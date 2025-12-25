@@ -23,7 +23,7 @@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Category</th>
-                        <th>Buying Price</th>
+                        <th>Buying Price (RM)</th>
                         <th>Status</th>
                         <th>Product Quantity</th>
                         <th>Action</th>

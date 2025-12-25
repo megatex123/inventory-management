@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="{{asset('backend')}}/img/logo/logo.png" rel="icon">
-  <title>RuangAdmin - Dashboard</title>
+  <title>Quivitech - Dashboard</title>
   <link href="{{asset('css/app.css')}}" rel="stylesheet">
 
   <link href="{{asset('backend')}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -45,7 +45,7 @@
       <div class="sidebar-heading">
         Features
       </div>
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Employee"
           aria-expanded="true" aria-controls="Employee">
           <i class="far fa-fw fa-window-maximize"></i>
@@ -57,7 +57,7 @@
             <router-link class="collapse-item" to="/employees">All Employees</router-link>
           </div>
         </div>
-      </li>
+      </li> --}}
 
 
 
@@ -104,7 +104,7 @@
       </li>
 
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Expense"
           aria-expanded="true" aria-controls="Expense">
           <i class="fas fa-fw fa-chart-area"></i>
@@ -116,9 +116,9 @@
             <router-link class="collapse-item" to="/expens">All Expense</router-link>
           </div>
         </div>
-      </li>
+      </li> --}}
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Salary"
           aria-expanded="true" aria-controls="Salary">
           <i class="fa fa-check-circle"></i>
@@ -130,7 +130,7 @@
             <router-link class="collapse-item" to="/salary/pay">Pay Salary</router-link>
           </div>
         </div>
-      </li>
+      </li> --}}
 
       <li class="nav-item">
         <router-link class="nav-link" to="/product/stock">

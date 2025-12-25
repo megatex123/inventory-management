@@ -30,8 +30,8 @@
                       <tr>
                         <th>Name</th>
                         <th>Qty</th>
-                        <th>Unit</th>
-                        <th>Total</th>
+                        <th>Unit (RM)</th>
+                        <th>Total (RM)</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -63,15 +63,15 @@
         <li class="list-group-item d-flex justify-content-between align-items-center">Total Quantity:
             <strong>{{totalCart}}</strong>
         </li>
-           <li class="list-group-item d-flex justify-content-between align-items-center">Sub Total:
+           <li class="list-group-item d-flex justify-content-between align-items-center">Sub Total:RM
             <strong>{{totalSub}}</strong>
         </li>
-           <li class="list-group-item d-flex justify-content-between align-items-center">Vat:
-            <strong > ({{(totalSub*vats.vat)/100}} ৳) {{vats.vat}} %</strong>
+        <!-- <li class="list-group-item d-flex justify-content-between align-items-center">Vat:
+            <strong > (RM {{(totalSub*vats.vat)/100}}) {{vats.vat}} %</strong>
         </li>
-           <li class="list-group-item d-flex justify-content-between align-items-center">Total:
+        <li class="list-group-item d-flex justify-content-between align-items-center">Total:
             <strong>{{(totalSub*vats.vat)/100 + totalSub}}</strong>
-        </li>
+        </li> -->
     </ul>
     <br>
     <form @submit.prevent='orderdone'>
@@ -79,7 +79,7 @@
            <select class='form-control' v-model='customer_id' >
             <option v-for='customer in Customers' :value="customer.id">{{customer.name}}</option>
         </select>
-        <label class='mb-2'>Pay</label>
+        <label class='mb-2'>Pay (RM)</label>
 <input class='form-control' type='text' v-model='pay'>
 
         <label class='mb-2'>Due</label>

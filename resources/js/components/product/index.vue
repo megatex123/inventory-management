@@ -23,8 +23,8 @@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Category</th>
-                        <th>Buying Price</th>
-                        <th>Selling Price</th>
+                        <th>Buying Price (RM)</th>
+                        <th>Selling Price (RM)</th>
                         <th>Root</th>
                         <th>Action</th>
                       </tr>

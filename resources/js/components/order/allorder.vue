@@ -20,7 +20,7 @@
                       <tr>
                         <th>Name</th>
                         <th>Total Amount</th>
-                        <th>Pay</th>
+                        <th>Pay (RM)</th>
                         <th>Due</th>
                         <th>Payment Method</th>
                         <th>Action</th>

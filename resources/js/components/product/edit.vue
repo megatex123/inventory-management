@@ -69,14 +69,14 @@
                                                         {{errors.root[0]}}</small> </small>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label>Buying Price</label>
+                                                    <label>Buying Price (RM)</label>
 
                                                     <input type="text" class="form-control" v-model='form.buying_price'>
                                                     <small class="text-danger" v-if='errors.buying_price'>
                                                         {{errors.buying_price[0]}}</small> </small>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label>Selling Price Code</label>
+                                                    <label>Selling Price (RM)</label>
 
                                                     <input type="text" class="form-control"
                                                         v-model='form.selling_price'>

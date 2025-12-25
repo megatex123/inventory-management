@@ -8,10 +8,10 @@ class extra extends Model
 {
     protected $fillable = [
         'vat',
-'logo',
-'favicon',
-'phone',
-'email',
-'address',
-            ];
+        'logo',
+        'favicon',
+        'phone',
+        'email',
+        'address',
+    ];
 }
