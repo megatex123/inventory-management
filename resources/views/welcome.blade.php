@@ -14,18 +14,23 @@
   <link href="{{asset('backend')}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="{{asset('backend')}}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="{{asset('backend')}}/css/ruang-admin.min.css" rel="stylesheet">
+  {{-- <script src="{{asset('backend')}}/vendor/jquery/jquery.min.js"></script> --}}
+  {{-- <script src="{{asset('backend')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
+  {{-- <script src="{{asset('backend')}}/vendor/jquery-easing/jquery.easing.min.js"></script> --}}
+  {{-- <script src="{{asset('backend')}}/js/ruang-admin.min.js"></script> --}}
+  {{-- <script src="{{asset('js/app.js')}}"></script> --}}
 </head>
 
 <body id="page-top">
   <div id="app">
   <div id="wrapper">
     <!-- Sidebar -->
-<ul class="navbar-nav sidebar sidebar-light accordion" v-if="$route.path === '/' || $route.path === '/register' || $route.path === '/forget' ? false : true " id="accordionSidebar">
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+<ul class="navbar-nav sidebar sidebar-light accordion" v-if="$route.meta.layout === 'app'" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
           <img src="{{asset('backend')}}/img/logo/logo2.png">
         </div>
-        <div class="sidebar-brand-text mx-3">Inventory</div>
+        <div class="sidebar-brand-text mx-3">Quivitech</div>
       </a>
       <hr class="sidebar-divider my-0">
       <li class="nav-item active">
@@ -64,13 +69,13 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Suppliers"
           aria-expanded="true" aria-controls="Suppliers">
-          <i class="far fa-fw fa-window-maximize"></i>
+          <i class="fas fa-fw fa-truck-loading"></i>
           <span>Suppliers</span>
         </a>
         <div id="Suppliers" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/supplier/create">Add Suppliers</router-link>
             <router-link class="collapse-item" to="/suppliers">All Suppliers</router-link>
+            <router-link class="collapse-item" to="/supplier/create">Add Suppliers</router-link>
           </div>
         </div>
       </li>
@@ -78,13 +83,69 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category"
           aria-expanded="true" aria-controls="category">
-          <i class="far fa-fw fa-window-maximize"></i>
+          <i class="fas fa-fw fa-boxes"></i>
           <span>Category</span>
         </a>
         <div id="category" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/category/create">Add Category</router-link>
             <router-link class="collapse-item" to="/category">All Category</router-link>
+            <router-link class="collapse-item" to="/category/create">Add Category</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#subcategory"
+          aria-expanded="true" aria-controls="subcategory">
+          <i class="fas fa-fw fa-boxes"></i>
+          <span>Sub Category</span>
+        </a>
+        <div id="subcategory" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/sub-category">All Sub Category</router-link>
+            <router-link class="collapse-item" to="/sub-category/create">Add Sub Category</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#craft"
+          aria-expanded="true" aria-controls="craft">
+          <i class="fas fa-fw fa-tools"></i>
+          <span>QuiviCraft</span>
+        </a>
+        <div id="craft" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/craft">All QuiviCraft</router-link>
+            <router-link class="collapse-item" to="/craft/create">Add QuiviCraft</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#serve"
+          aria-expanded="true" aria-controls="serve">
+          <i class="fas fa-fw fa-hammer"></i>
+          <span>QuiviServe</span>
+        </a>
+        <div id="serve" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/serve">All QuiviServe</router-link>
+            <router-link class="collapse-item" to="/serve/create">Add QuiviServe</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#care"
+          aria-expanded="true" aria-controls="care">
+          <i class="fas fa-fw fa-stethoscope"></i>
+          <span>QuiviCare</span>
+        </a>
+        <div id="care" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/care">All QuiviCare</router-link>
+            <router-link class="collapse-item" to="/care/create">Add QuiviCare</router-link>
           </div>
         </div>
       </li>
@@ -97,8 +158,8 @@
         </a>
         <div id="Product" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/product/create">Add Product</router-link>
             <router-link class="collapse-item" to="/product">All Product</router-link>
+            <router-link class="collapse-item" to="/product/create">Add Product</router-link>
           </div>
         </div>
       </li>
@@ -148,7 +209,23 @@
         <div id="Customer" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <router-link class="collapse-item" to="/customer">Customer List</router-link>
-            <router-link class="collapse-item" to="/customer/create">Add Customer</router-link>
+            <router-link class="collapse-item" to="/customer/create">Pre Register Customer</router-link>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Meeting"
+          aria-expanded="true" aria-controls="Meeting">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Meeting</span>
+        </a>
+        <div id="Meeting" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <router-link class="collapse-item" to="/meeting">Meeting List</router-link>
+            <router-link class="collapse-item" to="/meeting/create">Create Meeting</router-link>
+            <router-link class="collapse-item" to="/meeting-details">Meeting Detail List</router-link>
+            <router-link class="collapse-item" to="/meeting-details/create">Create Meeting Detail</router-link>
           </div>
         </div>
       </li>
@@ -161,8 +238,8 @@
         </a>
         <div id="Orders" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <router-link class="collapse-item" to="/orders">Today Order</router-link>
             <router-link class="collapse-item" to="/orders/all">Orlder List</router-link>
+            <router-link class="collapse-item" to="/orders">Today Order</router-link>
           </div>
         </div>
       </li>
@@ -188,7 +265,7 @@
     <div id="content-wrapper" class="d-flex flex-column">
       <div id="content">
         <!-- TopBar -->
-        <nav  v-if="$route.path === '/' || $route.path === '/register' || $route.path === '/forget' ? false : true " class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
+        <nav  v-if="$route.meta.layout === 'app'" class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
           <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
             <i class="fa fa-bars"></i>
           </button>

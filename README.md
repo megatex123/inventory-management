@@ -1,4 +1,4 @@
-# Laravel 7 & Vue js 2 Inventory Management System
+# Laravel 7 & Vue js 2 Quivitech Management System
 
 Manage the Product, Stock, Customers, Expenses.
 - - - - -

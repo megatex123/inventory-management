@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\expenses;
+use App\Models\Expenses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ExpensesController extends Controller
@@ -14,7 +14,7 @@ class ExpensesController extends Controller
      */
     public function index()
     {
-        $expenses=expenses::all();
+        $expenses=Expenses::all();
         return response()->json($expenses);
     }
 
@@ -41,7 +41,7 @@ class ExpensesController extends Controller
             'amount' =>'required',
          ]);
 
-             $categories= new expenses;
+             $categories= new Expenses;
              $categories->amount=$request->amount;
              $categories->details=$request->details;
              $categories->expenses_date=$request->date;

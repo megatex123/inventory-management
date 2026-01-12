@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class salaries extends Model
+class Salaries extends Model
 {
     protected $fillable = [
         'emp_id',
@@ -12,5 +12,5 @@ class salaries extends Model
         'salary_date',
         'salary_month',
         'salary_year',
-            ];
+    ];
 }

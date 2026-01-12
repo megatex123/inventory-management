@@ -50,7 +50,7 @@
               </div>
             </div>
             <!-- New User Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -67,9 +67,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -86,7 +86,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
 
 
 
@@ -125,7 +125,11 @@
                         <td>{{data.product_qty}}</td>
 
                       </tr>
-
+                      <tr v-if="products.length === 0">
+                        <td colspan="6" class="text-center text-muted">
+                            No data found.
+                        </td>
+                      </tr>
 
                     </tbody>
                   </table>

@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class suppliers extends Model
+class Suppliers extends Model
 {
     protected $fillable = [
         'name',
@@ -13,5 +13,5 @@ class suppliers extends Model
         'address',
         'photo',
         'shopname',
-            ];
+    ];
 }

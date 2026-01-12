@@ -17,22 +17,24 @@
                                         <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-12">
-                                                    <input type="text" class="form-control" v-model='form.name' id=""
-                                                        placeholder="Enter Full Name">
-                                                         <small class="text-danger" v-if='errors.name'> {{errors.name[0]}}</small> </small>
+                                                    <input type="text" class="form-control" v-model='form.name' placeholder="Enter Full Name">
+                                                    <small class="text-danger" v-if='errors.name'> {{errors.name[0]}}</small> </small>
                                                 </div>
-
+                                                <div class="col-6">
+                                                    <input type="text" class="form-control" v-model='form.code' placeholder="Enter Code">
+                                                    <small class="text-danger" v-if='errors.code'> {{errors.code[0]}}</small> </small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="text" class="form-control" v-model='form.fee' placeholder="Enter Fee">
+                                                    <small class="text-danger" v-if='errors.fee'> {{errors.fee[0]}}</small> </small>
+                                                </div>
                                             </div>
-
                                         </div>
-
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary btn-block">Submit</button>
                                         </div>
-
                                     </form>
                                     <hr>
-
                                     <div class="text-center">
                                     </div>
                                 </div>
@@ -57,6 +59,8 @@
             return {
                 form: {
                     name: null,
+                    code: null,
+                    fee: null,
 
                 },
                 errors: {}

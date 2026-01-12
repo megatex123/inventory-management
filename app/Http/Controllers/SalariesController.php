@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\salaries;
+use App\Models\Salaries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +33,7 @@ if($check){
     return response()->json('Salary Alrady Paid');
 }else{
 
-    $salaries= new salaries;
+    $salaries= new Salaries;
     $salaries->emp_id=$id;
     $salaries->amount=$request->sallery;
     $salaries->salary_date=date('d/m/y');

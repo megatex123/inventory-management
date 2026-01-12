@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class products extends Model
+class Products extends Model
 {
     protected $fillable = [
         'cat_id',
@@ -17,5 +17,5 @@ class products extends Model
         'buying_date',
         'image',
         'product_qty',
-            ];
+    ];
 }

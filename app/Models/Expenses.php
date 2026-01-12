@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class expenses extends Model
+class Expenses extends Model
 {
     protected $fillable = [
         'details',
         'amount',
-            ];
+    ];
 }

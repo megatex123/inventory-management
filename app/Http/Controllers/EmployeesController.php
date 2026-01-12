@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\employees;
+use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
@@ -15,7 +15,7 @@ class EmployeesController extends Controller
      */
     public function index()
     {
-       $employees=employees::all();
+       $employees=Employees::all();
        return response()->json($employees);
     }
 
@@ -55,7 +55,7 @@ class EmployeesController extends Controller
             $image_url=$upload_path.$name;
             $img->save($image_url);
 
-            $employees= new employees;
+            $employees= new Employees;
             $employees->name=$request->name;
             $employees->email=$request->email;
             $employees->phone=$request->phone;
@@ -66,7 +66,7 @@ class EmployeesController extends Controller
             $employees->photo='/'.$image_url;
             $employees->save();
         }else{
-            $employees= new employees;
+            $employees= new Employees;
             $employees->name=$request->name;
             $employees->email=$request->email;
             $employees->phone=$request->phone;
@@ -102,7 +102,7 @@ class EmployeesController extends Controller
      */
     public function update(Request $request,$id)
     {
-        $employees= employees::find($id);
+        $employees= Employees::find($id);
         $employees->name=$request->name;
         $employees->email=$request->email;
         $employees->phone=$request->phone;

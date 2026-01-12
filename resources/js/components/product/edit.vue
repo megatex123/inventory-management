@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-4">
-                                                    <label>Product Root</label>
+                                                    <label>Product Part</label>
                                                     <input type="text" class="form-control" v-model='form.root'>
                                                     <small class="text-danger" v-if='errors.root'>
                                                         {{errors.root[0]}}</small> </small>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\extra;
+use App\Models\Extra;
 use Illuminate\Http\Request;
 
 class ExtraController extends Controller

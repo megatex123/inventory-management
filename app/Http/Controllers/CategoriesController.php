@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\categories;
+use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +15,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories=categories::all();
+        $categories=Categories::all();
         return response()->json($categories);
     }
 
@@ -37,16 +37,15 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-
         $validateData=$request->validate([
            'name' =>'required|unique:categories|max:255',
         ]);
 
-            $categories= new categories;
+            $categories= new Categories;
             $categories->name=$request->name;
+            $categories->code=$request->code;
+            $categories->fee=$request->fee;
             $categories->save();
-
-
     }
 
     /**
@@ -71,17 +70,12 @@ class CategoriesController extends Controller
      */
     public function update(Request $request,$id)
     {
-
-
-
-        $categories= categories::find($id);
+        $categories= Categories::find($id);
         $categories->name=$request->name;
+        $categories->code=$request->code;
+        $categories->fee=$request->fee;
 
-            $categories->update();
-
-
-
-
+        $categories->update();
     }
 
     /**
@@ -92,8 +86,11 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
+        $categories = Categories::findOrFail($id);
+        $categories->delete();
 
-          DB::table('categories')->where('id',$id)->delete();
-
+        return response()->json([
+            'message' => 'Category deleted successfully',
+        ]);
     }
 }

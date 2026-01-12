@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\products;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
@@ -44,14 +44,23 @@ class ProductsController extends Controller
     public function store(Request $request)
     {
         $validateData=$request->validate([
-            'product_name' =>'required|unique:products|max:255',
             'product_code' =>'required|unique:products|max:255',
             'cat_id' =>'required',
-            'supplier_id' =>'required',
-            'buying_price' =>'required',
-            'selling_price' =>'required',
-            'buying_date' =>'required',
-            'product_qty' =>'required',
+            'brand_id' => 'nullable',
+            'product_name' =>'required|unique:products|max:255',
+            'capacity' =>'nullable',
+            'form' =>'nullable',
+            'interface' =>'nullable',
+            'read_speed' =>'nullable',
+            'write_speed' =>'nullable',
+            'price_tier' =>'nullable',
+            'min_price' =>'nullable',
+            'max_price' =>'nullable',
+            'available' =>'nullable',
+            'available_local' =>'nullable',
+            'supplier_id' =>'nullable',
+            'buying_date' =>'nullable',
+            'product_qty' =>'nullable',
         ]);
 
         if($request->photo){
@@ -65,29 +74,45 @@ class ProductsController extends Controller
             $image_url=$upload_path.$name;
             $img->save($image_url);
 
-            $products= new products;
-            $products->product_name=$request->product_name;
+            $products= new Products;
             $products->product_code=$request->product_code;
             $products->cat_id=$request->cat_id;
+            $products->brand_id=$request->brand_id;
+            $products->product_name=$request->product_name;
+            $products->capacity=$request->capacity;
+            $products->form=$request->form;
+            $products->interface=$request->interface;
+            $products->read=$request->read;
+            $products->write=$request->write;
+            $products->tier=$request->tier;
+            $products->min_price=$request->min_price;
+            $products->max_price=$request->max_price;
+            $products->available=$request->available;
+            $products->available_local=$request->available_local;
             $products->supplier_id=$request->supplier_id;
-            $products->buying_price=$request->buying_price;
-            $products->selling_price=$request->selling_price;
             $products->buying_date=$request->buying_date;
             $products->product_qty=$request->product_qty;
-            $products->root=$request->root;
             $products->image='/'.$image_url;
             $products->save();
         }else{
-            $products= new products;
-            $products->product_name=$request->product_name;
+            $products= new Products;
             $products->product_code=$request->product_code;
             $products->cat_id=$request->cat_id;
+            $products->brand_id=$request->brand_id;
+            $products->product_name=$request->product_name;
+            $products->capacity=$request->capacity;
+            $products->form=$request->form;
+            $products->interface=$request->interface;
+            $products->read=$request->read;
+            $products->write=$request->write;
+            $products->tier=$request->tier;
+            $products->min_price=$request->min_price;
+            $products->max_price=$request->max_price;
+            $products->available=$request->available;
+            $products->available_local=$request->available_local;
             $products->supplier_id=$request->supplier_id;
-            $products->buying_price=$request->buying_price;
-            $products->selling_price=$request->selling_price;
             $products->buying_date=$request->buying_date;
             $products->product_qty=$request->product_qty;
-            $products->root=$request->root;
             $products->save();
         }
 
@@ -115,21 +140,27 @@ class ProductsController extends Controller
     public function update(Request $request,$id)
     {
 
-            $products= products::find($id);
-            $products->product_name=$request->product_name;
+            $products= Products::find($id);
             $products->product_code=$request->product_code;
             $products->cat_id=$request->cat_id;
+            $products->brand_id=$request->brand_id;
+            $products->product_name=$request->product_name;
+            $products->capacity=$request->capacity;
+            $products->form=$request->form;
+            $products->interface=$request->interface;
+            $products->read=$request->read;
+            $products->write=$request->write;
+            $products->tier=$request->tier;
+            $products->min_price=$request->min_price;
+            $products->max_price=$request->max_price;
+            $products->available=$request->available;
+            $products->available_local=$request->available_local;
             $products->supplier_id=$request->supplier_id;
-            $products->buying_price=$request->buying_price;
-            $products->selling_price=$request->selling_price;
             $products->buying_date=$request->buying_date;
             $products->product_qty=$request->product_qty;
-            $products->root=$request->root;
-            $image=$request->image;
-        // $dbData= suppliers::find($id);
 
         $dbImg= $products->image;
-
+        $image = '';
         if($image != $dbImg){
 
             $position=strpos($image,';');
@@ -161,7 +192,7 @@ class ProductsController extends Controller
 
 
     public function stockupdate(Request $request,$id){
-        $products= products::find($id);
+        $products= Products::find($id);
         $products->product_qty=$request->product_qty;
 
             $products->update();
