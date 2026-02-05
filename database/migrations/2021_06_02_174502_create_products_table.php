@@ -24,8 +24,8 @@ class CreateProductsTable extends Migration
             $table->string('read')->nullable();
             $table->string('write')->nullable();
             $table->string('tier')->nullable();
-            $table->string('min_price')->nullable();
-            $table->string('max_price')->nullable();
+            $table->string('price')->nullable();
+            $table->datetime('price_updated_at')->nullable();
             $table->string('available')->nullable();
             $table->string('available_local')->nullable();
             $table->integer('supplier_id')->nullable();

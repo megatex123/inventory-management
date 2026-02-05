@@ -15,7 +15,7 @@ class CreateMeetingDetailsTable extends Migration {
             $table->decimal('initial_budget', 10, 2)->nullable();
             $table->string('reason')->nullable();
             $table->enum('play_mode', ['Singleplayer', 'Multiplayer'])->nullable();
-            $table->string('include_monitor')->nullable();
+            $table->integer('include_monitor')->nullable();
             $table->text('notes')->nullable();
             $table->string('theme_style')->nullable();
             $table->string('preference')->nullable();

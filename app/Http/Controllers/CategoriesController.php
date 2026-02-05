@@ -44,7 +44,6 @@ class CategoriesController extends Controller
             $categories= new Categories;
             $categories->name=$request->name;
             $categories->code=$request->code;
-            $categories->fee=$request->fee;
             $categories->save();
     }
 
@@ -73,7 +72,6 @@ class CategoriesController extends Controller
         $categories= Categories::find($id);
         $categories->name=$request->name;
         $categories->code=$request->code;
-        $categories->fee=$request->fee;
 
         $categories->update();
     }

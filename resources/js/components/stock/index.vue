@@ -23,7 +23,7 @@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Category</th>
-                        <th>Buying Price (RM)</th>
+                        <th>Price (RM)</th>
                         <th>Status</th>
                         <th>Product Quantity</th>
                         <th>Action</th>
@@ -36,7 +36,7 @@
                         <td>{{data.product_name}}</td>
                         <td>{{data.product_code}}</td>
                         <td>{{data.cat_name}}</td>
-                        <td>{{data.buying_price}}</td>
+                        <td>{{data.price}}</td>
                         <td>
                            <span v-if='data.product_qty>=1' class="badge badge-pill badge-success">Stock Available</span>
                            <span v-else='' class="badge badge-pill badge-danger">Stock Out</span>

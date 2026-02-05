@@ -71,6 +71,7 @@ let customerRegister = require('./components/auth/register_customer_luar').defau
 let todayorder = require('./components/order/order').default;
 let allorder = require('./components/order/allorder').default;
 let vieworder = require('./components/order/view').default;
+let editorder = require('./components/order/edit').default;
 
 //POS
 let pos = require('./components/pos/index').default;
@@ -87,6 +88,31 @@ let meetingedit = require('./components/meeting/edit.vue').default;
 let meetingdetails = require('./components/meeting_details/index').default;
 let createmeetingdetails = require('./components/meeting_details/create.vue').default;
 let meetingdetailsedit = require('./components/meeting_details/edit.vue').default;
+
+//servedata
+let servedata = require('./components/serve_data/index').default;
+let createservedata = require('./components/serve_data/create.vue').default;
+let servedataedit = require('./components/serve_data/edit.vue').default;
+
+//servepce
+let servepce = require ('./components/serve_pce/index.vue').default;
+let servepcecreate = require ('./components/serve_pce/create.vue').default;
+let servepceedit = require ('./components/serve_pce/edit.vue').default;
+
+//caredata
+let caredata = require('./components/care_data/index').default;
+let createcaredata = require('./components/care_data/create.vue').default;
+let caredataedit = require('./components/care_data/edit.vue').default;
+
+//serveemps
+let servemps = require ('./components/serve_mps/index.vue').default;
+let servempscreate = require ('./components/serve_mps/create.vue').default;
+let servempsedit = require ('./components/serve_mps/edit.vue').default;
+
+//servebek
+let servebek = require ('./components/serve_bek/index.vue').default;
+let servebekcreate = require ('./components/serve_bek/create.vue').default;
+let servebekedit = require ('./components/serve_bek/edit.vue').default;
 
 export const routes=[
 
@@ -137,8 +163,8 @@ export const routes=[
     {path: '/product/create',component:createProduct,name: 'createProduct',meta: { layout: 'app' }},
     {path: '/product/edit/:id',component:Productedit,name: 'Productedit',meta: { layout: 'app' }},
     {path: '/product',component:Product,name: 'Product',meta: { layout: 'app' }},
-    {path: '/product/stock',component:stock,name: 'stock',meta: { layout: 'app' }},  // product stock
-    {path: '/stock/edit/:id',component:stockedit,name: 'stockedit',meta: { layout: 'app' }},  // product stock edit
+    {path: '/product/stock',component:stock,name: 'stock',meta: { layout: 'app' }},
+    {path: '/stock/edit/:id',component:stockedit,name: 'stockedit',meta: { layout: 'app' }},
 
 
     // Expens:
@@ -166,6 +192,7 @@ export const routes=[
       {path: '/orders',component:todayorder,name: 'todayorder',meta: { layout: 'app' }},
       {path: '/orders/all',component:allorder,name: 'allorder',meta: { layout: 'app' }},
       {path: '/order/view/:id',component:vieworder,name: 'vieworder',meta: { layout: 'app' }},
+      {path: '/order/edit/:id',component: editorder ,name: 'editorder',meta: { layout: 'app' }},
 
       // meeting:
       { path: '/meeting', component: meeting, name: 'meeting', meta: { layout: 'app' } },
@@ -176,4 +203,30 @@ export const routes=[
       { path: '/meeting-details', component: meetingdetails, name: 'meetingdetails', meta: { layout: 'app' } },
       { path: '/meeting-details/create', component: createmeetingdetails, name: 'createmeetingdetails', meta: { layout: 'app' } },
       { path: '/meeting-details/edit/:id', component: meetingdetailsedit, name: 'meetingdetailsedit', meta: { layout: 'app' } },
+
+      // serve-data:
+      { path: '/serve-data', component: servedata, name: 'servedata', meta: { layout: 'app' } },
+      { path: '/serve-data/create', component: createservedata, name: 'createservedata', meta: { layout: 'app' } },
+      { path: '/serve-data/edit/:id', component: servedataedit, name: 'servedataedit', meta: { layout: 'app' } },
+
+      // serve-pce
+      { path: '/serve-pce', component: servepce, name: 'servepce', meta: { layout: 'app' } },
+      { path: '/serve-pce/create', component: servepcecreate, name: 'servepcecreate', meta: { layout: 'app' } },
+      { path: '/serve-pce/edit/:id', component: servepceedit, name: 'servepceedit', meta: { layout: 'app' } },
+
+      // care-data:
+      { path: '/care-data', component: caredata, name: 'caredata', meta: { layout: 'app' } },
+      { path: '/care-data/create', component: createcaredata, name: 'createcaredata', meta: { layout: 'app' } },
+      { path: '/care-data/edit/:id', component: caredataedit, name: 'caredataedit', meta: { layout: 'app' } },
+
+      // serve-mps
+      { path: '/serve-mps', component: servemps, name: 'servemps', meta: { layout: 'app' } },
+      { path: '/serve-mps/create', component: servempscreate, name: 'servempscreate',meta: { layout: 'app' } },
+      { path: '/serve-mps/edit/:id', component: servempsedit, name: 'servempsedit', meta: { layout: 'app' } },
+
+      // serve-bek
+      { path: '/serve-bek', component: servebek, name: 'servebek', meta: { layout: 'app' } },
+      { path: '/serve-bek/create', component: servebekcreate, name: 'servebekcreate',meta: { layout: 'app' } },
+      { path: '/serve-bek/edit/:id', component: servebekedit, name: 'servebekedit', meta: { layout: 'app' } },
+
 ]

@@ -11,102 +11,104 @@ class MeetingDetailsController extends Controller
     public function index()
     {
         return response()->json(
-            MeetingDetails::with('meeting')->latest()->get()
+            MeetingDetails::with('meeting.customer')->latest()->get()
         );
     }
 
     public function store(Request $request)
     {
-        if ($request->filled('target_location')) {
-            $location = strtolower($request->target_location);
-            $request->merge([
-                'qvcrf_tag' => (!str_contains($location, 'klang valley')) ? 1 : 0
-            ]);
-        }
-
         $validated = $request->validate([
-            'meeting_id'        => 'required|exists:meetings,id',
-            'initial_budget'    => 'required|numeric',
-            'reason'            => 'required|integer|in:1,2', // 1: Work, 2: Gaming
-            // play_mode is required only if reason is 2 (Gaming)
-            'play_mode'         => 'required_if:reason,2|nullable|integer|in:1,2',
-            'notes'             => 'nullable|string',
-            // If qvse or qvca is true (1), notes must be provided
-            'notes'             => 'required_if:qvse,1|required_if:qvca,1|nullable|string',
-            'include_monitor'   => 'nullable|string',
-            'theme_style'       => 'nullable|string',
-            'preference'        => 'nullable|string',
-            'exemption'         => 'nullable|boolean',
-            'future_proof'      => 'nullable|boolean',
-            'case_size'         => 'nullable|integer',
-            'okay_with_aio'     => 'nullable|boolean',
-            'need_rgb'          => 'nullable|boolean',
-            'gpu_sag'           => 'nullable|boolean',
-            'qvcrf_tag'         => 'nullable|boolean',
-            'qvse'              => 'nullable|boolean',
-            'qvca'              => 'nullable|boolean',
-            'qvtd'              => 'nullable|boolean',
+            'meeting_id' => 'required|exists:meetings,id',
+            'initial_budget' => 'nullable|numeric|min:0',
+            'reason' => 'required|in:1,2',
+            'play_mode' => 'nullable|in:1,2',
+            'include_monitor' => 'nullable|in:1,2',
+            'include_notes' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'theme_style' => 'nullable|string|max:191',
+            'preference' => 'nullable|string|max:191',
+            'exemption' => 'nullable|string|max:191',
+            'future_proof' => 'nullable|boolean',
+            'case_size' => 'nullable|in:1,2,3',
+            'okay_with_aio' => 'nullable|boolean',
+            'gpu_sag' => 'nullable|boolean',
+            'need_rgb' => 'nullable|boolean',
+            'qvcrf_tag' => 'nullable|boolean',
+            'qvse' => 'nullable|boolean',
+            'qvca' => 'nullable|boolean',
+            'qvtd' => 'nullable|boolean',
+            'qvtd_notes' => 'nullable|string',
             'target_build_date' => 'nullable|date',
-            'target_location'   => 'nullable|string',
+            'target_location' => 'nullable|string|max:191',
         ]);
 
-        // Force play_mode to null if reason is Work
-        if ($validated['reason'] == 1) {
-            $validated['play_mode'] = null;
-        }
-
-        $details = MeetingDetails::create($validated);
+        $meetingDetail = MeetingDetails::create($validated);
 
         return response()->json([
-            'message' => 'Meeting details saved successfully',
-            'data' => $details->load('meeting')
+            'message' => 'Meeting details created successfully',
+            'data' => $meetingDetail
         ], 201);
     }
 
-    public function show(MeetingDetails $meeting)
+    // Show single record
+    public function show($id)
     {
-        return response()->json(
-            $meeting->load('meeting')
-        );
+        // Try to find the meeting detail with all relationships
+        $meetingDetail = MeetingDetails::with('meeting')->find($id);
+
+        if (!$meetingDetail) {
+            return response()->json(['error' => 'Meeting details not found'], 404);
+        }
+
+        return response()->json($meetingDetail);
     }
 
-    public function update(Request $request, MeetingDetails $meeting)
+    // Update record
+    public function update(Request $request, $id)
     {
+        $meetingDetail = MeetingDetails::findOrFail($id);
+
         $validated = $request->validate([
-            'meeting_id'        => 'required|exists:meetings,id',
-            'initial_budget'    => 'required|numeric',
-            'reason'            => 'required|integer',
-            'play_mode'         => 'nullable|integer',
-            'include_monitor'   => 'nullable|string',
-            'notes'             => 'nullable|string',
-            'theme_style'       => 'nullable|string',
-            'preference'        => 'nullable|string',
-            'exemption'         => 'nullable|boolean',
-            'future_proof'      => 'nullable|boolean',
-            'case_size'         => 'nullable|boolean',
-            'okay_with_aio'     => 'nullable|boolean',
-            'need_rgb'          => 'nullable|boolean',
-            'gpu_sag'           => 'nullable|boolean',
-            'qvcrf_tag'         => 'nullable|boolean',
-            'qvse'              => 'nullable|boolean',
-            'qvca'              => 'nullable|boolean',
-            'qvtd'              => 'nullable|boolean',
+            'meeting_id' => 'required|exists:meetings,id',
+            'initial_budget' => 'nullable|numeric|min:0',
+            'reason' => 'required|in:1,2',
+            'play_mode' => 'nullable|in:1,2',
+            'include_monitor' => 'nullable|in:1,2',
+            'include_notes' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'theme_style' => 'nullable|string|max:191',
+            'preference' => 'nullable|string|max:191',
+            'exemption' => 'nullable|string|max:191',
+            'future_proof' => 'nullable|boolean',
+            'case_size' => 'nullable|in:1,2,3',
+            'okay_with_aio' => 'nullable|boolean',
+            'gpu_sag' => 'nullable|boolean',
+            'need_rgb' => 'nullable|boolean',
+            'qvcrf_tag' => 'nullable|boolean',
+            'qvse' => 'nullable|boolean',
+            'qvca' => 'nullable|boolean',
+            'qvtd' => 'nullable|boolean',
+            'qvtd_notes' => 'nullable|string',
             'target_build_date' => 'nullable|date',
-            'target_location'   => 'nullable|string',
+            'target_location' => 'nullable|string|max:191',
         ]);
 
-        $meeting->update($validated);
+        $meetingDetail->update($validated);
 
         return response()->json([
-            'message' => 'Meeting updated successfully',
-            'data' => $meeting->load('meeting')
+            'message' => 'Meeting details updated successfully',
+            'data' => $meetingDetail
         ]);
     }
 
-    public function destroy(MeetingDetails $meeting)
+    // Delete record
+    public function destroy($id)
     {
-        $meeting->delete();
+        $meetingDetail = MeetingDetails::findOrFail($id);
+        $meetingDetail->delete();
 
-        return response()->json(['message' => 'Meeting deleted']);
+        return response()->json([
+            'message' => 'Meeting details deleted successfully'
+        ]);
     }
 }

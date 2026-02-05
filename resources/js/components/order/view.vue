@@ -7,7 +7,12 @@
               <div class="col-lg-12">
                 <div class="login-form">
                   <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Order Details</h1>
+                    <span v-if="orders.approve == 1">
+                        <h1 class="h4 text-gray-900 mb-4">Order Invoice Details</h1>
+                    </span>
+                    <span v-else>
+                        <h1 class="h4 text-gray-900 mb-4">Order Draft Details</h1>
+                    </span>
                   </div>
 
                   <div class="row">
@@ -36,22 +41,22 @@
                                     <tbody>
                                     <tr>
                                         <td class="font-weight-bold" style="width: 30%">Customer Name</td>
-                                        <td class="text-right">{{ orders.full_name }}</td>
+                                        <td class="text-right">{{ orders.customer.full_name }}</td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">Phone</td>
-                                        <td class="text-right">{{ orders.phone }}</td>
+                                        <td class="text-right">{{ orders.customer.phone }}</td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">Email</td>
-                                        <td class="text-right">{{ orders.email }}</td>
+                                        <td class="text-right">{{ orders.customer.email }}</td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">Address</td>
-                                        <td class="text-right">{{ orders.address }}</td>
+                                        <td class="text-right">{{ orders.customer.address }}</td>
                                     </tr>
 
                                     <tr>
@@ -60,15 +65,8 @@
                                     </tr>
 
                                     <tr>
-                                        <td class="font-weight-bold">Order Status</td>
-                                        <td class="text-right">
-                                            <span v-if="orders.approve == 1">
-                                                Approved
-                                            </span>
-                                            <span v-else>
-                                                Rejected
-                                            </span>
-                                        </td>
+                                        <td class="font-weight-bold">Order ID</td>
+                                        <td class="text-right">{{ orders.order_id }}</td>
                                     </tr>
 
                                     </tbody>
@@ -83,9 +81,19 @@
                         <div class="card">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                                 <h5 class="m-0 font-weight-bold text-primary">Order Details</h5>
-                                <button class="btn btn-sm btn-outline-primary" @click="toggleProductDetails">
-                                    {{ showProducts ? 'Hide' : 'Show' }}
-                                </button>
+                                <div class="row">
+                                    <div class="ml-auto">
+
+                                        <span v-if="orders.approve == null">
+                                            <router-link :to="'/order/edit/' + orders.id" class="btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-edit"></i> Edit
+                                            </router-link>
+                                        </span>
+                                        <button class="btn btn-sm btn-outline-primary" @click="toggleProductDetails">
+                                            {{ showProducts ? 'Hide' : 'Show' }}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div v-show="showProducts" class="table-responsive">
@@ -163,33 +171,33 @@
                                     <tbody>
                                     <tr>
                                         <td colspan="3" class="font-weight-bold">Total Product Payment</td>
-                                        <td class="text-right">RM {{ formatNumber(orders.total) }}</td>
+                                        <td class="text-right">RM {{ formatNumber(grandTotalPrice) }}</td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviCraft</td>
-                                        <td class="text-left">{{ orders.craft_name }}</td>
-                                        <td class="text-right">{{ orders.craft_code }}</td>
+                                        <td class="text-left">{{ orders.craft.name }}</td>
+                                        <td class="text-right">{{ orders.craft.code }}</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(orders.craft_fee) }}
+                                            RM {{ formatNumber(orders.craft.fee) }}
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviServe</td>
-                                        <td class="text-left">{{ orders.serve_name }}</td>
-                                        <td class="text-right">{{ orders.serve_code }}</td>
+                                        <td class="text-left">{{ orders.serve.name }}</td>
+                                        <td class="text-right">{{ orders.serve.code }}</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(orders.serve_fee) }}
+                                            RM {{ formatNumber(orders.serve.fee) }}
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviCare</td>
-                                        <td class="text-left">{{ orders.care_name }}</td>
-                                        <td class="text-right">{{ orders.care_code }}</td>
+                                        <td class="text-left">{{ orders.care.name }}</td>
+                                        <td class="text-right">{{ orders.care.code }}</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(orders.care_fee) }}
+                                            RM {{ formatNumber(orders.care.fee) }}
                                         </td>
                                     </tr>
 
@@ -251,10 +259,10 @@ export default {
     },
     totalPayAmount() {
         return (
-        Number(this.orders.craft_fee || 0) +
+        Number(this.orders.craft.fee || 0) +
         Number(this.orders.total || 0) +
-        Number(this.orders.serve_fee || 0) +
-        Number(this.orders.care_fee || 0)
+        Number(this.orders.serve.fee || 0) +
+        Number(this.orders.care.fee || 0)
         );
     }
   },

@@ -2,9 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CustomersController;
-use App\Http\Controllers\MeetingController;
-use App\Http\Controllers\MeetingDetailsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +12,11 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function () {
-
     Route::post('login', 'AuthController@login');
     Route::post('signup', 'AuthController@signup');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
-
 });
 
 /*
@@ -29,8 +24,8 @@ Route::group([
 | PUBLIC CUSTOMER UPDATE (NO LOGIN – HASH LINK)
 |--------------------------------------------------------------------------
 */
-Route::get('/customer/public/{token}', [CustomersController::class, 'publicShow']);
-Route::post('/customer/public/{token}', [CustomersController::class, 'publicUpdate']);
+Route::get('/customer/public/{token}', 'CustomersController@publicShow');
+Route::post('/customer/public/{token}', 'CustomersController@publicUpdate');
 
 /*
 |--------------------------------------------------------------------------
@@ -48,10 +43,10 @@ Route::apiResource('/product', 'ProductsController');
 Route::apiResource('/expens', 'ExpensesController');
 Route::apiResource('/customer', 'CustomersController');
 
-Route::post('/customer/{id}/generate-update-link', [CustomersController::class, 'generateUpdateLink']);
-Route::put('/customer/{id}/approve', [CustomersController::class, 'updateApprove']);
-Route::get('/customer/{id}', [CustomersController::class, 'show']);
-Route::patch('/customer/{id}', [CustomersController::class, 'update']);
+Route::post('/customer/{id}/generate-update-link', 'CustomersController@generateUpdateLink');
+Route::put('/customer/{id}/approve', 'CustomersController@updateApprove');
+Route::get('/customer/{id}', 'CustomersController@show');
+Route::patch('/customer/{id}', 'CustomersController@update');
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +83,14 @@ Route::put('/order/{id}/categories', 'OrderController@updatecraft');
 Route::put('/order/{id}/serve', 'OrderController@updateserve');
 Route::put('/order/{id}/care', 'OrderController@updatecare');
 Route::put('/order/{id}/approve', 'OrderController@updateApprove');
+Route::get('/order/edit/{id}', 'OrderController@edit')->name('order.edit');
+Route::post('/order/update/{id}', 'OrderController@updateOrderDetails')->name('order.update');
+Route::get('/order/get/{id}', 'OrderController@getOrderWithDetails');
+Route::get('/order/edit-data/{id}', 'OrderController@getOrderEditData');
+Route::get('/order/search-products', 'OrderController@searchProducts');
+Route::get('/order/with-details/{id}', 'OrderController@getOrderWithDetails');
+Route::post('/order/update/{id}', 'OrderController@updateOrderDetails');
+Route::get('/orders/statistics', 'OrderController@getStatistics');
 
 /*
 |--------------------------------------------------------------------------
@@ -105,19 +108,142 @@ Route::get('/today/stock', 'PosController@todaystock');
 | MEETING
 |--------------------------------------------------------------------------
 */
-Route::get('/meetings', [MeetingController::class, 'index']);
-Route::get('/meetings/{meeting}', [MeetingController::class, 'show']);
-Route::post('/meetings', [MeetingController::class, 'store']);
-Route::put('/meetings/{meeting}', [MeetingController::class, 'update']);
-Route::delete('/meetings/{meeting}', [MeetingController::class, 'destroy']);
+Route::get('/meetings', 'MeetingController@index');
+Route::get('/meetings/{meeting}', 'MeetingController@show');
+Route::post('/meetings', 'MeetingController@store');
+Route::put('/meetings/{meeting}', 'MeetingController@update');
+Route::delete('/meetings/{meeting}', 'MeetingController@destroy');
 
 /*
 |--------------------------------------------------------------------------
 | MEETING DETAILS
 |--------------------------------------------------------------------------
 */
-Route::get('/meeting-details', [MeetingDetailsController::class, 'index']);
-Route::get('/meeting-details/{meeting}', [MeetingDetailsController::class, 'show']);
-Route::post('/meeting-details', [MeetingDetailsController::class, 'store']);
-Route::put('/meeting-details/{meeting}', [MeetingDetailsController::class, 'update']);
-Route::delete('/meeting-details/{meeting}', [MeetingDetailsController::class, 'destroy']);
+Route::get('/meeting-details', 'MeetingDetailsController@index');
+Route::get('/meeting-details/{id}', 'MeetingDetailsController@show');
+Route::post('/meeting-details', 'MeetingDetailsController@store');
+Route::put('/meeting-details/{id}', 'MeetingDetailsController@update');
+Route::delete('/meeting-details/{id}', 'MeetingDetailsController@destroy');
+
+/*
+|--------------------------------------------------------------------------
+| SERVE DATA ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('serve-data')->group(function () {
+    Route::get('/', 'ServeDataController@index');
+    Route::post('/', 'ServeDataController@store');
+    Route::get('/statistics', 'ServeDataController@statistics');
+    Route::get('/search', 'ServeDataController@search');
+    Route::get('/customer/{customerId}', 'ServeDataController@byCustomer');
+    Route::get('/order/{orderId}', 'ServeDataController@byOrder');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'ServeDataController@show');
+        Route::put('/', 'ServeDataController@update');
+        Route::patch('/', 'ServeDataController@update');
+        Route::delete('/', 'ServeDataController@destroy');
+        Route::post('/restore', 'ServeDataController@restore');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| SERVE PCE ROUTES (Corrected - no duplicate routes)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('serve-pce')->group(function () {
+    Route::get('/', 'ServePceController@index');
+    Route::post('/', 'ServePceController@store');
+    Route::get('/statistics', 'ServePceController@statistics');
+    Route::get('/search', 'ServePceController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'ServePceController@show');
+        Route::put('/', 'ServePceController@update');
+        Route::patch('/', 'ServePceController@update');
+        Route::delete('/', 'ServePceController@destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| SERVE MPS ROUTES (Updated to match Vue component)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('serve-mps')->group(function () {
+    // Main routes matching Vue component
+    Route::get('/', 'ServeMpsController@index');          // GET /api/serve-mps
+    Route::post('/', 'ServeMpsController@store');         // POST /api/serve-mps
+    Route::get('/statistics', 'ServeMpsController@statistics'); // GET /api/serve-mps/statistics
+
+    // Individual item routes
+    Route::get('/{id}', 'ServeMpsController@show');       // GET /api/serve-mps/{id}
+    Route::put('/{id}', 'ServeMpsController@update');     // PUT /api/serve-mps/{id}
+    Route::patch('/{id}', 'ServeMpsController@update');   // PATCH /api/serve-mps/{id}
+    Route::delete('/{id}', 'ServeMpsController@destroy'); // DELETE /api/serve-mps/{id}
+
+    // Optional additional routes if needed
+    Route::get('/search', 'ServeMpsController@search');   // GET /api/serve-mps/search (optional)
+    Route::post('/{id}/restore', 'ServeMpsController@restore'); // POST /api/serve-mps/{id}/restore (optional)
+});
+
+/*
+|--------------------------------------------------------------------------
+| SERVE BEK ROUTES (Updated to match Vue component)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('serve-beks')->group(function () {
+    Route::get('/', 'ServeBekController@index');
+    Route::post('/', 'ServeBekController@store');
+    Route::get('/{id}', 'ServeBekController@show');
+    Route::put('/{id}', 'ServeBekController@update');
+    Route::delete('/{id}', 'ServeBekController@destroy');
+
+    // Custom routes
+    Route::post('/{id}/restore', 'ServeBekController@restore');
+    Route::get('/serve-data/{serveDataId}', 'ServeBekController@getByServeDataId');
+    Route::post('/{id}/claim', 'ServeBekController@makeClaim');
+});
+
+/*
+|--------------------------------------------------------------------------
+| CARE DATA ROUTES (Removed duplicate, corrected)
+|--------------------------------------------------------------------------
+*/
+// Note: The previous duplicate serve-pce routes were removed
+// Only one serve-pce route group exists above
+
+/*
+|--------------------------------------------------------------------------
+| API TEST ROUTE (Optional - for debugging)
+|--------------------------------------------------------------------------
+*/
+Route::get('/test-connection', function () {
+    return response()->json([
+        'success' => true,
+        'message' => 'API is working',
+        'timestamp' => now(),
+        'version' => '1.0'
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| FALLBACK ROUTE
+|--------------------------------------------------------------------------
+*/
+Route::fallback(function () {
+    return response()->json([
+        'success' => false,
+        'message' => 'API endpoint not found. Please check the URL.',
+        'available_endpoints' => [
+            'GET /api/serve-mps',
+            'GET /api/serve-mps/statistics',
+            'GET /api/serve-mps/{id}',
+            'POST /api/serve-mps',
+            'PUT /api/serve-mps/{id}',
+            'DELETE /api/serve-mps/{id}'
+        ]
+    ], 404);
+});

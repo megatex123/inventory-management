@@ -6,6 +6,7 @@ use App\Models\Customers;
 use App\Models\Craft;
 use App\Models\Serves;
 use App\Models\Care;
+use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +17,7 @@ class Order extends Model
 
     use SoftDeletes;
     protected $fillable = [
+        'order_id',
         'customer_id',
         'qty',
         'sub_total',
@@ -95,5 +97,163 @@ class Order extends Model
     public function getFullNameAttribute()
     {
         return optional($this->customer)->full_name;
+    }
+
+    /**
+     * Scope a query to only include approved orders.
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('approve', 1);
+    }
+
+    /**
+     * Scope a query to only include pending orders.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('approve', 0);
+    }
+
+    /**
+     * Scope a query to only include today's orders.
+     */
+    public function scopeToday($query)
+    {
+        return $query->where('order_date', date('d/m/Y'));
+    }
+
+    /**
+     * Calculate the total with fees.
+     */
+    public function getTotalWithFeesAttribute()
+    {
+        $total = $this->total;
+
+        if ($this->craft && $this->craft->fee) {
+            $total += $this->craft->fee;
+        }
+
+        if ($this->serve && $this->serve->fee) {
+            $total += $this->serve->fee;
+        }
+
+        if ($this->care && $this->care->fee) {
+            $total += $this->care->fee;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Get the order status.
+     */
+    public function getStatusAttribute()
+    {
+        if ($this->approve) {
+            return 'Approved';
+        }
+
+        return 'Pending';
+    }
+
+    /**
+     * Get the status color.
+     */
+    public function getStatusColorAttribute()
+    {
+        return $this->approve ? 'success' : 'warning';
+    }
+
+
+    /**
+     * Get formatted time remaining.
+     */
+    public function getTimeRemainingAttribute()
+    {
+        if (!$this->approved_at) {
+            return "Not Approved";
+        }
+
+        $today = Carbon::now();
+        $approvedAt = Carbon::parse($this->approved_at);
+        $expiryDate = $approvedAt->copy()->addMonths(6);
+
+        if ($today->gt($expiryDate)) {
+            return "Expired";
+        }
+
+        $months = $today->diffInMonths($expiryDate);
+        $days = $today->copy()->addMonths($months)->diffInDays($expiryDate);
+
+        return $months . " Months " . $days . " Days";
+    }
+
+    /**
+     * Get months remaining.
+     */
+    public function getMonthsRemainingAttribute()
+    {
+        if (!$this->approved_at) {
+            return null;
+        }
+
+        $today = Carbon::now();
+        $approvedAt = Carbon::parse($this->approved_at);
+        $expiryDate = $approvedAt->copy()->addMonths(6);
+
+        if ($today->gt($expiryDate)) {
+            return 0;
+        }
+
+        return $today->diffInMonths($expiryDate);
+    }
+
+    /**
+     * Get days remaining.
+     */
+    public function getDaysRemainingAttribute()
+    {
+        if (!$this->approved_at) {
+            return null;
+        }
+
+        $today = Carbon::now();
+        $approvedAt = Carbon::parse($this->approved_at);
+        $expiryDate = $approvedAt->copy()->addMonths(6);
+
+        if ($today->gt($expiryDate)) {
+            return 0;
+        }
+
+        $months = $today->diffInMonths($expiryDate);
+        return $today->copy()->addMonths($months)->diffInDays($expiryDate);
+    }
+
+    /**
+     * Get expiry date.
+     */
+    public function getExpiryDateAttribute()
+    {
+        if (!$this->approved_at) {
+            return null;
+        }
+
+        return Carbon::parse($this->approved_at)->addMonths(6);
+    }
+
+    /**
+     * Check if order is expired.
+     */
+    public function getIsExpiredAttribute()
+    {
+        if (!$this->approved_at) {
+            return false;
+        }
+
+        $today = Carbon::now();
+        $expiryDate = $this->expiry_date;
+
+        return $today->gt($expiryDate);
     }
 }

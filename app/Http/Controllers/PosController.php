@@ -30,6 +30,7 @@ class PosController extends Controller
 
 public function orderdone(Request $request){
     $validateData = $request->validate([
+        'order_id' => 'required',
         'customer_id' => 'required',
     ]);
 
@@ -62,14 +63,17 @@ public function orderdone(Request $request){
         $categories_id = 2;
     }
 
-    $categories_id =
+    $nextId = DB::table('order')->max('id') + 1;
+    $orderNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+    $orderId = 'ODR-' . $orderNumber;
 
     $data = [
+        'order_id' => $orderId,
         'customer_id' => $request->customer_id,
-        'qty' => $request->qty,
-        'sub_total' => $request->total,
-        'total' => $request->total,
-        'order_date' => date('d/m/Y'),
+        'qty' => $request->total_qty,
+        'sub_total' => $request->total_amount,
+        'total' => $request->total_amount,
+        'order_date' => now(),
         'order_month' => date('F'),
         'order_year' => date('Y'),
         'craft_id' => $categories_id,

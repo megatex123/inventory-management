@@ -1,50 +1,212 @@
-<template lang="">
+<template>
     <div class="row justify-content-center">
         <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="card shadow-sm my-5">
                 <div class="card-body p-0">
                     <div class="row">
                         <div class="col-lg-12">
+                            <!-- Statistics Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="m-0 font-weight-bold">
+                                        <i class="fas fa-chart-bar mr-2"></i>Order Statistics
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-6 mb-4" v-for="stat in statistics.overview" :key="stat.label">
+                                            <div class="stat-card shadow-sm p-3 border rounded">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="text-muted mb-1">{{ stat.label }}</h6>
+                                                        <h4 class="mb-0" :class="stat.class">{{ stat.value }}</h4>
+                                                    </div>
+                                                    <div class="icon-circle" :class="stat.iconClass">
+                                                        <i class="fas" :class="stat.icon"></i>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">{{ stat.description }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Stats -->
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">Today's Summary</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row text-center">
+                                                        <div class="col-6">
+                                                            <h3 class="text-primary">{{ statistics.today_orders || 0 }}</h3>
+                                                            <small class="text-muted">Today's Orders</small>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <h3 class="text-success">RM{{ formatNumber(statistics.today_revenue || 0) }}</h3>
+                                                            <small class="text-muted">Today's Revenue</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6 class="mb-0">Status Distribution</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row text-center">
+                                                        <div class="col-4">
+                                                            <h5 class="text-success">{{ getStatValue('active_orders') }}</h5>
+                                                            <small class="text-muted">Active</small>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <h5 class="text-warning">{{ getStatValue('expired_orders') }}</h5>
+                                                            <small class="text-muted">Expired</small>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <h5 class="text-secondary">{{ getStatValue('total_draft') }}</h5>
+                                                            <small class="text-muted">Draft</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Filter Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-filter mr-2"></i>Filter Orders
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Search</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    v-model="filters.search"
+                                                    placeholder="Search by Order ID or Customer Name"
+                                                    @keyup.enter="applyFilters"
+                                                >
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select class="form-control" v-model="filters.approve" @change="applyFilters">
+                                                <option value="">All Status</option>
+                                                <option value="1">Approved</option>
+                                                <option value="0">Rejected</option>
+                                                <option value="null">Draft</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Date From</label>
+                                            <input
+                                                type="date"
+                                                class="form-control"
+                                                v-model="filters.date_from"
+                                                @change="applyFilters"
+                                            >
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Date To</label>
+                                            <input
+                                                type="date"
+                                                class="form-control"
+                                                v-model="filters.date_to"
+                                                @change="applyFilters"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-secondary mr-2" @click="resetFilters">
+                                                <i class="fas fa-redo mr-1"></i> Reset Filters
+                                            </button>
+                                            <button class="btn btn-primary" @click="applyFilters">
+                                                <i class="fas fa-filter mr-1"></i> Apply Filters
+                                            </button>
+                                            <span class="ml-3 text-muted">
+                                                Showing {{ filteredOrders.length }} of {{ orders.length }} orders
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Orders Table -->
                             <div class="card">
-                                <div class="card-header py-3 d-flex   flex-row align-items-center justify-content-between">
-                                    <h5 class="m-0 font-weight-bold text-primary">All Order</h5>
-                                    <input type="text" class="form-control" v-model="searchItem" id="searchItems" placeholder="Search Orders By Name">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h5 class="m-0 font-weight-bold text-primary">All Orders</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-success mr-2" @click="exportToExcel">
+                                            <i class="fas fa-file-excel mr-1"></i> Export
+                                        </button>
+                                        <button class="btn btn-sm btn-info" @click="refreshData">
+                                            <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Payment</th>
-                                            <th>Date</th>
-                                            <th>QuiviCraft</th>
-                                            <th>QuiviServe</th>
-                                            <th>QuiviCare</th>
-                                            <th>Approve</th>
-                                            <th>Action</th>
-                                        </tr>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Customer</th>
+                                                <th>Payment</th>
+                                                <th>Date</th>
+                                                <th>QuiviServe</th>
+                                                <th>QuiviCare</th>
+                                                <th>Status</th>
+                                                <th>Remaining</th>
+                                                <th>Actions</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for='order in filterSearch' :key="order.id" >
-                                                <td>{{order.customer.full_name}}</td>
+                                            <tr v-for='order in paginatedOrders' :key="order.id">
                                                 <td>
-                                                    Total Amount: <br>RM{{ formatNumber(
-                                                        Number(order.craft.fee || 0) +
-                                                        Number(order.total || 0) +
-                                                        Number(order.serve.fee || 0) +
-                                                        Number(order.care.fee || 0)
-                                                    ) }}<br>
-                                                    Amount Part: <br>RM{{ formatNumber(order.total) }}
+                                                    <span class="badge badge-light">{{ order.order_id }}</span>
                                                 </td>
                                                 <td>
-                                                    Order At: {{ formatDate(order.order_date) }} <br>
-                                                    Create At: {{ formatDate(order.created_at) }}
+                                                    <strong>{{ order.customer && order.customer.full_name ? order.customer.full_name : 'N/A' }}</strong><br>
+                                                    <small class="text-muted">{{ order.customer && order.customer.email ? order.customer.email : '' }}</small>
                                                 </td>
-
-                                                <td>{{ order.craft.name }}</td>
+                                                <td>
+                                                    <small class="text-muted">Total Part:</small><br>
+                                                    <strong>RM{{ formatNumber(order.total || 0) }}</strong><br>
+                                                    <small class="text-muted">Fees: RM{{
+                                                        formatNumber(
+                                                            (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
+                                                            (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
+                                                            (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                                                        )
+                                                    }}</small>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">Order:</small> {{ formatDate(order.order_date) }}
+                                                    <br>
+                                                    <small class="text-muted">Created:</small> {{ formatDate(order.created_at) }}
+                                                </td>
                                                 <td>
                                                     <span
-                                                        class="serve-badge"
+                                                        v-if="order.serve"
+                                                        class="badge serve-badge"
                                                         :style="{
                                                             backgroundColor: order.serve.colour,
                                                             color: isLightColor(order.serve.colour) ? '#000' : '#fff'
@@ -52,45 +214,115 @@
                                                     >
                                                         {{ order.serve.name }}
                                                     </span>
+                                                    <span v-else class="badge badge-secondary">N/A</span>
                                                 </td>
-                                                <td>{{ order.care.name }}</td>
                                                 <td>
-                                                    <div v-for="opt in approveOptions" :key="opt" class="form-check float-left mr-2">
-                                                        <input
-                                                            class="form-check-input"
-                                                            type="radio"
-                                                            :name="'approve_' + order.id"
-                                                            :value="opt"
-                                                            v-model="order.approve"
-                                                            @change="updateApprove(order)"
+                                                    <span class="badge badge-secondary">
+                                                        {{ order.care && order.care.name ? order.care.name : 'N/A' }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span :class="getStatusBadgeClass(order)" class="badge">
+                                                        {{ getStatusText(order) }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div v-if="order.approve == 1 && order.approved_at">
+                                                        <span :class="getRemainingClass(order)" class="badge">
+                                                            <i class="fa fa-clock mr-1"></i>
+                                                            {{ order.time_remaining }}
+                                                        </span>
+                                                    </div>
+                                                    <div v-else class="text-muted">
+                                                        -
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <router-link
+                                                            :to="{name:'vieworder', params:{id:order.id}}"
+                                                            class="btn btn-sm btn-primary"
+                                                            title="View Details"
                                                         >
-                                                        <label class="form-check-label">{{ opt }}</label>
+                                                            <i class="fas fa-eye"></i>
+                                                        </router-link>
+                                                        <button
+                                                            class="btn btn-sm btn-info"
+                                                            @click="showQuickInfo(order)"
+                                                            title="Quick Info"
+                                                        >
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </button>
+                                                        <!-- Approve Button -->
+                                                        <button
+                                                            v-if="order.approve === null || order.approve === '' || order.approve === undefined"
+                                                            class="btn btn-sm btn-success ml-1"
+                                                            @click="approveOrder(order, 1)"
+                                                            title="Approve Order"
+                                                        >
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                        <!-- Reject Button -->
+                                                        <button
+                                                            v-if="order.approve === null || order.approve === '' || order.approve === undefined"
+                                                            class="btn btn-sm btn-danger ml-1"
+                                                            @click="approveOrder(order, 0)"
+                                                            title="Reject Order"
+                                                        >
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                        <!-- Reset to Draft Button -->
+                                                        <button
+                                                            v-if="order.approve == 1 || order.approve == 0"
+                                                            class="btn btn-sm btn-warning ml-1"
+                                                            @click="approveOrder(order, null)"
+                                                            title="Reset to Draft"
+                                                        >
+                                                            <i class="fas fa-undo"></i>
+                                                        </button>
                                                     </div>
-                                                    <br><br>
-                                                    <div class="float-left mr-2" v-if="order.approved_at != null">
-                                                        Approved At: <br>{{ formatDate(order.approved_at) }}
-                                                        <div v-if="order.approved_at" class="float-left mr-2">
-                                                            <span :class="getStatusClass(order)" class="badge">
-                                                                <i class="fa fa-clock mr-1"></i>
-                                                                {{ order.time_remaining }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <router-link :to="{name:'vieworder', params:{id:order.id}}" class="btn btn-sm btn-primary rounded-circle"> <i class="fas fa-eye"></i>  </router-link>
                                                 </td>
                                             </tr>
-                                            <tr v-if="filterSearch.length === 0">
-                                                <td colspan="7" class="text-center text-muted">
-                                                    No Category found.
+                                            <tr v-if="filteredOrders.length === 0">
+                                                <td colspan="9" class="text-center py-4">
+                                                    <div class="empty-state">
+                                                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                                                        <h5>No orders found</h5>
+                                                        <p class="text-muted">Try adjusting your filters or create a new order</p>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="text-center">
+
+                                <!-- Pagination -->
+                                <div class="card-footer" v-if="filteredOrders.length > itemsPerPage">
+                                    <nav aria-label="Order navigation">
+                                        <ul class="pagination justify-content-center mb-0">
+                                            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                                                <button class="page-link" @click="prevPage">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </button>
+                                            </li>
+                                            <li
+                                                class="page-item"
+                                                v-for="page in totalPages"
+                                                :key="page"
+                                                :class="{ active: page === currentPage }"
+                                            >
+                                                <button class="page-link" @click="goToPage(page)">
+                                                    {{ page }}
+                                                </button>
+                                            </li>
+                                            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                                                <button class="page-link" @click="nextPage">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,127 +331,455 @@
         </div>
     </div>
 </template>
+
 <script>
-    export default {
-        data() {
-            return {
-                orders: [],
-                searchItem:'',
-                approveOptions: [
-                    "Approved",
-                    "Rejected",
-                ],
-            }
-        },
-        methods: {
-            fetchOrders() {
-                axios.get('/api/orders')
-                    .then(res => {
-                        this.orders = res.order
-                    });
+import Swal from 'sweetalert2';
+
+export default {
+    data() {
+        return {
+            orders: [],
+            statistics: {
+                overview: [],
+                today_orders: 0,
+                today_revenue: 0
             },
-            getOrders() {
-                axios.get('/api/orders')
+            filters: {
+                search: '',
+                approve: '', // Changed from status to approve
+                date_from: '',
+                date_to: '',
+                serve_id: '',
+                care_id: ''
+            },
+            currentPage: 1,
+            itemsPerPage: 10,
+            loading: false
+        }
+    },
+    computed: {
+        filteredOrders() {
+            let filtered = this.orders;
+
+            // Search filter
+            if (this.filters.search) {
+                const search = this.filters.search.toLowerCase();
+                filtered = filtered.filter(order =>
+                    (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
+                    (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
+                    (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
+                );
+            }
+
+            // Approve status filter - fixed to use actual approve values
+            if (this.filters.approve !== '') {
+                if (this.filters.approve === 'null') {
+                    // Filter for draft orders (null or undefined)
+                    filtered = filtered.filter(order =>
+                        order.approve === null ||
+                        order.approve === '' ||
+                        order.approve === undefined
+                    );
+                } else {
+                    // Filter for numeric values (1 = approved, 0 = rejected)
+                    const approveValue = parseInt(this.filters.approve);
+                    filtered = filtered.filter(order => order.approve == approveValue);
+                }
+            }
+
+            // Date range filter
+            if (this.filters.date_from) {
+                filtered = filtered.filter(order =>
+                    order.order_date && new Date(order.order_date) >= new Date(this.filters.date_from)
+                );
+            }
+            if (this.filters.date_to) {
+                filtered = filtered.filter(order =>
+                    order.order_date && new Date(order.order_date) <= new Date(this.filters.date_to + 'T23:59:59')
+                );
+            }
+
+            return filtered;
+        },
+        paginatedOrders() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredOrders.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.filteredOrders.length / this.itemsPerPage);
+        }
+    },
+    methods: {
+        getOrders() {
+            this.loading = true;
+            const params = {};
+
+            // Add filters to params if they exist
+            Object.keys(this.filters).forEach(key => {
+                if (this.filters[key] !== '' && this.filters[key] !== undefined) {
+                    // Handle null value for draft
+                    if (key === 'approve' && this.filters[key] === 'null') {
+                        params[key] = null;
+                    } else {
+                        params[key] = this.filters[key];
+                    }
+                }
+            });
+
+            axios.get('/api/orders', { params })
                 .then(res => {
-                    this.orders = res.data.orders ?? res.data.map(c => ({
-                    ...c,
-                    approve: c.approve == 1 ? 'Approved' : 'Rejected'
-                }));
+                    this.orders = res.data;
+                    this.loading = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.loading = false;
+                });
+        },
+        getStatistics() {
+            axios.get('/api/orders/statistics')
+                .then(res => {
+                    this.statistics = res.data;
+                    // Format overview statistics
+                    this.statistics.overview = [
+                        {
+                            label: 'Total Orders',
+                            value: res.data.overview ? res.data.overview.total_orders : 0,
+                            icon: 'fa-shopping-cart',
+                            iconClass: 'bg-primary',
+                            class: 'text-primary',
+                            description: 'All time orders'
+                        },
+                        {
+                            label: 'Total Revenue',
+                            value: 'RM' + this.formatNumber(res.data.overview ? res.data.overview.total_revenue : 0),
+                            icon: 'fa-dollar-sign',
+                            iconClass: 'bg-success',
+                            class: 'text-success',
+                            description: 'All time revenue'
+                        },
+                        {
+                            label: 'Approved Orders',
+                            value: res.data.overview ? res.data.overview.total_approved : 0,
+                            icon: 'fa-check-circle',
+                            iconClass: 'bg-info',
+                            class: 'text-info',
+                            description: 'Approved orders'
+                        },
+                        {
+                            label: 'Draft Orders',
+                            value: res.data.overview ? res.data.overview.total_draft : 0,
+                            icon: 'fa-clock',
+                            iconClass: 'bg-warning',
+                            class: 'text-warning',
+                            description: 'Draft orders'
+                        }
+                    ];
                 })
                 .catch(err => {
                     console.error(err);
                 });
-            },
-            formatNumber(value) {
-                return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            },
-            formatDate(date) {
-                if (!date) return '';
-                    const d = new Date(date);
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    const year = d.getFullYear();
-                return `${day}/${month}/${year}`;
-            },
-            isLightColor(hex) {
-                if (!hex) return false;
-                hex = hex.replace('#', '').toLowerCase();
-
-                if (hex === 'ffffff') return true;
-
-                const r = parseInt(hex.substr(0, 2), 16);
-                const g = parseInt(hex.substr(2, 2), 16);
-                const b = parseInt(hex.substr(4, 2), 16);
-
-                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-                return brightness > 180;
-            },
-            updateApprove(order) {
-                axios.put(`/api/order/${order.id}/approve`, {
-                    approve: order.approve
-                })
-                .then(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Updated',
-                        text: 'Approval successfully',
-                        timer: 1200,
-                        showConfirmButton: false
-                    });
-                    this.getOrders();
-                })
-                .catch(() => {
-                    Swal.fire('Error', 'Failed to update Approval', 'error');
-                });
-            },
-            getStatusClass(order) {
-                if (order.time_remaining === 'Expired') {
-                    return 'badge-danger';
-                }
-                if (order.months_remaining < 1) {
-                    return 'badge-warning';
-                }
-                return 'badge-success';
-            },
         },
-        computed: {
-            filterSearch() {
-                if (!this.searchItem) {
-                    return this.orders;
-                }
-                return this.orders.filter(order =>
-                    order.customer?.full_name
-                        ?.toLowerCase()
-                        .includes(this.searchItem.toLowerCase())
-                );
+        getStatValue(key) {
+            // Safely get statistic value
+            if (this.statistics.overview) {
+                const stat = this.statistics.overview.find(s => s.key === key);
+                return stat ? stat.value : 0;
             }
+            return 0;
         },
-       created() {
-            if (!User.loggedIn()) {
-                this.$router.push({
-                    name: 'login'
-                })
-            };
+        formatNumber(value) {
+            return Number(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+        formatDate(date) {
+            // if (!date) return '';
+            // const d = new Date(date);
+            // return d.toLocaleDateString('en-MY', {
+            //     day: '2-digit',
+            //     month: 'short',
+            //     year: 'numeric'
+            // });
+
+            if (!date) return '';
+
+            // Convert to UTC date string
+            const d = new Date(date);
+
+            // Get UTC components
+            const day = String(d.getUTCDate()).padStart(2, '0');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = monthNames[d.getUTCMonth()];
+            const year = d.getUTCFullYear();
+
+            return `${parseInt(day)} ${month} ${year}`;
+        },
+        isLightColor(hex) {
+            if (!hex) return false;
+            hex = hex.replace('#', '').toLowerCase();
+
+            if (hex === 'ffffff') return true;
+
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 180;
+        },
+        applyFilters() {
+            this.currentPage = 1;
             this.getOrders();
         },
+        resetFilters() {
+            this.filters = {
+                search: '',
+                approve: '',
+                date_from: '',
+                date_to: '',
+                serve_id: '',
+                care_id: ''
+            };
+            this.currentPage = 1;
+            this.getOrders();
+        },
+        approveOrder(order, status) {
+            const statusText = status === 1 ? 'approve' :
+                             status === 0 ? 'reject' :
+                             'reset to draft';
+
+            Swal.fire({
+                title: `Are you sure?`,
+                text: `Do you want to ${statusText} Order #${order.order_id}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `Yes, ${statusText} it!`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.updateApprove(order, status);
+                }
+            });
+        },
+
+        updateApprove(order, status) {
+            const loading = Swal.fire({
+                title: 'Updating...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Make sure we're sending the correct status value
+            console.log('Updating order:', order.id, 'to status:', status);
+
+            axios.put(`/api/order/${order.id}/approve`, {
+                approve: status
+            })
+            .then((response) => {
+                loading.close();
+
+                // Update local order data - convert to correct type
+                order.approve = status;
+
+                // Set approved_at only for approved orders
+                if (status === 1) {
+                    order.approved_at = new Date().toISOString();
+                } else {
+                    order.approved_at = null;
+                }
+
+                const statusMessage = status === 1 ? 'approved' :
+                                    status === 0 ? 'rejected' :
+                                    'reset to draft';
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated!',
+                    text: `Order has been ${statusMessage}`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                // Refresh the data to get updated orders
+                this.getOrders();
+                this.getStatistics();
+            })
+            .catch((error) => {
+                loading.close();
+                console.error('Error updating approval:', error);
+                console.error('Error response:', error.response);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to update order status. Please check the console for details.',
+                    confirmButtonText: 'OK'
+                });
+            });
+        },
+        getStatusBadgeClass(order) {
+            // Handle all possible null/undefined/empty cases
+            if (order.approve === null || order.approve === '' || order.approve === undefined) {
+                return 'badge-secondary';
+            }
+            if (order.approve == 1) return 'badge-success';
+            if (order.approve == 0) return 'badge-danger';
+            return 'badge-primary';
+        },
+        getStatusText(order) {
+            // Handle all possible null/undefined/empty cases
+            if (order.approve === null || order.approve === '' || order.approve === undefined) {
+                return 'Draft';
+            }
+            if (order.approve == 1) return 'Approved';
+            if (order.approve == 0) return 'Rejected';
+            return 'Unknown';
+        },
+        getRemainingClass(order) {
+            if (order.time_remaining === 'Expired') return 'badge-danger';
+            if (order.months_remaining < 1) return 'badge-warning';
+            return 'badge-success';
+        },
+        showQuickInfo(order) {
+            Swal.fire({
+                title: `Order #${order.order_id}`,
+                html: `
+                    <div class="text-left">
+                        <p><strong>Customer:</strong> ${order.customer ? order.customer.full_name : 'N/A'}</p>
+                        <p><strong>Email:</strong> ${order.customer && order.customer.email ? order.customer.email : 'N/A'}</p>
+                        <p><strong>Order Date:</strong> ${this.formatDate(order.order_date)}</p>
+                        <p><strong>Total Amount:</strong> RM${this.formatNumber(order.total || 0)}</p>
+                        <p><strong>Status:</strong> <span class="badge ${this.getStatusBadgeClass(order)}">${this.getStatusText(order)}</span></p>
+                        <p><strong>Approve Value:</strong> ${order.approve !== null && order.approve !== undefined ? order.approve : 'null'}</p>
+                        ${order.approved_at ? `<p><strong>Approved At:</strong> ${this.formatDate(order.approved_at)}</p>` : ''}
+                        ${order.time_remaining ? `<p><strong>Remaining:</strong> ${order.time_remaining}</p>` : ''}
+                    </div>
+                `,
+                showCloseButton: true,
+                showConfirmButton: false
+            });
+        },
+        exportToExcel() {
+            // Implement export functionality here
+            Swal.fire({
+                icon: 'info',
+                title: 'Export Feature',
+                text: 'Export to Excel functionality will be implemented here.',
+                confirmButtonText: 'OK'
+            });
+        },
+        refreshData() {
+            this.getOrders();
+            this.getStatistics();
+            Swal.fire({
+                icon: 'success',
+                title: 'Refreshed',
+                text: 'Data has been refreshed',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        },
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+            }
+        },
+        goToPage(page) {
+            this.currentPage = page;
+        }
+    },
+    created() {
+        if (!User.loggedIn()) {
+            this.$router.push({ name: 'login' });
+        }
+        this.getOrders();
+        this.getStatistics();
     }
+}
 </script>
 
 <style scoped>
-    #searchItems {
-        width: 270px !important;
-    }
+.stat-card {
+    background: white;
+    transition: transform 0.2s;
+}
 
-    .serve-badge {
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-weight: 500;
-        white-space: nowrap;
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
 
-        /* Soft shadow */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
 
-        transition: all 0.15s ease;
-    }
+.serve-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.15s ease;
+}
+
+.serve-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.empty-state {
+    padding: 40px 0;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+.page-link {
+    cursor: pointer;
+}
+
+.form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.input-group-text {
+    background-color: #f8f9fc;
+    border: 1px solid #d1d3e2;
+}
+
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.table th {
+    border-top: none;
+    border-bottom: 2px solid #e3e6f0;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fc;
+}
 </style>

@@ -2,10 +2,10 @@
   <div>
     <!-- Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">POS</h1>
+      <h1 class="h3 mb-0 text-gray-800">QuiviCraft</h1>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-        <li class="breadcrumb-item active" aria-current="page">POS</li>
+        <li class="breadcrumb-item active" aria-current="page">QuiviCraft</li>
       </ol>
     </div>
 
@@ -26,8 +26,8 @@
                 </a>
               </li>
               <li class="nav-item" v-for="category in categories" :key="category.id">
-                <a 
-                  class="nav-link" 
+                <a
+                  class="nav-link"
                   :class="{ active: selectedCategoryId === category.id }"
                   @click="selectCategory(category.id)"
                 >
@@ -38,15 +38,15 @@
 
             <!-- Sub-category Buttons -->
             <div v-if="filteredSubCategories.length > 0" class="sub-category-wrapper mb-3 px-2 d-flex flex-wrap border-bottom pb-2">
-              <button 
+              <button
                 class="btn btn-sm mr-2 mb-2"
                 :class="selectedSubCategoryId === null ? 'btn-primary' : 'btn-outline-primary'"
                 @click="selectSubCategory(null)"
               >
                 All
               </button>
-              <button 
-                v-for="sub in filteredSubCategories" 
+              <button
+                v-for="sub in filteredSubCategories"
                 :key="sub.id"
                 class="btn btn-sm mr-2 mb-2"
                 :class="selectedSubCategoryId === sub.id ? 'btn-primary' : 'btn-outline-primary'"
@@ -67,7 +67,11 @@
                     <img :src="product.image" id="em_photo" class="card-img-top">
                     <div class="card-body">
                       <h6 class="card-title">{{ product.product_name }}</h6>
-                      <span class="badge badge-success" v-if="product.product_qty >= 1">Available {{ product.product_qty }}</span>
+                      <h7 class="card-title">RM {{ formatNumber(product.price) }}</h7>
+                      <h7 class="card-title">{{ formatDate(product.price_updated_at) }}</h7>
+                      <span class="badge badge-success" v-if="product.product_qty >= 1">
+                        Available: {{ product.product_qty }}
+                      </span>
                       <span class="badge badge-danger" v-else>Stock Out</span>
                     </div>
                   </div>
@@ -119,25 +123,33 @@
                         <a href="javascript:void(0)" @click="removeItem(cart.cart_id)" class="btn btn-sm btn-danger">X</a>
                       </td>
                     </tr>
+                    <tr v-if="carts.length === 0">
+                      <td colspan="6" class="text-center text-muted py-3">
+                        No items in cart. Add products from the left panel.
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
 
               <div class="card-footer">
-                <ul class="list-group">
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Total Quantity: <strong>{{ totalCart }}</strong>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Total Amount Product: <strong>RM {{ formatNumber(totalSub.toFixed(2)) }}</strong>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    QuiviCraft: 
-                    <span v-if="totalSub <= 7000.00">Inessential kit</span>
-                    <span v-else-if="totalSub > 10000.00">Premium</span>
-                    <span v-else>Silver</span>
-                  </li>
-                </ul>
+                <!-- Service Tiers -->
+                  <div class="alert alert-info">
+                    <h6 class="alert-heading">Service Tier</h6>
+                    <div v-if="totalSub <= 7000.00" class="mb-2">
+                      <strong>QuiviCraft:</strong> Inessential Kit
+                    </div>
+                    <div v-else-if="totalSub > 10000.00" class="mb-2">
+                      <strong>QuiviCraft:</strong> Premium
+                    </div>
+                    <div v-else class="mb-2">
+                      <strong>QuiviCraft:</strong> Silver
+                    </div>
+
+                    <div class="small text-muted">
+                      This tier will automatically update when you save the order.
+                    </div>
+                  </div>
                 <br>
                 <form @submit.prevent="orderdone">
                   <label class="mb-2">Customer Name</label>
@@ -199,6 +211,12 @@ export default {
     }
   },
   methods: {
+    formatDate(dateString) {
+        if (!dateString) return 'N/A';
+
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-MY');
+    },
     selectCategory(id) {
       this.selectedCategoryId = id;
       this.selectedSubCategoryId = null;
@@ -217,23 +235,54 @@ export default {
     },
     AddToCart(id) {
       axios.get(`/api/addCart/${id}`)
-        .then(res => { 
-          notification.customNoti(res.data); 
+        .then(res => {
+          notification.customNoti(res.data);
           this.getCarts();
         });
     },
     inc(id) { axios.get(`/api/cart/cartInc/${id}`).then(() => this.getCarts()) },
     dec(id) { axios.get(`/api/cart/cartDec/${id}`).then(() => this.getCarts()) },
-    removeItem(id) { 
+    removeItem(id) {
       axios.get(`/api/cart/remove/${id}`)
-        .then(() => { this.carts = this.carts.filter(c => c.cart_id != id) }) 
+        .then(() => { this.carts = this.carts.filter(c => c.cart_id != id) })
     },
     getCarts() { axios.get('/api/carts/get').then(res => { this.carts = res.data }) },
     getCustomer() { axios.get('/api/customer').then(res => { this.Customers = res.data }) },
     getEmp() { axios.get('/api/product').then(res => { this.suppliers = res.data; this.CatProduct = res.data }) },
     getCat() { axios.get('/api/categories').then(res => { this.categories = res.data }) },
     getSubCategoriesOptions() { axios.get('/api/sub-categories').then(res => { this.subCategoriesOptions = res.data }) },
-    formatNumber(value) { return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+    formatNumber(value) { return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+    orderdone() {
+      if (!this.customer_id) {
+        notification.customNoti('Please select a customer');
+        return;
+      }
+
+      if (this.carts.length === 0) {
+        notification.customNoti('Cart is empty');
+        return;
+      }
+
+      const data = {
+        customer_id: this.customer_id,
+        total_amount: this.totalSub,
+        total_qty: this.totalCart,
+        cart_items: this.carts
+      };
+
+      axios.post('/api/orderdone', data)
+        .then(res => {
+          notification.customNoti(res.data.message || 'Order placed successfully!');
+          // Clear cart and reset
+          this.carts = [];
+          this.customer_id = '';
+          this.getCarts(); // Refresh cart
+        })
+        .catch(err => {
+          console.error(err);
+          notification.customNoti('Error placing order');
+        });
+    }
   },
   created() {
     this.getEmp();

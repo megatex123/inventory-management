@@ -18,7 +18,6 @@ class CreateCategoriesTable extends Migration
 
             $table->string('name');
             $table->string('code');
-            $table->string('fee');
             $table->timestamps();
             $table->softDeletes();
         });

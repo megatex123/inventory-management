@@ -10,8 +10,8 @@ class Suppliers extends Model
         'name',
         'email',
         'phone',
-        'address',
-        'photo',
         'shopname',
+        'address',
+        'photo'
     ];
 }

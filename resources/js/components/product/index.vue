@@ -28,8 +28,7 @@
                         <th>Read</th>
                         <th>Write</th>
                         <th>Tier</th>
-                        <th>Minimum Price (RM)</th>
-                        <th>Maximum Price (RM)</th>
+                        <th>Price (RM)</th>
                         <th>Available</th>
                         <th>Available Local</th>
                         <th>Buying Date</th>
@@ -49,8 +48,7 @@
                         <td>{{data.read_speed}}</td>
                         <td>{{data.write_speed}}</td>
                         <td>{{data.price_tier}}</td>
-                        <td>{{data.min_price}}</td>
-                        <td>{{data.max_price}}</td>
+                        <td>{{data.price}}</td>
                         <td>{{data.available}}</td>
                         <td>{{data.available_local}}</td>
                         <td>{{data.buying_date}}</td>

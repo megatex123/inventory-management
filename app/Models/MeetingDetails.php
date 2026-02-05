@@ -12,6 +12,7 @@ class MeetingDetails extends Model
         'reason',
         'play_mode',
         'include_monitor',
+        'include_notes',
         'theme_style',
         'preference',
         'exemption',
@@ -24,6 +25,7 @@ class MeetingDetails extends Model
         'qvse',
         'qvca',
         'qvtd',
+        'qvtd_notes',
         'target_build_date',
         'target_location',
     ];

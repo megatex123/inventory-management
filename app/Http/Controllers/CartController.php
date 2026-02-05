@@ -94,8 +94,8 @@ public function addcart(Request $request, $id)
                 'pro_id'    => $id,
                 'pro_name'  => $product->product_name,
                 'pro_qty'   => 1,
-                'pro_price' => $product->max_price,
-                'sub_total' => $product->max_price,
+                'pro_price' => $product->price,
+                'sub_total' => $product->price,
             ]);
         }
 

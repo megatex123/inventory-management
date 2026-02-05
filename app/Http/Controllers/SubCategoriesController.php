@@ -46,7 +46,6 @@ class SubCategoriesController extends Controller
             $categories->cat_id=$request->cat_id;
             $categories->name=$request->name;
             $categories->code=$request->code;
-            $categories->fee=$request->fee;
             $categories->save();
     }
 
@@ -76,7 +75,6 @@ class SubCategoriesController extends Controller
         $categories->cat_id=$request->cat_id;
         $categories->name=$request->name;
         $categories->code=$request->code;
-        $categories->fee=$request->fee;
 
         $categories->update();
     }

@@ -88,7 +88,10 @@ class CustomersController extends Controller
         DB::beginTransaction();
 
         try {
-            $customerId = 'QVCST-' . strtoupper(Str::random(4));
+            $totalCustomers = Customers::count();
+            $nextId = $totalCustomers + 1;
+            $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $customerId = "QVCST-{$serveNumber}";
 
             $customer = Customers::create([
                 'customer_id'      => $customerId,

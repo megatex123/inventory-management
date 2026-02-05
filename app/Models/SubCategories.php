@@ -16,7 +16,6 @@ class SubCategories extends Model
         'cat_id',
         'name',
         'code',
-        'fee',
     ];
 
     public function category()

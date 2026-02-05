@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
@@ -43,6 +44,7 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
+        $category_name = Categories::where('id',$request->cat_id)->pluck('name')->first();
         $validateData=$request->validate([
             'product_code' =>'required|unique:products|max:255',
             'cat_id' =>'required',
@@ -54,14 +56,16 @@ class ProductsController extends Controller
             'read_speed' =>'nullable',
             'write_speed' =>'nullable',
             'price_tier' =>'nullable',
-            'min_price' =>'nullable',
-            'max_price' =>'nullable',
+            'price' =>'nullable',
+            'price_updated_at' =>'nullable',
             'available' =>'nullable',
             'available_local' =>'nullable',
             'supplier_id' =>'nullable',
             'buying_date' =>'nullable',
             'product_qty' =>'nullable',
         ]);
+
+        $validateData['category_name'] = $category_name;
 
         if($request->photo){
             $position=strpos($request->photo,';');
@@ -85,8 +89,8 @@ class ProductsController extends Controller
             $products->read=$request->read;
             $products->write=$request->write;
             $products->tier=$request->tier;
-            $products->min_price=$request->min_price;
-            $products->max_price=$request->max_price;
+            $products->price=$request->price;
+            $products->price_updated_at=$request->price_updated_at;
             $products->available=$request->available;
             $products->available_local=$request->available_local;
             $products->supplier_id=$request->supplier_id;
@@ -106,8 +110,8 @@ class ProductsController extends Controller
             $products->read=$request->read;
             $products->write=$request->write;
             $products->tier=$request->tier;
-            $products->min_price=$request->min_price;
-            $products->max_price=$request->max_price;
+            $products->price=$request->price;
+            $products->price_updated_at=$request->price_updated_at;
             $products->available=$request->available;
             $products->available_local=$request->available_local;
             $products->supplier_id=$request->supplier_id;
@@ -137,58 +141,85 @@ class ProductsController extends Controller
      * @param  \App\products  $products
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
+        try {
+            // Get the product
+            $product = Products::findOrFail($id);
 
-            $products= Products::find($id);
-            $products->product_code=$request->product_code;
-            $products->cat_id=$request->cat_id;
-            $products->brand_id=$request->brand_id;
-            $products->product_name=$request->product_name;
-            $products->capacity=$request->capacity;
-            $products->form=$request->form;
-            $products->interface=$request->interface;
-            $products->read=$request->read;
-            $products->write=$request->write;
-            $products->tier=$request->tier;
-            $products->min_price=$request->min_price;
-            $products->max_price=$request->max_price;
-            $products->available=$request->available;
-            $products->available_local=$request->available_local;
-            $products->supplier_id=$request->supplier_id;
-            $products->buying_date=$request->buying_date;
-            $products->product_qty=$request->product_qty;
+            // Get category name
+            $category_name = Categories::where('id', $request->cat_id)->value('name');
 
-        $dbImg= $products->image;
-        $image = '';
-        if($image != $dbImg){
+            // Validate the request data
+            $validateData = $request->validate([
+                'product_code' => 'sometimes|required|max:255|unique:products,product_code,' . $id,
+                'cat_id' => 'sometimes|required|exists:categories,id',
+                'brand_id' => 'nullable|max:255',
+                'product_name' => 'sometimes|required|max:255|unique:products,product_name,' . $id,
+                'capacity' => 'nullable|max:255',
+                'form' => 'nullable|max:255',
+                'interface' => 'nullable|max:255',
+                'read' => 'nullable|max:255',
+                'write' => 'nullable|max:255',
+                'tier' => 'nullable|max:255',
+                'price' => 'nullable|numeric',
+                'price_updated_at' =>'nullable',
+                'available' => 'nullable|max:255',
+                'available_local' => 'nullable|max:255',
+                'supplier_id' => 'nullable|exists:suppliers,id',
+                'buying_date' => 'nullable|date',
+                'product_qty' => 'nullable|integer|min:0',
+                'buying_price' => 'nullable|numeric|min:0',
+                'selling_price' => 'nullable|numeric|min:0',
+                'root' => 'nullable|max:255',
+            ]);
 
-            $position=strpos($image,';');
-            $sub= substr($image,0,$position);
-            $ext= explode('/',$sub)[1];
-            $name=time() . '.'.$ext;
-            $img=Image::make($image)->resize(270,270);
+            // Add category name to validated data
+            $validateData['category_name'] = $category_name;
 
-            $upload_path='backend/products/';
-            $image_url=$upload_path.$name;
-            $success = $img->save($image_url);
+            // Handle image update
+            if ($request->has('image') && !empty($request->image) && $request->image != 'null') {
+                // Check if it's a new base64 image
+                if (strpos($request->image, 'data:image') === 0) {
+                    $position = strpos($request->image, ';');
+                    $sub = substr($request->image, 0, $position);
+                    $ext = explode('/', $sub)[1];
+                    $name = time() . '.' . $ext;
 
-            if($success){
-                $products->image='/'.$image_url;
-                $ming=ltrim($dbImg, $dbImg[0]);
-               $done= unlink($ming);
-               $products->update();
+                    // Create image using Image Intervention
+                    $img = Image::make($request->image)->resize(270, 270);
+
+                    $upload_path = 'backend/products/';
+                    $image_url = $upload_path . $name;
+
+                    // Save new image
+                    $img->save($image_url);
+
+                    // Delete old image if exists
+                    if ($product->image && file_exists(public_path(ltrim($product->image, '/')))) {
+                        unlink(public_path(ltrim($product->image, '/')));
+                    }
+
+                    $validateData['image'] = '/' . $image_url;
+                }
             }
 
-        }else{
-            $products->image=$image;
-            $products->update();
+            // Update the product
+            $product->update($validateData);
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Product updated successfully'
+            ]);
 
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update product',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
     }
-
 
 
     public function stockupdate(Request $request,$id){

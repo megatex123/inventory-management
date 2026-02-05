@@ -34,7 +34,9 @@ class MeetingController extends Controller
         }
 
         try {
-            $meetingId = 'LGMT-' . strtoupper(Str::random(4));
+            $nextId = DB::table('meetings')->max('id') + 1;
+            $meetingNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $meetingId = 'LGMT-' . $meetingNumber;
 
             $meeting = Meeting::create([
                 'meeting_id'       => $meetingId,
