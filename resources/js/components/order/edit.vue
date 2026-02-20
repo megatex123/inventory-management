@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Edit QuiviCraft : {{ orderData.order_id }}</h1>
       <ol class="breadcrumb">
@@ -11,54 +10,13 @@
     </div>
 
     <div class="row mb-3">
-      <!-- Products Panel -->
       <div class="col-xl-7 col-lg-7">
         <div class="card mb-4">
           <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Select Products</h6>
-            <!-- <button class="btn btn-sm btn-outline-primary" @click="showCurrentProducts = !showCurrentProducts">
-              {{ showCurrentProducts ? 'Hide Current Items' : 'Show Current Items' }}
-            </button> -->
           </div>
 
-          <!-- Current Order Items -->
-          <!-- <div v-if="showCurrentProducts && cartItems.length > 0" class="card-body border-bottom">
-            <h6 class="mb-3 text-primary">Current Order Items:</h6>
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Qty</th>
-                    <th>Price (RM)</th>
-                    <th>Total (RM)</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in cartItems" :key="item.id">
-                    <td>{{ item.product_name }}</td>
-                    <td>{{ item.pro_qty }}</td>
-                    <td>{{ formatNumber(item.pro_price) }}</td>
-                    <td>{{ formatNumber(item.sub_total) }}</td>
-                    <td>
-                      <button @click="removeFromCart(item.pro_id)" class="btn btn-sm btn-danger">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="table-active">
-                    <td colspan="3" class="text-right"><strong>Current Total:</strong></td>
-                    <td><strong>RM {{ formatNumber(currentOrderTotal) }}</strong></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div> -->
-
           <div class="card-body">
-            <!-- Category Tabs -->
             <ul class="nav nav-tabs mb-3" role="tablist">
               <li class="nav-item">
                 <a class="nav-link" :class="{ active: selectedCategoryId === null }" @click="selectCategory(null)">
@@ -76,7 +34,6 @@
               </li>
             </ul>
 
-            <!-- Sub-category Buttons -->
             <div v-if="filteredSubCategories.length > 0" class="sub-category-wrapper mb-3 px-2 d-flex flex-wrap border-bottom pb-2">
               <button
                 class="btn btn-sm mr-2 mb-2"
@@ -96,10 +53,8 @@
               </button>
             </div>
 
-            <!-- Search -->
             <input type="text" class="form-control w-100 mb-3" v-model="searchItem" placeholder="Search Products...">
 
-            <!-- Products Grid -->
             <div class="row">
               <div class="col-lg-3 col-md-3 col-sm-6 col-6" v-for="product in displayedProducts" :key="product.id">
                 <button class="btn btn-sm" @click.prevent="addToCart(product)">
@@ -127,7 +82,6 @@
         </div>
       </div>
 
-      <!-- Cart Panel -->
       <div class="col-xl-5 col-lg-5">
         <div class="card mb-4">
           <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -188,11 +142,9 @@
               </div>
 
               <div class="card-footer">
-                <!-- Customer Selection -->
                 <div class="form-group mb-3">
                   <label class="font-weight-bold">Customer</label>
                   <select class="form-control" v-model="customer_id" required disabled>
-                    <!-- <option value="">Select Customer</option> -->
                     <option v-for="customer in customers"
                             :key="customer.id"
                             :value="customer.id"
@@ -202,7 +154,6 @@
                   </select>
                 </div>
 
-                <!-- Order Summary -->
                 <div class="border-top pt-3">
                   <h6 class="font-weight-bold mb-3">Order Summary</h6>
 
@@ -215,10 +166,8 @@
                     <span>Total Quantity:</span>
                     <span class="font-weight-bold">{{ totalCart }}</span>
                   </div>
-
                   <hr>
 
-                  <!-- Service Tiers -->
                   <div class="alert alert-info">
                     <h6 class="alert-heading">Service Tier</h6>
                     <div v-if="totalSub <= 7000.00" class="mb-2">
@@ -230,13 +179,11 @@
                     <div v-else class="mb-2">
                       <strong>QuiviCraft:</strong> Silver
                     </div>
-
                     <div class="small text-muted">
                       This tier will automatically update when you save the order.
                     </div>
                   </div>
 
-                  <!-- Action Buttons -->
                   <div class="d-flex justify-content-between mt-4">
                     <button class="btn btn-secondary" @click="cancelEdit">
                       Cancel
@@ -258,7 +205,6 @@
       </div>
     </div>
 
-    <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -316,17 +262,14 @@ export default {
     displayedProducts() {
       let products = this.products;
 
-      // Filter by category
       if (this.selectedCategoryId) {
         products = products.filter(p => p.cat_id === this.selectedCategoryId);
       }
 
-      // Filter by subcategory
       if (this.selectedSubCategoryId) {
         products = products.filter(p => p.sub_cat_id === this.selectedSubCategoryId);
       }
 
-      // Filter by search
       if (this.searchItem) {
         const search = this.searchItem.toLowerCase();
         products = products.filter(p =>
@@ -341,7 +284,6 @@ export default {
       return this.cartItems.reduce((sum, c) => sum + parseInt(c.pro_qty), 0);
     },
     totalSub() {
-      // Ensure we have valid numbers
       return this.cartItems.reduce((sum, c) => {
         const subTotal = parseFloat(c.sub_total) || 0;
         return sum + (isNaN(subTotal) ? 0 : subTotal);
@@ -364,12 +306,11 @@ export default {
     this.loadAllData();
   },
   methods: {
-    // Load order data
     loadOrderData() {
       console.log('Fetching order detail with ID:', this.orderData.order_id);
       axios.get(`/api/order/get/${this.orderId}`)
         .then(res => {
-          console.log('Order API response:', res.data); // Debug log
+          console.log('Order API response:', res.data);
           if (res.data.success && res.data.order) {
             this.orderData = res.data.order;
             this.customer_id = res.data.order.customer_id || '';
@@ -393,8 +334,6 @@ export default {
               });
               this.originalCartItems = JSON.parse(JSON.stringify(this.cartItems));
             }
-
-            // Fix notification calls - use correct method
             this.showNotification('Order data loaded successfully', 'success');
           } else {
             const errorMsg = res.data.message || 'Failed to load order data';
@@ -409,11 +348,10 @@ export default {
         });
     },
 
-    // Load all products
     loadProducts() {
       axios.get('/api/product')
         .then(res => {
-          console.log('Products loaded:', res.data.length); // Debug log
+          console.log('Products loaded:', res.data.length);
           this.products = res.data;
         })
         .catch(err => {
@@ -422,7 +360,6 @@ export default {
         });
     },
 
-    // Category selection
     selectCategory(id) {
       this.selectedCategoryId = id;
       this.selectedSubCategoryId = null;
@@ -432,9 +369,8 @@ export default {
       this.selectedSubCategoryId = id;
     },
 
-    // Cart operations
     addToCart(product) {
-      console.log('Adding product to cart:', product); // Debug log
+      console.log('Adding product to cart:', product);
 
       // Check if product has valid selling_price
       if (!product.price || isNaN(parseFloat(product.price))) {
@@ -463,7 +399,7 @@ export default {
           pro_qty: 1,
           sub_total: sellingPrice,
           max_stock: productQty,
-          category_name: product.category_name || product.cat_id || 'Unknown Category'
+          category_name: product.category_name || 'Processing...'
         });
       }
 

@@ -19,6 +19,7 @@ class Products extends Model
         'buying_date',
         'image',
         'product_qty',
+        'is_care',
     ];
 
     public function category()

@@ -67,12 +67,15 @@
                     <img :src="product.image" id="em_photo" class="card-img-top">
                     <div class="card-body">
                       <h6 class="card-title">{{ product.product_name }}</h6>
-                      <h7 class="card-title">RM {{ formatNumber(product.price) }}</h7>
-                      <h7 class="card-title">{{ formatDate(product.price_updated_at) }}</h7>
-                      <span class="badge badge-success" v-if="product.product_qty >= 1">
+                      <h7 class="badge badge-success">RM {{ formatNumber(product.price) }}</h7>
+                      <h7 class="badge badge-primary">
+                        Last Updated At: <br>
+                        {{ formatDate(product.price_updated_at) }}
+                      </h7>
+                      <!-- <span class="badge badge-success" v-if="product.product_qty >= 1">
                         Available: {{ product.product_qty }}
-                      </span>
-                      <span class="badge badge-danger" v-else>Stock Out</span>
+                      </span> -->
+                      <span class="badge badge-danger" v-if="product.product_qty < 1">Stock Out</span>
                     </div>
                   </div>
                 </button>

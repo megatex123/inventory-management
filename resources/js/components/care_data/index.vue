@@ -270,14 +270,14 @@
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Care Data List</h5>
         <div class="d-flex align-items-center">
           <span class="text-muted mr-3">
-            Showing {{ filteredCount }} of {{ total }} records
+            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} records
             <span v-if="filters.search" class="text-primary">
               for "{{ filters.search }}"
             </span>
           </span>
           <div class="btn-group">
             <button class="btn btn-outline-info btn-sm" @click="exportToCSV">
-              <i class="fas fa-file-csv mr-1"></i> Export CSV
+              <i class="fas fa-file-csv mr-1"></i> Export
             </button>
             <button class="btn btn-outline-success btn-sm ml-2" @click="refreshData">
               <i class="fas fa-sync-alt mr-1"></i> Refresh
@@ -294,8 +294,7 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center align-top">#</th>
-                <th class="align-top">Care Details</th>
-                <th class="align-top">Customer</th>
+                <th class="align-top">Care Details /<br> Customer</th>
                 <th class="align-top">Order</th>
                 <th class="text-center align-top">Care Tier</th>
                 <th class="text-center align-top">Parts Value</th>
@@ -332,24 +331,24 @@
               <tr v-for="(care, index) in filteredCareData" :key="care.id">
                 <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
                 <td class="align-middle">
-                  <div>
-                    <div class="font-weight-bold text-primary">{{ care.care_id }}</div>
-                    <small class="text-muted">QVCA: {{ getCustomerCode(care.customer) }}</small>
-                  </div>
-                </td>
-                <td class="align-middle">
                   <div class="d-flex align-items-center">
-                    <div class="avatar-sm mr-2">
+                    <!-- <div class="avatar-sm mr-2">
                       <div class="avatar-title bg-light rounded-circle">
                         <i class="fas fa-user text-primary"></i>
                       </div>
-                    </div>
+                    </div> -->
                     <div>
-                      <div class="font-weight-bold">{{ care.customer ? care.customer.name : 'N/A' }}</div>
-                      <small class="text-muted">{{ getCustomerCode(care.customer) }}</small>
-                      <div v-if="care.customer && care.customer.email" class="small">
-                        <i class="fas fa-envelope text-muted mr-1"></i>{{ care.customer.email }}
+                      <div>
+                        <div class="font-weight-bold text-primary">{{ care.care_id }}</div>
+                        <small class="text-muted">QVCA: {{ getCustomerCode(care.customer) }}</small>
                       </div>
+                      <div class="font-weight-bold">{{ care.customer ? care.customer.full_name : 'N/A' }}</div>
+                      <!-- <small class="text-muted">{{ care.customer ? care.customer.customer_id : 'N/A' }}</small> -->
+                      <div v-if="care.customer && care.customer.phone" class="small">
+                        <i class="fas fa-phone text-muted mr-1"></i>{{ care.customer.phone }}
+                      </div>
+                      {{ care.orderItems }}
+                      {{ care.directOrderDetails }}
                     </div>
                   </div>
                 </td>
@@ -357,7 +356,7 @@
                   <div>
                     <span class="badge badge-light">{{ getOrderCode(care.order) }}</span>
                     <div class="small text-success mt-1">
-                      <i class="fas fa-shopping-cart"></i> {{ formatCurrency(care.order ? care.order.total : 0) }}
+                      <i class="fas fa-shopping-cart"></i>{{ formatCurrency(care.order ? care.order.total : 0) }}
                     </div>
                   </div>
                 </td>
@@ -855,6 +854,12 @@ export default {
       });
     },
 
+    truncateText(text, maxLength) {
+      if (!text) return '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + '...';
+    },
+
     getCustomerCode(customer) {
       if (!customer) return 'N/A';
       return customer.code || customer.customer_id || 'N/A';
@@ -942,15 +947,167 @@ export default {
           ...this.filters
         };
 
+        // Remove empty parameters
+        Object.keys(params).forEach(key => {
+          if (params[key] === '' || params[key] === null || params[key] === undefined) {
+            delete params[key];
+          }
+        });
+
+        console.log('Fetching care data with params:', params);
+
         const response = await axios.get('/api/care-data', { params });
-        this.careData = response.data.data || [];
-        this.total = response.data.meta ? response.data.meta.total : (response.data.total || 0);
-        this.filteredCount = this.total;
+
+        // Log full response for debugging
+        console.log('Full API response:', response);
+
+        // Handle different response structures
+        if (response.data) {
+          // Check for success flag (your controller returns this)
+          if (response.data.success !== undefined) {
+            if (response.data.success) {
+              this.careData = response.data.data || [];
+              if (response.data.meta) {
+                this.total = response.data.meta.total || 0;
+                this.filteredCount = this.total;
+              } else {
+                this.total = response.data.total || this.careData.length;
+                this.filteredCount = this.total;
+              }
+            } else {
+              console.error('API returned error:', response.data.message);
+              this.careData = [];
+              this.total = 0;
+              this.filteredCount = 0;
+            }
+          }
+          // Check if data is directly in response
+          else if (response.data.data) {
+            this.careData = response.data.data;
+            this.total = response.data.total || response.data.data.length;
+            this.filteredCount = this.total;
+          }
+          // Check if response is already an array
+          else if (Array.isArray(response.data)) {
+            this.careData = response.data;
+            this.total = response.data.length;
+            this.filteredCount = this.total;
+          }
+          // Default case
+          else {
+            console.warn('Unexpected response structure:', response.data);
+            this.careData = [];
+            this.total = 0;
+            this.filteredCount = 0;
+          }
+        } else {
+          console.error('Empty API response');
+          this.careData = [];
+          this.total = 0;
+          this.filteredCount = 0;
+        }
+
+        console.log('Loaded care data:', this.careData.length, 'items');
+        if (this.careData.length > 0) {
+          console.log('Sample data:', this.careData[0]);
+        }
 
         this.updateStatistics(this.careData);
       } catch (error) {
         console.error('Error fetching care data:', error);
-        Swal.fire('Error!', 'Failed to load care data', 'error');
+        if (error.response) {
+          console.error('Response status:', error.response.status);
+          console.error('Response data:', error.response.data);
+          console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+        } else {
+          console.error('Request setup error:', error.message);
+        }
+
+        // Try alternative API endpoint structure
+        try {
+          console.log('Trying alternative API endpoint...');
+          const altResponse = await axios.get('/api/care-data/index');
+          if (altResponse.data) {
+            this.careData = altResponse.data.data || altResponse.data;
+            this.total = this.careData.length;
+            this.filteredCount = this.total;
+            this.updateStatistics(this.careData);
+            console.log('Alternative API successful, loaded:', this.careData.length, 'items');
+          }
+        } catch (altError) {
+          console.error('Alternative API also failed:', altError);
+
+          // TEMPORARY: Show dummy data for debugging
+          console.log('Using dummy data for debugging');
+          this.careData = [
+            {
+              id: 1,
+              care_id: 'VIS-2712-0001',
+              customer_id: 1,
+              order_id: 1,
+              lkp_care_id: 1,
+              total_part: 100.50,
+              price: 150.00,
+              update_membership: true,
+              created_at: '2024-01-15T10:30:00',
+              customer: {
+                id: 1,
+                name: 'John Doe',
+                email: 'john@example.com',
+                customer_id: 'CUST001'
+              },
+              order: {
+                id: 1,
+                order_number: 'ORD001',
+                total: 250.50
+              },
+              care: {
+                id: 1,
+                name: 'Vision Care',
+                code: 'VIS'
+              }
+            },
+            {
+              id: 2,
+              care_id: 'PRM-2712-0002',
+              customer_id: 2,
+              order_id: 2,
+              lkp_care_id: 2,
+              total_part: 250.75,
+              price: 300.00,
+              update_membership: false,
+              created_at: '2024-01-16T14:45:00',
+              customer: {
+                id: 2,
+                name: 'Jane Smith',
+                email: 'jane@example.com',
+                customer_id: 'CUST002'
+              },
+              order: {
+                id: 2,
+                order_number: 'ORD002',
+                total: 550.75
+              },
+              care: {
+                id: 2,
+                name: 'Premium Care',
+                code: 'PRM'
+              }
+            }
+          ];
+          this.total = this.careData.length;
+          this.filteredCount = this.total;
+          this.updateStatistics(this.careData);
+
+          Swal.fire({
+            icon: 'warning',
+            title: 'API Connection Issue',
+            text: 'Using dummy data. Please check API configuration.',
+            timer: 5000
+          });
+        }
       } finally {
         this.loading = false;
       }
@@ -959,10 +1116,26 @@ export default {
     async fetchOverallStatistics() {
       try {
         const response = await axios.get('/api/care-data/statistics');
-        this.allStats = response.data.data || {};
-        this.stats = { ...this.allStats };
+        if (response.data && response.data.success) {
+          this.allStats = response.data.data || {};
+          this.stats = { ...this.allStats };
+        } else if (response.data) {
+          // Handle direct data response
+          this.allStats = response.data;
+          this.stats = { ...this.allStats };
+        }
       } catch (error) {
         console.error('Error fetching overall statistics:', error);
+        // Set default stats
+        this.allStats = {
+          total_care_data: 0,
+          total_price: 0,
+          total_part: 0,
+          average_price: 0,
+          with_membership: 0,
+          without_membership: 0
+        };
+        this.stats = { ...this.allStats };
       }
     },
 
@@ -999,18 +1172,40 @@ export default {
     async fetchCustomers() {
       try {
         const response = await axios.get('/api/customer');
-        this.customers = response.data.data || response.data;
+        // Handle different response structures
+        if (response.data && response.data.success) {
+          this.customers = response.data.data || response.data;
+        } else if (Array.isArray(response.data)) {
+          this.customers = response.data;
+        } else if (response.data && response.data.data) {
+          this.customers = response.data.data;
+        } else {
+          this.customers = [];
+        }
+        console.log('Loaded customers:', this.customers.length);
       } catch (error) {
         console.error('Error fetching customers:', error);
+        this.customers = [];
       }
     },
 
     async fetchCares() {
       try {
         const response = await axios.get('/api/care');
-        this.cares = response.data.data || response.data;
+        // Handle different response structures
+        if (response.data && response.data.success) {
+          this.cares = response.data.data || response.data;
+        } else if (Array.isArray(response.data)) {
+          this.cares = response.data;
+        } else if (response.data && response.data.data) {
+          this.cares = response.data.data;
+        } else {
+          this.cares = [];
+        }
+        console.log('Loaded cares:', this.cares.length);
       } catch (error) {
         console.error('Error fetching cares:', error);
+        this.cares = [];
       }
     },
 
@@ -1115,10 +1310,24 @@ export default {
       this.statisticsLoading = true;
       try {
         const response = await axios.get('/api/care-data/statistics');
-        this.statistics = response.data.data || {};
+        if (response.data && response.data.success) {
+          this.statistics = response.data.data || {};
+        } else {
+          this.statistics = response.data || {};
+        }
       } catch (error) {
         console.error('Error fetching statistics:', error);
         Swal.fire('Error!', 'Failed to load statistics', 'error');
+        // Set empty statistics
+        this.statistics = {
+          total_care_data: 0,
+          total_price: 0,
+          total_part: 0,
+          average_price: 0,
+          membership_stats: { with_membership: 0, without_membership: 0 },
+          monthly_stats: [],
+          care_type_stats: []
+        };
       } finally {
         this.statisticsLoading = false;
       }
@@ -1146,23 +1355,792 @@ export default {
 
     exportToCSV() {
       Swal.fire({
-        title: 'Export to CSV',
-        text: 'This will export all filtered records to CSV format',
-        icon: 'info',
+        title: 'Export Options',
+        html: `
+          <div class="text-left">
+            <p>Choose export format:</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportFormat" id="formatExcel" value="excel" checked>
+              <label class="form-check-label" for="formatExcel">
+                Excel/HTML Format (Styled Report)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportFormat" id="formatCSV" value="csv">
+              <label class="form-check-label" for="formatCSV">
+                Simple CSV Format
+              </label>
+            </div>
+            <br>
+            <p>Choose what to export:</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
+              <label class="form-check-label" for="exportFiltered">
+                Export filtered data (${this.filteredCount} records)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportScope" id="exportAll" value="all">
+              <label class="form-check-label" for="exportAll">
+                Export all data (${this.total} records)
+              </label>
+            </div>
+          </div>
+        `,
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+          const format = document.querySelector('input[name="exportFormat"]:checked').value;
+          const scope = document.querySelector('input[name="exportScope"]:checked').value;
+          return { format, scope };
+        }
       }).then((result) => {
         if (result.isConfirmed) {
-          const params = {
-            ...this.filters,
-            export: 'csv',
-            limit: 10000
-          };
+          const { format, scope } = result.value;
 
-          window.location.href = `/api/care-data?${new URLSearchParams(params).toString()}`;
+          if (format === 'excel') {
+            this.generateStyledExcelReport(scope);
+          } else {
+            this.generateSimpleCSV(scope);
+          }
         }
       });
+    },
+
+    async generateStyledExcelReport(scope) {
+      Swal.fire({
+        title: 'Generating Report...',
+        text: 'Please wait while we prepare your export',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        // Fetch data based on scope
+        let dataToExport;
+        if (scope === 'filtered') {
+          // For filtered data, use the getFilteredDataForExport method
+          dataToExport = this.getFilteredDataForExport();
+
+          // If no data from client-side filtering, try API call
+          if (!dataToExport || dataToExport.length === 0) {
+            dataToExport = await this.getAllFilteredData();
+          }
+        } else {
+          // Fetch all data without any filters
+          const params = { per_page: 10000 }; // Large number to get all records
+          const res = await axios.get('/api/care-data', { params });
+          dataToExport = res.data.data || [];
+        }
+
+        // If no data, show message and return
+        if (!dataToExport || dataToExport.length === 0) {
+          Swal.close();
+          Swal.fire('No Data', 'There is no data to export', 'warning');
+          return;
+        }
+
+        // Generate HTML content with styling
+        const exportDate = new Date().toLocaleString('en-MY', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        // Calculate summary statistics
+        const totalRecords = dataToExport.length;
+        const totalPrice = dataToExport.reduce((sum, care) => sum + (parseFloat(care.price) || 0), 0);
+        const totalPart = dataToExport.reduce((sum, care) => sum + (parseFloat(care.total_part) || 0), 0);
+        const withMembership = dataToExport.filter(care => care.update_membership).length;
+        const withoutMembership = totalRecords - withMembership;
+
+        // Generate filter info string
+        const filterInfo = this.generateFilterInfo();
+
+        // Create HTML content
+        const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>QuiviCare Report</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 20px;
+        }
+
+        .report-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .report-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .report-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #6c757d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #b0e0e6;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #e8ec7e;
+            color: black;
+            padding: 10px;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            text-align: center;
+            padding: 8px;
+            background-color: #f0f0f0;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #b0e0e6;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .summary-section {
+            background-color: #e8f4f8;
+            border: 1px solid #b0e0e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .membership-yes {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .membership-no {
+            color: #6c757d;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #95a5a6;
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="book">
+        <div class="page">
+            <h1 class="report-title">QUIVICARE REPORT</h1>
+            <h4 class="report-subtitle"></h4>
+
+            <table>
+                <tr>
+                    <th colspan="11" class="header-title">
+                        CARE DATA DETAILED LIST
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="11" class="subtitle">
+                        Records: ${totalRecords} | Export Date: ${exportDate} |
+                        ${scope === 'filtered' ? 'Filtered Data' : 'All Data'}
+                    </td>
+                </tr>
+                <tr class="total-row">
+                    <th>No.</th>
+                    <th>Care ID</th>
+                    <th>Customer Name</th>
+                    <th>Customer ID</th>
+                    <th>Email</th>
+                    <th>Order Number</th>
+                    <th>Care Tier</th>
+                    <th>Parts Value</th>
+                    <th>Price</th>
+                    <th>Membership Update</th>
+                    <th>Created Date</th>
+                </tr>
+                ${dataToExport.map((care, index) => `
+                <tr>
+                    <td class="text-center">${index + 1}</td>
+                    <td class="text-center">${this.escapeHtml(care.care_id || 'N/A')}</td>
+                    <td class="text-left">${this.escapeHtml(care.customer?.name || 'N/A')}</td>
+                    <td class="text-center">${this.escapeHtml(this.getCustomerCode(care.customer))}</td>
+                    <td class="text-center">${this.escapeHtml(care.customer?.email || 'N/A')}</td>
+                    <td class="text-center">${this.escapeHtml(this.getOrderCode(care.order))}</td>
+                    <td class="text-center">${this.escapeHtml(care.care?.name || 'N/A')}</td>
+                    <td class="text-right">RM${parseFloat(care.total_part || 0).toFixed(2)}</td>
+                    <td class="text-right">RM${parseFloat(care.price || 0).toFixed(2)}</td>
+                    <td class="text-center ${care.update_membership ? 'membership-yes' : 'membership-no'}">
+                        ${care.update_membership ? 'Yes' : 'No'}
+                    </td>
+                    <td class="text-center">${this.formatDate(care.created_at)}</td>
+                </tr>
+                `).join('')}
+
+                <tr class="total-row">
+                    <td colspan="7" class="text-center">TOTAL</td>
+                    <td class="text-right">RM${totalPart.toFixed(2)}</td>
+                    <td class="text-right">RM${totalPrice.toFixed(2)}</td>
+                    <td class="text-center">${withMembership} / ${withoutMembership}</td>
+                    <td colspan="1"></td>
+                </tr>
+            </table>
+
+            <div class="footer">
+                <p>Generated by QuiviCare Management System | ${exportDate}</p>
+                <p>This is a computer-generated report. No signature is required.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`;
+
+        // Create and download the file
+        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `QuiviCare_Report_${date}_${scope}_${new Date().getTime()}.xls`;
+
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up
+        window.URL.revokeObjectURL(url);
+
+        Swal.close();
+        Swal.fire({
+          title: 'Export Complete!',
+          text: `Report "${filename}" has been downloaded`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        console.error('Export error:', error);
+        Swal.fire({
+          title: 'Export Failed!',
+          text: error.response?.data?.message || error.message || 'Failed to generate report',
+          icon: 'error'
+        });
+      }
+    },
+
+    async getAllFilteredData() {
+      try {
+        // First try to use the already filtered data from client-side
+        const clientSideFiltered = this.getFilteredDataForExport();
+
+        if (clientSideFiltered.length > 0) {
+          return clientSideFiltered;
+        }
+
+        // Fallback to API call
+        const params = {
+          ...this.filters,
+          per_page: 10000,
+          page: 1
+        };
+
+        // Remove empty filters
+        Object.keys(params).forEach(key => {
+          if (params[key] === '' || params[key] === null || params[key] === undefined) {
+            delete params[key];
+          }
+        });
+
+        const res = await axios.get('/api/care-data', { params });
+
+        // Handle response structure
+        let data = [];
+        if (res.data) {
+          if (res.data.success) {
+            data = res.data.data || [];
+          } else if (Array.isArray(res.data)) {
+            data = res.data;
+          } else if (res.data.data) {
+            data = res.data.data;
+          }
+        }
+
+        // Apply client-side filters as well to ensure consistency
+        if (data && data.length > 0) {
+          return this.applyClientSideFilters(data);
+        }
+
+        return data;
+
+      } catch (error) {
+        console.error('Error fetching filtered data:', error);
+        return this.getFilteredDataForExport();
+      }
+    },
+
+    // Helper method to apply the same filters as the table
+    applyClientSideFilters(data) {
+      let filtered = [...data];
+
+      // Apply text search
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
+        filtered = filtered.filter(care => {
+          return (
+            (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+            (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+            (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+            (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
+            (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
+            (care.price && care.price.toString().includes(keyword)) ||
+            (care.total_part && care.total_part.toString().includes(keyword))
+          );
+        });
+      }
+
+      // Apply other filters
+      if (this.filters.update_membership !== '') {
+        filtered = filtered.filter(care => care.update_membership == this.filters.update_membership);
+      }
+
+      if (this.filters.customer_id) {
+        filtered = filtered.filter(care => care.customer && care.customer.id == this.filters.customer_id);
+      }
+
+      if (this.filters.lkp_care_id) {
+        filtered = filtered.filter(care => care.care && care.care.id == this.filters.lkp_care_id);
+      }
+
+      if (this.filters.date_from) {
+        const dateFrom = new Date(this.filters.date_from);
+        filtered = filtered.filter(care => {
+          const careDate = new Date(care.created_at);
+          return careDate >= dateFrom;
+        });
+      }
+
+      if (this.filters.year) {
+        filtered = filtered.filter(care => {
+          if (!care.created_at) return false;
+          const careDate = new Date(care.created_at);
+          return careDate.getFullYear() === parseInt(this.filters.year);
+        });
+      }
+
+      if (this.filters.year && this.filters.month) {
+        filtered = filtered.filter(care => {
+          if (!care.created_at) return false;
+          const careDate = new Date(care.created_at);
+          return careDate.getMonth() + 1 === parseInt(this.filters.month);
+        });
+      }
+
+      // Apply sorting
+      filtered = this.sortCareData(filtered);
+
+      return filtered;
+    },
+
+    escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.toString().replace(/[&<>"']/g, m => map[m]);
+    },
+
+    generateFilterInfo() {
+      const filterParts = [];
+
+      if (this.filters.search) {
+        filterParts.push(`Search: "${this.filters.search}"`);
+      }
+
+      if (this.filters.update_membership !== '') {
+        filterParts.push(`Membership: ${this.filters.update_membership === '1' ? 'With Update' : 'Without Update'}`);
+      }
+
+      if (this.filters.customer_id) {
+        const customer = this.customers.find(c => c.id == this.filters.customer_id);
+        filterParts.push(`Customer: ${customer ? customer.name : this.filters.customer_id}`);
+      }
+
+      if (this.filters.lkp_care_id) {
+        const care = this.cares.find(c => c.id == this.filters.lkp_care_id);
+        filterParts.push(`Care Tier: ${care ? care.name : this.filters.lkp_care_id}`);
+      }
+
+      if (this.filters.date_from) {
+        filterParts.push(`From Date: ${this.filters.date_from}`);
+      }
+
+      if (this.filters.year) {
+        let yearFilter = `Year: ${this.filters.year}`;
+        if (this.filters.month) {
+          yearFilter += `, Month: ${this.monthNames[this.filters.month - 1]}`;
+        }
+        filterParts.push(yearFilter);
+      }
+
+      return filterParts.length > 0 ? filterParts.join(' | ') : 'No active filters';
+    },
+
+    generateSimpleCSV(scope) {
+      Swal.fire({
+        title: 'Generating CSV...',
+        text: 'Please wait while we prepare your export',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        // Get data based on scope
+        let dataToExport;
+        if (scope === 'filtered') {
+          // Use client-side filtered data
+          dataToExport = this.getFilteredDataForExport();
+
+          // If no data from client-side, try to fetch from API
+          if (!dataToExport || dataToExport.length === 0) {
+            dataToExport = this.careData.filter(care => {
+              return this.matchesFilters(care);
+            });
+          }
+        } else {
+          // For all data, use all careData
+          dataToExport = this.careData;
+        }
+
+        if (!dataToExport || dataToExport.length === 0) {
+          Swal.close();
+          Swal.fire('No Data', 'There is no data to export', 'warning');
+          return;
+        }
+
+        // Define CSV headers
+        const headers = [
+          'No.',
+          'Care ID',
+          'Customer Name',
+          'Customer ID',
+          'Email',
+          'Order Number',
+          'Order Total',
+          'Care Tier',
+          'Parts Value',
+          'Price',
+          'Membership Update',
+          'Created Date'
+        ];
+
+        // Prepare CSV rows
+        const rows = dataToExport.map((care, index) => {
+          return [
+            index + 1,
+            care.care_id || '',
+            care.customer?.name || '',
+            this.getCustomerCode(care.customer),
+            care.customer?.email || '',
+            this.getOrderCode(care.order),
+            care.order?.total || '0',
+            care.care?.name || '',
+            care.total_part || '0',
+            care.price || '0',
+            care.update_membership ? 'Yes' : 'No',
+            new Date(care.created_at).toISOString()
+          ].map(cell => `"${cell}"`); // Wrap all cells in quotes
+        });
+
+        // Combine headers and rows
+        const csvContent = [
+          headers.join(','),
+          ...rows.map(row => row.join(','))
+        ].join('\n');
+
+        // Add UTF-8 BOM for Excel compatibility
+        const BOM = '\uFEFF';
+        const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `care-data-${date}-${scope}.csv`;
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up URL
+        URL.revokeObjectURL(url);
+
+        Swal.close();
+        Swal.fire({
+          title: 'Export Complete!',
+          text: 'CSV file has been generated and downloaded',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        console.error('CSV export error:', error);
+        Swal.fire({
+          title: 'Export Failed!',
+          text: error.message || 'Failed to generate CSV',
+          icon: 'error'
+        });
+      }
+    },
+
+    getFilteredDataForExport() {
+      // First, try to filter from the currently loaded careData
+      let filtered = this.careData.filter(care => this.matchesFilters(care));
+
+      // If we have filtered data, apply sorting
+      if (filtered.length > 0) {
+        return this.sortCareData(filtered);
+      }
+
+      // Fallback: apply filters manually
+      filtered = [...this.careData];
+
+      // Apply text search
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
+        filtered = filtered.filter(care => {
+          return (
+            (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+            (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+            (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+            (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
+            (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
+            (care.price && care.price.toString().includes(keyword)) ||
+            (care.total_part && care.total_part.toString().includes(keyword))
+          );
+        });
+      }
+
+      // Apply other filters
+      if (this.filters.update_membership !== '') {
+        filtered = filtered.filter(care => care.update_membership == this.filters.update_membership);
+      }
+
+      if (this.filters.customer_id) {
+        filtered = filtered.filter(care => care.customer && care.customer.id == this.filters.customer_id);
+      }
+
+      if (this.filters.lkp_care_id) {
+        filtered = filtered.filter(care => care.care && care.care.id == this.filters.lkp_care_id);
+      }
+
+      if (this.filters.date_from) {
+        const dateFrom = new Date(this.filters.date_from);
+        filtered = filtered.filter(care => {
+          const careDate = new Date(care.created_at);
+          return careDate >= dateFrom;
+        });
+      }
+
+      // Apply year filter
+      if (this.filters.year) {
+        filtered = filtered.filter(care => {
+          if (!care.created_at) return false;
+          const careDate = new Date(care.created_at);
+          return careDate.getFullYear() === parseInt(this.filters.year);
+        });
+      }
+
+      // Apply month filter (only if year is selected)
+      if (this.filters.year && this.filters.month) {
+        filtered = filtered.filter(care => {
+          if (!care.created_at) return false;
+          const careDate = new Date(care.created_at);
+          return careDate.getMonth() + 1 === parseInt(this.filters.month);
+        });
+      }
+
+      // Apply sorting
+      filtered = this.sortCareData(filtered);
+
+      return filtered;
+    },
+
+    // Helper method to check if a single care matches all filters
+    matchesFilters(care) {
+      // Check text search
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
+        const matchesSearch = (
+          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
+          (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
+          (care.price && care.price.toString().includes(keyword)) ||
+          (care.total_part && care.total_part.toString().includes(keyword))
+        );
+        if (!matchesSearch) return false;
+      }
+
+      // Check membership filter
+      if (this.filters.update_membership !== '' && care.update_membership != this.filters.update_membership) {
+        return false;
+      }
+
+      // Check other filters...
+      if (this.filters.customer_id && care.customer && care.customer.id != this.filters.customer_id) {
+        return false;
+      }
+
+      if (this.filters.lkp_care_id && care.care && care.care.id != this.filters.lkp_care_id) {
+        return false;
+      }
+
+      if (this.filters.date_from) {
+        const careDate = new Date(care.created_at);
+        const dateFrom = new Date(this.filters.date_from);
+        if (careDate < dateFrom) return false;
+      }
+
+      if (this.filters.year) {
+        if (!care.created_at) return false;
+        const careDate = new Date(care.created_at);
+        if (careDate.getFullYear() !== parseInt(this.filters.year)) return false;
+      }
+
+      if (this.filters.year && this.filters.month) {
+        if (!care.created_at) return false;
+        const careDate = new Date(care.created_at);
+        if (careDate.getMonth() + 1 !== parseInt(this.filters.month)) return false;
+      }
+
+      return true;
     },
 
     exportStatistics() {

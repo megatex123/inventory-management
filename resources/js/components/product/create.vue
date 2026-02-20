@@ -24,10 +24,10 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <label>Product Code</label>
-
                                                     <input type="text" class="form-control" v-model='form.product_code'>
                                                     <small class="text-danger" v-if='errors.product_code'>
-                                                        {{errors.product_code[0]}}</small> </small>
+                                                        {{errors.product_code[0]}}
+                                                    </small>
                                                 </div>
                                             </div>
 
@@ -38,42 +38,47 @@
                                                 <div class="col-6">
                                                     <label>Product Category</label>
                                                     <select v-model='form.cat_id' class="form-control">
-                                                        <option :value="cat.id" v-for='cat in categories'>{{cat.name}}
-                                                        </option>
-
+                                                        <option :value="cat.id" v-for='cat in categories'>{{cat.name}}</option>
                                                     </select>
                                                     <small class="text-danger" v-if='errors.cat_id'>
-                                                        {{errors.cat_id[0]}}</small> </small>
+                                                        {{errors.cat_id[0]}}
+                                                    </small>
                                                 </div>
                                                 <div class="col-6">
                                                     <label>Product Supplier</label>
                                                     <select v-model='form.supplier_id' class="form-control">
                                                         <option :value="supplier.id" v-for='supplier in suppliers'>
-                                                            {{supplier.name}}</option>
-
+                                                            {{supplier.name}}
+                                                        </option>
                                                     </select>
                                                     <small class="text-danger" v-if='errors.supplier_id'>
-                                                        {{errors.supplier_id[0]}}</small> </small>
+                                                        {{errors.supplier_id[0]}}
+                                                    </small>
                                                 </div>
                                             </div>
-
                                         </div>
-
 
                                         <div class="form-group">
                                             <div class="form-row">
-                                                <div class="col-4">
-                                                    <label>Product Part</label>
-                                                    <input type="text" class="form-control" v-model='form.root'>
-                                                    <small class="text-danger" v-if='errors.root'>
-                                                        {{errors.root[0]}}</small> </small>
+                                                <div class="col-6">
+                                                    <label>Brand</label>
+                                                    <input type="text" class="form-control" v-model='form.brand_id'>
+                                                    <small class="text-danger" v-if='errors.brand_id'>
+                                                        {{errors.brand_id[0]}}
+                                                    </small>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="form-row">
                                                 <div class="col-4">
                                                     <label>Buying Price (RM)</label>
 
                                                     <input type="text" class="form-control" v-model='form.buying_price'>
                                                     <small class="text-danger" v-if='errors.buying_price'>
-                                                        {{errors.buying_price[0]}}</small> </small>
+                                                        {{errors.buying_price[0]}}
+                                                    </small>
                                                 </div>
                                                 <div class="col-4">
                                                     <label>Selling Price (RM)</label>
@@ -81,10 +86,55 @@
                                                     <input type="text" class="form-control"
                                                         v-model='form.selling_price'>
                                                     <small class="text-danger" v-if='errors.selling_price'>
-                                                        {{errors.selling_price[0]}}</small> </small>
+                                                        {{errors.selling_price[0]}}
+                                                    </small>
                                                 </div>
                                             </div>
+                                        </div>
 
+                                        <div class="form-group">
+                                            <div class="form-row">
+                                                <div class="col-6">
+                                                    <label>Price (RM)</label>
+                                                    <input type="number" step="0.01" class="form-control" v-model='form.price'>
+                                                    <small class="text-danger" v-if='errors.price'>
+                                                        {{errors.price[0]}}
+                                                    </small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label>Available</label>
+                                                    <input type="text" class="form-control" v-model='form.available'>
+                                                    <small class="text-danger" v-if='errors.available'>
+                                                        {{errors.available[0]}}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="form-row">
+                                                <div class="col-4">
+                                                    <label>Available Local</label>
+                                                    <input type="text" class="form-control" v-model='form.available_local'>
+                                                    <small class="text-danger" v-if='errors.available_local'>
+                                                        {{errors.available_local[0]}}
+                                                    </small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label>Product Part/Root</label>
+                                                    <input type="text" class="form-control" v-model='form.root'>
+                                                    <small class="text-danger" v-if='errors.root'>
+                                                        {{errors.root[0]}}
+                                                    </small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label>Product Qty</label>
+                                                    <input type="number" class="form-control" v-model='form.product_qty'>
+                                                    <small class="text-danger" v-if='errors.product_qty'>
+                                                        {{errors.product_qty[0]}}
+                                                    </small>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="form-group">
@@ -97,10 +147,10 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <label>Product Qty</label>
-
                                                     <input type="text" class="form-control" v-model='form.product_qty'>
                                                     <small class="text-danger" v-if='errors.product_qty'>
-                                                        {{errors.product_qty[0]}}</small> </small>
+                                                        {{errors.product_qty[0]}}
+                                                    </small>
                                                 </div>
                                             </div>
 
@@ -150,16 +200,16 @@
                     name: 'login'
                 })
             };
+            let id = this.$route.params.id
+
             axios.get('/api/categories')
                 .then(res => {
                     this.categories = res.data;
-
                 })
 
             axios.get('/api/suppliers')
                 .then(res => {
                     this.suppliers = res.data;
-
                 })
 
         },
@@ -174,9 +224,13 @@
                     selling_price: null,
                     supplier_id: null,
                     buying_date: null,
-                    photo: null,
+                    image: null,
                     product_qty: null,
-
+                    brand_id: null,
+                    price: null,
+                    price_updated_at: null,
+                    available: null,
+                    available_local: null,
                 },
                 errors: {},
                 categories: {},

@@ -60,7 +60,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Brand & Capacity -->
                                         <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-6">
@@ -70,78 +69,24 @@
                                                         {{errors.brand_id[0]}}
                                                     </small>
                                                 </div>
-                                                <div class="col-6">
-                                                    <label>Capacity</label>
-                                                    <input type="text" class="form-control" v-model='form.capacity'>
-                                                    <small class="text-danger" v-if='errors.capacity'>
-                                                        {{errors.capacity[0]}}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Form & Interface -->
-                                        <div class="form-group">
-                                            <div class="form-row">
-                                                <div class="col-6">
-                                                    <label>Form Factor</label>
-                                                    <input type="text" class="form-control" v-model='form.form'>
-                                                    <small class="text-danger" v-if='errors.form'>
-                                                        {{errors.form[0]}}
-                                                    </small>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label>Interface</label>
-                                                    <input type="text" class="form-control" v-model='form.interface'>
-                                                    <small class="text-danger" v-if='errors.interface'>
-                                                        {{errors.interface[0]}}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Read/Write Speed -->
-                                        <div class="form-group">
-                                            <div class="form-row">
-                                                <div class="col-6">
-                                                    <label>Read Speed (MB/s)</label>
-                                                    <input type="text" class="form-control" v-model='form.read'>
-                                                    <small class="text-danger" v-if='errors.read'>
-                                                        {{errors.read[0]}}
-                                                    </small>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label>Write Speed (MB/s)</label>
-                                                    <input type="text" class="form-control" v-model='form.write'>
-                                                    <small class="text-danger" v-if='errors.write'>
-                                                        {{errors.write[0]}}
-                                                    </small>
-                                                </div>
                                             </div>
                                         </div>
 
                                         <!-- Prices -->
                                         <div class="form-group">
                                             <div class="form-row">
-                                                <div class="col-4">
+                                                <div class="col-6">
                                                     <label>Buying Price (RM)</label>
                                                     <input type="number" step="0.01" class="form-control" v-model='form.buying_price'>
                                                     <small class="text-danger" v-if='errors.buying_price'>
                                                         {{errors.buying_price[0]}}
                                                     </small>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-6">
                                                     <label>Selling Price (RM)</label>
                                                     <input type="number" step="0.01" class="form-control" v-model='form.selling_price'>
                                                     <small class="text-danger" v-if='errors.selling_price'>
                                                         {{errors.selling_price[0]}}
-                                                    </small>
-                                                </div>
-                                                <div class="col-4">
-                                                    <label>Price Tier</label>
-                                                    <input type="text" class="form-control" v-model='form.tier'>
-                                                    <small class="text-danger" v-if='errors.tier'>
-                                                        {{errors.tier[0]}}
                                                     </small>
                                                 </div>
                                             </div>
@@ -150,21 +95,14 @@
                                         <!-- Min/Max Price & Availability -->
                                         <div class="form-group">
                                             <div class="form-row">
-                                                <div class="col-4">
-                                                    <label>Min Price (RM)</label>
-                                                    <input type="number" step="0.01" class="form-control" v-model='form.min_price'>
-                                                    <small class="text-danger" v-if='errors.min_price'>
-                                                        {{errors.min_price[0]}}
-                                                    </small>
-                                                </div>
-                                                <div class="col-4">
-                                                    <label>Max Price (RM)</label>
+                                                <div class="col-6">
+                                                    <label>Price (RM)</label>
                                                     <input type="number" step="0.01" class="form-control" v-model='form.price'>
                                                     <small class="text-danger" v-if='errors.price'>
                                                         {{errors.price[0]}}
                                                     </small>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-6">
                                                     <label>Available</label>
                                                     <input type="text" class="form-control" v-model='form.available'>
                                                     <small class="text-danger" v-if='errors.available'>
@@ -209,6 +147,13 @@
                                                     <input type="date" class="form-control" v-model='form.buying_date'>
                                                     <small class="text-danger" v-if='errors.buying_date'>
                                                         {{errors.buying_date[0]}}
+                                                    </small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label>Product Qty</label>
+                                                    <input type="text" class="form-control" v-model='form.product_qty'>
+                                                    <small class="text-danger" v-if='errors.product_qty'>
+                                                        {{errors.product_qty[0]}}
                                                     </small>
                                                 </div>
                                             </div>
@@ -259,33 +204,20 @@ export default {
 
         let id = this.$route.params.id
 
-        // Load product data
         axios.get('/api/product/'+id)
             .then(res => {
                 this.form = res.data
                 console.log('Product data loaded:', this.form)
             })
-            .catch(err => {
-                console.error('Error loading product:', err)
-                this.showNotification('Failed to load product data', 'error')
-            })
 
-        // Load categories
         axios.get('/api/categories')
             .then(res => {
                 this.categories = res.data
             })
-            .catch(err => {
-                console.error('Error loading categories:', err)
-            })
 
-        // Load suppliers
         axios.get('/api/suppliers')
             .then(res => {
                 this.suppliers = res.data
-            })
-            .catch(err => {
-                console.error('Error loading suppliers:', err)
             })
     },
     data() {
@@ -302,13 +234,6 @@ export default {
                 image: null,
                 product_qty: null,
                 brand_id: null,
-                capacity: null,
-                form: null,
-                interface: null,
-                read: null,
-                write: null,
-                tier: null,
-                min_price: null,
                 price: null,
                 price_updated_at: null,
                 available: null,

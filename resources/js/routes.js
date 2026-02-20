@@ -114,6 +114,11 @@ let servebek = require ('./components/serve_bek/index.vue').default;
 let servebekcreate = require ('./components/serve_bek/create.vue').default;
 let servebekedit = require ('./components/serve_bek/edit.vue').default;
 
+//carewarranty
+let carewarranty = require ('./components/care_warranty/index.vue').default;
+let carewarrantycreate = require ('./components/care_warranty/create.vue').default;
+let carewarrantyedit = require ('./components/care_warranty/edit.vue').default;
+
 export const routes=[
 
     {path: '/',component:login,name: 'login',meta: { layout: 'auth' }},
@@ -229,4 +234,8 @@ export const routes=[
       { path: '/serve-bek/create', component: servebekcreate, name: 'servebekcreate',meta: { layout: 'app' } },
       { path: '/serve-bek/edit/:id', component: servebekedit, name: 'servebekedit', meta: { layout: 'app' } },
 
+      // care-warranty
+      { path: '/care-warranty', component: carewarranty, name: 'carewarranty', meta: { layout: 'app' } },
+      { path: '/care-warranty/create', component: carewarrantycreate, name: 'carewarrantycreate',meta: { layout: 'app' } },
+      { path: '/care-warranty/edit/:id', component: carewarrantyedit, name: 'carewarrantyedit', meta: { layout: 'app' } },
 ]

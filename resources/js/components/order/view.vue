@@ -8,7 +8,7 @@
                 <div class="login-form">
                   <div class="text-center">
                     <span v-if="orders.approve == 1">
-                        <h1 class="h4 text-gray-900 mb-4">Order Invoice Details</h1>
+                        <!-- <h1 class="h4 text-gray-900 mb-4">Order Invoice Details</h1> -->
                     </span>
                     <span v-else>
                         <h1 class="h4 text-gray-900 mb-4">Order Draft Details</h1>
@@ -27,55 +27,71 @@
                       </div>
                   </div>
 
+                  <!-- Company Header Section -->
+                  <div class="row pt-4">
+                      <div class="col-lg-12">
+                          <div class="card">
+                              <div class="card-body">
+                                  <div class="row">
+                                      <div class="col-md-2 col-lg-2 text-center">
+                                          <img src="/backend/img/logo/quivitech.svg" alt="QuiviTech Logo" width="140" height="180">
+                                      </div>
+                                      <div class="col-md-4 col-lg-4">
+                                          <h2 class="font-weight-bold text-primary mb-0">QuiviTech Enterprise</h2>
+                                          <p class="mb-1">Sunway Damansara, 47810 Petaling Jaya, Selangor</p>
+                                          <p class="mb-1">support@quivitech.com</p>
+                                          <p class="mb-0">+0197017420</p>
+                                      </div>
+                                      <div class="col-md-6 text-right">
+                                          <span v-if="orders.approve == 1">
+                                              <h3 class="font-weight-bold mb-3">INVOICE</h3>
+                                          </span>
+                                          <span v-else>
+                                              <h3 class="font-weight-bold mb-3"></h3>
+                                          </span>
+                                          <p class="mb-1"><strong>DATE:</strong> {{ formatDate(orders.order_date) }}</p>
+                                          <span v-if="orders.invoice_id">
+                                              <p class="mb-0"><strong>INVOICE NO:</strong> {{ orders.invoice_id || '-' }}</p>
+                                          </span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Bill To Section -->
                   <div class="row pt-4">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="m-0 font-weight-bold text-primary">Order Details</h5>
+                                <h5 class="m-0 font-weight-bold text-primary">BILL TO</h5>
                                 <button class="btn btn-sm btn-outline-primary" @click="toggleOrder">
                                     {{ showOrder ? 'Hide' : 'Show' }}
                                 </button>
                             </div>
-                            <div v-show="showOrder" class="table-responsive">
-                                <table class="table table-bordered table-sm mb-0">
-                                    <tbody>
-                                    <tr>
-                                        <td class="font-weight-bold" style="width: 30%">Customer Name</td>
-                                        <td class="text-right">{{ orders.customer.full_name }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="font-weight-bold">Phone</td>
-                                        <td class="text-right">{{ orders.customer.phone }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="font-weight-bold">Email</td>
-                                        <td class="text-right">{{ orders.customer.email }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="font-weight-bold">Address</td>
-                                        <td class="text-right">{{ orders.customer.address }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="font-weight-bold">Order Date</td>
-                                        <td class="text-right">{{ orders.order_date }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="font-weight-bold">Order ID</td>
-                                        <td class="text-right">{{ orders.order_id }}</td>
-                                    </tr>
-
-                                    </tbody>
-                                </table>
+                            <div v-show="showOrder" class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Customer ID:</strong> {{ orders.customer.customer_id }}</p>
+                                        <p class="mb-1"><strong>Name:</strong> {{ orders.customer.full_name }}</p>
+                                        <p class="mb-1"><strong>Preferred Name:</strong> {{ orders.customer.preferred_name }}</p>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <span v-if="orders.customer.phone">
+                                            <p class="mb-1"><strong>Phone:</strong> {{ orders.customer.phone }}</p>
+                                        </span>
+                                        <span v-if="orders.customer.email">
+                                            <p class="mb-0"><strong>Email:</strong> {{ orders.customer.email }}</p>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                   </div>
 
+                  <!-- Order Details Section -->
                   <div class="row pt-4">
                     <div class="col-lg-12">
                         <div class="card">
@@ -83,13 +99,12 @@
                                 <h5 class="m-0 font-weight-bold text-primary">Order Details</h5>
                                 <div class="row">
                                     <div class="ml-auto">
-
                                         <span v-if="orders.approve == null">
                                             <router-link :to="'/order/edit/' + orders.id" class="btn btn-sm btn-outline-primary">
                                                 <i class="fa fa-edit"></i> Edit
                                             </router-link>
                                         </span>
-                                        <button class="btn btn-sm btn-outline-primary" @click="toggleProductDetails">
+                                        <button class="btn btn-sm btn-outline-primary ml-2" @click="toggleProductDetails">
                                             {{ showProducts ? 'Hide' : 'Show' }}
                                         </button>
                                     </div>
@@ -103,7 +118,8 @@
                                             <th style="width: 60px" class="text-center">Image</th>
                                             <th>Product Name</th>
                                             <th style="width: 200px">Product Code</th>
-                                            <th style="width: 60px">Product Type</th>
+                                            <th style="width: 100px">Product Type</th>
+                                            <th style="width: 100px">Product Care</th>
                                             <th style="width: 80px" class="text-center">Qty</th>
                                             <th style="width: 140px" class="text-right">Unit Price (RM)</th>
                                             <th style="width: 160px" class="text-right">Total Price (RM)</th>
@@ -117,6 +133,7 @@
                                                 :src="data.image"
                                                 class="img-fluid rounded border"
                                                 style="max-width:40px"
+                                                alt="Product Image"
                                             />
                                             </td>
 
@@ -129,6 +146,11 @@
                                             </td>
 
                                             <td class="text-muted">{{ data.category_name }}</td>
+
+                                            <td class="text-muted">
+                                                <span v-if="data.is_care == 1" class="badge badge-success">Covered</span>
+                                                <span v-else class="badge badge-secondary">Not Covered</span>
+                                            </td>
 
                                             <td class="text-center">
                                             {{ data.pro_qty }}
@@ -144,7 +166,7 @@
                                         </tr>
 
                                         <tr class="table-active font-weight-bold">
-                                            <td colspan="4" class="text-left">Total</td>
+                                            <td colspan="5" class="text-left">Total</td>
                                             <td class="text-center">{{ totalQty }}</td>
                                             <td class="text-right"></td>
                                             <td class="text-right text-primary">RM {{ formatNumber(grandTotalPrice) }}</td>
@@ -152,16 +174,16 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </div>
                   </div>
 
+                  <!-- Payment Section -->
                   <div class="row pt-4">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="m-0 font-weight-bold text-primary">Payment</h5>
+                                <h5 class="m-0 font-weight-bold text-primary">Payment Summary</h5>
                                 <button class="btn btn-sm btn-outline-primary" @click="togglePayment">
                                     {{ showPayment ? 'Hide' : 'Show' }}
                                 </button>
@@ -176,29 +198,39 @@
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviCraft</td>
-                                        <td class="text-left">{{ orders.craft.name }}</td>
-                                        <td class="text-right">{{ orders.craft.code }}</td>
+                                        <td class="text-left">{{ orders.craft && orders.craft.name ? orders.craft.name : 'N/A' }}</td>
+                                        <td class="text-right">{{ orders.craft && orders.craft.code ? orders.craft.code : 'N/A' }}</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(orders.craft.fee) }}
+                                            RM {{ formatNumber(orders.craft && orders.craft.fee ? orders.craft.fee : 0) }}
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviServe</td>
-                                        <td class="text-left">{{ orders.serve.name }}</td>
-                                        <td class="text-right">{{ orders.serve.code }}</td>
-                                        <td class="text-right">
-                                            RM {{ formatNumber(orders.serve.fee) }}
-                                        </td>
+                                        <template v-if="orders.serve_data && orders.serve_data[0] && orders.serve_data[0].serve">
+                                            <td class="text-left">{{ orders.serve_data[0].serve.name }}</td>
+                                            <td class="text-right">{{ orders.serve_data[0].serve.code }}</td>
+                                            <td class="text-right">
+                                                RM {{ formatNumber(orders.serve_data[0].serve.fee) }}
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td colspan="3" class="text-center">-</td>
+                                        </template>
                                     </tr>
 
                                     <tr>
                                         <td class="font-weight-bold">QuiviCare</td>
-                                        <td class="text-left">{{ orders.care.name }}</td>
-                                        <td class="text-right">{{ orders.care.code }}</td>
-                                        <td class="text-right">
-                                            RM {{ formatNumber(orders.care.fee) }}
-                                        </td>
+                                        <template v-if="orders.care_data && orders.care_data[0] && orders.care_data[0].care">
+                                            <td class="text-left">{{ orders.care_data[0].care.name }}</td>
+                                            <td class="text-right">{{ orders.care_data[0].care.code }}</td>
+                                            <td class="text-right">
+                                                RM {{ formatNumber(orders.care_data[0].price) }}
+                                            </td>
+                                        </template>
+                                        <template v-else>
+                                            <td colspan="3" class="text-center">-</td>
+                                        </template>
                                     </tr>
 
                                     <tr class="table-active">
@@ -213,6 +245,18 @@
                         </div>
                     </div>
                   </div>
+
+                  <!-- Footer Section -->
+                  <div class="row pt-4">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p class="mb-0"><strong>Thank you for your business!</strong></p>
+                                <p class="mb-0 text-muted">Terms & Conditions: Payment due within 30 days</p>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -221,6 +265,7 @@
       </div>
     </div>
 </template>
+
 <script>
 export default {
   created() {
@@ -249,21 +294,21 @@ export default {
   },
   computed: {
     totalQty() {
-      return this.details.reduce((sum, item) => sum + Number(item.pro_qty), 0);
-    },
-    totalUnitPrice() {
-      return this.details.reduce((sum, item) => sum + Number(item.pro_price), 0);
+      return this.details.reduce((sum, item) => sum + Number(item.pro_qty || 0), 0);
     },
     grandTotalPrice() {
-      return this.details.reduce((sum, item) => sum + Number(item.sub_total), 0);
+      return this.details.reduce((sum, item) => sum + Number(item.sub_total || 0), 0);
     },
     totalPayAmount() {
-        return (
-        Number(this.orders.craft.fee || 0) +
-        Number(this.orders.total || 0) +
-        Number(this.orders.serve.fee || 0) +
-        Number(this.orders.care.fee || 0)
-        );
+        const craftFee = this.orders.craft && this.orders.craft.fee ? Number(this.orders.craft.fee) : 0;
+        const serveFee = this.orders.serve_data && this.orders.serve_data[0] && this.orders.serve_data[0].serve && this.orders.serve_data[0].serve.fee
+            ? Number(this.orders.serve_data[0].serve.fee)
+            : 0;
+        const carePrice = this.orders.care_data && this.orders.care_data[0] && this.orders.care_data[0].price
+            ? Number(this.orders.care_data[0].price)
+            : 0;
+
+        return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     }
   },
   methods: {
@@ -277,15 +322,19 @@ export default {
       this.showPayment = !this.showPayment;
     },
     formatNumber(value) {
-      return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const num = Number(value);
+      return isNaN(num) ? '0.00' : num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     },
     formatDate(date) {
-        if (!date) return '';
+        if (!date) return '23/12/2025';
         const d = new Date(date);
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const year = d.getFullYear();
-        return `${day}-${month}-${year}`;
+        return `${day}/${month}/${year}`;
     },
     printPdf() {
         window.print();
@@ -304,14 +353,14 @@ export default {
             display: none !important;
         }
 
-        /* Hide all buttons: includes Print, Back, and Hide/Show toggles */
+        /* Hide all buttons */
         .btn {
             display: none !important;
         }
 
         /* Optional: Remove the card shadow and border for a cleaner look on paper */
         .card {
-            border: none !important;
+            border: 1px solid #ddd !important;
             box-shadow: none !important;
         }
 
@@ -324,6 +373,25 @@ export default {
         .my-5 {
             margin-top: 0 !important;
             margin-bottom: 0 !important;
+        }
+
+        .table-bordered {
+            border: 1px solid #000 !important;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #000 !important;
+        }
+
+        .text-primary {
+            color: #000 !important;
+        }
+
+        .badge {
+            border: 1px solid #000 !important;
+            background-color: #fff !important;
+            color: #000 !important;
         }
     }
 </style>

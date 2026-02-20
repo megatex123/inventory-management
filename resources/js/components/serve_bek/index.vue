@@ -585,6 +585,7 @@ export default {
 
 .badge {
   font-size: 0.85em;
+  color: #ffffff;
 }
 
 .btn-group-sm .btn {

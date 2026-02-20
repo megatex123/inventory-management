@@ -13,13 +13,10 @@ use Illuminate\Support\Str;
 
 class ServeDataController extends Controller
 {
-    // Get all serve data with filters
     public function index(Request $request)
     {
-        $query = ServeData::with(['customer', 'order', 'serve'])
-            ->select('serve_data.*');
+        $query = ServeData::with(['customer', 'order', 'serve'])->select('serve_data.*');
 
-        // Apply filters
         if ($request->filled('status')) {
             if ($request->status === 'active') {
                 $query->where('start_serve_enabled', 1);
@@ -46,23 +43,50 @@ class ServeDataController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('serve_id', 'LIKE', "%{$search}%")
-                  ->orWhere('qvse_cid', 'LIKE', "%{$search}%")
-                  ->orWhereHas('customer', function($q) use ($search) {
-                      $q->where('full_name', 'LIKE', "%{$search}%")
+                ->orWhere('qvse_cid', 'LIKE', "%{$search}%")
+                ->orWhereHas('customer', function($q) use ($search) {
+                    $q->where('full_name', 'LIKE', "%{$search}%")
                         ->orWhere('customer_id', 'LIKE', "%{$search}%");
-                  })
-                  ->orWhereHas('order', function($q) use ($search) {
-                      $q->where('order_id', 'LIKE', "%{$search}%");
-                  });
+                })
+                ->orWhereHas('order', function($q) use ($search) {
+                    $q->where('order_id', 'LIKE', "%{$search}%");
+                });
             });
         }
 
-        // Handle export
+        if ($request->filled('sort_by')) {
+            $sortBy = $request->sort_by;
+            switch ($sortBy) {
+                case 'created_at_asc':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                case 'customer_name_asc':
+                    $query->join('customers', 'serve_data.customer_id', '=', 'customers.id')
+                        ->orderBy('customers.full_name', 'asc')
+                        ->select('serve_data.*');
+                    break;
+                case 'customer_name_desc':
+                    $query->join('customers', 'serve_data.customer_id', '=', 'customers.id')
+                        ->orderBy('customers.full_name', 'desc')
+                        ->select('serve_data.*');
+                    break;
+                case 'serve_id_asc':
+                    $query->orderBy('serve_id', 'asc');
+                    break;
+                case 'serve_id_desc':
+                    $query->orderBy('serve_id', 'desc');
+                    break;
+                case 'created_at_desc':
+                default:
+                    $query->orderBy('created_at', 'desc');
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
         if ($request->has('export') && $request->export === 'csv') {
             return $this->exportToCSV($query->get());
         }
-
-        // Pagination
         $perPage = $request->get('per_page', 10);
         $currentPage = $request->get('page', 1);
 
@@ -76,12 +100,11 @@ class ServeDataController extends Controller
                 'total' => $total,
                 'per_page' => $perPage,
                 'current_page' => $currentPage,
-                'last_page' => ceil($total / $perPage)
+                'last_page' => $results->lastPage()
             ]
         ]);
     }
 
-    // Get single serve data
     public function show($id)
     {
         $serveData = ServeData::with(['customer', 'order', 'serve'])->find($id);
@@ -110,14 +133,10 @@ class ServeDataController extends Controller
             ], 404);
         }
 
-        // If you're returning JSON for an API
         return response()->json([
             'success' => true,
             'data' => $serveData
         ]);
-
-        // Or if you want to return a view (for a web page)
-        // return view('serve-data.edit', compact('serveData'));
     }
 
     // Create new serve data
@@ -319,48 +338,51 @@ class ServeDataController extends Controller
     // Export to CSV
     private function exportToCSV($data)
     {
+       $filename = 'serve-data-' . date('Y-m-d-H-i-s') . '.csv';
+
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="serve-data-' . date('Y-m-d') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
         $callback = function() use ($data) {
             $file = fopen('php://output', 'w');
 
-            // Add BOM for UTF-8
+            // Add UTF-8 BOM for Excel compatibility
             fwrite($file, "\xEF\xBB\xBF");
 
             // Headers
             fputcsv($file, [
-                'QVSE ID',
-                'QVCST ID',
-                'Customer Name',
-                'QVCR ID',
-                'Total Build',
-                'Tier',
-                'Package Price',
-                'QVSE CID',
-                'Start Serve',
-                'Upgrade PCE',
-                'Upgrade Notes',
-                'Created Date'
+                'Serve ID', 'Customer Name', 'Customer ID', 'Customer Phone',
+                'Order ID', 'Order Total', 'Serve Type', 'Base Price',
+                'Upgrade Enabled', 'Upgrade Price', 'Total Price', 'Status',
+                'QVSE CID', 'Notes', 'Upgrade Notes', 'Created Date'
             ]);
 
-            // Data rows
+            // Rows
             foreach ($data as $serve) {
+                $totalPrice = $serve->serve ? $serve->serve->fee : 0;
+                if ($serve->upgrade_pce_enabled) {
+                    $totalPrice += ($serve->upgrade_price ?: 69.90);
+                }
+
                 fputcsv($file, [
                     $serve->serve_id,
-                    $serve->customer->customer_id ?? 'N/A',
-                    $serve->customer->full_name ?? 'N/A',
-                    $serve->order->order_id ?? 'N/A',
-                    $serve->order->total ?? '0.00',
-                    $serve->serve->name ?? 'N/A',
-                    $serve->serve->fee ?? '0.00',
-                    $serve->qvse_cid,
+                    $serve->customer->full_name ?? '',
+                    $serve->customer->customer_id ?? '',
+                    $serve->customer->phone ?? '',
+                    $serve->order->order_id ?? '',
+                    $serve->order->total ?? 0,
+                    $serve->serve->name ?? '',
+                    $serve->serve->fee ?? 0,
+                    $serve->upgrade_pce_enabled ? 'Yes' : 'No',
+                    $serve->upgrade_price ?? '',
+                    $totalPrice,
                     $serve->start_serve_enabled ? 'Started' : 'Not Started',
-                    $serve->upgrade_pce_enabled ? 'Enabled' : 'Disabled',
-                    $serve->upgrade_pce_notes ?? '',
-                    $serve->created_at->format('Y-m-d H:i:s')
+                    $serve->qvse_cid,
+                    $serve->notes,
+                    $serve->upgrade_pce_notes,
+                    $serve->created_at
                 ]);
             }
 

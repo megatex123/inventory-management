@@ -23,7 +23,7 @@
     <ul class="navbar-nav sidebar sidebar-light accordion" v-if="$route.meta.layout === 'app'" id="accordionSidebar">
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
-          <img src="{{asset('backend')}}/img/logo/logo2.png">
+          <img src="{{asset('backend')}}/img/logo/logo.png">
         </div>
         <div class="sidebar-brand-text mx-3">Quivitech</div>
       </a>
@@ -156,6 +156,12 @@
 
             <hr class="sidebar-divider my-1">
 
+            <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Warranties</h6>
+            <router-link class="collapse-item" to="/care-warranty">All QuiviCare Warranties</router-link>
+            <router-link class="collapse-item" to="/care-warranty/create">Add QuiviCare Warranties</router-link>
+
+            <hr class="sidebar-divider my-1">
+
             <h6 class="collapse-header text-primary font-weight-bold">Lookup Tables</h6>
             <router-link class="collapse-item" to="/care">QuiviCare Lookup</router-link>
             <router-link class="collapse-item" to="/care/create">Add QuiviCare Lookup</router-link>
@@ -285,9 +291,14 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
-  <script src="{{asset('js/app.js')}}"></script>
+  {{-- <script src="{{asset('js/app.js')}}"></script>
   <script src="{{asset('backend')}}/vendor/jquery/jquery.min.js"></script>
   <script src="{{asset('backend')}}/vendor/jquery-easing/jquery.easing.min.js"></script>
-  <script src="{{asset('backend')}}/js/ruang-admin.min.js"></script>
+  <script src="{{asset('backend')}}/js/ruang-admin.min.js"></script> --}}
+    <script src="{{asset('backend')}}/vendor/jquery/jquery.min.js"></script>
+    <script src="{{asset('backend')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{asset('backend')}}/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="{{asset('backend')}}/js/ruang-admin.min.js"></script>
+    <script src="{{asset('js/app.js')}}"></script>
 </body>
 </html>

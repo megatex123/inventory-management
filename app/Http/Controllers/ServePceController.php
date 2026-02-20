@@ -64,15 +64,13 @@ class ServePceController extends Controller
         $servePces = $query->paginate($perPage, ['*'], 'page', $page);
 
         // Transform each item
-        $transformedData = $servePces->getCollection()->map(function ($item) {
+        $transformedData = collect($servePces->items())->map(function ($item) {
             return $this->formatServePceItem($item);
         });
 
-        $servePces->setCollection($transformedData);
-
         return response()->json([
             'success' => true,
-            'data' => $servePces->items(),
+            'data' => $transformedData,
             'meta' => [
                 'total' => $servePces->total(),
                 'per_page' => $servePces->perPage(),
@@ -198,7 +196,7 @@ class ServePceController extends Controller
     public function show($id)
     {
         try {
-            $servePce = ServePce::with(['serveData.customer'])->findOrFail($id);
+            $servePce = ServePce::with(['serveData'])->find($id);
             $formattedItem = $this->formatServePceItem($servePce);
 
             return response()->json([
@@ -222,7 +220,7 @@ class ServePceController extends Controller
             $servePce = ServePce::findOrFail($id);
 
             $validator = Validator::make($request->all(), [
-                'serve_data_id' => 'sometimes|required|exists:serve_data,id',
+                // 'serve_data_id' => 'sometimes|required|exists:serve_data,id',
                 'date_start' => 'sometimes|required|date',
                 'three_year_warranty' => 'nullable|string|max:255',
                 'unlimited_troubleshooting' => 'nullable|string|max:255',
@@ -402,6 +400,7 @@ class ServePceController extends Controller
         if ($servePce->relationLoaded('serveData') && $servePce->serveData) {
             $item['qvse_cid'] = $servePce->serveData->qvse_cid;
             $item['serve_data'] = $servePce->serveData;
+            $item['serve_data_id'] = $servePce->serveData->serve_id;
 
             // Add customer info if loaded
             if ($servePce->serveData->relationLoaded('customer') && $servePce->serveData->customer) {

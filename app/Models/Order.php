@@ -6,6 +6,8 @@ use App\Models\Customers;
 use App\Models\Craft;
 use App\Models\Serves;
 use App\Models\Care;
+use App\Models\ServeData;
+use App\Models\CareData;
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +20,7 @@ class Order extends Model
     use SoftDeletes;
     protected $fillable = [
         'order_id',
+        'invoice_id',
         'customer_id',
         'qty',
         'sub_total',
@@ -49,9 +52,19 @@ class Order extends Model
         return $this->belongsTo(Serves::class);
     }
 
+    public function serve_data()
+    {
+        return $this->hasMany(ServeData::class,'order_id','id');
+    }
+
     public function care()
     {
         return $this->belongsTo(Care::class);
+    }
+
+    public function care_data()
+    {
+        return $this->hasMany(CareData::class,'order_id','id');
     }
 
     public function getServeNameAttribute()

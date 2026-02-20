@@ -79,9 +79,6 @@ Route::post('/orderdone', 'PosController@orderdone');
 Route::get('/orders', 'OrderController@getorders');
 Route::get('/orders/details/{id}', 'OrderController@details');
 Route::get('/orders/orderdetails/{id}', 'OrderController@orderdetails');
-Route::put('/order/{id}/categories', 'OrderController@updatecraft');
-Route::put('/order/{id}/serve', 'OrderController@updateserve');
-Route::put('/order/{id}/care', 'OrderController@updatecare');
 Route::put('/order/{id}/approve', 'OrderController@updateApprove');
 Route::get('/order/edit/{id}', 'OrderController@edit')->name('order.edit');
 Route::post('/order/update/{id}', 'OrderController@updateOrderDetails')->name('order.update');
@@ -137,6 +134,7 @@ Route::prefix('serve-data')->group(function () {
     Route::get('/search', 'ServeDataController@search');
     Route::get('/customer/{customerId}', 'ServeDataController@byCustomer');
     Route::get('/order/{orderId}', 'ServeDataController@byOrder');
+    Route::get('/export', 'ServeDataController@exportToCSV');
 
     Route::prefix('{id}')->group(function () {
         Route::get('/', 'ServeDataController@show');
@@ -149,10 +147,45 @@ Route::prefix('serve-data')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| CARE DATA ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('care-data')->group(function () {
+    Route::get('/', 'CareDataController@index');
+    Route::post('/', 'CareDataController@store');
+    Route::get('/statistics', 'CareDataController@statistics');
+    Route::get('/search', 'CareDataController@search');
+    Route::get('/customer/{customerId}', 'CareDataController@byCustomer');
+    Route::get('/order/{orderId}', 'CareDataController@byOrder');
+    Route::get('/export', 'CareDataController@exportToCSV');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'CareDataController@show');
+        Route::put('/', 'CareDataController@update');
+        Route::patch('/', 'CareDataController@update');
+        Route::delete('/', 'CareDataController@destroy');
+        Route::post('/restore', 'CareDataController@restore');
+    });
+});
+
+Route::prefix('care-warranty')->group(function () {
+    // Basic CRUD routes
+    Route::get('/', 'CareWarrantyController@index');
+    Route::post('/', 'CareWarrantyController@store');
+    Route::get('/statistics', 'CareWarrantyController@statistics');
+    Route::post('/bulk-update-eligibility', 'CareWarrantyController@bulkUpdateEligibility');
+    Route::get('/{id}', 'CareWarrantyController@show');
+    Route::put('/{id}', 'CareWarrantyController@update');
+    Route::delete('/{id}', 'CareWarrantyController@destroy');
+    Route::get('/next-id', 'CareWarrantyController@getNextId');
+});
+
+/*
+|--------------------------------------------------------------------------
 | SERVE PCE ROUTES (Corrected - no duplicate routes)
 |--------------------------------------------------------------------------
 */
-Route::prefix('serve-pce')->group(function () {
+Route::prefix('serve-pce')->group(function () {  // <-- This should be 'serve-pces'
     Route::get('/', 'ServePceController@index');
     Route::post('/', 'ServePceController@store');
     Route::get('/statistics', 'ServePceController@statistics');

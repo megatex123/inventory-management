@@ -1,20 +1,19 @@
 <template>
     <div class="row justify-content-center">
         <div class="col-xl-12 col-lg-12 col-md-12">
-            <div class="card shadow-sm my-5">
+            <div class="card shadow-sm">
                 <div class="card-body p-0">
                     <div class="row">
                         <div class="col-lg-12">
-                            <!-- Statistics Section -->
                             <div class="card mb-4">
                                 <div class="card-header bg-primary text-white">
                                     <h5 class="m-0 font-weight-bold">
-                                        <i class="fas fa-chart-bar mr-2"></i>Order Statistics
+                                        <i class="fas fa-chart-bar mr-2"></i>QuiviCraft Statistics
                                     </h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-3 col-sm-6 mb-4" v-for="stat in statistics.overview" :key="stat.label">
+                                        <div class="col-md-4 col-sm-6 mb-4" v-for="stat in statistics.overview" :key="stat.label">
                                             <div class="stat-card shadow-sm p-3 border rounded">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
@@ -31,8 +30,8 @@
                                     </div>
 
                                     <!-- Quick Stats -->
-                                    <div class="row mt-4">
-                                        <div class="col-md-6">
+                                    <div class="row mt-12">
+                                        <div class="col-md-12">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h6 class="mb-0">Today's Summary</h6>
@@ -51,29 +50,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h6 class="mb-0">Status Distribution</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row text-center">
-                                                        <div class="col-4">
-                                                            <h5 class="text-success">{{ getStatValue('active_orders') }}</h5>
-                                                            <small class="text-muted">Active</small>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <h5 class="text-warning">{{ getStatValue('expired_orders') }}</h5>
-                                                            <small class="text-muted">Expired</small>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <h5 class="text-secondary">{{ getStatValue('total_draft') }}</h5>
-                                                            <small class="text-muted">Draft</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +58,7 @@
                             <div class="card mb-4">
                                 <div class="card-header bg-light">
                                     <h5 class="m-0 font-weight-bold text-primary">
-                                        <i class="fas fa-filter mr-2"></i>Filter Orders
+                                        <i class="fas fa-filter mr-2"></i>Filter QuiviCraft
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -153,7 +129,7 @@
                             <!-- Orders Table -->
                             <div class="card">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h5 class="m-0 font-weight-bold text-primary">All Orders</h5>
+                                    <h5 class="m-0 font-weight-bold text-primary">QuiviCraft List</h5>
                                     <div>
                                         <button class="btn btn-sm btn-success mr-2" @click="exportToExcel">
                                             <i class="fas fa-file-excel mr-1"></i> Export
@@ -167,8 +143,7 @@
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>Order ID</th>
-                                                <th>Customer</th>
+                                                <th>Order</th>
                                                 <th>Payment</th>
                                                 <th>Date</th>
                                                 <th>QuiviServe</th>
@@ -181,9 +156,7 @@
                                         <tbody>
                                             <tr v-for='order in paginatedOrders' :key="order.id">
                                                 <td>
-                                                    <span class="badge badge-light">{{ order.order_id }}</span>
-                                                </td>
-                                                <td>
+                                                    <span class="badge badge-light">{{ order.order_id }}</span><br><br>
                                                     <strong>{{ order.customer && order.customer.full_name ? order.customer.full_name : 'N/A' }}</strong><br>
                                                     <small class="text-muted">{{ order.customer && order.customer.email ? order.customer.email : '' }}</small>
                                                 </td>
@@ -199,9 +172,7 @@
                                                     }}</small>
                                                 </td>
                                                 <td>
-                                                    <small class="text-muted">Order:</small> {{ formatDate(order.order_date) }}
-                                                    <br>
-                                                    <small class="text-muted">Created:</small> {{ formatDate(order.created_at) }}
+                                                    {{ formatDate(order.order_date) }}
                                                 </td>
                                                 <td>
                                                     <span
@@ -224,6 +195,9 @@
                                                 <td>
                                                     <span :class="getStatusBadgeClass(order)" class="badge">
                                                         {{ getStatusText(order) }}
+                                                    </span>
+                                                    <span :class="getStatusBadgeClass(order)" class="badge" v-if="order.invoice_id ">
+                                                        {{ order.invoice_id }}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -474,6 +448,24 @@ export default {
                             iconClass: 'bg-warning',
                             class: 'text-warning',
                             description: 'Draft orders'
+                        },
+                        {
+                            key: 'active_orders',
+                            label: 'Active Orders',
+                            value: res.data.overview ? res.data.overview.active_orders : 0,
+                            icon: 'fa-check-circle',
+                            iconClass: 'bg-success',
+                            class: 'text-success',
+                            description: 'Active Orders (within 6 months)'
+                        },
+                        {
+                            key: 'expired_orders',
+                            label: 'Expired Orders',
+                            value: res.data.overview ? res.data.overview.expired_orders : 0,
+                            icon: 'fa-clock',
+                            iconClass: 'bg-danger',
+                            class: 'text-danger',
+                            description: 'Expired Orders (older than 6 months)'
                         }
                     ];
                 })
@@ -669,13 +661,598 @@ export default {
             });
         },
         exportToExcel() {
-            // Implement export functionality here
             Swal.fire({
-                icon: 'info',
-                title: 'Export Feature',
-                text: 'Export to Excel functionality will be implemented here.',
-                confirmButtonText: 'OK'
+                title: 'Export Options',
+                html: `
+                    <div class="text-left">
+                        <p>Choose export format:</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportFormat" id="formatExcel" value="excel" checked>
+                            <label class="form-check-label" for="formatExcel">
+                                Excel/HTML Format (Styled Report)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportFormat" id="formatCSV" value="csv">
+                            <label class="form-check-label" for="formatCSV">
+                                Simple CSV Format
+                            </label>
+                        </div>
+                        <br>
+                        <p>Choose what to export:</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
+                            <label class="form-check-label" for="exportFiltered">
+                                Export filtered data (${this.filteredOrders.length} records)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exportScope" id="exportAll" value="all">
+                            <label class="form-check-label" for="exportAll">
+                                Export all data (${this.orders.length} records)
+                            </label>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Export',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const format = document.querySelector('input[name="exportFormat"]:checked').value;
+                    const scope = document.querySelector('input[name="exportScope"]:checked').value;
+                    return { format, scope };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { format, scope } = result.value;
+
+                    if (format === 'excel') {
+                        this.generateStyledExcelReport(scope);
+                    } else {
+                        this.generateSimpleCSV(scope);
+                    }
+                }
             });
+        },
+        async generateStyledExcelReport(scope) {
+            Swal.fire({
+                title: 'Generating Report...',
+                text: 'Please wait while we prepare your export',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                let dataToExport;
+                if (scope === 'filtered') {
+                    // Get ALL filtered data
+                    dataToExport = await this.getAllFilteredOrders();
+                } else {
+                    // Fetch all data without any filters
+                    const params = { per_page: 10000 };
+                    const res = await axios.get('/api/orders', { params });
+                    dataToExport = res.data;
+                }
+
+                if (!dataToExport || dataToExport.length === 0) {
+                    Swal.close();
+                    Swal.fire('No Data', 'There is no data to export', 'warning');
+                    return;
+                }
+
+                // Calculate summary statistics
+                const totalOrders = dataToExport.length;
+                const totalRevenue = dataToExport.reduce((sum, order) => sum + (parseFloat(order.total) || 0), 0);
+                const totalFees = dataToExport.reduce((sum, order) => {
+                    return sum + (
+                        (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
+                        (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
+                        (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                    );
+                }, 0);
+                const approvedOrders = dataToExport.filter(order => order.approve == 1).length;
+                const rejectedOrders = dataToExport.filter(order => order.approve == 0).length;
+                const draftOrders = dataToExport.filter(order => order.approve === null || order.approve === '' || order.approve === undefined).length;
+
+                const exportDate = new Date().toLocaleString('en-MY', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Generate filter summary
+                const filterSummary = [];
+                if (this.filters.search) filterSummary.push(`Search: "${this.filters.search}"`);
+                if (this.filters.approve) {
+                    const statusMap = {
+                        '1': 'Approved',
+                        '0': 'Rejected',
+                        'null': 'Draft'
+                    };
+                    filterSummary.push(`Status: ${statusMap[this.filters.approve] || this.filters.approve}`);
+                }
+                if (this.filters.date_from) filterSummary.push(`From: ${this.filters.date_from}`);
+                if (this.filters.date_to) filterSummary.push(`To: ${this.filters.date_to}`);
+
+                const htmlContent = `
+                <html>
+                <head>
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    <title>QuiviCraft Report</title>
+                    <style>
+                        body {
+                            font-family: Arial, Helvetica, sans-serif;
+                            margin: 20px;
+                            background-color: #ffffff;
+                        }
+                        h1 {
+                            color: #4e73df;
+                            text-align: center;
+                            font-size: 24px;
+                            margin-bottom: 5px;
+                        }
+                        h3 {
+                            text-align: center;
+                            color: #858796;
+                            font-size: 14px;
+                            margin-top: 0;
+                            margin-bottom: 20px;
+                            font-weight: normal;
+                        }
+                        .stats-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: black;
+                        }
+                        .stats-table td {
+                            padding: 15px;
+                            text-align: center;
+                            border: none;
+                        }
+                        .stats-label {
+                            font-size: 12px;
+                            text-transform: uppercase;
+                        }
+                        .stats-value {
+                            font-size: 20px;
+                            font-weight: bold;
+                            margin-top: 5px;
+                        }
+                        .filter-section {
+                            background-color: #f8f9fc;
+                            padding: 15px;
+                            border-radius: 8px;
+                            margin-bottom: 20px;
+                            border: 1px solid #e3e6f0;
+                        }
+                        .filter-title {
+                            font-size: 14px;
+                            font-weight: bold;
+                            color: #4e73df;
+                            margin-bottom: 10px;
+                        }
+                        .filter-badge {
+                            background-color: #4e73df;
+                            color: white;
+                            padding: 5px 10px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            display: inline-block;
+                            margin-right: 5px;
+                            margin-bottom: 5px;
+                        }
+                        .generated-info {
+                            font-size: 11px;
+                            color: #858796;
+                            text-align: right;
+                            margin-bottom: 10px;
+                        }
+                        table.data-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                            font-size: 12px;
+                        }
+                        table.data-table th {
+                            background-color: #4e73df;
+                            color: white;
+                            font-weight: bold;
+                            padding: 12px;
+                            text-align: center;
+                            border: 1px solid #ddd;
+                        }
+                        table.data-table td {
+                            padding: 8px;
+                            border: 1px solid #ddd;
+                            text-align: center;
+                            color: #000000; /* Black text for all cells */
+                        }
+                        table.data-table tr:nth-child(even) {
+                            background-color: #f2f2f2;
+                        }
+                        .total-row {
+                            font-weight: bold;
+                            background-color: #4e73df !important;
+                            color: white;
+                        }
+                        .total-row td {
+                            color: white !important; /* Keep total row white text */
+                        }
+                        .footer {
+                            text-align: center;
+                            font-size: 10px;
+                            color: #95a5a6;
+                            margin-top: 30px;
+                            padding-top: 10px;
+                            border-top: 1px solid #ecf0f1;
+                        }
+                        .text-right { text-align: right; }
+                        .text-left { text-align: left; }
+                        .text-center { text-align: center; }
+                        .text-black { color: #000000; } /* Utility class for black text */
+                    </style>
+                </head>
+                <body>
+                    <h1>ORDERS REPORT</h1>
+                    <h3>Comprehensive Order Data Analysis</h3>
+
+                    <!-- Statistics Table -->
+                    <table class="stats-table" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td><div class="stats-label">Total Orders</div><div class="stats-value">${totalOrders}</div></td>
+                            <td><div class="stats-label">Total Revenue</div><div class="stats-value">RM ${this.formatNumber(totalRevenue)}</div></td>
+                            <td><div class="stats-label">Total Fees</div><div class="stats-value">RM ${this.formatNumber(totalFees)}</div></td>
+                            <td><div class="stats-label">Approved</div><div class="stats-value">${approvedOrders}</div></td>
+                            <td><div class="stats-label">Draft</div><div class="stats-value">${draftOrders}</div></td>
+                            <td><div class="stats-label">Rejected</div><div class="stats-value">${rejectedOrders}</div></td>
+                        </tr>
+                    </table>
+
+                    <div class="generated-info">
+                        Generated on: ${exportDate}
+                    </div>
+
+                    <!-- Main Data Table -->
+                    <table class="data-table" cellspacing="0" cellpadding="0" border="1">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Order ID</th>
+                                <th>Customer Name</th>
+                                <th>Customer Email</th>
+                                <th>Order Date</th>
+                                <th>Total (RM)</th>
+                                <th>QuiviServe</th>
+                                <th>QuiviCare</th>
+                                <th>Status</th>
+                                <th>Time Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${dataToExport.map((order, index) => {
+                                const statusText = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' :
+                                                order.approve == 1 ? 'Approved' : 'Rejected';
+
+                                const serveStyle = order.serve && order.serve.colour ?
+                                    `background-color: ${order.serve.colour}; color: #000000;` :
+                                    'background-color: #f2f2f2; color: #000000;';
+
+                                return `
+                                <tr>
+                                    <td class="text-center">${index + 1}</td>
+                                    <td class="text-center"><strong>${this.escapeHtml(order.order_id || 'N/A')}</strong></td>
+                                    <td class="text-left">${this.escapeHtml(order.customer?.full_name || 'N/A')}</td>
+                                    <td class="text-left">${this.escapeHtml(order.customer?.email || 'N/A')}</td>
+                                    <td class="text-center">${this.formatDate(order.order_date)}</td>
+                                    <td class="text-right"><strong>RM ${this.formatNumber(order.total || 0)}</strong></td>
+                                    <td class="text-center">
+                                        <span style="${serveStyle} padding: 3px 8px; border-radius: 20px; color: #000000;">
+                                            ${this.escapeHtml(order.serve?.name || 'N/A')}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span style="background-color: #f2f2f2; padding: 3px 8px; border-radius: 20px; color: #000000;">
+                                            ${this.escapeHtml(order.care?.name || 'N/A')}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span style="color: #000000;">
+                                            ${statusText}
+                                        </span>
+                                        ${order.invoice_id ? `<br><small>${this.escapeHtml(order.invoice_id)}</small>` : ''}
+                                    </td>
+                                    <td class="text-center">
+                                        ${order.approve == 1 && order.approved_at ?
+                                            `<span style="color: #000000;">
+                                                ${this.escapeHtml(order.time_remaining || 'N/A')}
+                                            </span>` :
+                                            '-'
+                                        }
+                                    </td>
+                                </tr>
+                            `}).join('')}
+
+                            <tr class="total-row">
+                                <td colspan="5" class="text-center"><strong>GRAND TOTAL</strong></td>
+                                <td class="text-right"><strong>RM ${this.formatNumber(totalRevenue)}</strong></td>
+                                <td colspan="4"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="footer">
+                        <p>Generated by Order Management System | ${exportDate}</p>
+                        <p>This is a computer-generated report. No signature is required.</p>
+                        <p>Total Pages: 1 | Confidential</p>
+                    </div>
+                </body>
+                </html>`;
+
+                const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                const date = new Date().toISOString().split('T')[0];
+                const filterType = scope === 'filtered' ? 'Filtered' : 'All';
+                const filename = `Orders_Report_${date}_${filterType}.xls`;
+
+                link.href = url;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                window.URL.revokeObjectURL(url);
+
+                Swal.close();
+                Swal.fire({
+                    title: 'Export Complete!',
+                    text: `Report "${filename}" has been downloaded`,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+            } catch (error) {
+                console.error('Export error:', error);
+                Swal.fire({
+                    title: 'Export Failed!',
+                    text: error.response?.data?.message || error.message || 'Failed to generate report',
+                    icon: 'error'
+                });
+            }
+        },
+        async getAllFilteredOrders() {
+            try {
+                const params = {
+                    ...this.filters,
+                    per_page: 10000,
+                    page: 1
+                };
+
+                // Handle null value for draft
+                if (params.approve === 'null') {
+                    params.approve = null;
+                }
+
+                // Remove empty filters
+                Object.keys(params).forEach(key => {
+                    if (params[key] === '' || params[key] === null || params[key] === undefined) {
+                        delete params[key];
+                    }
+                });
+
+                console.log('Fetching all filtered orders with params:', params);
+
+                const res = await axios.get('/api/orders', { params });
+
+                let filteredData = res.data || [];
+
+                // Apply any client-side filtering if needed
+                if (this.filters.search) {
+                    const search = this.filters.search.toLowerCase();
+                    filteredData = filteredData.filter(order =>
+                        (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
+                        (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
+                        (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
+                    );
+                }
+
+                // Apply date filters again to ensure consistency
+                if (this.filters.date_from) {
+                    filteredData = filteredData.filter(order =>
+                        order.order_date && new Date(order.order_date) >= new Date(this.filters.date_from)
+                    );
+                }
+                if (this.filters.date_to) {
+                    filteredData = filteredData.filter(order =>
+                        order.order_date && new Date(order.order_date) <= new Date(this.filters.date_to + 'T23:59:59')
+                    );
+                }
+
+                console.log(`Fetched ${filteredData.length} records for export`);
+                return filteredData;
+
+            } catch (error) {
+                console.error('Error fetching all filtered orders:', error);
+                // Fallback to client-side filtering from current data
+                return this.getFilteredOrdersForExport();
+            }
+        },
+
+        generateSimpleCSV(scope) {
+            Swal.fire({
+                title: 'Generating CSV...',
+                text: 'Please wait while we prepare your export',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                let dataToExport;
+                if (scope === 'filtered') {
+                    dataToExport = this.filteredOrders;
+                } else {
+                    dataToExport = this.orders;
+                }
+
+                if (!dataToExport || dataToExport.length === 0) {
+                    Swal.close();
+                    Swal.fire('No Data', 'There is no data to export', 'warning');
+                    return;
+                }
+
+                const headers = [
+                    'No.',
+                    'Order ID',
+                    'Customer Name',
+                    'Customer Email',
+                    'Order Date',
+                    'Total Amount (RM)',
+                    'Fees (RM)',
+                    'QuiviServe',
+                    'QuiviCare',
+                    'Status',
+                    'Invoice ID',
+                    'Time Remaining',
+                    'Approved At',
+                    'Created At'
+                ];
+
+                const rows = dataToExport.map((order, index) => {
+                    const fees = (
+                        (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
+                        (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
+                        (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                    );
+
+                    const status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' :
+                                order.approve == 1 ? 'Approved' : 'Rejected';
+
+                    return [
+                        index + 1,
+                        order.order_id || '',
+                        order.customer?.full_name || '',
+                        order.customer?.email || '',
+                        this.formatDate(order.order_date),
+                        order.total || '0',
+                        fees.toFixed(2),
+                        order.serve?.name || 'N/A',
+                        order.care?.name || 'N/A',
+                        status,
+                        order.invoice_id || '',
+                        order.time_remaining || 'N/A',
+                        order.approved_at ? this.formatDate(order.approved_at) : '',
+                        order.created_at ? this.formatDate(order.created_at) : ''
+                    ].map(cell => `"${cell}"`);
+                });
+
+                const csvContent = [
+                    headers.join(','),
+                    ...rows.map(row => row.join(','))
+                ].join('\n');
+
+                const BOM = '\uFEFF';
+                const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                const date = new Date().toISOString().split('T')[0];
+                const filterType = scope === 'filtered' ? 'Filtered' : 'All';
+                const filename = `QuiviCraft_Data_${date}_${filterType}.csv`;
+
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                URL.revokeObjectURL(url);
+
+                Swal.close();
+                Swal.fire({
+                    title: 'Export Complete!',
+                    text: 'CSV file has been generated and downloaded',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+            } catch (error) {
+                console.error('CSV export error:', error);
+                Swal.fire({
+                    title: 'Export Failed!',
+                    text: error.message || 'Failed to generate CSV',
+                    icon: 'error'
+                });
+            }
+        },
+
+        getFilteredOrdersForExport() {
+            let filtered = [...this.orders];
+
+            // Search filter
+            if (this.filters.search) {
+                const search = this.filters.search.toLowerCase();
+                filtered = filtered.filter(order =>
+                    (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
+                    (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
+                    (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
+                );
+            }
+
+            // Approve status filter
+            if (this.filters.approve !== '') {
+                if (this.filters.approve === 'null') {
+                    filtered = filtered.filter(order =>
+                        order.approve === null ||
+                        order.approve === '' ||
+                        order.approve === undefined
+                    );
+                } else {
+                    const approveValue = parseInt(this.filters.approve);
+                    filtered = filtered.filter(order => order.approve == approveValue);
+                }
+            }
+
+            // Date range filter
+            if (this.filters.date_from) {
+                filtered = filtered.filter(order =>
+                    order.order_date && new Date(order.order_date) >= new Date(this.filters.date_from)
+                );
+            }
+            if (this.filters.date_to) {
+                filtered = filtered.filter(order =>
+                    order.order_date && new Date(order.order_date) <= new Date(this.filters.date_to + 'T23:59:59')
+                );
+            }
+
+            return filtered;
+        },
+
+        escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, m => map[m]);
         },
         refreshData() {
             this.getOrders();

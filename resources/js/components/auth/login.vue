@@ -5,7 +5,7 @@
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="#">
           <img
-            src="/backend/img/logo/logo2.png"
+            src="/backend/img/logo/logo.png"
             alt="QuiviTech Logo"
             style="height: 32px; margin-right: 8px;"
           />

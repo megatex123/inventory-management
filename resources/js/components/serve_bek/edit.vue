@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>Edit ServeBek #{{ serveBekId }}</h1>
       <div>
-        <router-link :to="{ name: 'serve-bek.index' }" class="btn btn-outline-secondary mr-2">
+        <router-link to="/serve-bek" class="btn btn-outline-secondary mr-2">
           <i class="fas fa-arrow-left"></i> Back to List
         </router-link>
         <button
@@ -288,7 +288,7 @@
           </div>
 
           <!-- Timestamps -->
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-6">
               <div class="form-group">
                 <label>Created At</label>
@@ -313,7 +313,7 @@
                 />
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Form Actions -->
           <div class="form-actions mt-4">
@@ -325,16 +325,16 @@
               <span v-if="submitting" class="spinner-border spinner-border-sm"></span>
               {{ submitting ? 'Saving...' : 'Save Changes' }}
             </button>
-            <button
+            <!-- <button
               type="button"
               @click="resetForm"
               class="btn btn-outline-secondary ml-2"
               :disabled="submitting"
             >
               Reset
-            </button>
+            </button> -->
             <router-link
-              :to="{ name: 'serve-bek.index' }"
+              to="/serve-bek"
               class="btn btn-outline-secondary ml-2"
               :disabled="submitting"
             >
@@ -383,10 +383,7 @@
 export default {
   name: 'ServeBekEdit',
   props: {
-    id: {
-      type: [String, Number],
-      required: true
-    }
+    id: '',
   },
   data() {
     return {
@@ -499,7 +496,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.get(`/api/serve-beks/${this.serveBekId}`);
+        const response = await axios.get(`/api/serve-beks/${this.$route.params.id}`);
         this.serveBekData = response.data.data;
         this.mapDataToForm();
       } catch (error) {
@@ -565,7 +562,7 @@ export default {
       this.serverErrors = null;
 
       try {
-        const response = await axios.put(`/api/serve-beks/${this.serveBekId}`, this.form);
+        const response = await axios.put(`/api/serve-beks/${this.$route.params.id}`, this.form);
 
         this.$toast.success(response.data.message || 'ServeBek updated successfully');
 
@@ -603,7 +600,7 @@ export default {
       this.deleting = true;
 
       try {
-        await axios.delete(`/api/serve-beks/${this.serveBekId}`);
+        await axios.delete(`/api/serve-beks/${this.$route.params.id}`);
 
         this.$toast.success('ServeBek deleted successfully');
         this.showDeleteModal = false;

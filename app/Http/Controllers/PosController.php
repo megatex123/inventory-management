@@ -28,10 +28,12 @@ class PosController extends Controller
   }
 
 
-public function orderdone(Request $request){
+public function orderdone(Request $request)
+{
     $validateData = $request->validate([
-        'order_id' => 'required',
         'customer_id' => 'required',
+        'total_qty' => 'required|integer',
+        'total_amount' => 'required|numeric',
     ]);
 
     $cartProducts = DB::table('pos')->get();
@@ -101,7 +103,11 @@ public function orderdone(Request $request){
     // Clear pos table
     DB::table('pos')->delete();
 
-    return response('done');
+    return response()->json([
+        'success' => true,
+        'message' => 'Order placed successfully',
+        'order_id' => $orderId
+    ]);
 }
 
 

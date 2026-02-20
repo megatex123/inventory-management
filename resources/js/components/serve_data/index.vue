@@ -25,7 +25,7 @@
                 <i class="fas fa-server"></i>
               </div>
               <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Total Serves</h6>
+                <h6 class="card-title text-uppercase text-muted mb-0">Total QuiviServe</h6>
                 <span class="h4 font-weight-bold mb-0">{{ stats.total_serves || 0 }}</span>
               </div>
             </div>
@@ -63,13 +63,13 @@
                 <i class="fas fa-user-check"></i>
               </div>
               <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Started</h6>
+                <h6 class="card-title text-uppercase text-muted mb-0">Total QuiviServe Today</h6>
                 <span class="h4 font-weight-bold mb-0">{{ stats.total_started || 0 }}</span>
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
               <span class="text-success mr-2"><i class="fas fa-play-circle"></i> Active</span>
-              <span class="text-nowrap">Serves</span>
+              <span class="text-nowrap">Serves Today</span>
             </p>
           </div>
         </div>
@@ -82,55 +82,17 @@
                 <i class="fas fa-users"></i>
               </div>
               <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Customers</h6>
+                <h6 class="card-title text-uppercase text-muted mb-0">Total Customers</h6>
                 <span class="h4 font-weight-bold mb-0">{{ stats.unique_customers || 0 }}</span>
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
               <span class="text-info mr-2"><i class="fas fa-user-friends"></i> Total</span>
-              <span class="text-nowrap">Unique</span>
+              <span class="text-nowrap">Active Customer</span>
             </p>
           </div>
         </div>
       </div>
-      <!-- <div class="col-xl-2 col-md-4 mb-3">
-        <div class="card card-stats h-100">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
-                <i class="fas fa-money-bill-wave"></i>
-              </div>
-              <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Revenue</h6>
-                <span class="h4 font-weight-bold mb-0 text-nowrap">RM{{ formatNumber(stats.total_revenue || 0) }}</span>
-              </div>
-            </div>
-            <p class="mt-3 mb-0 text-sm">
-              <span class="text-success mr-2"><i class="fas fa-chart-line"></i> RM{{ avgRevenuePerServe }}</span>
-              <span class="text-nowrap">Avg/Serve</span>
-            </p>
-          </div>
-        </div>
-      </div> -->
-      <!-- <div class="col-xl-2 col-md-4 mb-3">
-        <div class="card card-stats h-100">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="icon icon-shape bg-gradient-secondary text-white rounded-circle shadow">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Performance</h6>
-                <span class="h4 font-weight-bold mb-0">{{ upgradePercentage }}%</span>
-              </div>
-            </div>
-            <p class="mt-3 mb-0 text-sm">
-              <span class="text-success mr-2"><i class="fas fa-trending-up"></i> Rate</span>
-              <span class="text-nowrap">Upgrade Success</span>
-            </p>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <!-- Filters Card -->
@@ -309,14 +271,14 @@
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Serve Data List</h5>
         <div class="d-flex align-items-center">
           <span class="text-muted mr-3">
-            Showing {{ filteredCount }} of {{ total }} records
+            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} records
             <span v-if="filters.search" class="text-primary">
               for "{{ filters.search }}"
             </span>
           </span>
           <div class="btn-group">
             <button class="btn btn-outline-info btn-sm" @click="exportToCSV">
-              <i class="fas fa-file-csv mr-1"></i> Export CSV
+              <i class="fas fa-file-csv mr-1"></i> Export
             </button>
             <button class="btn btn-outline-success btn-sm ml-2" @click="refreshData">
               <i class="fas fa-sync-alt mr-1"></i> Refresh
@@ -330,8 +292,7 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center align-top">#</th>
-                <th class="align-top">Serve Details</th>
-                <th class="align-top">Customer</th>
+                <th class="align-top">Serve Details /<br> Customer</th>
                 <th class="align-top">Order</th>
                 <th class="text-center align-top">Serve Type</th>
                 <th class="text-center align-top">Price</th>
@@ -351,7 +312,7 @@
                 </td>
               </tr>
             </tbody>
-            <tbody v-else-if="filteredServes.length === 0">
+            <tbody v-else-if="serveData.length === 0">
               <tr>
                 <td colspan="10" class="text-center py-5">
                   <i class="fas fa-database fa-3x text-muted mb-3"></i>
@@ -365,22 +326,15 @@
               </tr>
             </tbody>
             <tbody v-else>
-              <tr v-for="(serve, index) in filteredServes" :key="serve.id">
+              <tr v-for="(serve, index) in serveData" :key="serve.id">
                 <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
                 <td class="align-middle">
-                  <div>
-                    <div class="font-weight-bold text-primary">{{ serve.serve_id }}</div>
-                    <small class="text-muted">CID: {{ serve.qvse_cid || 'N/A' }}</small>
-                  </div>
-                </td>
-                <td class="align-middle">
                   <div class="d-flex align-items-center">
-                    <div class="avatar-sm mr-2">
-                      <div class="avatar-title bg-light rounded-circle">
-                        <i class="fas fa-user text-primary"></i>
-                      </div>
-                    </div>
                     <div>
+                      <div>
+                        <div class="font-weight-bold text-primary">{{ serve.serve_id }}</div>
+                        <small class="text-muted">CID: {{ serve.qvse_cid || 'N/A' }}</small>
+                      </div>
                       <div class="font-weight-bold">{{ serve.customer ? serve.customer.full_name : 'N/A' }}</div>
                       <small class="text-muted">{{ serve.customer ? serve.customer.customer_id : 'N/A' }}</small>
                       <div v-if="serve.customer && serve.customer.phone" class="small">
@@ -424,9 +378,6 @@
                 <td class="text-center align-middle">
                   <div v-if="serve.upgrade_pce_enabled" class="text-success">
                     <i class="fas fa-crown mr-1"></i> RM69.90
-                    <div v-if="serve.upgrade_pce_notes" class="small text-muted mt-1" style="max-width: 150px;">
-                      {{ truncateText(serve.upgrade_pce_notes, 30) }}
-                    </div>
                   </div>
                   <span v-else class="text-muted">
                     <i class="fas fa-minus-circle"></i> None
@@ -455,9 +406,10 @@
           </table>
         </div>
       </div>
-      <div v-if="filteredServes.length > 0" class="card-footer d-flex justify-content-between align-items-center">
+      <div v-if="filteredCount > 0" class="card-footer d-flex justify-content-between align-items-center">
         <div>
           <small class="text-muted">
+            Page {{ currentPage }} of {{ lastPage }} |
             Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} entries
           </small>
         </div>
@@ -496,7 +448,7 @@ export default {
       customers: [],
       serves: [],
       stats: {},
-      allStats: {}, // Store overall statistics
+      allStats: {},
       loading: true,
       filters: {
         search: '',
@@ -514,7 +466,7 @@ export default {
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
       currentPage: 1,
-      perPage: 10,
+      perPage: 10, // Increased from 10 to 25 to show more records by default
       total: 0,
       filteredCount: 0
     };
@@ -556,7 +508,7 @@ export default {
       return Object.values(this.filters).some((value, index) => {
         const key = Object.keys(this.filters)[index];
         if (key === 'sortBy') {
-          return value !== 'created_at_desc'; // Only show if not default
+          return value !== 'created_at_desc';
         }
         return value !== '';
       });
@@ -566,7 +518,6 @@ export default {
       Object.keys(this.filters).forEach(key => {
         const value = this.filters[key];
         if (value !== '' && !(key === 'sortBy' && value === 'created_at_desc')) {
-          // Don't show month as active if no year is selected
           if (key === 'month' && !this.filters.year) {
             return;
           }
@@ -574,110 +525,25 @@ export default {
         }
       });
       return active;
-    },
-    filteredServes() {
-      let filtered = this.serveData;
-
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(serve => {
-          // Search in multiple fields
-          return (
-            (serve.serve_id && serve.serve_id.toLowerCase().includes(keyword)) ||
-            (serve.customer && serve.customer.full_name && serve.customer.full_name.toLowerCase().includes(keyword)) ||
-            (serve.customer && serve.customer.customer_id && serve.customer.customer_id.toLowerCase().includes(keyword)) ||
-            (serve.order && serve.order.order_id && serve.order.order_id.toLowerCase().includes(keyword)) ||
-            (serve.qvse_cid && serve.qvse_cid.toLowerCase().includes(keyword)) ||
-            (serve.notes && serve.notes.toLowerCase().includes(keyword)) ||
-            (serve.upgrade_pce_notes && serve.upgrade_pce_notes.toLowerCase().includes(keyword))
-          );
-        });
-      }
-
-      // Apply other filters
-      if (this.filters.status) {
-        filtered = filtered.filter(serve => {
-          if (this.filters.status === 'active') return serve.start_serve_enabled;
-          if (this.filters.status === 'not_started') return !serve.start_serve_enabled;
-          if (this.filters.status === 'with_upgrade') return serve.upgrade_pce_enabled;
-          if (this.filters.status === 'started') return serve.start_serve_enabled;
-          if (this.filters.status === 'not_started_only') return !serve.start_serve_enabled;
-          return true;
-        });
-      }
-
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(serve =>
-          serve.customer && serve.customer.id == this.filters.customer_id
-        );
-      }
-
-      if (this.filters.lkp_serve_id) {
-        filtered = filtered.filter(serve =>
-          serve.serve && serve.serve.id == this.filters.lkp_serve_id
-        );
-      }
-
-      if (this.filters.date_from) {
-        const dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(serve => {
-          const serveDate = new Date(serve.created_at);
-          return serveDate >= dateFrom;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(serve => {
-          if (!serve.created_at) return false;
-          const serveDate = new Date(serve.created_at);
-          return serveDate.getFullYear() === parseInt(this.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(serve => {
-          if (!serve.created_at) return false;
-          const serveDate = new Date(serve.created_at);
-          return serveDate.getMonth() + 1 === parseInt(this.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortServes(filtered);
-
-      this.filteredCount = filtered.length;
-      return filtered.slice((this.currentPage - 1) * this.perPage, this.currentPage * this.perPage);
     }
   },
   watch: {
     'filters.year': function(newYear) {
-      // Clear month when year changes to empty
       if (!newYear) {
         this.filters.month = '';
       }
-    },
-    // Watch for filter changes to update statistics
-    filteredServes: {
-      handler(newFilteredData) {
-        this.updateStatistics(newFilteredData);
-      },
-      deep: true
     }
   },
   mounted() {
     this.fetchServeData();
     this.fetchCustomers();
     this.fetchServes();
-    this.fetchOverallStatistics(); // Fetch overall statistics
+    this.fetchOverallStatistics();
     this.extractAvailableYears();
   },
   methods: {
     formatNumber(value) {
       const num = parseFloat(value) || 0;
-      // For revenue, we want to show it in thousands/millions if needed
       if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M';
       } else if (num >= 1000) {
@@ -737,13 +603,10 @@ export default {
 
       let price = parseFloat(serve.serve.fee) || 0;
 
-      // Add upgrade fee for ANY serve type when upgrade is enabled
       if (serve.upgrade_pce_enabled) {
-        // Check if there's an upgrade price in the serve data, otherwise use default
         if (serve.upgrade_price) {
           price += parseFloat(serve.upgrade_price) || 0;
         } else {
-          // Default upgrade price if not specified
           price += 69.90;
         }
       }
@@ -819,13 +682,43 @@ export default {
           ...this.filters
         };
 
-        const res = await axios.get('/api/serve-data', { params });
-        this.serveData = res.data.data || [];
-        this.total = res.data.meta ? res.data.meta.total : (res.data.total || 0);
-        this.filteredCount = this.total;
+        // Remove empty params
+        Object.keys(params).forEach(key => {
+          if (params[key] === '' || params[key] === null || params[key] === undefined) {
+            delete params[key];
+          }
+        });
 
-        // Update statistics based on filtered data
+        console.log('Fetching data with params:', params);
+
+        const res = await axios.get('/api/serve-data', { params });
+        console.log('Server response:', res.data);
+
+        this.serveData = res.data.data || [];
+
+        // Get pagination info from server response
+        if (res.data.meta) {
+          this.total = res.data.meta.total || 0;
+          this.filteredCount = res.data.meta.total || 0;
+          this.currentPage = res.data.meta.current_page || 1;
+          this.perPage = res.data.meta.per_page || this.perPage;
+        } else if (res.data.total !== undefined) {
+          this.total = res.data.total;
+          this.filteredCount = res.data.total;
+        } else {
+          this.total = this.serveData.length;
+          this.filteredCount = this.serveData.length;
+        }
+
+        console.log('Total records:', this.total);
+        console.log('Filtered count:', this.filteredCount);
+        console.log('Current page:', this.currentPage);
+        console.log('Per page:', this.perPage);
+        console.log('Records loaded:', this.serveData.length);
+
+        // Update statistics for the current page
         this.updateStatistics(this.serveData);
+
       } catch (error) {
         console.error('Error fetching serve data:', error);
         Swal.fire('Error!', 'Failed to load serve data', 'error');
@@ -838,7 +731,6 @@ export default {
       try {
         const res = await axios.get('/api/serve-data/statistics');
         this.allStats = res.data.data || {};
-        // Initialize with overall statistics
         this.stats = { ...this.allStats };
       } catch (error) {
         console.error('Error fetching overall statistics:', error);
@@ -847,17 +739,13 @@ export default {
 
     updateStatistics(filteredData) {
       if (!filteredData || filteredData.length === 0) {
-        // Reset to overall statistics when no filtered data
-        this.stats = { ...this.allStats };
         return;
       }
 
-      // Calculate statistics from filtered data
       const totalServes = filteredData.length;
       const totalUpgrades = filteredData.filter(serve => serve.upgrade_pce_enabled).length;
       const totalStarted = filteredData.filter(serve => serve.start_serve_enabled).length;
 
-      // Get unique customers
       const uniqueCustomerIds = new Set();
       filteredData.forEach(serve => {
         if (serve.customer && serve.customer.id) {
@@ -865,14 +753,12 @@ export default {
         }
       });
 
-      // Calculate total revenue using getPackagePrice method
       let totalRevenue = 0;
       filteredData.forEach(serve => {
         const packagePrice = parseFloat(this.getPackagePrice(serve)) || 0;
         totalRevenue += packagePrice;
       });
 
-      // Get today's serves from filtered data
       const today = new Date().toISOString().split('T')[0];
       const todayServes = filteredData.filter(serve => {
         if (!serve.created_at) return false;
@@ -880,11 +766,11 @@ export default {
         return serveDate === today;
       }).length;
 
-      // Calculate conversion rate (upgrades per serve)
       const conversionRate = totalServes > 0 ? ((totalUpgrades / totalServes) * 100).toFixed(1) : 0;
 
+      // Update stats for current page only
       this.stats = {
-        total_serves: totalServes,
+        total_serves: this.filteredCount, // Use total count from server for overall total
         today_serves: todayServes,
         total_upgrades: totalUpgrades,
         total_started: totalStarted,
@@ -920,44 +806,6 @@ export default {
       }
     },
 
-    sortServes(serves) {
-      switch (this.filters.sortBy) {
-        case 'created_at_asc':
-          return serves.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-        case 'customer_name_asc':
-          return serves.slice().sort((a, b) => {
-            const nameA = a.customer ? a.customer.full_name || '' : '';
-            const nameB = b.customer ? b.customer.full_name || '' : '';
-            return nameA.localeCompare(nameB);
-          });
-        case 'customer_name_desc':
-          return serves.slice().sort((a, b) => {
-            const nameA = a.customer ? a.customer.full_name || '' : '';
-            const nameB = b.customer ? b.customer.full_name || '' : '';
-            return nameB.localeCompare(nameA);
-          });
-        case 'serve_id_asc':
-          return serves.slice().sort((a, b) => (a.serve_id || '').localeCompare(b.serve_id || ''));
-        case 'serve_id_desc':
-          return serves.slice().sort((a, b) => (b.serve_id || '').localeCompare(a.serve_id || ''));
-        case 'package_price_desc':
-          return serves.slice().sort((a, b) => {
-            const priceA = this.getPackagePrice(a);
-            const priceB = this.getPackagePrice(b);
-            return parseFloat(priceB) - parseFloat(priceA);
-          });
-        case 'package_price_asc':
-          return serves.slice().sort((a, b) => {
-            const priceA = this.getPackagePrice(a);
-            const priceB = this.getPackagePrice(b);
-            return parseFloat(priceA) - parseFloat(priceB);
-          });
-        case 'created_at_desc':
-        default:
-          return serves.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-    },
-
     applyFilters() {
       this.currentPage = 1;
       this.fetchServeData();
@@ -974,17 +822,15 @@ export default {
         month: '',
         sortBy: 'created_at_desc'
       };
-      this.perPage = 10;
+      this.perPage = 25;
       this.currentPage = 1;
       this.fetchServeData();
-      // Reset statistics to overall when filters are cleared
       this.stats = { ...this.allStats };
     },
 
     removeFilter(filterKey) {
       if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
-        // If year is removed, also clear month
         if (filterKey === 'year') {
           this.filters.month = '';
         }
@@ -1037,39 +883,685 @@ export default {
 
     exportToCSV() {
       Swal.fire({
-        title: 'Export to CSV',
-        text: 'This will export all filtered records to CSV format',
-        icon: 'info',
+        title: 'Export Options',
+        html: `
+          <div class="text-left">
+            <p>Choose export format:</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportFormat" id="formatExcel" value="excel" checked>
+              <label class="form-check-label" for="formatExcel">
+                Excel/HTML Format (Styled Report)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportFormat" id="formatCSV" value="csv">
+              <label class="form-check-label" for="formatCSV">
+                Simple CSV Format
+              </label>
+            </div>
+            <br>
+            <p>Choose what to export:</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
+              <label class="form-check-label" for="exportFiltered">
+                Export filtered data (${this.filteredCount} records)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exportScope" id="exportAll" value="all">
+              <label class="form-check-label" for="exportAll">
+                Export all data (${this.total} records)
+              </label>
+            </div>
+          </div>
+        `,
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+          const format = document.querySelector('input[name="exportFormat"]:checked').value;
+          const scope = document.querySelector('input[name="exportScope"]:checked').value;
+          return { format, scope };
+        }
       }).then((result) => {
         if (result.isConfirmed) {
-          const params = {
-            ...this.filters,
-            export: 'csv',
-            limit: 10000 // Export all filtered records
-          };
+          const { format, scope } = result.value;
 
-          axios.get('/api/serve-data/export', { params, responseType: 'blob' })
-            .then(response => {
-              const url = window.URL.createObjectURL(new Blob([response.data]));
-              const link = document.createElement('a');
-              link.href = url;
-              const date = new Date().toISOString().split('T')[0];
-              link.setAttribute('download', `serve-data-${date}.csv`);
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-
-              Swal.fire('Success!', 'CSV file has been downloaded', 'success');
-            })
-            .catch(error => {
-              console.error('Error exporting CSV:', error);
-              Swal.fire('Error!', 'Failed to export CSV', 'error');
-            });
+          if (format === 'excel') {
+            this.generateStyledExcelReport(scope);
+          } else {
+            this.generateSimpleCSV(scope);
+          }
         }
       });
+    },
+
+    async generateStyledExcelReport(scope) {
+      Swal.fire({
+        title: 'Generating Report...',
+        text: 'Please wait while we prepare your export',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        let dataToExport;
+        if (scope === 'filtered') {
+          // Get ALL filtered data from API
+          dataToExport = await this.getAllFilteredData();
+        } else {
+          // Fetch all data without any filters
+          const params = { per_page: 10000 };
+          const res = await axios.get('/api/serve-data', { params });
+          dataToExport = res.data.data || [];
+        }
+
+        if (!dataToExport || dataToExport.length === 0) {
+          Swal.close();
+          Swal.fire('No Data', 'There is no data to export', 'warning');
+          return;
+        }
+
+        const exportDate = new Date().toLocaleString('en-MY', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const totalRecords = dataToExport.length;
+        const totalUpgrades = dataToExport.filter(serve => serve.upgrade_pce_enabled).length;
+        const totalStarted = dataToExport.filter(serve => serve.start_serve_enabled).length;
+        const totalRevenue = dataToExport.reduce((sum, serve) => {
+          return sum + parseFloat(this.getPackagePrice(serve));
+        }, 0);
+
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+            <title>QuiviServe Report</title>
+            <style type="text/css">
+                body {
+                    font-family: Arial, Helvetica, sans-serif;
+                    margin: 20px;
+                }
+
+                .report-title {
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-bottom: 10px;
+                }
+
+                .report-subtitle {
+                    text-align: center;
+                    font-size: 16px;
+                    color: #7f8c8d;
+                    margin-bottom: 20px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                    font-size: 12px;
+                }
+
+                td, th {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: center;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                th {
+                    padding-top: 12px;
+                    padding-bottom: 12px;
+                    background-color: #b0e0e6;
+                    color: black;
+                    font-weight: bold;
+                }
+
+                .header-title {
+                    text-align: center;
+                    font-size: 16px;
+                    font-weight: bold;
+                    background-color: #e8ec7e;
+                    color: black;
+                    padding: 10px;
+                }
+
+                .subtitle {
+                    font-size: 11px;
+                    text-align: center;
+                    padding: 8px;
+                    background-color: #f0f0f0;
+                }
+
+                .total-row {
+                    font-weight: bold;
+                    background-color: #b0e0e6;
+                }
+
+                .text-center {
+                    text-align: center;
+                }
+
+                .text-right {
+                    text-align: right;
+                }
+
+                .text-left {
+                    text-align: left;
+                }
+
+                .status-active {
+                    color: #28a745;
+                    font-weight: bold;
+                }
+
+                .status-inactive {
+                    color: #dc3545;
+                    font-weight: bold;
+                }
+
+                .upgrade-yes {
+                    color: #28a745;
+                    font-weight: bold;
+                }
+
+                .upgrade-no {
+                    color: #6c757d;
+                }
+
+                .footer {
+                    text-align: center;
+                    font-size: 10px;
+                    color: #95a5a6;
+                    margin-top: 30px;
+                    padding-top: 10px;
+                    border-top: 1px solid #ecf0f1;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="book">
+                <div class="page">
+                    <h1 class="report-title">QUIVISERVE REPORT</h1>
+                    <h4 class="report-subtitle"></h4>
+
+                    <table>
+                        <tr>
+                            <th colspan="12" class="header-title">
+                                SERVE DATA DETAILED LIST
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="12" class="subtitle">
+                                Records: ${totalRecords} | Export Date: ${exportDate} |
+                                ${scope === 'filtered' ? 'Filtered Data' : 'All Data'}
+                            </td>
+                        </tr>
+                        <tr class="total-row">
+                            <th>No.</th>
+                            <th>Serve ID</th>
+                            <th>Customer Name</th>
+                            <th>Customer ID</th>
+                            <th>Phone</th>
+                            <th>Order ID</th>
+                            <th>Serve Type</th>
+                            <th>Base Price</th>
+                            <th>Upgrade</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Created Date</th>
+                        </tr>
+                        ${dataToExport.map((serve, index) => `
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td class="text-center">${this.escapeHtml(serve.serve_id || 'N/A')}</td>
+                            <td class="text-left">${this.escapeHtml(serve.customer?.full_name || 'N/A')}</td>
+                            <td class="text-center">${this.escapeHtml(serve.customer?.customer_id || 'N/A')}</td>
+                            <td class="text-center">${this.escapeHtml(serve.customer?.phone || 'N/A')}</td>
+                            <td class="text-center">${this.escapeHtml(serve.order?.order_id || 'N/A')}</td>
+                            <td class="text-center">${this.escapeHtml(serve.serve?.name || 'N/A')}</td>
+                            <td class="text-right">RM${serve.serve?.fee || '0.00'}</td>
+                            <td class="text-center ${serve.upgrade_pce_enabled ? 'upgrade-yes' : 'upgrade-no'}">
+                                ${serve.upgrade_pce_enabled ? 'Yes' : 'No'}
+                            </td>
+                            <td class="text-right">RM${this.getPackagePrice(serve)}</td>
+                            <td class="text-center ${serve.start_serve_enabled ? 'status-active' : 'status-inactive'}">
+                                ${serve.start_serve_enabled ? 'Active' : 'Inactive'}
+                            </td>
+                            <td class="text-center">${this.formatDate(serve.created_at)}</td>
+                        </tr>
+                        `).join('')}
+
+                        <tr class="total-row">
+                            <td colspan="7" class="text-center">TOTAL</td>
+                            <td class="text-right">RM${dataToExport.reduce((sum, serve) => sum + (parseFloat(serve.serve?.fee) || 0), 0).toFixed(2)}</td>
+                            <td class="text-center">${totalUpgrades}</td>
+                            <td class="text-right">RM${totalRevenue.toFixed(2)}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </table>
+
+                    <div class="footer">
+                        <p>Generated by QuiviServe Management System | ${exportDate}</p>
+                        <p>This is a computer-generated report. No signature is required.</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>`;
+
+        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `QuiviServe_Report_${date}_${scope}_${new Date().getTime()}.xls`;
+
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url);
+
+        Swal.close();
+        Swal.fire({
+          title: 'Export Complete!',
+          text: `Report "${filename}" has been downloaded`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        console.error('Export error:', error);
+        Swal.fire({
+          title: 'Export Failed!',
+          text: error.response?.data?.message || error.message || 'Failed to generate report',
+          icon: 'error'
+        });
+      }
+    },
+
+    async getAllFilteredData() {
+      try {
+        const params = {
+          ...this.filters,
+          per_page: 10000,
+          page: 1
+        };
+
+        // Remove empty filters
+        Object.keys(params).forEach(key => {
+          if (params[key] === '' || params[key] === null || params[key] === undefined) {
+            delete params[key];
+          }
+        });
+
+        // Remove filters that backend doesn't support
+        delete params.sortBy;
+        delete params.year;
+        delete params.month;
+
+        console.log('Fetching all filtered data with params:', params);
+
+        const res = await axios.get('/api/serve-data', { params });
+
+        let filteredData = res.data.data || [];
+
+        // Apply year/month filters client-side
+        if (this.filters.year) {
+          filteredData = filteredData.filter(serve => {
+            if (!serve.created_at) return false;
+            const serveDate = new Date(serve.created_at);
+            return serveDate.getFullYear() === parseInt(this.filters.year);
+          });
+        }
+
+        if (this.filters.year && this.filters.month) {
+          filteredData = filteredData.filter(serve => {
+            if (!serve.created_at) return false;
+            const serveDate = new Date(serve.created_at);
+            return serveDate.getMonth() + 1 === parseInt(this.filters.month);
+          });
+        }
+
+        // Apply sorting client-side
+        filteredData = this.sortServes(filteredData);
+
+        console.log(`Fetched ${filteredData.length} records for export`);
+        return filteredData;
+
+      } catch (error) {
+        console.error('Error fetching all filtered data:', error);
+        // Fallback to client-side filtering from current page data
+        return this.getFilteredDataForExport();
+      }
+    },
+
+    sortServes(serves) {
+      switch (this.filters.sortBy) {
+        case 'created_at_asc':
+          return serves.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        case 'customer_name_asc':
+          return serves.slice().sort((a, b) => {
+            const nameA = a.customer ? a.customer.full_name || '' : '';
+            const nameB = b.customer ? b.customer.full_name || '' : '';
+            return nameA.localeCompare(nameB);
+          });
+        case 'customer_name_desc':
+          return serves.slice().sort((a, b) => {
+            const nameA = a.customer ? a.customer.full_name || '' : '';
+            const nameB = b.customer ? b.customer.full_name || '' : '';
+            return nameB.localeCompare(nameA);
+          });
+        case 'serve_id_asc':
+          return serves.slice().sort((a, b) => (a.serve_id || '').localeCompare(b.serve_id || ''));
+        case 'serve_id_desc':
+          return serves.slice().sort((a, b) => (b.serve_id || '').localeCompare(a.serve_id || ''));
+        case 'package_price_desc':
+          return serves.slice().sort((a, b) => {
+            const priceA = this.getPackagePrice(a);
+            const priceB = this.getPackagePrice(b);
+            return parseFloat(priceB) - parseFloat(priceA);
+          });
+        case 'package_price_asc':
+          return serves.slice().sort((a, b) => {
+            const priceA = this.getPackagePrice(a);
+            const priceB = this.getPackagePrice(b);
+            return parseFloat(priceA) - parseFloat(priceB);
+          });
+        case 'created_at_desc':
+        default:
+          return serves.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+    },
+
+    escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.toString().replace(/[&<>"']/g, m => map[m]);
+    },
+
+    generateSimpleCSV(scope) {
+      Swal.fire({
+        title: 'Generating CSV...',
+        text: 'Please wait while we prepare your export',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        let dataToExport;
+        if (scope === 'filtered') {
+          // Get ALL filtered data from API
+          dataToExport = this.getFilteredDataForExport();
+
+          // If no data, try to fetch from API
+          if (!dataToExport || dataToExport.length === 0) {
+            dataToExport = this.serveData.filter(serve => {
+              return this.matchesFilters(serve);
+            });
+          }
+        } else {
+          // For all data, fetch all from API
+          const params = { per_page: 10000 };
+          axios.get('/api/serve-data', { params })
+            .then(res => {
+              this.exportCSVData(res.data.data || [], scope);
+            })
+            .catch(error => {
+              console.error('Error fetching all data for CSV:', error);
+              Swal.fire('Error!', 'Failed to fetch data for export', 'error');
+            });
+          return;
+        }
+
+        this.exportCSVData(dataToExport, scope);
+
+      } catch (error) {
+        console.error('CSV export error:', error);
+        Swal.fire({
+          title: 'Export Failed!',
+          text: error.message || 'Failed to generate CSV',
+          icon: 'error'
+        });
+      }
+    },
+
+    exportCSVData(dataToExport, scope) {
+      if (!dataToExport || dataToExport.length === 0) {
+        Swal.close();
+        Swal.fire('No Data', 'There is no data to export', 'warning');
+        return;
+      }
+
+      const headers = [
+        'No.',
+        'Serve ID',
+        'Customer Name',
+        'Customer ID',
+        'Phone',
+        'Order ID',
+        'Order Total',
+        'Serve Type',
+        'Base Price',
+        'Upgrade Enabled',
+        'Upgrade Price',
+        'Package Price',
+        'Status',
+        'QVSE CID',
+        'Notes',
+        'Created Date'
+      ];
+
+      const rows = dataToExport.map((serve, index) => {
+        return [
+          index + 1,
+          serve.serve_id || '',
+          serve.customer?.full_name || '',
+          serve.customer?.customer_id || '',
+          serve.customer?.phone || '',
+          serve.order?.order_id || '',
+          serve.order?.total || '0',
+          serve.serve?.name || '',
+          serve.serve?.fee || '0',
+          serve.upgrade_pce_enabled ? 'Yes' : 'No',
+          serve.upgrade_price || '69.90',
+          this.getPackagePrice(serve),
+          serve.start_serve_enabled ? 'Active' : 'Inactive',
+          serve.qvse_cid || '',
+          (serve.notes || '').replace(/"/g, '""'),
+          new Date(serve.created_at).toISOString()
+        ].map(cell => `"${cell}"`);
+      });
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.join(','))
+      ].join('\n');
+
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      const date = new Date().toISOString().split('T')[0];
+      const filename = `serve-data-${date}-${scope}.csv`;
+
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+
+      Swal.close();
+      Swal.fire({
+        title: 'Export Complete!',
+        text: 'CSV file has been generated and downloaded',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    },
+
+    getFilteredDataForExport() {
+      let filtered = this.serveData.filter(serve => this.matchesFilters(serve));
+
+      if (filtered.length > 0) {
+        return this.sortServes(filtered);
+      }
+
+      filtered = [...this.serveData];
+
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
+        filtered = filtered.filter(serve => {
+          return (
+            (serve.serve_id && serve.serve_id.toLowerCase().includes(keyword)) ||
+            (serve.customer && serve.customer.full_name && serve.customer.full_name.toLowerCase().includes(keyword)) ||
+            (serve.customer && serve.customer.customer_id && serve.customer.customer_id.toLowerCase().includes(keyword)) ||
+            (serve.order && serve.order.order_id && serve.order.order_id.toLowerCase().includes(keyword)) ||
+            (serve.qvse_cid && serve.qvse_cid.toLowerCase().includes(keyword)) ||
+            (serve.notes && serve.notes.toLowerCase().includes(keyword)) ||
+            (serve.upgrade_pce_notes && serve.upgrade_pce_notes.toLowerCase().includes(keyword))
+          );
+        });
+      }
+
+      if (this.filters.status) {
+        filtered = filtered.filter(serve => {
+          if (this.filters.status === 'active') return serve.start_serve_enabled;
+          if (this.filters.status === 'not_started') return !serve.start_serve_enabled;
+          if (this.filters.status === 'with_upgrade') return serve.upgrade_pce_enabled;
+          if (this.filters.status === 'started') return serve.start_serve_enabled;
+          if (this.filters.status === 'not_started_only') return !serve.start_serve_enabled;
+          return true;
+        });
+      }
+
+      if (this.filters.customer_id) {
+        filtered = filtered.filter(serve =>
+          serve.customer && serve.customer.id == this.filters.customer_id
+        );
+      }
+
+      if (this.filters.lkp_serve_id) {
+        filtered = filtered.filter(serve =>
+          serve.serve && serve.serve.id == this.filters.lkp_serve_id
+        );
+      }
+
+      if (this.filters.date_from) {
+        const dateFrom = new Date(this.filters.date_from);
+        filtered = filtered.filter(serve => {
+          const serveDate = new Date(serve.created_at);
+          return serveDate >= dateFrom;
+        });
+      }
+
+      if (this.filters.year) {
+        filtered = filtered.filter(serve => {
+          if (!serve.created_at) return false;
+          const serveDate = new Date(serve.created_at);
+          return serveDate.getFullYear() === parseInt(this.filters.year);
+        });
+      }
+
+      if (this.filters.year && this.filters.month) {
+        filtered = filtered.filter(serve => {
+          if (!serve.created_at) return false;
+          const serveDate = new Date(serve.created_at);
+          return serveDate.getMonth() + 1 === parseInt(this.filters.month);
+        });
+      }
+
+      filtered = this.sortServes(filtered);
+
+      return filtered;
+    },
+
+    matchesFilters(serve) {
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
+        const matchesSearch = (
+          (serve.serve_id && serve.serve_id.toLowerCase().includes(keyword)) ||
+          (serve.customer && serve.customer.full_name && serve.customer.full_name.toLowerCase().includes(keyword)) ||
+          (serve.customer && serve.customer.customer_id && serve.customer.customer_id.toLowerCase().includes(keyword)) ||
+          (serve.order && serve.order.order_id && serve.order.order_id.toLowerCase().includes(keyword)) ||
+          (serve.qvse_cid && serve.qvse_cid.toLowerCase().includes(keyword)) ||
+          (serve.notes && serve.notes.toLowerCase().includes(keyword)) ||
+          (serve.upgrade_pce_notes && serve.upgrade_pce_notes.toLowerCase().includes(keyword))
+        );
+        if (!matchesSearch) return false;
+      }
+
+      if (this.filters.status) {
+        if (this.filters.status === 'active' && !serve.start_serve_enabled) return false;
+        if (this.filters.status === 'not_started' && serve.start_serve_enabled) return false;
+        if (this.filters.status === 'with_upgrade' && !serve.upgrade_pce_enabled) return false;
+        if (this.filters.status === 'started' && !serve.start_serve_enabled) return false;
+        if (this.filters.status === 'not_started_only' && serve.start_serve_enabled) return false;
+      }
+
+      if (this.filters.customer_id && serve.customer && serve.customer.id != this.filters.customer_id) {
+        return false;
+      }
+
+      if (this.filters.lkp_serve_id && serve.serve && serve.serve.id != this.filters.lkp_serve_id) {
+        return false;
+      }
+
+      if (this.filters.date_from) {
+        const serveDate = new Date(serve.created_at);
+        const dateFrom = new Date(this.filters.date_from);
+        if (serveDate < dateFrom) return false;
+      }
+
+      if (this.filters.year) {
+        if (!serve.created_at) return false;
+        const serveDate = new Date(serve.created_at);
+        if (serveDate.getFullYear() !== parseInt(this.filters.year)) return false;
+      }
+
+      if (this.filters.year && this.filters.month) {
+        if (!serve.created_at) return false;
+        const serveDate = new Date(serve.created_at);
+        if (serveDate.getMonth() + 1 !== parseInt(this.filters.month)) return false;
+      }
+
+      return true;
     }
   }
 };
@@ -1081,7 +1573,7 @@ export default {
   border: none;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   transition: transform 0.2s;
-  min-height: 140px; /* Fixed minimum height */
+  min-height: 140px;
   display: flex;
   flex-direction: column;
 }
@@ -1091,7 +1583,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.25rem; /* Consistent padding */
+  padding: 1.25rem;
 }
 
 .card-stats:hover {
@@ -1105,10 +1597,9 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
-  flex-shrink: 0; /* Prevent icon from shrinking */
+  flex-shrink: 0;
 }
 
-/* Ensure text doesn't overflow */
 .card-title {
   font-size: 0.75rem;
   white-space: nowrap;
@@ -1125,10 +1616,9 @@ export default {
 
 .text-sm {
   font-size: 0.875rem;
-  margin-top: auto; /* Push to bottom */
+  margin-top: auto;
 }
 
-/* Make sure all cards have same height on all screen sizes */
 .h-100 {
   height: 100%;
 }
@@ -1192,14 +1682,12 @@ export default {
   margin-right: 0;
 }
 
-/* Filter badge styling */
 .badge-info {
   background-color: #36b9cc !important;
   font-size: 0.75em;
   padding: 0.4em 0.8em;
 }
 
-/* Responsive adjustments for revenue display */
 @media (max-width: 1200px) {
   .h4 {
     font-size: 1.3rem;
@@ -1250,13 +1738,11 @@ export default {
   }
 }
 
-/* Search input focus */
 .form-control:focus {
   border-color: #80bdff;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-/* Disabled month select */
 select:disabled {
   background-color: #e9ecef;
   cursor: not-allowed;

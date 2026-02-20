@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CareData extends Model
 {
-
     use SoftDeletes;
 
     protected $fillable = [
@@ -22,6 +21,8 @@ class CareData extends Model
 
     protected $casts = [
         'update_membership' => 'boolean',
+        'total_part' => 'decimal:2',
+        'price' => 'decimal:2',
     ];
 
     protected $dates = [
@@ -43,5 +44,22 @@ class CareData extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasManyThrough(
+            OrderDetails::class,
+            Order::class,
+            'id',
+            'order_id',
+            'order_id',
+            'id'
+        );
+    }
+
+    public function directOrderDetails()
+    {
+        return $this->hasMany(OrderDetails::class, 'order_id', 'order_id');
     }
 }

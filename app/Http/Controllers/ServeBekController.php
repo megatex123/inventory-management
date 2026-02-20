@@ -70,7 +70,7 @@ class ServeBekController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'serve_data_id' => 'required|exists:serve_data,id',
+            // 'serve_data_id' => 'required|exists:serve_data,id',
             'date_start' => 'required|date',
             'one_year_assembly_warranty' => 'boolean',
             'one_free_onsite_troubleshooting_first_3_months' => 'boolean',
@@ -102,7 +102,7 @@ class ServeBekController extends Controller
             }
 
             $serveBek = ServeBek::create($request->only([
-                'serve_data_id',
+                // 'serve_data_id',
                 'date_start',
                 'one_year_assembly_warranty',
                 'one_free_onsite_troubleshooting_first_3_months',
@@ -173,6 +173,8 @@ class ServeBekController extends Controller
                 'message' => 'ServeBek record not found.'
             ], 404);
         }
+
+        $request['serve_data_id'] = $serveBek->serve_data_id;
 
         $validator = Validator::make($request->all(), [
             'date_start' => 'sometimes|date',
@@ -422,7 +424,7 @@ class ServeBekController extends Controller
     {
         return [
             'id' => $item->id,
-            'serve_data_id' => $item->serve_data_id,
+            'serve_data_id' => $item->serveData->serve_id,
             'qvse_cid' => $item->qvse_cid,
             'date_start' => $item->date_start ? $item->date_start->format('Y-m-d') : null,
             'warranty' => [

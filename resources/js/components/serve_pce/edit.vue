@@ -48,6 +48,28 @@
                           <small class="text-muted">Linked Serve Data record ID</small>
                         </div>
 
+                        <!-- Customer Name (if available) -->
+                        <div class="col-md-6 mb-3" v-if="form.customer_name">
+                          <label class="form-label">Customer Name</label>
+                          <input
+                            :value="form.customer_name"
+                            type="text"
+                            readonly
+                            class="form-control bg-light"
+                          >
+                        </div>
+
+                        <!-- Customer Email (if available) -->
+                        <div class="col-md-6 mb-3" v-if="form.customer_email">
+                          <label class="form-label">Customer Email</label>
+                          <input
+                            :value="form.customer_email"
+                            type="text"
+                            readonly
+                            class="form-control bg-light"
+                          >
+                        </div>
+
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Start Date <span class="text-danger">*</span></label>
                           <input
@@ -64,15 +86,16 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">CM</label>
+                          <label class="form-label">CM (Cable Management)</label>
                           <input
-                            v-model="form.cm"
+                            v-model="form.cable_management"
                             type="text"
                             class="form-control"
-                            :class="{ 'is-invalid': errors.cm }"
+                            :class="{ 'is-invalid': errors.cable_management }"
+                            placeholder="Premium Cable Management"
                           >
-                          <div v-if="errors.cm" class="invalid-feedback">
-                            {{ errors.cm[0] }}
+                          <div v-if="errors.cable_management" class="invalid-feedback">
+                            {{ errors.cable_management[0] }}
                           </div>
                         </div>
                       </div>
@@ -105,7 +128,7 @@
                         </div>
 
                         <!-- Unlimited Troubleshooting Period (First Year) -->
-                        <div class="col-md-6 mb-3" v-if="form.unlimited_troubleshooting">
+                        <div class="col-md-6 mb-3" v-if="form.unlimited_troubleshooting === 'Yes'">
                           <label class="form-label">Unlimited On-Site Troubleshooting (First Year)</label>
                           <div class="calculated-field bg-light p-3 rounded">
                             <div class="d-flex justify-content-between align-items-center">
@@ -125,7 +148,7 @@
                         </div>
 
                         <!-- 50% Off Troubleshooting (Years 2-9) -->
-                        <div class="col-md-6 mb-3" v-if="form['50_troubleshooting']">
+                        <div class="col-md-6 mb-3" v-if="form.troubleshooting === 'Yes'">
                           <label class="form-label">50% Off On-Site Troubleshooting (Years 2-9)</label>
                           <div class="calculated-field bg-light p-3 rounded">
                             <div class="d-flex justify-content-between align-items-center">
@@ -145,7 +168,7 @@
                         </div>
 
                         <!-- Premium Cable Management Claims -->
-                        <div class="col-md-6 mb-3" v-if="form.cm">
+                        <div class="col-md-6 mb-3" v-if="form.cable_management">
                           <label class="form-label">Premium Cable Management Claims</label>
                           <div class="calculated-field bg-light p-3 rounded">
                             <div class="row">
@@ -185,13 +208,15 @@
                         <div class="col-md-4 mb-3">
                           <div class="form-check">
                             <input
-                              v-model="form['3_year_warranty']"
+                              v-model="form.three_year_warranty"
                               type="checkbox"
-                              id="3_year_warranty"
+                              id="three_year_warranty"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                               @change="calculateDates"
                             >
-                            <label for="3_year_warranty" class="form-check-label">
+                            <label for="three_year_warranty" class="form-check-label">
                               <strong>3 Year Warranty</strong>
                               <div v-if="form.date_start" class="small text-muted">
                                 Ends: {{ formatDate(warrantyEndDate) }}
@@ -207,11 +232,13 @@
                               type="checkbox"
                               id="unlimited_troubleshooting"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                               @change="calculateDates"
                             >
                             <label for="unlimited_troubleshooting" class="form-check-label">
                               <strong>Unlimited Troubleshooting</strong>
-                              <div v-if="form.date_start && form.unlimited_troubleshooting" class="small text-muted">
+                              <div v-if="form.date_start && form.unlimited_troubleshooting === 'Yes'" class="small text-muted">
                                 First year only
                               </div>
                             </label>
@@ -221,15 +248,17 @@
                         <div class="col-md-4 mb-3">
                           <div class="form-check">
                             <input
-                              v-model="form['50_troubleshooting']"
+                              v-model="form.troubleshooting"
                               type="checkbox"
-                              id="50_troubleshooting"
+                              id="troubleshooting"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                               @change="calculateDates"
                             >
-                            <label for="50_troubleshooting" class="form-check-label">
+                            <label for="troubleshooting" class="form-check-label">
                               <strong>50% Off Troubleshooting</strong>
-                              <div v-if="form.date_start && form['50_troubleshooting']" class="small text-muted">
+                              <div v-if="form.date_start && form.troubleshooting === 'Yes'" class="small text-muted">
                                 Years 2-9
                               </div>
                             </label>
@@ -253,10 +282,10 @@
                           <label class="form-label">CM Claim 1</label>
                           <div class="input-group">
                             <input
-                              v-model="form.cm_claim1"
+                              v-model="form.cable_management_claim1"
                               type="text"
                               class="form-control"
-                              :class="{ 'is-invalid': errors.cm_claim1 }"
+                              :class="{ 'is-invalid': errors.cable_management_claim1 }"
                               placeholder="Claim description"
                             >
                             <div class="input-group-append">
@@ -272,10 +301,10 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Claim Date 1</label>
                           <input
-                            v-model="form.cm_claim1_date"
+                            v-model="form.cable_management_claim1_date"
                             type="date"
                             class="form-control"
-                            :class="{ 'is-invalid': errors.cm_claim1_date }"
+                            :class="{ 'is-invalid': errors.cable_management_claim1_date }"
                             :min="cableManagementClaims && cableManagementClaims[0] ? cableManagementClaims[0].start : null"
                             :max="cableManagementClaims && cableManagementClaims[0] ? cableManagementClaims[0].end : null"
                           >
@@ -292,7 +321,7 @@
                           <label class="form-label">CM Claim 2</label>
                           <div class="input-group">
                             <input
-                              v-model="form.cm_claim2"
+                              v-model="form.cable_management_claim2"
                               type="text"
                               class="form-control"
                               placeholder="Claim description"
@@ -310,7 +339,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Claim Date 2</label>
                           <input
-                            v-model="form.cm_claim2_date"
+                            v-model="form.cable_management_claim2_date"
                             type="date"
                             class="form-control"
                             :min="cableManagementClaims && cableManagementClaims[1] ? cableManagementClaims[1].start : null"
@@ -326,7 +355,7 @@
                           <label class="form-label">CM Claim 3</label>
                           <div class="input-group">
                             <input
-                              v-model="form.cm_claim3"
+                              v-model="form.cable_management_claim3"
                               type="text"
                               class="form-control"
                               placeholder="Claim description"
@@ -344,7 +373,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Claim Date 3</label>
                           <input
-                            v-model="form.cm_claim3_date"
+                            v-model="form.cable_management_claim3_date"
                             type="date"
                             class="form-control"
                             :min="cableManagementClaims && cableManagementClaims[2] ? cableManagementClaims[2].start : null"
@@ -360,7 +389,7 @@
                           <label class="form-label">CM Claim 4</label>
                           <div class="input-group">
                             <input
-                              v-model="form.cm_claim4"
+                              v-model="form.cable_management_claim4"
                               type="text"
                               class="form-control"
                               placeholder="Claim description"
@@ -378,7 +407,7 @@
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Claim Date 4</label>
                           <input
-                            v-model="form.cm_claim4_date"
+                            v-model="form.cable_management_claim4_date"
                             type="date"
                             class="form-control"
                             :min="cableManagementClaims && cableManagementClaims[3] ? cableManagementClaims[3].start : null"
@@ -398,54 +427,75 @@
                       </h5>
                       <div class="row">
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual D Cleaning 1</label>
+                          <label class="form-label">Annual D Cleaning (Description)</label>
                           <input
-                            v-model="form.annual_d_cleaning1"
+                            v-model="form.annual_dust_cleaning"
                             type="text"
                             class="form-control"
+                            placeholder="Free Annual Dust Cleaning"
                           >
                         </div>
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Claim Date 1</label>
-                          <input
-                            v-model="form.claim_date1"
-                            type="date"
-                            class="form-control"
-                          >
+                          <label class="form-label">Year 1 Claim</label>
+                          <div class="d-flex align-items-center">
+                            <input
+                              v-model="form.annual_dust_cleaning_year1"
+                              type="checkbox"
+                              class="form-check-input mr-2"
+                              true-value="Yes"
+                              false-value="No"
+                              id="year1_claim"
+                            >
+                            <label for="year1_claim" class="mr-3">Claimed</label>
+                            <input
+                              v-model="form.claim_date_year1"
+                              type="date"
+                              class="form-control"
+                              placeholder="Claim Date"
+                            >
+                          </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual D Cleaning 2</label>
-                          <input
-                            v-model="form.annual_d_cleaning2"
-                            type="text"
-                            class="form-control"
-                          >
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Claim Date 2</label>
-                          <input
-                            v-model="form.claim_date2"
-                            type="date"
-                            class="form-control"
-                          >
+                          <label class="form-label">Year 2 Claim</label>
+                          <div class="d-flex align-items-center">
+                            <input
+                              v-model="form.annual_dust_cleaning_year2"
+                              type="checkbox"
+                              class="form-check-input mr-2"
+                              true-value="Yes"
+                              false-value="No"
+                              id="year2_claim"
+                            >
+                            <label for="year2_claim" class="mr-3">Claimed</label>
+                            <input
+                              v-model="form.claim_date_year2"
+                              type="date"
+                              class="form-control"
+                              placeholder="Claim Date"
+                            >
+                          </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual D Cleaning 3</label>
-                          <input
-                            v-model="form.annual_d_cleaning3"
-                            type="text"
-                            class="form-control"
-                          >
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Claim Date 3</label>
-                          <input
-                            v-model="form.claim_date3"
-                            type="date"
-                            class="form-control"
-                          >
+                          <label class="form-label">Year 3 Claim</label>
+                          <div class="d-flex align-items-center">
+                            <input
+                              v-model="form.annual_dust_cleaning_year3"
+                              type="checkbox"
+                              class="form-check-input mr-2"
+                              true-value="Yes"
+                              false-value="No"
+                              id="year3_claim"
+                            >
+                            <label for="year3_claim" class="mr-3">Claimed</label>
+                            <input
+                              v-model="form.claim_date_year3"
+                              type="date"
+                              class="form-control"
+                              placeholder="Claim Date"
+                            >
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -459,13 +509,15 @@
                         <div class="col-md-4 mb-3">
                           <div class="form-check">
                             <input
-                              v-model="form['50_d_cleaning']"
+                              v-model="form['50_dust_cleaning']"
                               type="checkbox"
-                              id="50_d_cleaning"
+                              id="50_dust_cleaning"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                             >
-                            <label for="50_d_cleaning" class="form-check-label">
-                              50 D Cleaning
+                            <label for="50_dust_cleaning" class="form-check-label">
+                              50% Dust Cleaning
                             </label>
                           </div>
                         </div>
@@ -473,13 +525,15 @@
                         <div class="col-md-4 mb-3">
                           <div class="form-check">
                             <input
-                              v-model="form['50_us']"
+                              v-model="form['50_upgrade_service']"
                               type="checkbox"
-                              id="50_us"
+                              id="50_upgrade_service"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                             >
-                            <label for="50_us" class="form-check-label">
-                              50 US
+                            <label for="50_upgrade_service" class="form-check-label">
+                              50% Upgrade Service
                             </label>
                           </div>
                         </div>
@@ -487,13 +541,15 @@
                         <div class="col-md-4 mb-3">
                           <div class="form-check">
                             <input
-                              v-model="form['30_us']"
+                              v-model="form['30_upgrade_service']"
                               type="checkbox"
-                              id="30_us"
+                              id="30_upgrade_service"
                               class="form-check-input"
+                              true-value="Yes"
+                              false-value="No"
                             >
-                            <label for="30_us" class="form-check-label">
-                              30 US
+                            <label for="30_upgrade_service" class="form-check-label">
+                              30% Upgrade Service
                             </label>
                           </div>
                         </div>
@@ -521,14 +577,16 @@
 
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Generate Code</label>
-                          <input
-                            v-model="form.generate_code"
-                            type="text"
-                            class="form-control"
-                            :class="{ 'is-invalid': errors.generate_code }"
-                          >
-                          <div v-if="errors.generate_code" class="invalid-feedback">
-                            {{ errors.generate_code[0] }}
+                          <div class="d-flex align-items-center">
+                            <input
+                              v-model="form.generate_code"
+                              type="checkbox"
+                              class="form-check-input mr-2"
+                              true-value="1"
+                              false-value="0"
+                              id="generate_code"
+                            >
+                            <label for="generate_code">Generate promo code</label>
                           </div>
                         </div>
 
@@ -539,9 +597,11 @@
                               type="checkbox"
                               id="promo_claim"
                               class="form-check-input"
+                              true-value="1"
+                              false-value="0"
                             >
                             <label for="promo_claim" class="form-check-label">
-                              Promo Claim
+                              Promo Claim (Code has been claimed)
                             </label>
                           </div>
                         </div>
@@ -556,7 +616,7 @@
                         </div>
                         <div>
                           <router-link
-                            to="/serve-pces"
+                            to="/serve-pce"
                             class="btn btn-secondary mr-2"
                           >
                             <i class="fas fa-times mr-1"></i> Cancel
@@ -589,41 +649,49 @@ import Swal from 'sweetalert2'
 
 export default {
   name: 'ServePceEdit',
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
+    }
+  },
   data() {
     return {
+      servePceId: this.id,
       loading: false,
       errors: {},
       form: {
         id: '',
         serve_data_id: '',
         qvse_cid: '',
+        customer_name: '',
+        customer_email: '',
         date_start: '',
-        '3_year_warranty': true,
-        unlimited_troubleshooting: true,
-        '50_troubleshooting': true,
-        cm: '',
-        cm_claim1: '',
-        cm_claim1_date: '',
-        cm_claim2: '',
-        cm_claim2_date: '',
-        cm_claim3: '',
-        cm_claim3_date: '',
-        cm_claim4: '',
-        cm_claim4_date: '',
-        annual_d_cleaning1: '',
-        claim_date1: '',
-        annual_d_cleaning2: '',
-        claim_date2: '',
-        annual_d_cleaning3: '',
-        claim_date3: '',
-        '50_d_cleaning': false,
-        '50_us': false,
-        '30_us': false,
+        three_year_warranty: 'Yes',
+        unlimited_troubleshooting: 'Yes',
+        troubleshooting: 'Yes',
+        cable_management: '',
+        cable_management_claim1: '',
+        cable_management_claim1_date: '',
+        cable_management_claim2: '',
+        cable_management_claim2_date: '',
+        cable_management_claim3: '',
+        cable_management_claim3_date: '',
+        cable_management_claim4: '',
+        cable_management_claim4_date: '',
+        annual_dust_cleaning: '',
+        annual_dust_cleaning_year1: 'No',
+        claim_date_year1: '',
+        annual_dust_cleaning_year2: 'No',
+        claim_date_year2: '',
+        annual_dust_cleaning_year3: 'No',
+        claim_date_year3: '',
+        '50_dust_cleaning': 'No',
+        '50_upgrade_service': 'No',
+        '30_upgrade_service': 'No',
         promo_code: '',
-        generate_code: '',
-        promo_claim: false,
-        created_at: '',
-        updated_at: ''
+        generate_code: '0',
+        promo_claim: '0'
       }
     }
   },
@@ -824,16 +892,64 @@ export default {
     async fetchRecord() {
       this.loading = true
       try {
-        const response = await axios.get(`/api/serve-pces/${this.$route.params.id}`)
-
+        const response = await axios.get(`/api/serve-pce/${this.$route.params.id}`)
         if (response.data.data) {
-          this.form = response.data.data
+          const data = response.data.data
+
+          // Debug: Log the data structure
+          console.log('API Response data:', data)
+
+          // Map the database fields to form fields
+          this.form = {
+            id: data.id || '',
+            serve_data_id: data.serve_data_id || '',
+            qvse_cid: data.qvse_cid || '',
+            customer_name: data.customer ? data.customer.full_name : '',
+            customer_email: data.customer ? data.customer.email : '',
+            date_start: data.date_start || '',
+            three_year_warranty: data.three_year_warranty || 'Yes',
+            unlimited_troubleshooting: data.unlimited_troubleshooting || 'Yes',
+            troubleshooting: data.troubleshooting || 'Yes',
+            cable_management: data.cable_management || '',
+            cable_management_claim1: data.cable_management_claim1 || '',
+            cable_management_claim1_date: data.cable_management_claim1_date || '',
+            cable_management_claim2: data.cable_management_claim2 || '',
+            cable_management_claim2_date: data.cable_management_claim2_date || '',
+            cable_management_claim3: data.cable_management_claim3 || '',
+            cable_management_claim3_date: data.cable_management_claim3_date || '',
+            cable_management_claim4: data.cable_management_claim4 || '',
+            cable_management_claim4_date: data.cable_management_claim4_date || '',
+            annual_dust_cleaning: data.annual_dust_cleaning || '',
+            annual_dust_cleaning_year1: data.annual_dust_cleaning_year1 || 'No',
+            claim_date_year1: data.claim_date_year1 || '',
+            annual_dust_cleaning_year2: data.annual_dust_cleaning_year2 || 'No',
+            claim_date_year2: data.claim_date_year2 || '',
+            annual_dust_cleaning_year3: data.annual_dust_cleaning_year3 || 'No',
+            claim_date_year3: data.claim_date_year3 || '',
+            '50_dust_cleaning': data['50_dust_cleaning'] || 'No',
+            '50_upgrade_service': data['50_upgrade_service'] || 'No',
+            '30_upgrade_service': data['30_upgrade_service'] || 'No',
+            promo_code: data.promo_code || '',
+            generate_code: data.generate_code || '0',
+            promo_claim: data.promo_claim || '0'
+          }
+
+          // If qvse_cid is still empty but serve_data exists, try to get it from there
+          if (!this.form.qvse_cid && data.serve_data) {
+            this.form.qvse_cid = data.serve_data.qvse_cid || ''
+
+            // Also get customer info from serve_data if not already in customer object
+            if (!this.form.customer_name && data.serve_data.customer) {
+              this.form.customer_name = data.serve_data.customer.full_name || ''
+              this.form.customer_email = data.serve_data.customer.email || ''
+            }
+          }
 
           // Format dates for input fields (YYYY-MM-DD)
           const dateFields = [
-            'date_start', 'cm_claim1_date', 'cm_claim2_date', 'cm_claim3_date',
-            'cm_claim4_date', 'claim_date1', 'claim_date2', 'claim_date3',
-            'created_at', 'updated_at'
+            'date_start', 'cable_management_claim1_date', 'cable_management_claim2_date',
+            'cable_management_claim3_date', 'cable_management_claim4_date',
+            'claim_date_year1', 'claim_date_year2', 'claim_date_year3'
           ]
 
           dateFields.forEach(field => {
@@ -847,18 +963,6 @@ export default {
                 const day = String(date.getDate()).padStart(2, '0')
                 this.form[field] = `${year}-${month}-${day}`
               }
-            }
-          })
-
-          // Ensure boolean fields are properly set
-          const booleanFields = [
-            '3_year_warranty', 'unlimited_troubleshooting', '50_troubleshooting',
-            '50_d_cleaning', '50_us', '30_us', 'promo_claim'
-          ]
-
-          booleanFields.forEach(field => {
-            if (this.form[field] !== undefined) {
-              this.form[field] = Boolean(this.form[field])
             }
           })
 
@@ -881,7 +985,7 @@ export default {
           text: errorMessage,
           confirmButtonText: 'OK'
         }).then(() => {
-          this.$router.push('/serve-pces')
+          this.$router.push('/serve-pce')
         })
       } finally {
         this.loading = false
@@ -942,14 +1046,50 @@ export default {
       })
 
       try {
-        // Create a copy of form data without qvse_cid since it's from relationship
+        // Create a copy of form data for submission
         const formData = { ...this.form }
-        delete formData.qvse_cid // Remove qvse_cid as it's not a direct field
-        delete formData.id // Remove ID as it's in the URL
-        delete formData.created_at // Remove timestamps
-        delete formData.updated_at
 
-        const response = await axios.put(`/api/serve-pces/${this.$route.params.id}`, formData)
+        // Remove fields that shouldn't be sent to the API
+        delete formData.id
+        delete formData.qvse_cid
+        delete formData.customer_name
+        delete formData.customer_email
+        delete formData.created_at
+        delete formData.updated_at
+        delete formData.serve_data
+        delete formData.customer
+
+        // Ensure boolean/checkbox fields are properly formatted
+        const checkboxFields = [
+          'cable_management_claim1', 'cable_management_claim2', 'cable_management_claim3', 'cable_management_claim4',
+          'annual_dust_cleaning_year1', 'annual_dust_cleaning_year2', 'annual_dust_cleaning_year3',
+          'generate_code', 'promo_claim'
+        ]
+
+        checkboxFields.forEach(field => {
+          if (formData[field] !== undefined) {
+            // Convert Yes/No to '1'/'0' for the API
+            if (formData[field] === 'Yes') {
+              formData[field] = '1'
+            } else if (formData[field] === 'No') {
+              formData[field] = '0'
+            }
+          }
+        })
+
+        // Handle warranty and troubleshooting fields
+        const yesNoFields = ['three_year_warranty', 'unlimited_troubleshooting', 'troubleshooting']
+        yesNoFields.forEach(field => {
+          if (formData[field] === 'Yes') {
+            formData[field] = 'Yes'
+          } else if (formData[field] === 'No') {
+            formData[field] = 'No'
+          }
+        })
+
+        console.log('Submitting form data:', formData) // For debugging
+
+        const response = await axios.put(`/api/serve-pce/${this.$route.params.id}`, formData)
 
         loadingSwal.close()
 
@@ -962,7 +1102,7 @@ export default {
         })
 
         setTimeout(() => {
-          this.$router.push('/serve-pces')
+          this.$router.push('/serve-pce')
         }, 1500)
 
       } catch (error) {
@@ -992,7 +1132,7 @@ export default {
             text: 'The record you are trying to update no longer exists.',
             confirmButtonText: 'OK'
           }).then(() => {
-            this.$router.push('/serve-pces')
+            this.$router.push('/serve-pce')
           })
         } else {
           console.error('Error updating record:', error)
