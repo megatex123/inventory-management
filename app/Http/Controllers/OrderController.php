@@ -218,7 +218,9 @@ class OrderController extends Controller
                     } elseif ($totalAmount >= 19000 && $totalAmount <= 20000) {
                         return ['lkp_care_id' => 3, 'charge' => 2149, 'range' => '19,000 - 20,000'];
                     } else {
-                        return ['lkp_care_id' => 3, 'charge' => 2149 + (ceil(($totalAmount - 20000) / 1000) * 110), 'range' => 'Above 20,000'];
+                        return ['lkp_care_id' => 3, 'charge' => 2359
+                        //  + (ceil(($totalAmount - 20000) / 1000) * 110)
+                         , 'range' => 'Above 20,000'];
                     }
                 };
 

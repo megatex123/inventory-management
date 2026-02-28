@@ -21,9 +21,9 @@
                                                     <th>Product Type</th>
                                                     <th>Name</th>
                                                     <th>Price (RM)</th>
-                                                    <th>Available</th>
+                                                    <!-- <th>Available</th>
                                                     <th>Available Local</th>
-                                                    <th>Buying Date</th>
+                                                    <th>Buying Date</th> -->
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -34,9 +34,9 @@
                                                     <td>{{data.cat_name}}</td>
                                                     <td>{{data.product_name}}</td>
                                                     <td>{{data.price}}</td>
-                                                    <td>{{data.available}}</td>
+                                                    <!-- <td>{{data.available}}</td>
                                                     <td>{{data.available_local}}</td>
-                                                    <td>{{data.buying_date}}</td>
+                                                    <td>{{data.buying_date}}</td> -->
                                                     <td>
                                                         <router-link :to="{name:'Productedit', params:{id:data.id}}" class="btn btn-sm   btn-primary">Edit </router-link>
                                                         <a href='javascript:void(0)' @click='deletePro(data.id)' class="btn btn-sm   btn-danger">Delete </a>

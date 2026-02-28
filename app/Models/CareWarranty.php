@@ -17,8 +17,6 @@ class CareWarranty extends Model
         'care_invoice_id',
         'product_id',
         'category_id',
-        'eligible_warranty',
-        'eligible_qvca',
         'i_qvca_id',
         'spare_item_name',
         'spare_category_id',
@@ -28,8 +26,6 @@ class CareWarranty extends Model
     ];
 
     protected $casts = [
-        'eligible_warranty' => 'boolean',
-        'eligible_qvca' => 'boolean',
         'reset_status' => 'boolean',
         'date_start' => 'date',
         'loan_date_end' => 'date',
@@ -65,22 +61,6 @@ class CareWarranty extends Model
     public function spareCategory()
     {
         return $this->belongsTo(Categories::class, 'spare_category_id');
-    }
-
-    /**
-     * Scope a query to only include eligible warranties
-     */
-    public function scopeEligibleWaranty($query)
-    {
-        return $query->where('eligible_warranty', true);
-    }
-
-    /**
-     * Scope a query to only include eligible QVCA
-     */
-    public function scopeEligibleQvca($query)
-    {
-        return $query->where('eligible_qvca', true);
     }
 
     /**

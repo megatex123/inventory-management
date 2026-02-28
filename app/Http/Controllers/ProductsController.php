@@ -23,7 +23,6 @@ class ProductsController extends Controller
                 ->orderBy('products.id','DESC')
                 ->get();
                 return response()->json($products);
-
     }
 
     /**

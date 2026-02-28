@@ -28,7 +28,7 @@
                   readonly
                   required
                 >
-                <div class="invalid-feedback" v-if="errors.care_warranty_id">
+                <div v-if="errors.care_warranty_id" class="invalid-feedback d-block">
                   {{ errors.care_warranty_id[0] }}
                 </div>
               </div>
@@ -41,7 +41,6 @@
                 <input
                   v-model="searchQuery"
                   type="text"
-                  required
                   class="form-control"
                   :class="{ 'is-invalid': errors.care_data_id }"
                   placeholder="Search by Care ID, Customer Name, etc."
@@ -124,10 +123,9 @@
                             </span>
                           </div>
                           <div v-if="item.customer" class="small mt-1" :class="{ 'text-white': highlightedIndex === index }">
-                            <div><i class="fas fa-user mr-1"></i> {{ getCustomerName(item) }}</div>
+                            <div><i class="fas fa-user mr-1"></i> {{ item.customer.name }}</div>
                             <div v-if="item.customer.email"><i class="fas fa-envelope mr-1"></i> {{ item.customer.email }}</div>
                           </div>
-                          <!-- Display invoice info in search results -->
                           <div v-if="item.order && item.order.invoice_id" class="small mt-1" :class="{ 'text-white': highlightedIndex === index }">
                             <i class="fas fa-file-invoice mr-1"></i> Invoice: {{ item.order.invoice_id }}
                           </div>
@@ -148,7 +146,7 @@
                   v-model="form.care_invoice_id"
                   :class="{ 'is-invalid': errors.care_invoice_id }"
                   required
-                  disabled
+                  readonly
                 >
                 <div v-if="errors.care_invoice_id" class="invalid-feedback d-block">
                   {{ errors.care_invoice_id[0] }}
@@ -158,15 +156,17 @@
                 </small>
               </div>
             </div>
+          </div>
 
-            <!-- Customer Info Display -->
-            <div class="col-md-6">
-              <div v-if="selectedCareData && selectedCareData.customer">
+          <!-- Customer Info Display -->
+          <div class="row">
+            <div class="col-md-6" v-if="selectedCareData && selectedCareData.customer">
+              <div class="form-group">
                 <label class="form-label">Customer Information</label>
                 <div class="customer-info bg-light p-3 rounded">
                   <div class="d-flex align-items-center mb-2">
                     <i class="fas fa-user text-primary mr-2"></i>
-                    <strong>{{ selectedCareData.customer.full_name || 'N/A' }}</strong>
+                    <strong>{{ selectedCareData.customer.name || 'N/A' }}</strong>
                   </div>
                   <div class="d-flex align-items-center mb-2">
                     <i class="fas fa-envelope text-primary mr-2"></i>
@@ -179,9 +179,9 @@
                 </div>
               </div>
             </div>
-            
-            <div class="col-md-6">
-              <div v-if="selectedCareData" class="selected-info">
+
+            <div class="col-md-6" v-if="selectedCareData">
+              <div class="form-group">
                 <div class="alert alert-success">
                   <span v-if="selectedCareData && selectedCareData.care_id" class="ml-2 badge badge-light">
                     <i class="fas fa-check-circle mr-2"></i> Selected: <strong>{{ selectedCareData.care_id }}</strong>
@@ -198,15 +198,12 @@
                   <button type="button" class="btn btn-sm btn-outline-danger float-right" @click="clearCareData">
                     <i class="fas fa-times"></i> Change
                   </button>
-                  <br>
                 </div>
               </div>
             </div>
           </div>
 
-          <br>
-
-          <!-- Products from Order -->
+          <!-- Product Selection -->
           <div v-if="selectedCareData" class="row">
             <div class="col-md-12 mb-3">
               <label class="form-label">Item Name (Select Product from Order) <span class="text-danger">*</span></label>
@@ -230,7 +227,7 @@
                 <template v-else>
                   <div class="alert alert-info mb-3">
                     <i class="fas fa-info-circle mr-2"></i>
-                    Please select a product from the order below ({{ orderProducts.length }} product(s) found)
+                    Please select a product from the order below ({{ orderProducts.filter(p => p.is_care == 1).length }} eligible product(s) found)
                   </div>
 
                   <div class="product-grid">
@@ -238,15 +235,15 @@
                       v-for="product in orderProducts.filter(p => p.is_care == 1)"
                       :key="product.id"
                       class="product-card"
-                      :class="{ 'selected': selectedProductId === (product.pro_id || product.id) }"
+                      :class="{ 'selected': selectedProductId === product.pro_id }"
                       @click="selectProduct(product)"
                     >
                       <div class="product-card-body">
                         <!-- Product Header -->
                         <div class="d-flex justify-content-between align-items-start">
-                          <strong class="product-name">{{ product.product_name || product.name || 'Unnamed Product' }}</strong>
-                          <span class="badge" :class="selectedProductId === (product.pro_id || product.id) ? 'badge-success' : 'badge-primary'">
-                            Qty: {{ product.pro_qty || product.quantity || 0 }}
+                          <strong class="product-name">{{ product.product_name || 'Unnamed Product' }}</strong>
+                          <span class="badge" :class="selectedProductId === product.pro_id ? 'badge-success' : 'badge-primary'">
+                            Qty: {{ product.pro_qty || 0 }}
                           </span>
                         </div>
 
@@ -255,11 +252,11 @@
                           <div v-if="product.product_code" class="small text-muted">
                             <i class="fas fa-barcode mr-1"></i> Code: {{ product.product_code }}
                           </div>
-                          <div v-if="product.cat_id || product.category_id" class="small text-muted">
-                            <i class="fas fa-tag mr-1"></i> Category ID: {{ product.cat_id || product.category_id }} : {{ product.cat }}
+                          <div v-if="product.cat_id" class="small text-muted">
+                            <i class="fas fa-tag mr-1"></i> Category ID: {{ product.cat_id }}
                           </div>
                           <div class="small text-muted">
-                            <i class="fas fa-money-bill mr-1"></i> Price: {{ formatCurrency(product.pro_price || product.price) }}
+                            <i class="fas fa-money-bill mr-1"></i> Price: {{ formatCurrency(product.pro_price) }}
                           </div>
                           <div class="small text-muted">
                             <i class="fas fa-cube mr-1"></i> Product ID: {{ product.pro_id }}
@@ -272,7 +269,7 @@
                         </div>
 
                         <!-- Selected Indicator -->
-                        <div v-if="selectedProductId === (product.pro_id || product.id)" class="selected-indicator">
+                        <div v-if="selectedProductId === product.pro_id" class="selected-indicator">
                           <i class="fas fa-check-circle"></i> Selected
                         </div>
                       </div>
@@ -283,20 +280,116 @@
             </div>
           </div>
 
-          <!-- Other Form Fields -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Inventory QVCA ID</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="form.i_qvca_id"
-                >
+          <!-- Inventory QVCA ID Selection -->
+          <div v-if="selectedProduct" class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label">
+                Inventory QVCA ID <span class="text-danger">*</span>
+                <small class="text-muted ml-2">(Select from product warranties with same category)</small>
+              </label>
+
+              <!-- Loading State -->
+              <div v-if="loadingWarranties" class="text-center p-4">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-2">Loading available warranties...</p>
+              </div>
+
+              <!-- No Warranties Found -->
+              <div v-else-if="availableWarranties.length === 0" class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <strong>No product warranties found for this category</strong>
+                <p class="mt-2 mb-0">Category ID: {{ selectedProduct.cat_id }} ({{ getCategoryName(selectedProduct.cat_id) }})</p>
+                <button @click="fetchAvailableWarranties(selectedProduct.cat_id)" class="btn btn-sm btn-warning mt-2">
+                  <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+              </div>
+
+              <!-- Warranties Grid -->
+              <template v-else>
+                <div class="alert alert-info mb-3">
+                  <i class="fas fa-info-circle mr-2"></i>
+                  Please select a warranty from the list below ({{ availableWarranties.length }} available)
+                </div>
+
+                <!-- Warranty Search -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="warrantySearch"
+                      placeholder="Search by warranty ID, serial no, product name..."
+                      @input="filterWarranties"
+                    >
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <span class="text-muted">Showing {{ filteredWarranties.length }} of {{ availableWarranties.length }}</span>
+                  </div>
+                </div>
+
+                <div class="warranty-grid">
+                  <div
+                    v-for="warranty in filteredWarranties"
+                    :key="warranty.id"
+                    class="warranty-card"
+                    :class="{ 'selected': selectedWarrantyId === warranty.id }"
+                    @click="selectWarranty(warranty)"
+                  >
+                    <div class="warranty-card-body">
+                      <!-- Warranty Header -->
+                      <div class="d-flex justify-content-between align-items-start">
+                        <strong class="warranty-id">Inventory QVCA ID : {{ warranty.warranty_id || warranty.id }}</strong>
+                        <span class="badge" :class="selectedWarrantyId === warranty.id ? 'badge-success' : 'badge-primary'">
+                          ID: {{ warranty.id }}
+                        </span>
+                      </div>
+
+                      <!-- Warranty Details -->
+                      <div class="warranty-details mt-2">
+                        <div class="small">
+                          <i class="fas fa-barcode mr-1"></i>
+                          <strong>Product:</strong> {{ warranty.product_name }}
+                        </div>
+                        <div v-if="warranty.product_code" class="small">
+                          <i class="fas fa-qrcode mr-1"></i>
+                          <strong>Code:</strong> {{ warranty.product_code }}
+                        </div>
+                        <div class="small">
+                          <i class="fas fa-hashtag mr-1"></i>
+                          <strong>Serial No:</strong> {{ warranty.serial_no || 'N/A' }}
+                        </div>
+                        <div class="small">
+                          <i class="fas fa-tag mr-1"></i>
+                          <strong>Category:</strong> {{ warranty.category_name }}
+                        </div>
+                        <div v-if="warranty.warranty_id" class="small">
+                          <i class="fas fa-id-card mr-1"></i>
+                          <strong>Warranty:</strong> {{ warranty.warranty_id }}
+                        </div>
+                        <div class="small text-muted">
+                          <i class="fas fa-calendar mr-1"></i>
+                          <strong>Created:</strong> {{ formatDate(warranty.created_at) }}
+                        </div>
+                      </div>
+
+                      <!-- Selected Indicator -->
+                      <div v-if="selectedWarrantyId === warranty.id" class="selected-indicator">
+                        <i class="fas fa-check-circle"></i> Selected
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <input type="hidden" v-model="form.i_qvca_id">
+
+              <div v-if="errors.i_qvca_id" class="invalid-feedback d-block">
+                {{ errors.i_qvca_id[0] }}
               </div>
             </div>
           </div>
 
+          <!-- Spare Item Fields -->
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -305,19 +398,27 @@
                   type="text"
                   class="form-control"
                   v-model="form.spare_item_name"
+                  readonly
                 >
+                <small v-if="selectedWarranty" class="text-muted">
+                  <i class="fas fa-info-circle"></i> Auto-filled from selected warranty
+                </small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label>Spare Category</label>
-                <select class="form-control" v-model="form.spare_category_id">
-                  <option value="">Select Spare Category</option>
-                  <option
-                    v-for="category in categories"
-                    :key="category.id"
-                    :value="category.id"
-                  >
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="form.spare_category_name"
+                  readonly
+                >
+                <small v-if="selectedWarranty" class="text-muted">
+                  <i class="fas fa-info-circle"></i> Auto-filled from selected warranty
+                </small>
+                <select class="form-control" v-model="form.spare_category_id" style="display: none;">
+                  <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select>
@@ -325,6 +426,7 @@
             </div>
           </div>
 
+          <!-- Date Fields -->
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
@@ -349,37 +451,8 @@
             </div>
           </div>
 
+          <!-- Reset Status Checkbox -->
           <div class="row">
-            <div class="col-md-4">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="eligible_warranty"
-                  v-model="form.eligible_warranty"
-                  true-value="1"
-                  false-value="0"
-                >
-                <label class="form-check-label" for="eligible_warranty">
-                  Eligible Warranty
-                </label>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="eligible_qvca"
-                  v-model="form.eligible_qvca"
-                  true-value="1"
-                  false-value="0"
-                >
-                <label class="form-check-label" for="eligible_qvca">
-                  Eligible QVCA
-                </label>
-              </div>
-            </div>
             <div class="col-md-4">
               <div class="form-check">
                 <input
@@ -397,6 +470,7 @@
             </div>
           </div>
 
+          <!-- Form Actions -->
           <div class="form-actions">
             <router-link to="/care-warranty" class="btn btn-secondary">
               Cancel
@@ -404,7 +478,7 @@
             <button
               type="submit"
               class="btn btn-primary"
-              :disabled="saving || !form.care_data_id || !form.product_id"
+              :disabled="saving || !form.care_data_id || !form.product_id || !form.i_qvca_id"
             >
               <span v-if="saving" class="spinner-border spinner-border-sm mr-1"></span>
               {{ saving ? 'Updating...' : 'Update' }}
@@ -424,6 +498,7 @@ export default {
   name: 'CareWarrantyEdit',
   data() {
     return {
+      debugMode: false,
       form: {
         id: null,
         care_warranty_id: '',
@@ -436,6 +511,7 @@ export default {
         i_qvca_id: '',
         spare_item_name: '',
         spare_category_id: '',
+        spare_category_name: '',
         date_start: '',
         loan_date_end: '',
         reset_status: '0'
@@ -455,9 +531,21 @@ export default {
       searchCache: new Map(),
       abortController: null,
       orderProducts: [],
+      selectedProduct: null,
       selectedProductId: null,
       loadingProducts: false,
-      debouncedSearch: null
+      debouncedSearch: null,
+
+      // Warranty related
+      availableWarranties: [],
+      filteredWarranties: [],
+      selectedWarranty: null,
+      selectedWarrantyId: null,
+      loadingWarranties: false,
+      warrantySearch: '',
+
+      // Flag to track if we've loaded the warranty by ID
+      loadedWarrantyById: false
     }
   },
   mounted() {
@@ -478,12 +566,36 @@ export default {
       }
     },
 
+    getCategoryName(categoryId) {
+      if (!categoryId) return 'Unknown'
+      const category = this.categories.find(c => c.id == categoryId)
+      return category ? category.name : `ID: ${categoryId}`
+    },
+
+    formatCurrency(value) {
+      if (!value) return 'RM 0'
+      return new Intl.NumberFormat('ms-MY', {
+        style: 'currency',
+        currency: 'MYR',
+        minimumFractionDigits: 0
+      }).format(value)
+    },
+
+    formatDate(dateString) {
+      if (!dateString) return 'N/A'
+      return new Date(dateString).toLocaleDateString('en-MY', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    },
+
     async fetchWarranty() {
       this.loading = true
       try {
         const id = this.$route.params.id
         const response = await axios.get(`/api/care-warranty/${id}`)
-        
+
         const warrantyData = response.data.data || response.data
 
         // Format dates for input fields (YYYY-MM-DD)
@@ -501,12 +613,18 @@ export default {
           category_id: warrantyData.category_id?.toString() || '',
           eligible_warranty: warrantyData.eligible_warranty ? '1' : '0',
           eligible_qvca: warrantyData.eligible_qvca ? '1' : '0',
-          i_qvca_id: warrantyData.i_qvca_id || '',
+          i_qvca_id: warrantyData.i_qvca_id?.toString() || '',
           spare_item_name: warrantyData.spare_item_name || '',
           spare_category_id: warrantyData.spare_category_id?.toString() || '',
+          spare_category_name: warrantyData.spare_category_name || '',
           date_start: formatDateForInput(warrantyData.date_start),
           loan_date_end: formatDateForInput(warrantyData.loan_date_end),
           reset_status: warrantyData.reset_status ? '1' : '0'
+        }
+
+        // First, try to load the warranty by ID if it exists
+        if (this.form.i_qvca_id) {
+          await this.loadWarrantyById(this.form.i_qvca_id)
         }
 
         // If care_data_id exists, fetch the care data details
@@ -525,30 +643,66 @@ export default {
       }
     },
 
+    async loadWarrantyById(warrantyId) {
+      try {
+        console.log('Loading warranty by ID:', warrantyId)
+
+        const response = await axios.get(`/api/product-warranty/${warrantyId}`)
+
+        if (response.data.success) {
+          const warranty = response.data.data
+          console.log('Loaded warranty:', warranty)
+
+          // Store the warranty as selected
+          this.selectedWarranty = warranty
+          this.selectedWarrantyId = warranty.id
+
+          // Auto-fill spare item fields
+          if (warranty.product_name) {
+            this.form.spare_item_name = warranty.product_name
+          }
+
+          if (warranty.category_name) {
+            this.form.spare_category_name = warranty.category_name
+          }
+
+          if (warranty.category_id) {
+            this.form.spare_category_id = warranty.category_id
+          } else if (warranty.category_name) {
+            const category = this.categories.find(c =>
+              c.name.toLowerCase() === warranty.category_name.toLowerCase()
+            )
+            if (category) {
+              this.form.spare_category_id = category.id
+            }
+          }
+
+          this.loadedWarrantyById = true
+        }
+      } catch (error) {
+        console.error('Error loading warranty by ID:', error)
+      }
+    },
+
     async fetchCareDataDetails(careDataId) {
       try {
         const response = await axios.get(`/api/care-data/${careDataId}`)
-        
+
         const careData = response.data.data || response.data
-        
+
         if (!careData) {
           console.warn('No care data found')
           return
         }
-        
+
         this.selectedCareData = careData
         this.searchQuery = careData.care_id || ''
         this.autoPopulatedInvoice = true
-        
+
         // If order exists, fetch products
         const orderData = careData.order || (careData.orders && careData.orders[0])
         if (orderData && orderData.id) {
           await this.fetchOrderProducts(orderData.id)
-          
-          // Set selected product if exists
-          if (this.form.product_id) {
-            this.selectedProductId = parseInt(this.form.product_id)
-          }
         } else {
           console.warn('No order found for this care data')
         }
@@ -578,8 +732,11 @@ export default {
             this.orderProducts = response.data
           }
 
-          if (this.orderProducts.length === 0 && this.$toast) {
-            this.$toast.warning('No products found in this order')
+          console.log('Order products loaded:', this.orderProducts)
+
+          // After products are loaded, check if we have a product_id from the form
+          if (this.form.product_id && this.orderProducts.length > 0) {
+            await this.preselectExistingProduct()
           }
         }
       } catch (error) {
@@ -592,21 +749,141 @@ export default {
       }
     },
 
-    selectProduct(product) {
-      const productId = product.pro_id || product.id
-      
-      if (!productId) {
-        console.error('Product has no ID:', product)
-        return
+    async preselectExistingProduct() {
+      // Find the product that matches the saved product_id
+      const product = this.orderProducts.find(p => p.pro_id == this.form.product_id)
+
+      if (product) {
+        console.log('Preselecting existing product:', product)
+
+        // Set the selected product
+        this.selectedProduct = product
+        this.selectedProductId = product.pro_id
+
+        // Fetch available warranties for this product's category
+        await this.fetchAvailableWarranties(product.cat)
+
+        // If we haven't loaded the warranty by ID yet, try to find it in the available warranties
+        if (!this.loadedWarrantyById && this.form.i_qvca_id && this.availableWarranties.length > 0) {
+          const warranty = this.availableWarranties.find(w => w.id == this.form.i_qvca_id)
+          if (warranty) {
+            console.log('Found warranty in available list:', warranty)
+            this.selectWarranty(warranty)
+          }
+        }
+      } else {
+        console.warn('Could not find product with ID:', this.form.product_id)
       }
-      
-      this.selectedProductId = productId
+    },
+
+    async selectProduct(product) {
+      this.selectedProduct = product
+      this.selectedProductId = product.pro_id
       this.form.product_id = product.pro_id.toString()
       this.form.category_id = product.cat
 
+      console.log('Selected product category ID:', product.cat)
+
+      // Clear previous warranty selection
+      this.clearWarrantySelection()
+
+      // Fetch available warranties for this product's category
+      await this.fetchAvailableWarranties(product.cat)
+
       if (this.$toast) {
-        this.$toast.success(`Selected: ${product.product_name || product.name || 'Product'}`)
+        this.$toast.success(`Selected: ${product.product_name || 'Product'}`)
       }
+    },
+
+    async fetchAvailableWarranties(categoryId) {
+      this.loadingWarranties = true
+      this.availableWarranties = []
+      this.filteredWarranties = []
+
+      try {
+        console.log('Fetching warranties for category ID:', categoryId)
+
+        const response = await axios.get('/api/product-warranty/by-category', {
+          params: {
+            category_id: categoryId
+          }
+        })
+
+        console.log('Warranties response:', response.data)
+
+        if (response.data.success) {
+          this.availableWarranties = response.data.data || []
+          this.filteredWarranties = [...this.availableWarranties]
+
+          console.log(`Loaded ${this.availableWarranties.length} warranties for category ${categoryId}`)
+        }
+      } catch (error) {
+        console.error('Error fetching warranties:', error)
+        if (this.$toast) {
+          this.$toast.error('Failed to load warranties')
+        }
+      } finally {
+        this.loadingWarranties = false
+      }
+    },
+
+    filterWarranties() {
+      if (!this.warrantySearch) {
+        this.filteredWarranties = [...this.availableWarranties]
+        return
+      }
+
+      const search = this.warrantySearch.toLowerCase()
+      this.filteredWarranties = this.availableWarranties.filter(warranty =>
+        (warranty.warranty_id && warranty.warranty_id.toLowerCase().includes(search)) ||
+        (warranty.serial_no && warranty.serial_no.toLowerCase().includes(search)) ||
+        (warranty.product_name && warranty.product_name.toLowerCase().includes(search)) ||
+        (warranty.product_code && warranty.product_code.toLowerCase().includes(search))
+      )
+    },
+
+    selectWarranty(warranty) {
+      this.selectedWarranty = warranty
+      this.selectedWarrantyId = warranty.id
+      this.form.i_qvca_id = warranty.id.toString()
+
+      // Auto-fill spare item name and category from the warranty
+      if (warranty.product_name) {
+        this.form.spare_item_name = warranty.product_name
+      }
+
+      if (warranty.category_name) {
+        this.form.spare_category_name = warranty.category_name
+      }
+
+      // Find and set category ID
+      if (warranty.category_id) {
+        this.form.spare_category_id = warranty.category_id
+      } else if (warranty.category_name) {
+        const category = this.categories.find(c =>
+          c.name.toLowerCase() === warranty.category_name.toLowerCase()
+        )
+        if (category) {
+          this.form.spare_category_id = category.id
+        }
+      }
+
+      if (this.$toast) {
+        this.$toast.success(`Selected warranty: ${warranty.warranty_id || warranty.id}`)
+      }
+    },
+
+    clearWarrantySelection() {
+      this.selectedWarranty = null
+      this.selectedWarrantyId = null
+      this.form.i_qvca_id = ''
+      this.form.spare_item_name = ''
+      this.form.spare_category_id = ''
+      this.form.spare_category_name = ''
+      this.availableWarranties = []
+      this.filteredWarranties = []
+      this.warrantySearch = ''
+      this.loadedWarrantyById = false
     },
 
     clearCareData() {
@@ -619,31 +896,10 @@ export default {
       this.searchQuery = ''
       this.careDataResults = []
       this.orderProducts = []
+      this.selectedProduct = null
       this.selectedProductId = null
+      this.clearWarrantySelection()
       this.$refs.searchInput.focus()
-    },
-
-    async selectCareData(item) {
-      this.selectedCareData = item
-      this.form.care_data_id = item.id
-      this.searchQuery = item.care_id
-
-      if (item.order && item.order.invoice_id) {
-        this.form.care_invoice_id = item.order.invoice_id
-        this.autoPopulatedInvoice = true
-        await this.fetchOrderProducts(item.order.id)
-      } else {
-        this.form.care_invoice_id = ''
-        this.autoPopulatedInvoice = false
-        this.orderProducts = []
-        this.selectedProductId = null
-        this.form.product_id = ''
-        this.form.category_id = ''
-      }
-
-      this.careDataResults = []
-      this.showDropdown = false
-      this.highlightedIndex = -1
     },
 
     handleSearchInput() {
@@ -732,6 +988,30 @@ export default {
       }
     },
 
+    async selectCareData(item) {
+      this.selectedCareData = item
+      this.form.care_data_id = item.id
+      this.searchQuery = item.care_id
+
+      if (item.order && item.order.invoice_id) {
+        this.form.care_invoice_id = item.order.invoice_id
+        this.autoPopulatedInvoice = true
+        await this.fetchOrderProducts(item.order.id)
+      } else {
+        this.form.care_invoice_id = ''
+        this.autoPopulatedInvoice = false
+        this.orderProducts = []
+        this.selectedProduct = null
+        this.selectedProductId = null
+        this.form.product_id = ''
+        this.clearWarrantySelection()
+      }
+
+      this.careDataResults = []
+      this.showDropdown = false
+      this.highlightedIndex = -1
+    },
+
     onSearchFocus() {
       if (this.searchQuery.length >= 2 && !this.selectedCareData) {
         this.showDropdown = true
@@ -742,7 +1022,7 @@ export default {
       if (!this.selectedCareData) {
         this.showDropdown = !this.showDropdown
         if (this.showDropdown && this.searchQuery.length >= 2) {
-          this.searchCareDataApi()
+          this.debouncedSearch()
         }
       }
     },
@@ -753,19 +1033,6 @@ export default {
           this.showDropdown = false
         }
       }, 200)
-    },
-
-    getCustomerName(item) {
-      return (item.customer && item.customer.name) || 'No customer'
-    },
-
-    formatCurrency(value) {
-        if (!value) return 'RM 0'
-        return new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-            minimumFractionDigits: 0
-        }).format(value)
     },
 
     async updateWarranty() {
@@ -799,6 +1066,9 @@ export default {
       } else {
         document.removeEventListener('click', this.handleClickOutside)
       }
+    },
+    warrantySearch() {
+      this.filterWarranties()
     }
   },
   created() {
@@ -904,18 +1174,22 @@ export default {
   border-color: #c3e6cb;
 }
 
-.selected-info {
-  margin-top: 28px;
-}
-
-.product-grid {
+.product-grid,
+.warranty-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   margin-top: 0.5rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 2px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #f8f9fa;
 }
 
-.product-card {
+.product-card,
+.warranty-card {
   background: white;
   border: 2px solid #dee2e6;
   border-radius: 0.5rem;
@@ -926,30 +1200,35 @@ export default {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.product-card:hover {
+.product-card:hover,
+.warranty-card:hover {
   border-color: #007bff;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0,123,255,0.15);
 }
 
-.product-card.selected {
+.product-card.selected,
+.warranty-card.selected {
   border-color: #28a745;
   background-color: #f0fff4;
   box-shadow: 0 4px 8px rgba(40,167,69,0.2);
 }
 
-.product-card-body {
+.product-card-body,
+.warranty-card-body {
   position: relative;
 }
 
-.product-name {
+.product-name,
+.warranty-id {
   font-size: 1rem;
   color: #333;
   flex: 1;
   margin-right: 0.5rem;
 }
 
-.product-details {
+.product-details,
+.warranty-details {
   background-color: #f8f9fa;
   padding: 0.75rem;
   border-radius: 0.25rem;
@@ -978,12 +1257,23 @@ export default {
   padding: 0.25rem 0.5rem;
 }
 
+input[readonly] {
+  background-color: #f8f9fa;
+  cursor: default;
+}
+
+input[readonly]:focus {
+  border-color: #e9ecef;
+  box-shadow: none;
+}
+
 @media (max-width: 768px) {
   .search-dropdown {
     max-width: 100%;
   }
 
-  .product-grid {
+  .product-grid,
+  .warranty-grid {
     grid-template-columns: 1fr;
   }
 

@@ -32,14 +32,6 @@ class CareWarrantyController extends Controller
             $query->where('product_id', 'like', '%' . $request->product_id . '%');
         }
 
-        if ($request->has('eligible_warranty') && $request->eligible_warranty !== '') {
-            $query->where('eligible_warranty', $request->eligible_warranty);
-        }
-
-        if ($request->has('eligible_qvca') && $request->eligible_qvca !== '') {
-            $query->where('eligible_qvca', $request->eligible_qvca);
-        }
-
         if ($request->has('warranty_status') && $request->warranty_status !== '') {
             if ($request->warranty_status === 'active') {
                 $query->activeWaranty();
@@ -121,8 +113,6 @@ class CareWarrantyController extends Controller
                 'care_invoice_id' => 'required|string|max:255',
                 'product_id' => 'nullable|string|max:255',
                 'category_id' => 'nullable|exists:categories,id',
-                'eligible_warranty' => 'nullable|boolean',
-                'eligible_qvca' => 'nullable|boolean',
                 'i_qvca_id' => 'nullable|string|max:255',
                 'spare_item_name' => 'nullable|string|max:255',
                 'spare_category_id' => 'nullable|exists:categories,id',
@@ -151,8 +141,6 @@ class CareWarrantyController extends Controller
             $data = $validator->validated();
 
             // Set default values for boolean fields if not provided
-            $data['eligible_warranty'] = $data['eligible_warranty'] ?? false;
-            $data['eligible_qvca'] = $data['eligible_qvca'] ?? false;
             $data['reset_status'] = $data['reset_status'] ?? false;
 
             $CareWarranty = CareWarranty::create($data);
@@ -216,8 +204,6 @@ class CareWarrantyController extends Controller
                 'care_invoice_id' => 'sometimes|required|string|max:255',
                 'product_id' => 'nullable|string|max:255',
                 'category_id' => 'nullable|exists:categories,id',
-                'eligible_warranty' => 'nullable|boolean',
-                'eligible_qvca' => 'nullable|boolean',
                 'i_qvca_id' => 'nullable|string|max:255',
                 'spare_item_name' => 'nullable|string|max:255',
                 'spare_category_id' => 'nullable|exists:categories,id',
@@ -308,10 +294,6 @@ class CareWarrantyController extends Controller
     {
         $total = CareWarranty::count();
 
-        // Warranty eligibility stats
-        $eligibleWaranty = CareWarranty::where('eligible_warranty', true)->count();
-        $eligibleQvca = CareWarranty::where('eligible_qvca', true)->count();
-
         // Warranty status stats
         $activeWarranty = CareWarranty::activeWaranty()->count();
         $expiredWarranty = CareWarranty::expiredWaranty()->count();
@@ -326,86 +308,20 @@ class CareWarrantyController extends Controller
         $withSpareParts = CareWarranty::whereNotNull('spare_item_name')->count();
 
         // Calculate percentages
-        $eligibleWarantyPercentage = $total > 0 ? round(($eligibleWaranty / $total) * 100, 2) : 0;
-        $eligibleQvcaPercentage = $total > 0 ? round(($eligibleQvca / $total) * 100, 2) : 0;
         $activeWarrantyPercentage = $total > 0 ? round(($activeWarranty / $total) * 100, 2) : 0;
 
         return response()->json([
             'success' => true,
             'data' => [
                 'total_records' => $total,
-                'eligible_warranty' => $eligibleWaranty,
-                'eligible_qvca' => $eligibleQvca,
                 'active_warranty' => $activeWarranty,
                 'expired_warranty' => $expiredWarranty,
                 'reset_status' => $resetStatus,
                 'with_qvca_id' => $withQvcaId,
                 'with_spare_parts' => $withSpareParts,
-                'eligible_warranty_percentage' => $eligibleWarantyPercentage,
-                'eligible_qvca_percentage' => $eligibleQvcaPercentage,
                 'active_warranty_percentage' => $activeWarrantyPercentage
             ]
         ]);
-    }
-
-    /**
-     * Bulk update warranty eligibility
-     */
-    public function bulkUpdateEligibility(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:care_warranty,id',
-            'eligible_warranty' => 'nullable|boolean',
-            'eligible_qvca' => 'nullable|boolean',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            $updateData = [];
-
-            if ($request->has('eligible_warranty')) {
-                $updateData['eligible_warranty'] = $request->eligible_warranty;
-            }
-
-            if ($request->has('eligible_qvca')) {
-                $updateData['eligible_qvca'] = $request->eligible_qvca;
-            }
-
-            if (empty($updateData)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No update data provided'
-                ], 422);
-            }
-
-            CareWarranty::whereIn('id', $request->ids)->update($updateData);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bulk update completed successfully',
-                'updated_count' => count($request->ids)
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to perform bulk update',
-                'error' => env('APP_DEBUG') ? $e->getMessage() : 'Internal server error'
-            ], 500);
-        }
     }
 
     /**

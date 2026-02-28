@@ -84,7 +84,6 @@ Route::get('/order/edit/{id}', 'OrderController@edit')->name('order.edit');
 Route::post('/order/update/{id}', 'OrderController@updateOrderDetails')->name('order.update');
 Route::get('/order/get/{id}', 'OrderController@getOrderWithDetails');
 Route::get('/order/edit-data/{id}', 'OrderController@getOrderEditData');
-Route::get('/order/search-products', 'OrderController@searchProducts');
 Route::get('/order/with-details/{id}', 'OrderController@getOrderWithDetails');
 Route::post('/order/update/{id}', 'OrderController@updateOrderDetails');
 Route::get('/orders/statistics', 'OrderController@getStatistics');
@@ -173,11 +172,26 @@ Route::prefix('care-warranty')->group(function () {
     Route::get('/', 'CareWarrantyController@index');
     Route::post('/', 'CareWarrantyController@store');
     Route::get('/statistics', 'CareWarrantyController@statistics');
-    Route::post('/bulk-update-eligibility', 'CareWarrantyController@bulkUpdateEligibility');
     Route::get('/{id}', 'CareWarrantyController@show');
     Route::put('/{id}', 'CareWarrantyController@update');
     Route::delete('/{id}', 'CareWarrantyController@destroy');
     Route::get('/next-id', 'CareWarrantyController@getNextId');
+});
+
+Route::get('/product-warranty/by-category', 'ProductWarrantyController@getByCategory');
+Route::get('/product-warranty/available', 'ProductWarrantyController@getAvailableWarranties');
+Route::prefix('product-warranty')->group(function () {
+    // Basic CRUD routes
+    Route::get('/', 'ProductWarrantyController@index');
+    Route::post('/', 'ProductWarrantyController@store');
+    Route::get('/statistics', 'ProductWarrantyController@statistics');
+    Route::get('/export', 'ProductWarrantyController@export');
+    Route::post('/bulk-delete', 'ProductWarrantyController@bulkDelete');
+    Route::get('/generate-serial', 'ProductWarrantyController@generateSerialNo');
+    Route::post('/check-serial', 'ProductWarrantyController@checkSerialNo');
+    Route::get('/{id}', 'ProductWarrantyController@show');
+    Route::put('/{id}', 'ProductWarrantyController@update');
+    Route::delete('/{id}', 'ProductWarrantyController@destroy');
 });
 
 /*

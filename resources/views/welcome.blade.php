@@ -174,13 +174,19 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Product"
           aria-expanded="true" aria-controls="Product">
           <i class="fas fa-fw fa-truck"></i>
-          <span>Product</span>
+          <span>Inventory</span>
         </a>
         <div id="Product" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header text-primary font-weight-bold">Product Management</h6>
             <router-link class="collapse-item" to="/product">All Products</router-link>
             <router-link class="collapse-item" to="/product/create">Add Product</router-link>
+
+            <hr class="sidebar-divider my-1">
+
+            <h6 class="collapse-header text-primary font-weight-bold">Product Warranty <br> Management</h6>
+            <router-link class="collapse-item" to="/product-warranty">All Products Warranty</router-link>
+            <router-link class="collapse-item" to="/product-warranty/create">Add Product Warranty</router-link>
 
             <hr class="sidebar-divider my-1">
 

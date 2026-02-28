@@ -34,16 +34,6 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon bg-success">
-          <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="stat-content">
-          <h3>{{ statistics.eligible_warranty || 0 }}</h3>
-          <p>Eligible Warranties</p>
-          <small>{{ statistics.eligible_warranty_percentage || 0 }}%</small>
-        </div>
-      </div>
-      <div class="stat-card">
         <div class="stat-icon bg-info">
           <i class="fas fa-shield-alt"></i>
         </div>
@@ -108,22 +98,6 @@
               <option value="">All</option>
               <option value="active">Active</option>
               <option value="expired">Expired</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Eligible Warranty</label>
-            <select class="form-control" v-model="filters.eligible_warranty">
-              <option value="">All</option>
-              <option value="1">Yes</option>
-              <option value="0">No</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Eligible QVCA</label>
-            <select class="form-control" v-model="filters.eligible_qvca">
-              <option value="">All</option>
-              <option value="1">Yes</option>
-              <option value="0">No</option>
             </select>
           </div>
           <div class="form-group">
@@ -203,8 +177,6 @@
               Item Name
               <i v-if="sortField === 'product_id'" :class="sortIcon"></i>
             </th>
-            <th width="5%">Eligible</th>
-            <th width="5%">Status</th>
             <th width="15%">Date</th>
             <th width="5%">Reset Status</th>
             <th width="10%">Actions</th>
@@ -228,20 +200,6 @@
                 <span v-if="item.spare_category" class="badge badge-info ml-1">
                     {{ getCategoryName(item.spare_category) }}
                 </span>
-            </td>
-            <td>
-              <span v-if="item.eligible_warranty" class="badge badge-success d-block mb-1">
-                <i class="fas fa-check"></i> Warranty
-              </span>
-              <span v-if="item.eligible_qvca" class="badge badge-primary d-block">
-                <i class="fas fa-check"></i> QVCA
-              </span>
-              <span v-if="!item.eligible_warranty && !item.eligible_qvca">-</span>
-            </td>
-            <td>
-              <span :class="['badge', getWarrantyStatus(item) === 'active' ? 'badge-success' : 'badge-danger']">
-                {{ getWarrantyStatus(item) }}
-              </span>
             </td>
             <td>
                 <small>Start: {{ formatDate(item.date_start) }}</small><br>
@@ -353,26 +311,6 @@
               <tr>
                 <th>Category:</th>
                 <td>{{ getCategoryName(selectedItem.category) }}</td>
-              </tr>
-              <tr>
-                <th>Eligible Warranty:</th>
-                <td>
-                  <span :class="['badge', selectedItem.eligible_warranty ? 'badge-success' : 'badge-secondary']">
-                    {{ selectedItem.eligible_warranty ? 'Yes' : 'No' }}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <th>Eligible QVCA:</th>
-                <td>
-                  <span :class="['badge', selectedItem.eligible_qvca ? 'badge-success' : 'badge-secondary']">
-                    {{ selectedItem.eligible_qvca ? 'Yes' : 'No' }}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <th>I QVCA ID:</th>
-                <td>{{ selectedItem.i_qvca_id || '-' }}</td>
               </tr>
               <tr>
                 <th>Spare Item:</th>
@@ -488,8 +426,6 @@ export default {
         care_invoice_id: '',
         product_id: '',
         warranty_status: '',
-        eligible_warranty: '',
-        eligible_qvca: '',
         reset_status: '',
         date_start_from: '',
         date_start_to: ''
@@ -584,7 +520,7 @@ export default {
                     params[key] = this.filters[key]
                 }
             })
-            
+
             const response = await axios.get('/api/care-warranty', { params })
 
             if (response.data && response.data.success) {
@@ -614,7 +550,7 @@ export default {
     async fetchStatistics() {
       try {
         const response = await axios.get('/api/care-warranty/statistics')
-        
+
         if (response.data && response.data.success) {
           this.statistics = response.data.data
         } else if (response.data) {
@@ -672,7 +608,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           const { format, scope } = result.value
-          
+
           if (format === 'excel') {
             this.generateStyledExcelReport(scope)
           } else {
@@ -695,12 +631,12 @@ export default {
 
       try {
         let dataToExport = []
-        
+
         if (scope === 'filtered') {
           dataToExport = await this.getAllFilteredData()
         } else {
-          const response = await axios.get('/api/care-warranty/all', { 
-            params: { per_page: 10000 } 
+          const response = await axios.get('/api/care-warranty/all', {
+            params: { per_page: 10000 }
           })
           dataToExport = response.data?.data || []
         }
@@ -713,8 +649,6 @@ export default {
 
         // Calculate summary statistics
         const totalRecords = dataToExport.length
-        const eligibleWarranty = dataToExport.filter(item => item.eligible_warranty).length
-        const eligibleQVCA = dataToExport.filter(item => item.eligible_qvca).length
         const activeWarranty = dataToExport.filter(item => this.getWarrantyStatus(item) === 'active').length
         const withSpareParts = dataToExport.filter(item => item.spare_item_name).length
 
@@ -731,8 +665,6 @@ export default {
         if (this.filters.care_warranty_id) filterSummary.push(`Warranty ID: "${this.filters.care_warranty_id}"`)
         if (this.filters.care_invoice_id) filterSummary.push(`Invoice ID: "${this.filters.care_invoice_id}"`)
         if (this.filters.warranty_status) filterSummary.push(`Status: ${this.filters.warranty_status}`)
-        if (this.filters.eligible_warranty) filterSummary.push(`Eligible Warranty: ${this.filters.eligible_warranty === '1' ? 'Yes' : 'No'}`)
-        if (this.filters.eligible_qvca) filterSummary.push(`Eligible QVCA: ${this.filters.eligible_qvca === '1' ? 'Yes' : 'No'}`)
         if (this.filters.reset_status) filterSummary.push(`Reset Status: ${this.filters.reset_status === '1' ? 'Yes' : 'No'}`)
         if (this.filters.date_start_from) filterSummary.push(`Date From: ${this.filters.date_start_from}`)
         if (this.filters.date_start_to) filterSummary.push(`Date To: ${this.filters.date_start_to}`)
@@ -773,8 +705,6 @@ export default {
           <table class="stats-table" cellspacing="0" cellpadding="0">
             <tr>
               <td><div class="stats-label">Total Records</div><div class="stats-value">${totalRecords}</div></td>
-              <td><div class="stats-label">Eligible Warranty</div><div class="stats-value">${eligibleWarranty}</div></td>
-              <td><div class="stats-label">Eligible QVCA</div><div class="stats-value">${eligibleQVCA}</div></td>
               <td><div class="stats-label">Active Warranty</div><div class="stats-value">${activeWarranty}</div></td>
               <td><div class="stats-label">With Spare Parts</div><div class="stats-value">${withSpareParts}</div></td>
             </tr>
@@ -799,15 +729,12 @@ export default {
                 <th>Invoice ID</th>
                 <th>Item Name</th>
                 <th>Category</th>
-                <th>Eligible Warranty</th>
-                <th>Eligible QVCA</th>
                 <th>Warranty Status</th>
                 <th>Spare Item</th>
                 <th>Spare Category</th>
                 <th>Date Start</th>
                 <th>Loan Date End</th>
                 <th>Reset Status</th>
-                <th>I QVCA ID</th>
               </tr>
             </thead>
             <tbody>
@@ -816,7 +743,7 @@ export default {
                 const productName = this.getProductName(item)
                 const categoryName = this.getCategoryName(item.category)
                 const spareCategoryName = this.getCategoryName(item.spare_category)
-                
+
                 return `
                 <tr>
                   <td class="text-center">${index + 1}</td>
@@ -824,16 +751,6 @@ export default {
                   <td class="text-center">${this.escapeHtml(item.care_invoice_id || 'N/A')}</td>
                   <td class="text-left">${this.escapeHtml(productName)}</td>
                   <td class="text-center">${this.escapeHtml(categoryName)}</td>
-                  <td class="text-center">
-                    <span style="color: ${item.eligible_warranty ? '#28a745' : '#6c757d'}">
-                      ${item.eligible_warranty ? 'Yes' : 'No'}
-                    </span>
-                  </td>
-                  <td class="text-center">
-                    <span style="color: ${item.eligible_qvca ? '#28a745' : '#6c757d'}">
-                      ${item.eligible_qvca ? 'Yes' : 'No'}
-                    </span>
-                  </td>
                   <td class="text-center">
                     <span style="color: ${warrantyStatus === 'active' ? '#28a745' : '#dc3545'}">
                       ${warrantyStatus}
@@ -848,12 +765,11 @@ export default {
                       ${item.reset_status ? 'Reset' : 'Normal'}
                     </span>
                   </td>
-                  <td class="text-center">${this.escapeHtml(item.i_qvca_id || '-')}</td>
                 </tr>
               `}).join('')}
 
               <tr class="total-row">
-                <td colspan="14" class="text-center">
+                <td colspan="12" class="text-center">
                   <strong>Total Records: ${totalRecords}</strong>
                 </td>
               </tr>
@@ -988,15 +904,12 @@ export default {
         'Invoice ID',
         'Item Name',
         'Category',
-        'Eligible Warranty',
-        'Eligible QVCA',
         'Warranty Status',
         'Spare Item',
         'Spare Category',
         'Date Start',
         'Loan Date End',
         'Reset Status',
-        'I QVCA ID',
         'Created At'
       ]
 
@@ -1012,15 +925,12 @@ export default {
           item.care_invoice_id || '',
           productName,
           categoryName,
-          item.eligible_warranty ? 'Yes' : 'No',
-          item.eligible_qvca ? 'Yes' : 'No',
           warrantyStatus,
           item.spare_item_name || '',
           spareCategoryName,
           this.formatDate(item.date_start) || '',
           this.formatDate(item.loan_date_end) || '',
           item.reset_status ? 'Reset' : 'Normal',
-          item.i_qvca_id || '',
           this.formatDateTime(item.created_at) || ''
         ].map(cell => `"${cell}"`)
       })
@@ -1090,8 +1000,6 @@ export default {
         care_invoice_id: '',
         product_id: '',
         warranty_status: '',
-        eligible_warranty: '',
-        eligible_qvca: '',
         reset_status: '',
         date_start_from: '',
         date_start_to: ''
@@ -1145,7 +1053,7 @@ export default {
 
       try {
         await axios.delete(`/api/care-warranty/${this.deleteItem.id}`)
-        
+
         $(this.$refs.deleteModal).modal('hide')
         if (this.$toast) {
           this.$toast.success('Warranty deleted successfully')

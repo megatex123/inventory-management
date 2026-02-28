@@ -70,7 +70,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-4">
                                                     <label>Buying Price (RM)</label>
@@ -90,7 +90,7 @@
                                                     </small>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <div class="form-group">
                                             <div class="form-row">
@@ -102,16 +102,23 @@
                                                     </small>
                                                 </div>
                                                 <div class="col-6">
+                                                    <label>Product Qty</label>
+                                                    <input type="number" class="form-control" v-model='form.product_qty'>
+                                                    <small class="text-danger" v-if='errors.product_qty'>
+                                                        {{errors.product_qty[0]}}
+                                                    </small>
+                                                </div>
+                                                <!-- <div class="col-6">
                                                     <label>Available</label>
                                                     <input type="text" class="form-control" v-model='form.available'>
                                                     <small class="text-danger" v-if='errors.available'>
                                                         {{errors.available[0]}}
                                                     </small>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-4">
                                                     <label>Available Local</label>
@@ -135,9 +142,9 @@
                                                     </small>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-6">
                                                     <label>Buying Date</label>
@@ -153,8 +160,7 @@
                                                     </small>
                                                 </div>
                                             </div>
-
-                                        </div>
+                                        </div> -->
 
                                         <div class="form-group">
                                             <div class="form-row">
