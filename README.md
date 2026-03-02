@@ -17,3 +17,5 @@ Basically, feel free to use and re-use any way you want.
 
 #### For Newbies
 1. `composer install`
+2. `npm install`
+3. `npm run dev`
