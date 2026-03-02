@@ -119,7 +119,7 @@
                                             <th>Product Name</th>
                                             <th style="width: 200px">Product Code</th>
                                             <th style="width: 100px">Product Type</th>
-                                            <th style="width: 100px">Product Care</th>
+                                            <th style="width: 100px">QuiviCare</th>
                                             <th style="width: 80px" class="text-center">Qty</th>
                                             <th style="width: 140px" class="text-right">Unit Price (RM)</th>
                                             <th style="width: 160px" class="text-right">Total Price (RM)</th>
@@ -197,9 +197,7 @@
                                     </tr>
 
                                     <tr>
-                                        <td class="font-weight-bold">QuiviCraft</td>
-                                        <td class="text-left">{{ orders.craft && orders.craft.name ? orders.craft.name : 'N/A' }}</td>
-                                        <td class="text-right">{{ orders.craft && orders.craft.code ? orders.craft.code : 'N/A' }}</td>
+                                        <td colspan="3" class="font-weight-bold">QuiviCraft</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(orders.craft && orders.craft.fee ? orders.craft.fee : 0) }}
                                         </td>

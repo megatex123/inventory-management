@@ -250,18 +250,18 @@ export default {
       selectedSubCategoryId: null,
       // Category rules configuration based on requirements
       categoryRules: {
-        'CPU': { min: 1, max: 1, dependencies: [], description: 'Exactly 1 required' },
+        'CPU': { min: 1, max: 1, description: 'Exactly 1 required' },
         'MBD': { min: 1, max: 1, dependencies: ['CPU'], description: 'Exactly 1 required, needs CPU' },
-        'PSU': { min: 1, max: null, dependencies: [], description: 'Minimum 1 required' },
-        'GPU': { min: 0, max: null, dependencies: [], description: 'Optional, can be 0 or more' },
-        'AIO': { min: 1, max: 1, dependencies: [], exclusiveWith: ['HSF'], description: 'Exactly 1 required, cannot have with HSF' },
-        'HSF': { min: 1, max: 1, dependencies: [], exclusiveWith: ['AIO'], description: 'Exactly 1 required, cannot have with AIO' },
-        'SSD': { min: 0, max: null, dependencies: [], exclusiveWith: ['HDD'], description: 'Optional, cannot have with HDD' },
-        'HDD': { min: 0, max: null, dependencies: [], exclusiveWith: ['SSD'], description: 'Optional, cannot have with SSD' },
-        'RAM': { min: 1, max: null, dependencies: [], description: 'Minimum 1 required' },
-        'CSE': { min: 1, max: 1, dependencies: [], description: 'Exactly 1 required' },
-        'FAN': { min: 0, max: null, dependencies: [], description: 'No restrictions' },
-        'ACC': { min: 0, max: null, dependencies: [], description: 'No restrictions' }
+        'PSU': { min: 1, max: null, description: 'Minimum 1 required' },
+        'GPU': { min: 0, max: null, description: 'Optional' },
+        'AIO': { min: 1, max: 1, exclusiveWith: ['HSF'], description: 'Exactly 1 required, cannot have with HSF' },
+        'HSF': { min: 1, max: 1, exclusiveWith: ['AIO'], description: 'Exactly 1 required, cannot have with AIO' },
+        'SSD': { min: 0, exclusiveWith: ['HDD'], description: 'Optional, cannot have with HDD' },
+        'HDD': { min: 0, exclusiveWith: ['SSD'], description: 'Optional, cannot have with SSD' },
+        'RAM': { min: 1, description: 'Minimum 1 required' },
+        'CSE': { min: 1, max: 1, description: 'Exactly 1 required' },
+        'FAN': { description: 'No restrictions' },
+        'ACC': { description: 'No restrictions' }
       }
     }
   },
