@@ -25,7 +25,7 @@
                   All Products
                 </a>
               </li>
-              <li class="nav-item" v-for="category in categories" :key="category.id">
+              <li class="nav-item" v-for="category in sortedCategories" :key="category.id">
                 <a
                   class="nav-link"
                   :class="{ active: selectedCategoryId === category.id }"
@@ -266,6 +266,25 @@ export default {
     }
   },
   computed: {
+    sortedCategories() {
+        // Define your custom order
+        const categoryOrder = [
+        'CPU', 'MBD', 'GPU', 'RAM', 'SSD', 'HDD',
+        'AIO', 'HSF', 'PSU', 'CSE', 'FAN', 'ACC', 'PER'
+        ];
+
+        // Sort categories based on the custom order
+        return [...this.categories].sort((a, b) => {
+        const indexA = categoryOrder.indexOf(a.name);
+        const indexB = categoryOrder.indexOf(b.name);
+
+        // If category not found in order list, put it at the end
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+
+        return indexA - indexB;
+        });
+    },
     filteredSubCategories() {
       if (!this.selectedCategoryId) return [];
       return this.subCategoriesOptions.filter(sub => sub.cat_id == this.selectedCategoryId);
