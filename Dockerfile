@@ -28,12 +28,14 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 # Install composer
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install project dependencies
-# RUN composer install
+RUN composer install
 
 # Set permissions
 # RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/.
 RUN chmod 777 -R /var/www/html/
+RUN chmod +x artisan
+RUN php artisan storage:link
