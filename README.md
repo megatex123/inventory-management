@@ -19,3 +19,6 @@ Basically, feel free to use and re-use any way you want.
 1. `composer install`
 2. `npm install`
 3. `npm run dev`
+4. `php artisan storage:link`
+5. `php artisan config:cache`
+6. `php artisan route:cache`

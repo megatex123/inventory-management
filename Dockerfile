@@ -34,4 +34,6 @@ WORKDIR /var/www/html
 # RUN composer install
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/.
+RUN chmod 777 -R /var/www/html/
