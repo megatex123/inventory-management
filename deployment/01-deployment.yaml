@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quivitech-im-staging-deployment
+  namespace: quivitech-im-stag
+  labels:
+    app: quivitech-im
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quivitech-im
+  template:
+    metadata:
+      labels:
+        app: quivitech-im
+    spec:
+      containers:
+        - name: quivitech-im
+          image: telur.penyahpepijat.com/enigma/quivitech/inventory-management:release
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: regcred
