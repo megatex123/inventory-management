@@ -11198,7 +11198,11 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -11218,7 +11222,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         'CPU': {
           min: 1,
           max: 1,
-          dependencies: [],
           description: 'Exactly 1 required'
         },
         'MBD': {
@@ -11230,71 +11233,69 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         'PSU': {
           min: 1,
           max: null,
-          dependencies: [],
           description: 'Minimum 1 required'
         },
         'GPU': {
           min: 0,
           max: null,
-          dependencies: [],
-          description: 'Optional, can be 0 or more'
+          description: 'Optional'
         },
         'AIO': {
           min: 1,
           max: 1,
-          dependencies: [],
           exclusiveWith: ['HSF'],
           description: 'Exactly 1 required, cannot have with HSF'
         },
         'HSF': {
           min: 1,
           max: 1,
-          dependencies: [],
           exclusiveWith: ['AIO'],
           description: 'Exactly 1 required, cannot have with AIO'
         },
         'SSD': {
           min: 0,
-          max: null,
-          dependencies: [],
           exclusiveWith: ['HDD'],
           description: 'Optional, cannot have with HDD'
         },
         'HDD': {
           min: 0,
-          max: null,
-          dependencies: [],
           exclusiveWith: ['SSD'],
           description: 'Optional, cannot have with SSD'
         },
         'RAM': {
           min: 1,
-          max: null,
-          dependencies: [],
           description: 'Minimum 1 required'
         },
         'CSE': {
           min: 1,
           max: 1,
-          dependencies: [],
           description: 'Exactly 1 required'
         },
         'FAN': {
-          min: 0,
-          max: null,
-          dependencies: [],
           description: 'No restrictions'
         },
         'ACC': {
-          min: 0,
-          max: null,
-          dependencies: [],
           description: 'No restrictions'
         }
       }
     };
   },
   computed: {
+    sortedCategories: function sortedCategories() {
+      // Define your custom order
+      var categoryOrder = ['CPU', 'MBD', 'GPU', 'RAM', 'SSD', 'HDD', 'AIO', 'HSF', 'PSU', 'CSE', 'FAN', 'ACC', 'PER'];
+
+      // Sort categories based on the custom order
+      return _toConsumableArray(this.categories).sort(function (a, b) {
+        var indexA = categoryOrder.indexOf(a.name);
+        var indexB = categoryOrder.indexOf(b.name);
+
+        // If category not found in order list, put it at the end
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+      });
+    },
     filteredSubCategories: function filteredSubCategories() {
       var _this = this;
       if (!this.selectedCategoryId) return [];
@@ -36112,12 +36113,11 @@ var render = function render() {
   }, [_vm._v("Total Product Payment")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("RM " + _vm._s(_vm.formatNumber(_vm.grandTotalPrice)))])]), _vm._v(" "), _c("tr", [_c("td", {
-    staticClass: "font-weight-bold"
+    staticClass: "font-weight-bold",
+    attrs: {
+      colspan: "3"
+    }
   }, [_vm._v("QuiviCraft")]), _vm._v(" "), _c("td", {
-    staticClass: "text-left"
-  }, [_vm._v(_vm._s(_vm.orders.craft && _vm.orders.craft.name ? _vm.orders.craft.name : "N/A"))]), _vm._v(" "), _c("td", {
-    staticClass: "text-right"
-  }, [_vm._v(_vm._s(_vm.orders.craft && _vm.orders.craft.code ? _vm.orders.craft.code : "N/A"))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.orders.craft && _vm.orders.craft.fee ? _vm.orders.craft.fee : 0)) + "\n                                    ")])]), _vm._v(" "), _c("tr", [_c("td", {
     staticClass: "font-weight-bold"
@@ -36205,7 +36205,7 @@ var staticRenderFns = [function () {
     staticStyle: {
       width: "100px"
     }
-  }, [_vm._v("Product Care")]), _vm._v(" "), _c("th", {
+  }, [_vm._v("QuiviCare")]), _vm._v(" "), _c("th", {
     staticClass: "text-center",
     staticStyle: {
       width: "80px"
@@ -36299,7 +36299,7 @@ var render = function render() {
         return _vm.selectCategory(null);
       }
     }
-  }, [_vm._v("\n                All Products\n              ")])]), _vm._v(" "), _vm._l(_vm.categories, function (category) {
+  }, [_vm._v("\n                All Products\n              ")])]), _vm._v(" "), _vm._l(_vm.sortedCategories, function (category) {
     return _c("li", {
       key: category.id,
       staticClass: "nav-item"
@@ -126664,8 +126664,8 @@ var routes = [{
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/pykekaisora/pk/devops/k8s/clients/quivitechInventoryManagement/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/pykekaisora/pk/devops/k8s/clients/quivitechInventoryManagement/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/enigma/quivitech/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/enigma/quivitech/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
