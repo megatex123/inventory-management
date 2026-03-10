@@ -52,7 +52,7 @@
                                                                 type="text"
                                                                 class="form-control"
                                                                 v-model="filters.search"
-                                                                placeholder="Search by Name or Code..."
+                                                                placeholder="Search by PC Parts or Code..."
                                                                 @input="applyFilters"
                                                             />
                                                             <div class="input-group-append" v-if="filters.search">
@@ -77,8 +77,8 @@
                                                             class="form-control form-control-sm"
                                                             @change="applyFilters"
                                                         >
-                                                            <option value="name_asc">Name (A-Z)</option>
-                                                            <option value="name_desc">Name (Z-A)</option>
+                                                            <option value="name_asc">PC Parts (A-Z)</option>
+                                                            <option value="name_desc">PC Parts (Z-A)</option>
                                                             <option value="code_asc">Code (A-Z)</option>
                                                             <option value="code_desc">Code (Z-A)</option>
                                                             <option value="date_asc">Date Created (Oldest)</option>
@@ -88,7 +88,7 @@
 
                                                     <!-- Name Starts With Filter -->
                                                     <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Name Starts With</label>
+                                                        <label class="small font-weight-bold text-muted">PC Parts Starts With</label>
                                                         <select
                                                             v-model="filters.nameStartsWith"
                                                             class="form-control form-control-sm"
@@ -197,7 +197,7 @@
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Name</th>
+                                                <th>PC Parts</th>
                                                 <th>Code</th>
                                                 <th>Created At</th>
                                                 <th>Action</th>

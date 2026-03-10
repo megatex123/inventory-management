@@ -61,7 +61,7 @@
 
             <!-- Products Grid -->
             <div class="row">
-              <div class="col-lg-4 col-md-4 col-sm-12 col-12" v-for="product in displayedProducts" :key="product.id">
+              <div class="col-lg-2 col-md-2 col-sm-12 col-12" v-for="product in displayedProducts" :key="product.id">
                 <button
                   class="btn btn-sm col-lg-12"
                   @click.prevent="AddToCart(product.id)"

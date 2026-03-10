@@ -77,6 +77,7 @@
           </a>
           <div id="Suppliers" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Supplier Management</h6>
               <router-link class="collapse-item" to="/suppliers">All Suppliers</router-link>
               <router-link class="collapse-item" to="/supplier/create">Add Supplier</router-link>
             </div>
@@ -90,8 +91,15 @@
           </a>
           <div id="category" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-              <router-link class="collapse-item" to="/category">Category Lookup</router-link>
-              <router-link class="collapse-item" to="/category/create">Add Category</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">Category Management</h6>
+              <router-link class="collapse-item" to="/category">Code Lookup</router-link>
+              <router-link class="collapse-item" to="/category/create">Add Code Lookup</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Sub Category Management</h6>
+              <router-link class="collapse-item" to="/sub-category">Sub Code Lookup</router-link>
+              <router-link class="collapse-item" to="/sub-category/create">Add Sub Code Lookup</router-link>
             </div>
           </div>
         </li>

@@ -36,9 +36,9 @@
                                         <div class="form-group">
                                             <div class="form-row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="small font-weight-bold text-muted">Address</label>
+                                                    <label class="small font-weight-bold text-muted">Country</label>
                                                     <input type="text" class="form-control" v-model='form.address'
-                                                        placeholder="Enter Supplier Address">
+                                                        placeholder="Enter Supplier Country">
                                                     <small class="text-danger" v-if='errors.address'>{{ errors.address[0] }}</small>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
