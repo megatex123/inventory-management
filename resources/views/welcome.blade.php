@@ -111,8 +111,15 @@
           </a>
           <div id="craft" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviCraft Operations</h6>
               <router-link class="collapse-item" to="/pos">Create QuiviCraft</router-link>
               <router-link class="collapse-item" to="/orders/all">Order QuiviCraft</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Lookup Tables</h6>
+              <router-link class="collapse-item" to="/craft">QuiviCraft Lookup</router-link>
+              <router-link class="collapse-item" to="/craft/create">Add QuiviCraft Lookup</router-link>
             </div>
           </div>
         </li>
@@ -124,8 +131,33 @@
           </a>
           <div id="serve" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Records</h6>
               <router-link class="collapse-item" to="/serve-data">All QuiviServe</router-link>
               <router-link class="collapse-item" to="/serve-data/create">Add QuiviServe</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe BEK</h6>
+              <router-link class="collapse-item" to="/serve-bek">All QuiviServe BEK</router-link>
+              <router-link class="collapse-item" to="/serve-bek/create">Add QuiviServe BEK</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe MPS</h6>
+              <router-link class="collapse-item" to="/serve-mps">All QuiviServe MPS</router-link>
+              <router-link class="collapse-item" to="/serve-mps/create">Add QuiviServe MPS</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe PCE</h6>
+              <router-link class="collapse-item" to="/serve-pce">All QuiviServe PCE</router-link>
+              <router-link class="collapse-item" to="/serve-pce/create">Add QuiviServe PCE</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Lookup Tables</h6>
+              <router-link class="collapse-item" to="/serve">QuiviServe Lookup</router-link>
+              <router-link class="collapse-item" to="/serve/create">Add QuiviServe Lookup</router-link>
             </div>
           </div>
         </li>
@@ -137,8 +169,21 @@
           </a>
           <div id="care" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Records</h6>
               <router-link class="collapse-item" to="/care-data">All QuiviCare</router-link>
               <router-link class="collapse-item" to="/care-data/create">Add QuiviCare</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Warranties</h6>
+              <router-link class="collapse-item" to="/care-warranty">All QuiviCare Warranties</router-link>
+              <router-link class="collapse-item" to="/care-warranty/create">Add QuiviCare Warranties</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Lookup Tables</h6>
+              <router-link class="collapse-item" to="/care">QuiviCare Lookup</router-link>
+              <router-link class="collapse-item" to="/care/create">Add QuiviCare Lookup</router-link>
             </div>
           </div>
         </li>
@@ -150,8 +195,20 @@
           </a>
           <div id="Product" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Product Management</h6>
               <router-link class="collapse-item" to="/product">All Products</router-link>
               <router-link class="collapse-item" to="/product/create">Add Product</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Product Warranty <br> Management</h6>
+              <router-link class="collapse-item" to="/product-warranty">All Products Warranty</router-link>
+              <router-link class="collapse-item" to="/product-warranty/create">Add Product Warranty</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Stock Management</h6>
+              <router-link class="collapse-item" to="/product/stock">All Stock</router-link>
             </div>
           </div>
         </li>
@@ -163,8 +220,9 @@
           </a>
           <div id="Customer" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Customer Management</h6>
               <router-link class="collapse-item" to="/customer">Customer List</router-link>
-              <router-link class="collapse-item" to="/customer/create">Add Customer</router-link>
+              <router-link class="collapse-item" to="/customer/create">Pre Register Customer</router-link>
             </div>
           </div>
         </li>
@@ -176,7 +234,15 @@
           </a>
           <div id="Meeting" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Meeting Management</h6>
               <router-link class="collapse-item" to="/meeting">Meeting List</router-link>
+              <router-link class="collapse-item" to="/meeting/create">Create Meeting</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Meeting Details</h6>
+              <router-link class="collapse-item" to="/meeting-details">Meeting Detail List</router-link>
+              <router-link class="collapse-item" to="/meeting-details/create">Create Meeting Detail</router-link>
             </div>
           </div>
         </li>
@@ -188,7 +254,9 @@
           </a>
           <div id="Orders" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Order Management</h6>
               <router-link class="collapse-item" to="/orders/all">Order List</router-link>
+              <router-link class="collapse-item" to="/orders">Today's Orders</router-link>
             </div>
           </div>
         </li>
