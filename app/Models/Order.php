@@ -32,7 +32,8 @@ class Order extends Model
         'serve_id',
         'care_id',
         'approve',
-        'approved_at'
+        'approved_at',
+        'is_reason'
     ];
 
     protected $dates = ['deleted_at'];

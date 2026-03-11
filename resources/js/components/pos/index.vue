@@ -223,6 +223,39 @@
                       {{ customer.full_name }}
                     </option>
                   </select>
+                  <!-- Build Type Section - Radio Buttons -->
+                  <div class="mt-3">
+                      <label class="mb-2 font-weight-bold">Build Type</label>
+                      <div class="d-flex">
+                      <div class="form-check mr-4">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="buildType"
+                          id="buildWorking"
+                          :value="1"
+                          v-model="build_type"
+                          >
+                          <label class="form-check-label" for="buildWorking">
+                          Working
+                          </label>
+                      </div>
+                      <div class="form-check">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="buildType"
+                          id="buildGaming"
+                          :value="2"
+                          v-model="build_type"
+                          >
+                          <label class="form-check-label" for="buildGaming">
+                          Gaming
+                          </label>
+                      </div>
+                      </div>
+                      <small class="text-muted">Select the purpose of this build (optional)</small>
+                  </div>
                   <button class="btn btn-primary mt-3" type="submit" :disabled="carts.length === 0 || cartValidationErrors.length > 0">Submit Order</button>
                 </form>
               </div>
@@ -248,20 +281,22 @@ export default {
       searchItem: '',
       selectedCategoryId: null,
       selectedSubCategoryId: null,
+      build_type: null,
       // Category rules configuration based on requirements
       categoryRules: {
         'CPU': { min: 1, max: 1, description: 'Exactly 1 required' },
         'MBD': { min: 1, max: 1, dependencies: ['CPU'], description: 'Exactly 1 required, needs CPU' },
-        'PSU': { min: 1, max: null, description: 'Minimum 1 required' },
         'GPU': { min: 0, max: null, description: 'Optional' },
-        'AIO': { min: 1, max: 1, exclusiveWith: ['HSF'], description: 'Exactly 1 required, cannot have with HSF' },
-        'HSF': { min: 1, max: 1, exclusiveWith: ['AIO'], description: 'Exactly 1 required, cannot have with AIO' },
+        'RAM': { min: 1, description: 'Minimum 1 required' },
         'SSD': { min: 0, exclusiveWith: ['HDD'], description: 'Optional, cannot have with HDD' },
         'HDD': { min: 0, exclusiveWith: ['SSD'], description: 'Optional, cannot have with SSD' },
-        'RAM': { min: 1, description: 'Minimum 1 required' },
+        'AIO': { min: 1, max: 1, exclusiveWith: ['HSF'], description: 'Exactly 1 required, cannot have with HSF' },
+        'HSF': { min: 1, max: 1, exclusiveWith: ['AIO'], description: 'Exactly 1 required, cannot have with AIO' },
+        'PSU': { min: 1, max: null, description: 'Minimum 1 required' },
         'CSE': { min: 1, max: 1, description: 'Exactly 1 required' },
         'FAN': { description: 'No restrictions' },
-        'ACC': { description: 'No restrictions' }
+        'ACC': { description: 'No restrictions' },
+        'PER': { description: 'No restrictions' },
       }
     }
   },
@@ -819,7 +854,8 @@ export default {
         customer_id: this.customer_id,
         total_amount: this.totalSub,
         total_qty: this.totalCart,
-        cart_items: this.carts
+        cart_items: this.carts,
+        is_reason: this.build_type
       };
 
       axios.post('/api/orderdone', data)
@@ -827,6 +863,7 @@ export default {
           notification.customNoti(res.data.message || 'Order placed successfully!');
           this.carts = [];
           this.customer_id = '';
+          this.build_type = null;
           this.getCarts();
         })
         .catch(err => {

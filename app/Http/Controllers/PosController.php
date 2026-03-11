@@ -34,6 +34,7 @@ public function orderdone(Request $request)
         'customer_id' => 'required',
         'total_qty' => 'required|integer',
         'total_amount' => 'required|numeric',
+        'is_reason' => 'required|integer',
     ]);
 
     $cartProducts = DB::table('pos')->get();
@@ -80,7 +81,8 @@ public function orderdone(Request $request)
         'order_year' => date('Y'),
         'craft_id' => $categories_id,
         'serve_id' => $categories_id,
-        'care_id' => $categories_id
+        'care_id' => $categories_id,
+        'is_reason' => $request->is_reason,
     ];
 
     $order_id = DB::table('order')->insertGetId($data);
