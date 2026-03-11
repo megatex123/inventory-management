@@ -160,7 +160,7 @@
                                                     <!-- Reason -->
                                                     <div class="mb-1">
                                                         <span v-if="order.is_reason == 1" class="badge badge-primary">
-                                                        <i class="fas fa-briefcase mr-1"></i> Work
+                                                        <i class="fas fa-briefcase mr-1"></i> Workstation
                                                         </span>
                                                         <span v-else-if="order.is_reason == 2" class="badge badge-success">
                                                         <i class="fas fa-gamepad mr-1"></i> Gaming

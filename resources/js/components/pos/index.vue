@@ -237,7 +237,7 @@
                           v-model="build_type"
                           >
                           <label class="form-check-label" for="buildWorking">
-                          Working
+                          Workstation
                           </label>
                       </div>
                       <div class="form-check">
