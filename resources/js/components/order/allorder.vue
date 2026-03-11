@@ -165,7 +165,6 @@
                                                         <span v-else-if="order.is_reason == 2" class="badge badge-success">
                                                         <i class="fas fa-gamepad mr-1"></i> Gaming
                                                         </span>
-                                                        <span v-else class="text-muted">-</span>
                                                     </div><br>
                                                     <strong>{{ order.customer && order.customer.full_name ? order.customer.full_name : 'N/A' }}</strong><br>
                                                     <small class="text-muted">{{ order.customer && order.customer.email ? order.customer.email : '' }}</small>
