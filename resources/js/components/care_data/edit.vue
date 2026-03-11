@@ -101,7 +101,7 @@
                   id="customer_id"
                   required
                   @change="onCustomerChange"
-                  :disabled="loadingCustomers"
+                  disabled
                 >
                   <option value="">Select Customer</option>
                   <option
@@ -135,6 +135,7 @@
                   id="order_id"
                   required
                   @change="onOrderChange"
+                  disabled
                 >
                   <option value="">Select Order</option>
                   <option

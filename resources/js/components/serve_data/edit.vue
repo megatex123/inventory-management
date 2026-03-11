@@ -108,7 +108,7 @@
                   id="customer_id"
                   required
                   @change="onCustomerChange"
-                  :disabled="loadingCustomers"
+                  disabled
                 >
                   <option value="">Select Customer</option>
                   <option
@@ -142,6 +142,7 @@
                   id="order_id"
                   required
                   @change="onOrderChange"
+                  disabled
                 >
                   <option value="">Select Order</option>
                   <option
@@ -210,7 +211,7 @@
                     :key="serve.id"
                     :value="serve.id"
                   >
-                    {{ serve.name }} - RM{{ serve.fee }}
+                    {{ serve.name }}
                   </option>
                 </select>
                 <div v-if="selectedServe" class="mt-2 p-2 bg-light rounded">
