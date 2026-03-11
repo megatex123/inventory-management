@@ -462,12 +462,16 @@ class OrderController extends Controller
             // Get the approve value
             $approveValue = $request->approve;
 
-            $invoiceTypeCode = "QVT-INV";
-            $lastInvoice = Order::orderBy('id', 'desc')->first();
-            $sequence = $lastInvoice ? intval(substr($lastInvoice->invoice_id, -4)) + 1 : 1;
-            $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
+            // $invoiceTypeCode = "QVT-INV";
+            // $lastInvoice = Order::orderBy('id', 'desc')->first();
+            // $sequence = $lastInvoice ? intval(substr($lastInvoice->invoice_id, -4)) + 1 : 1;
+            // $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
-            $invoiceId = "{$invoiceTypeCode}-{$sequenceNumber}";
+            // $invoiceId = "{$invoiceTypeCode}-{$sequenceNumber}";
+
+            $datePart = Carbon::now()->format('ym');
+            $paddedId = $id;
+            $invoiceId = "QVT-INV-{$datePart}-{$paddedId}";
 
             // Handle different input types
             if ($approveValue === 'null' || $approveValue === null) {

@@ -84,6 +84,13 @@
                                         <span v-if="orders.customer.email">
                                             <p class="mb-0"><strong>Email:</strong> {{ orders.customer.email }}</p>
                                         </span>
+                                        <span v-if="orders.is_reason">
+                                            <p class="mb-0">
+                                                <strong>Build Type:</strong>
+                                                <span v-if="orders.is_reason == 1">Workstation</span>
+                                                <span v-else-if="orders.is_reason == 2">Gaming</span>
+                                            </p>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
