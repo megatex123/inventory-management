@@ -77,7 +77,10 @@
           <div class="text-center px-4">
             <h2 class="text-primary">Welcome Back 👋</h2>
             <p class="text-muted mt-2">
-              Build something amazing with QuiviTech.
+              Build something amazing with QuiviTech
+              <span class="version" style="padding:10px; font-size: 10px;">
+                <br>Version 1.0.1 By Enigma Code Solution
+              </span>
             </p>
           </div>
         </div>
