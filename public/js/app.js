@@ -11217,6 +11217,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       searchItem: '',
       selectedCategoryId: null,
       selectedSubCategoryId: null,
+      build_type: null,
       // Category rules configuration based on requirements
       categoryRules: {
         'CPU': {
@@ -11230,15 +11231,24 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           dependencies: ['CPU'],
           description: 'Exactly 1 required, needs CPU'
         },
-        'PSU': {
-          min: 1,
-          max: null,
-          description: 'Minimum 1 required'
-        },
         'GPU': {
           min: 0,
           max: null,
           description: 'Optional'
+        },
+        'RAM': {
+          min: 1,
+          description: 'Minimum 1 required'
+        },
+        'SSD': {
+          min: 0,
+          exclusiveWith: ['HDD'],
+          description: 'Optional, cannot have with HDD'
+        },
+        'HDD': {
+          min: 0,
+          exclusiveWith: ['SSD'],
+          description: 'Optional, cannot have with SSD'
         },
         'AIO': {
           min: 1,
@@ -11252,18 +11262,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           exclusiveWith: ['AIO'],
           description: 'Exactly 1 required, cannot have with AIO'
         },
-        'SSD': {
-          min: 0,
-          exclusiveWith: ['HDD'],
-          description: 'Optional, cannot have with HDD'
-        },
-        'HDD': {
-          min: 0,
-          exclusiveWith: ['SSD'],
-          description: 'Optional, cannot have with SSD'
-        },
-        'RAM': {
+        'PSU': {
           min: 1,
+          max: null,
           description: 'Minimum 1 required'
         },
         'CSE': {
@@ -11275,6 +11276,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           description: 'No restrictions'
         },
         'ACC': {
+          description: 'No restrictions'
+        },
+        'PER': {
           description: 'No restrictions'
         }
       }
@@ -11933,12 +11937,14 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         customer_id: this.customer_id,
         total_amount: this.totalSub,
         total_qty: this.totalCart,
-        cart_items: this.carts
+        cart_items: this.carts,
+        is_reason: this.build_type
       };
       axios.post('/api/orderdone', data).then(function (res) {
         notification.customNoti(res.data.message || 'Order placed successfully!');
         _this15.carts = [];
         _this15.customer_id = '';
+        _this15.build_type = null;
         _this15.getCarts();
       })["catch"](function (err) {
         console.error('Error placing order:', err);
@@ -21598,7 +21604,13 @@ var staticRenderFns = [function () {
     staticClass: "text-primary"
   }, [_vm._v("Welcome Back 👋")]), _vm._v(" "), _c("p", {
     staticClass: "text-muted mt-2"
-  }, [_vm._v("\n            Build something amazing with QuiviTech.\n          ")])])]);
+  }, [_vm._v("\n            Build something amazing with QuiviTech\n            "), _c("span", {
+    staticClass: "version",
+    staticStyle: {
+      padding: "10px",
+      "font-size": "10px"
+    }
+  }, [_c("br"), _vm._v("Version 0.0.2 By Enigma Code Solution\n            ")])])])]);
 }];
 render._withStripped = true;
 
@@ -22974,7 +22986,7 @@ var render = function render() {
     attrs: {
       id: "customer_id",
       required: "",
-      disabled: _vm.loadingCustomers
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -23020,7 +23032,8 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       id: "order_id",
-      required: ""
+      required: "",
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -23689,7 +23702,7 @@ var render = function render() {
     attrs: {
       id: "customer_id",
       required: "",
-      disabled: _vm.loadingCustomers
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -23735,7 +23748,8 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       id: "order_id",
-      required: ""
+      required: "",
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -28071,7 +28085,7 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       type: "text",
-      placeholder: "Search by Name or Code..."
+      placeholder: "Search by PC Parts or Code..."
     },
     domProps: {
       value: _vm.filters.search
@@ -28126,11 +28140,11 @@ var render = function render() {
     attrs: {
       value: "name_asc"
     }
-  }, [_vm._v("Name (A-Z)")]), _vm._v(" "), _c("option", {
+  }, [_vm._v("PC Parts (A-Z)")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "name_desc"
     }
-  }, [_vm._v("Name (Z-A)")]), _vm._v(" "), _c("option", {
+  }, [_vm._v("PC Parts (Z-A)")]), _vm._v(" "), _c("option", {
     attrs: {
       value: "code_asc"
     }
@@ -28150,7 +28164,7 @@ var render = function render() {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Name Starts With")]), _vm._v(" "), _c("select", {
+  }, [_vm._v("PC Parts Starts With")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -28377,7 +28391,7 @@ var staticRenderFns = [function () {
     _c = _vm._self._c;
   return _c("thead", {
     staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Code")]), _vm._v(" "), _c("th", [_vm._v("Created At")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
+  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("PC Parts")]), _vm._v(" "), _c("th", [_vm._v("Code")]), _vm._v(" "), _c("th", [_vm._v("Created At")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -34977,7 +34991,17 @@ var render = function render() {
       key: order.id
     }, [_c("td", [_c("span", {
       staticClass: "badge badge-light"
-    }, [_vm._v(_vm._s(order.order_id))]), _c("br"), _c("br"), _vm._v(" "), _c("strong", [_vm._v(_vm._s(order.customer && order.customer.full_name ? order.customer.full_name : "N/A"))]), _c("br"), _vm._v(" "), _c("small", {
+    }, [_vm._v(_vm._s(order.order_id))]), _c("br"), _c("br"), _vm._v(" "), _c("div", {
+      staticClass: "mb-1"
+    }, [order.is_reason == 1 ? _c("span", {
+      staticClass: "badge badge-primary"
+    }, [_c("i", {
+      staticClass: "fas fa-briefcase mr-1"
+    }), _vm._v(" Workstation\n                                                    ")]) : order.is_reason == 2 ? _c("span", {
+      staticClass: "badge badge-success"
+    }, [_c("i", {
+      staticClass: "fas fa-gamepad mr-1"
+    }), _vm._v(" Gaming\n                                                    ")]) : _vm._e()]), _c("br"), _vm._v(" "), _c("strong", [_vm._v(_vm._s(order.customer && order.customer.full_name ? order.customer.full_name : "N/A"))]), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(order.customer && order.customer.email ? order.customer.email : ""))])]), _vm._v(" "), _c("td", [_c("small", {
       staticClass: "text-muted"
@@ -35998,7 +36022,9 @@ var render = function render() {
     staticClass: "mb-1"
   }, [_c("strong", [_vm._v("Phone:")]), _vm._v(" " + _vm._s(_vm.orders.customer.phone))])]) : _vm._e(), _vm._v(" "), _vm.orders.customer.email ? _c("span", [_c("p", {
     staticClass: "mb-0"
-  }, [_c("strong", [_vm._v("Email:")]), _vm._v(" " + _vm._s(_vm.orders.customer.email))])]) : _vm._e()])])])])])]), _vm._v(" "), _c("div", {
+  }, [_c("strong", [_vm._v("Email:")]), _vm._v(" " + _vm._s(_vm.orders.customer.email))])]) : _vm._e(), _vm._v(" "), _vm.orders.is_reason ? _c("span", [_c("p", {
+    staticClass: "mb-0"
+  }, [_c("strong", [_vm._v("Build Type:")]), _vm._v(" "), _vm.orders.is_reason == 1 ? _c("span", [_vm._v("Workstation")]) : _vm.orders.is_reason == 2 ? _c("span", [_vm._v("Gaming")]) : _vm._e()])]) : _vm._e()])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row pt-4"
   }, [_c("div", {
     staticClass: "col-lg-12"
@@ -36361,7 +36387,7 @@ var render = function render() {
   }, [_vm._l(_vm.displayedProducts, function (product) {
     return _c("div", {
       key: product.id,
-      staticClass: "col-lg-4 col-md-4 col-sm-12 col-12"
+      staticClass: "col-lg-2 col-md-2 col-sm-12 col-12"
     }, [_c("button", {
       staticClass: "btn btn-sm col-lg-12",
       attrs: {
@@ -36607,7 +36633,73 @@ var render = function render() {
         value: customer.id
       }
     }, [_vm._v("\n                    " + _vm._s(customer.full_name) + "\n                  ")]);
-  })], 2), _vm._v(" "), _c("button", {
+  })], 2), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_c("label", {
+    staticClass: "mb-2 font-weight-bold"
+  }, [_vm._v("Build Type")]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex"
+  }, [_c("div", {
+    staticClass: "form-check mr-4"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.build_type,
+      expression: "build_type"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      type: "radio",
+      name: "buildType",
+      id: "buildWorking"
+    },
+    domProps: {
+      value: 1,
+      checked: _vm._q(_vm.build_type, 1)
+    },
+    on: {
+      change: function change($event) {
+        _vm.build_type = 1;
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      "for": "buildWorking"
+    }
+  }, [_vm._v("\n                        Workstation\n                        ")])]), _vm._v(" "), _c("div", {
+    staticClass: "form-check"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.build_type,
+      expression: "build_type"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      type: "radio",
+      name: "buildType",
+      id: "buildGaming"
+    },
+    domProps: {
+      value: 2,
+      checked: _vm._q(_vm.build_type, 2)
+    },
+    on: {
+      change: function change($event) {
+        _vm.build_type = 2;
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      "for": "buildGaming"
+    }
+  }, [_vm._v("\n                        Gaming\n                        ")])])]), _vm._v(" "), _c("small", {
+    staticClass: "text-muted"
+  }, [_vm._v("Select the purpose of this build (optional)")])]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-primary mt-3",
     attrs: {
       type: "submit",
@@ -41957,7 +42049,7 @@ var render = function render() {
     attrs: {
       id: "customer_id",
       required: "",
-      disabled: _vm.loadingCustomers
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -42003,7 +42095,8 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       id: "order_id",
-      required: ""
+      required: "",
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -42093,7 +42186,7 @@ var render = function render() {
       domProps: {
         value: serve.id
       }
-    }, [_vm._v("\n                  " + _vm._s(serve.name) + " - RM" + _vm._s(serve.fee) + "\n                ")]);
+    }, [_vm._v("\n                  " + _vm._s(serve.name) + "\n                ")]);
   })], 2), _vm._v(" "), _vm.selectedServe ? _c("div", {
     staticClass: "mt-2 p-2 bg-light rounded"
   }, [_c("small", {
@@ -42709,7 +42802,7 @@ var render = function render() {
     attrs: {
       id: "customer_id",
       required: "",
-      disabled: _vm.loadingCustomers
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -42755,7 +42848,8 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       id: "order_id",
-      required: ""
+      required: "",
+      disabled: ""
     },
     on: {
       change: [function ($event) {
@@ -42845,7 +42939,7 @@ var render = function render() {
       domProps: {
         value: serve.id
       }
-    }, [_vm._v("\n                  " + _vm._s(serve.name) + " - RM" + _vm._s(serve.fee) + "\n                ")]);
+    }, [_vm._v("\n                  " + _vm._s(serve.name) + "\n                ")]);
   })], 2), _vm._v(" "), _vm.selectedServe ? _c("div", {
     staticClass: "mt-2 p-2 bg-light rounded"
   }, [_c("small", {
@@ -51546,7 +51640,7 @@ var render = function render() {
     staticClass: "col-md-6 mb-3"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Address")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("Country")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -51556,7 +51650,7 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       type: "text",
-      placeholder: "Enter Supplier Address"
+      placeholder: "Enter Supplier Country"
     },
     domProps: {
       value: _vm.form.address
@@ -51827,7 +51921,7 @@ var render = function render() {
     staticClass: "col-md-6 mb-3"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Address")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("Country")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -51837,7 +51931,7 @@ var render = function render() {
     staticClass: "form-control",
     attrs: {
       type: "text",
-      placeholder: "Enter Supplier Address"
+      placeholder: "Enter Supplier Country"
     },
     domProps: {
       value: _vm.form.address
@@ -126664,8 +126758,8 @@ var routes = [{
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/enigma/quivitech/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Applications/XAMPP/xamppfiles/htdocs/enigma/quivitech/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/pykekaisora/pk/devops/k8s/clients/quivitechInventoryManagement/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/pykekaisora/pk/devops/k8s/clients/quivitechInventoryManagement/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
