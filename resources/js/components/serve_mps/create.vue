@@ -1,17 +1,13 @@
 <template>
-  <div class="serve-mps-edit">
+  <div class="serve-mps-create">
     <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Edit Serve MPS Entry</h5>
-        <div>
-          <span class="badge badge-info mr-2">ID: {{ id }}</span>
-          <span class="badge" :class="form.deleted_at ? 'badge-danger' : 'badge-success'">
-            {{ form.deleted_at ? 'Deleted' : 'Active' }}
-          </span>
-        </div>
+      <div class="card-header">
+        <h5 class="card-title mb-0">
+          Create New Serve MPS Entry
+        </h5>
       </div>
       <div class="card-body">
-        <form v-if="formLoaded" @submit.prevent="submitForm">
+        <form @submit.prevent="submitForm">
           <!-- Basic Information -->
           <div class="form-section mb-5">
             <h5 class="font-weight-bold text-primary mb-4 border-bottom pb-2">
@@ -420,15 +416,14 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="rm100_promo_code_claim">RM 100 Promo Code</label>
+                    <label for="rm100_promo_code_next_build">RM 100 Promo Code</label>
                     <input
                       type="text"
-                      id="rm100_promo_code_claim"
+                      id="rm100_promo_code_next_build"
                       class="form-control"
-                      v-model="form.rm100_promo_code_claim"
+                      v-model="form.rm100_promo_code_next_build"
                       placeholder="Enter promo code..."
                     />
-                    <small class="form-text text-muted">Will be auto-generated if blank and "Generate Code" is checked</small>
                   </div>
                 </div>
                 <div class="col-md-3">
@@ -438,7 +433,6 @@
                       id="generate_code"
                       class="form-check-input"
                       v-model="form.generate_code"
-                      @change="handleGenerateCodeChange"
                     />
                     <label class="form-check-label" for="generate_code">
                       Generate Code
@@ -452,17 +446,12 @@
                       id="rm100_promo_code_claim"
                       class="form-check-input"
                       v-model="form.rm100_promo_code_claim"
-                      :disabled="!form.rm100_promo_code_claim"
                     />
                     <label class="form-check-label" for="rm100_promo_code_claim">
                       Promo Code Claimed
                     </label>
                   </div>
                 </div>
-              </div>
-              <div v-if="form.generate_code && !form.rm100_promo_code_claim" class="alert alert-warning mt-2">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                Promo code will be auto-generated on save
               </div>
             </div>
           </div>
@@ -484,77 +473,21 @@
             </div>
           </div>
 
-          <!-- Timestamps Section -->
-          <div class="card mt-4">
-            <div class="card-header bg-light">
-              <h6 class="mb-0">Timestamps</h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label>Created At</label>
-                    <input
-                      type="text"
-                      class="form-control bg-light"
-                      :value="formatDateTime(form.created_at)"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label>Updated At</label>
-                    <input
-                      type="text"
-                      class="form-control bg-light"
-                      :value="formatDateTime(form.updated_at)"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label>Deleted At</label>
-                    <input
-                      type="text"
-                      class="form-control bg-light"
-                      :value="form.deleted_at ? formatDateTime(form.deleted_at) : 'Not deleted'"
-                      readonly
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Form Actions -->
           <div class="form-group mt-4">
             <button type="submit" class="btn btn-primary" :disabled="loading || !isFormValid">
               <span v-if="loading">
-                <i class="fas fa-spinner fa-spin"></i> Updating...
+                <i class="fas fa-spinner fa-spin"></i> Creating...
               </span>
               <span v-else>
-                <i class="fas fa-save"></i> Update Entry
+                <i class="fas fa-save"></i> Create Entry
               </span>
             </button>
             <router-link :to="{ name: 'serve-mps.index' }" class="btn btn-secondary ml-2">
               <i class="fas fa-arrow-left"></i> Back to List
             </router-link>
-            <button v-if="!form.deleted_at" type="button" class="btn btn-danger float-right" @click="confirmDelete">
-              <i class="fas fa-trash"></i> Delete Entry
-            </button>
-            <button v-else type="button" class="btn btn-warning float-right" @click="restoreEntry">
-              <i class="fas fa-redo"></i> Restore Entry
-            </button>
           </div>
         </form>
-        <div v-else class="text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-          <p class="mt-3">Loading entry data...</p>
-        </div>
       </div>
     </div>
   </div>
@@ -566,8 +499,7 @@ import Swal from 'sweetalert2'
 import _ from 'lodash'
 
 export default {
-  name: 'ServeMpsEdit',
-  props: ['id'],
+  name: 'ServeMpsCreate',
   data() {
     return {
       form: {
@@ -589,17 +521,13 @@ export default {
         one_free_dust_cleaning_claim: false,
         fifty_percent_off_dust_cleaning_second_year: true,
         thirty_percent_off_labour_fees_upgrade_first_year: true,
-        rm100_promo_code_claim: '',
+        rm100_promo_code_next_build: '',
         generate_code: false,
         rm100_promo_code_claim: false,
         notes: '',
-        created_at: '',
-        updated_at: '',
-        deleted_at: null,
       },
       loading: false,
       loadingServeData: false,
-      formLoaded: false,
       errors: {},
       showDropdown: false,
       searchQuery: '',
@@ -631,72 +559,17 @@ export default {
     }
   },
   mounted() {
-    console.log('🔄 Edit component mounted for ID:', this.id)
-    this.fetchEntry()
     this.fetchServeData()
   },
   methods: {
-    async fetchEntry() {
-      this.loading = true
-      this.formLoaded = false
-
-      try {
-        console.log('🔍 Fetching Serve MPS entry for ID:', this.id)
-
-        const response = await axios.get(`/api/serve-mps/${this.id}`)
-
-        console.log('✅ Entry response:', response.data)
-
-        if (response.data && response.data.success) {
-          this.form = response.data.data
-
-          // Set search query to the selected QVSE CID
-          this.searchQuery = this.form.qvse_cid || ''
-
-          // If we have serve_data_id, try to fetch customer info
-          if (this.form.serve_data_id) {
-            await this.fetchCustomerData(this.form.serve_data_id)
-          }
-
-          this.formLoaded = true
-          console.log('📝 Form data loaded:', this.form)
-        } else {
-          throw new Error(response.data?.message || 'Failed to load entry')
-        }
-      } catch (error) {
-        console.error('❌ Error fetching entry:', error)
-
-        let errorMessage = 'Failed to load entry data.'
-        if (error.response) {
-          if (error.response.status === 404) {
-            errorMessage = 'Entry not found.'
-          } else if (error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message
-          }
-        }
-
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: errorMessage,
-          confirmButtonText: 'OK'
-        }).then(() => {
-          this.$router.push({ name: 'serve-mps.index' })
-        })
-      } finally {
-        this.loading = false
-      }
-    },
-
     async fetchServeData() {
       this.loadingServeData = true
       try {
         console.log('🔍 Fetching Prime Series serve data for dropdown...')
 
-        // Use the correct endpoint for Serve Data index
         const response = await axios.get('/api/serve-data', {
           params: {
-            per_page: 50,
+            per_page: 100,
             page: 1
           },
           headers: {
@@ -708,16 +581,12 @@ export default {
         console.log('✅ Serve data response:', response.data)
 
         let data = []
-        if (response.data && response.data.data) {
-          // Check if we have an array in the data property
-          if (Array.isArray(response.data.data)) {
-            data = response.data.data
-          } else if (response.data.data.data && Array.isArray(response.data.data.data)) {
-            // Laravel paginated response
-            data = response.data.data.data
-          }
+        if (response.data && response.data.success && response.data.data) {
+          data = response.data.data
         } else if (Array.isArray(response.data)) {
           data = response.data
+        } else if (response.data && Array.isArray(response.data.data)) {
+          data = response.data.data
         }
 
         // Filter for Prime Series (lkp_serve_id = 2)
@@ -727,44 +596,8 @@ export default {
       } catch (error) {
         console.error('❌ Error fetching serve data:', error)
         this.serveData = []
-
-        // Try alternative endpoint
-        try {
-          const altResponse = await axios.get('/api/serve-data/', {
-            params: {
-              lkp_serve_id: 2,
-              per_page: 50
-            }
-          })
-
-          if (altResponse.data && altResponse.data.success && altResponse.data.data) {
-            this.serveData = altResponse.data.data
-            console.log('📊 Alternative endpoint loaded:', this.serveData.length, 'items')
-          }
-        } catch (altError) {
-          console.error('❌ Alternative endpoint also failed:', altError)
-        }
       } finally {
         this.loadingServeData = false
-      }
-    },
-
-    async fetchCustomerData(serveDataId) {
-      try {
-        const response = await axios.get(`/api/serve-data/${serveDataId}`)
-
-        if (response.data && response.data.success && response.data.data) {
-          this.selectedCustomer = response.data.data.customer || null
-          this.selectedServeData = response.data.data
-        }
-      } catch (error) {
-        console.error('Error fetching customer data:', error)
-        // Try alternative method
-        const foundItem = this.serveData.find(item => item.id == serveDataId)
-        if (foundItem) {
-          this.selectedCustomer = foundItem.customer || null
-          this.selectedServeData = foundItem
-        }
       }
     },
 
@@ -815,60 +648,46 @@ export default {
       this.fetchServeData()
     },
 
-    handleGenerateCodeChange() {
-      if (this.form.generate_code && !this.form.rm100_promo_code_claim) {
-        // Clear any existing promo code if we're generating a new one
-        this.form.rm100_promo_code_claim = ''
-        this.form.rm100_promo_code_claim = false
-      }
-    },
-
     async submitForm() {
       this.loading = true
       this.errors = {}
 
       try {
         const loadingSwal = Swal.fire({
-          title: 'Updating...',
-          text: 'Please wait while we update the Serve MPS record.',
+          title: 'Creating...',
+          text: 'Please wait while we create the Serve MPS record.',
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading()
           }
         })
 
-        console.log('Updating form data:', this.form)
+        console.log('📝 Creating form data:', this.form)
 
         // Make sure qvse_cid is filled
         if (!this.form.qvse_cid && this.selectedServeData) {
           this.form.qvse_cid = this.selectedServeData.qvse_cid
         }
 
-        // Prepare the data for submission
-        const formData = { ...this.form }
-
-        // Remove fields that shouldn't be sent
-        delete formData.created_at
-        delete formData.updated_at
-        delete formData.deleted_at
-
-        const response = await axios.put(`/api/serve-mps/${this.id}`, formData)
+        const response = await axios.post('/api/serve-mps', this.form)
 
         loadingSwal.close()
 
         Swal.fire({
           icon: 'success',
           title: 'Success!',
-          text: 'Serve MPS record has been updated successfully.',
+          text: 'Serve MPS record has been created successfully.',
           showConfirmButton: false,
           timer: 1500
         })
 
-        // Refresh the data
-        this.fetchEntry()
+        // Redirect to index after successful creation
+        setTimeout(() => {
+          this.$router.push({ name: 'serve-mps.index' })
+        }, 1500)
 
       } catch (error) {
-        console.error('Error updating record:', error)
+        console.error('❌ Error creating record:', error)
 
         if (error.response && error.response.status === 422) {
           this.errors = error.response.data.errors || {}
@@ -894,88 +713,13 @@ export default {
             icon: 'error',
             title: 'Error!',
             text: (error.response && error.response.data && error.response.data.message) ||
-                  'Failed to update record. Please try again.',
+                  'Failed to create record. Please try again.',
             confirmButtonText: 'OK'
           })
         }
       } finally {
         this.loading = false
       }
-    },
-
-    confirmDelete() {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: `You want to delete ${this.form.qvse_cid || 'this entry'}?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.deleteEntry()
-        }
-      })
-    },
-
-    async deleteEntry() {
-      try {
-        const response = await axios.delete(`/api/serve-mps/${this.id}`)
-
-        if (response.data && response.data.success) {
-          Swal.fire(
-            'Deleted!',
-            'Entry has been deleted successfully.',
-            'success'
-          )
-          this.fetchEntry() // Refresh to show deleted status
-        } else {
-          throw new Error(response.data?.message || 'Delete failed')
-        }
-      } catch (error) {
-        console.error('Error deleting:', error)
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.response?.data?.message || 'Failed to delete entry'
-        })
-      }
-    },
-
-    async restoreEntry() {
-      try {
-        const response = await axios.put(`/api/serve-mps/${this.id}/restore`)
-
-        if (response.data && response.data.success) {
-          Swal.fire(
-            'Restored!',
-            'Entry has been restored successfully.',
-            'success'
-          )
-          this.fetchEntry()
-        } else {
-          throw new Error(response.data?.message || 'Restore failed')
-        }
-      } catch (error) {
-        console.error('Error restoring:', error)
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.response?.data?.message || 'Failed to restore entry'
-        })
-      }
-    },
-
-    formatDateTime(date) {
-      if (!date) return 'N/A'
-      return new Date(date).toLocaleString('en-MY', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
     }
   }
 }
@@ -1095,47 +839,30 @@ export default {
   margin-bottom: 20px;
 }
 
-/* Loading animation */
-.fa-spin {
-  animation: fa-spin 2s infinite linear;
-}
-
-/* Better scrollbar for dropdown */
-.search-dropdown .card-body {
-  scrollbar-width: thin;
-  scrollbar-color: #4e73df #f8f9fc;
-}
-
-.search-dropdown .card-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-.search-dropdown .card-body::-webkit-scrollbar-track {
-  background: #f8f9fc;
-}
-
-.search-dropdown .card-body::-webkit-scrollbar-thumb {
-  background-color: #4e73df;
-  border-radius: 4px;
-}
-
-/* Responsive adjustments */
+/* Responsive styles */
 @media (max-width: 768px) {
   .search-dropdown {
-    position: relative;
     width: 100%;
-    margin-top: 10px;
   }
 
-  .form-section {
-    padding: 15px;
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
   }
 
-  .float-right {
-    float: none !important;
-    display: block;
+  .card-header h5 {
+    margin-bottom: 10px;
+  }
+
+  .form-group.mt-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-group.mt-4 .btn {
     width: 100%;
-    margin-top: 10px;
+    margin: 5px 0 !important;
   }
 }
 </style>
