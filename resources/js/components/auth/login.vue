@@ -79,7 +79,7 @@
             <p class="text-muted mt-2">
               Build something amazing with QuiviTech
               <span class="version" style="padding:10px; font-size: 10px;">
-                <br>Version 1.0.1 By Enigma Code Solution
+                <br>Version 0.0.2 By Enigma Code Solution
               </span>
             </p>
           </div>

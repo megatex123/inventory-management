@@ -262,7 +262,7 @@
         </li>
 
         <hr class="sidebar-divider">
-        <div class="version" style="padding:10px; font-size: 10px;">Version 1.0.1 By Enigma</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version 0.0.2 <br>By Enigma Code Solution</div>
       </ul>
 
       <div id="content-wrapper" class="d-flex flex-column">
