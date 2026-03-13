@@ -16957,25 +16957,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'ServeMpsEdit',
-  props: ['id'],
+  name: 'ServeMpsCreate',
   data: function data() {
     return {
-      form: _defineProperty(_defineProperty(_defineProperty(_defineProperty(_defineProperty({
+      form: {
         serve_data_id: '',
         qvse_cid: '',
         date_start: '',
@@ -16994,12 +16987,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         one_free_dust_cleaning_claim: false,
         fifty_percent_off_dust_cleaning_second_year: true,
         thirty_percent_off_labour_fees_upgrade_first_year: true,
-        rm100_promo_code_claim: '',
-        generate_code: false
-      }, "rm100_promo_code_claim", false), "notes", ''), "created_at", ''), "updated_at", ''), "deleted_at", null),
+        rm100_promo_code_next_build: '',
+        generate_code: false,
+        rm100_promo_code_claim: false,
+        notes: ''
+      },
       loading: false,
       loadingServeData: false,
-      formLoaded: false,
       errors: {},
       showDropdown: false,
       searchQuery: '',
@@ -17024,101 +17018,23 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     }
   },
   mounted: function mounted() {
-    console.log('🔄 Edit component mounted for ID:', this.id);
-    this.fetchEntry();
     this.fetchServeData();
   },
   methods: {
-    fetchEntry: function fetchEntry() {
+    fetchServeData: function fetchServeData() {
       var _this = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var response, _response$data, errorMessage, _t;
+        var response, data, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _this.loading = true;
-              _this.formLoaded = false;
+              _this.loadingServeData = true;
               _context.p = 1;
-              console.log('🔍 Fetching Serve MPS entry for ID:', _this.id);
-              _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/serve-mps/".concat(_this.id));
-            case 2:
-              response = _context.v;
-              console.log('✅ Entry response:', response.data);
-              if (!(response.data && response.data.success)) {
-                _context.n = 4;
-                break;
-              }
-              _this.form = response.data.data;
-
-              // Set search query to the selected QVSE CID
-              _this.searchQuery = _this.form.qvse_cid || '';
-
-              // If we have serve_data_id, try to fetch customer info
-              if (!_this.form.serve_data_id) {
-                _context.n = 3;
-                break;
-              }
-              _context.n = 3;
-              return _this.fetchCustomerData(_this.form.serve_data_id);
-            case 3:
-              _this.formLoaded = true;
-              console.log('📝 Form data loaded:', _this.form);
-              _context.n = 5;
-              break;
-            case 4:
-              throw new Error(((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.message) || 'Failed to load entry');
-            case 5:
-              _context.n = 7;
-              break;
-            case 6:
-              _context.p = 6;
-              _t = _context.v;
-              console.error('❌ Error fetching entry:', _t);
-              errorMessage = 'Failed to load entry data.';
-              if (_t.response) {
-                if (_t.response.status === 404) {
-                  errorMessage = 'Entry not found.';
-                } else if (_t.response.data && _t.response.data.message) {
-                  errorMessage = _t.response.data.message;
-                }
-              }
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-                icon: 'error',
-                title: 'Error',
-                text: errorMessage,
-                confirmButtonText: 'OK'
-              }).then(function () {
-                _this.$router.push({
-                  name: 'serve-mps.index'
-                });
-              });
-            case 7:
-              _context.p = 7;
-              _this.loading = false;
-              return _context.f(7);
-            case 8:
-              return _context.a(2);
-          }
-        }, _callee, null, [[1, 6, 7, 8]]);
-      }))();
-    },
-    fetchServeData: function fetchServeData() {
-      var _this2 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var response, data, altResponse, _t2, _t3;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              _this2.loadingServeData = true;
-              _context2.p = 1;
               console.log('🔍 Fetching Prime Series serve data for dropdown...');
-
-              // Use the correct endpoint for Serve Data index
-              _context2.n = 2;
+              _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-data', {
                 params: {
-                  per_page: 50,
+                  per_page: 100,
                   page: 1
                 },
                 headers: {
@@ -17127,99 +17043,37 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 }
               });
             case 2:
-              response = _context2.v;
+              response = _context.v;
               console.log('✅ Serve data response:', response.data);
               data = [];
-              if (response.data && response.data.data) {
-                // Check if we have an array in the data property
-                if (Array.isArray(response.data.data)) {
-                  data = response.data.data;
-                } else if (response.data.data.data && Array.isArray(response.data.data.data)) {
-                  // Laravel paginated response
-                  data = response.data.data.data;
-                }
+              if (response.data && response.data.success && response.data.data) {
+                data = response.data.data;
               } else if (Array.isArray(response.data)) {
                 data = response.data;
+              } else if (response.data && Array.isArray(response.data.data)) {
+                data = response.data.data;
               }
 
               // Filter for Prime Series (lkp_serve_id = 2)
-              _this2.serveData = data.filter(function (item) {
+              _this.serveData = data.filter(function (item) {
                 return item.lkp_serve_id == 2;
               });
-              console.log('📊 Total Prime Series items loaded:', _this2.serveData.length);
-              _context2.n = 7;
+              console.log('📊 Total Prime Series items loaded:', _this.serveData.length);
+              _context.n = 4;
               break;
             case 3:
-              _context2.p = 3;
-              _t2 = _context2.v;
-              console.error('❌ Error fetching serve data:', _t2);
-              _this2.serveData = [];
-
-              // Try alternative endpoint
-              _context2.p = 4;
-              _context2.n = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-data/', {
-                params: {
-                  lkp_serve_id: 2,
-                  per_page: 50
-                }
-              });
+              _context.p = 3;
+              _t = _context.v;
+              console.error('❌ Error fetching serve data:', _t);
+              _this.serveData = [];
+            case 4:
+              _context.p = 4;
+              _this.loadingServeData = false;
+              return _context.f(4);
             case 5:
-              altResponse = _context2.v;
-              if (altResponse.data && altResponse.data.success && altResponse.data.data) {
-                _this2.serveData = altResponse.data.data;
-                console.log('📊 Alternative endpoint loaded:', _this2.serveData.length, 'items');
-              }
-              _context2.n = 7;
-              break;
-            case 6:
-              _context2.p = 6;
-              _t3 = _context2.v;
-              console.error('❌ Alternative endpoint also failed:', _t3);
-            case 7:
-              _context2.p = 7;
-              _this2.loadingServeData = false;
-              return _context2.f(7);
-            case 8:
-              return _context2.a(2);
+              return _context.a(2);
           }
-        }, _callee2, null, [[4, 6], [1, 3, 7, 8]]);
-      }))();
-    },
-    fetchCustomerData: function fetchCustomerData(serveDataId) {
-      var _this3 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var response, foundItem, _t4;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.p = _context3.n) {
-            case 0:
-              _context3.p = 0;
-              _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/serve-data/".concat(serveDataId));
-            case 1:
-              response = _context3.v;
-              if (response.data && response.data.success && response.data.data) {
-                _this3.selectedCustomer = response.data.data.customer || null;
-                _this3.selectedServeData = response.data.data;
-              }
-              _context3.n = 3;
-              break;
-            case 2:
-              _context3.p = 2;
-              _t4 = _context3.v;
-              console.error('Error fetching customer data:', _t4);
-              // Try alternative method
-              foundItem = _this3.serveData.find(function (item) {
-                return item.id == serveDataId;
-              });
-              if (foundItem) {
-                _this3.selectedCustomer = foundItem.customer || null;
-                _this3.selectedServeData = foundItem;
-              }
-            case 3:
-              return _context3.a(2);
-          }
-        }, _callee3, null, [[0, 2]]);
+        }, _callee, null, [[1, 3, 4, 5]]);
       }))();
     },
     searchServeData: lodash__WEBPACK_IMPORTED_MODULE_2___default.a.debounce(function () {
@@ -17227,13 +17081,13 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.validateQVSE();
     }, 400),
     validateQVSE: function validateQVSE() {
-      var _this4 = this;
+      var _this2 = this;
       if (!this.searchQuery) {
         this.qvseValidationError = '';
         return;
       }
       var exactMatch = this.serveData.find(function (item) {
-        return item.qvse_cid && item.qvse_cid.toString().toLowerCase() === _this4.searchQuery.toLowerCase();
+        return item.qvse_cid && item.qvse_cid.toString().toLowerCase() === _this2.searchQuery.toLowerCase();
       });
       if (exactMatch) {
         if (this.form.serve_data_id === exactMatch.id) {
@@ -17255,76 +17109,67 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       this.qvseValidationError = '';
     },
     onSearchBlur: function onSearchBlur() {
-      var _this5 = this;
+      var _this3 = this;
       setTimeout(function () {
-        _this5.showDropdown = false;
+        _this3.showDropdown = false;
       }, 200);
     },
     refreshData: function refreshData() {
       this.fetchServeData();
     },
-    handleGenerateCodeChange: function handleGenerateCodeChange() {
-      if (this.form.generate_code && !this.form.rm100_promo_code_claim) {
-        // Clear any existing promo code if we're generating a new one
-        this.form.rm100_promo_code_claim = '';
-        this.form.rm100_promo_code_claim = false;
-      }
-    },
     submitForm: function submitForm() {
-      var _this6 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-        var loadingSwal, formData, response, errorMessage, _t5;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
+      var _this4 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var loadingSwal, response, errorMessage, _t2;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
-              _this6.loading = true;
-              _this6.errors = {};
-              _context4.p = 1;
+              _this4.loading = true;
+              _this4.errors = {};
+              _context2.p = 1;
               loadingSwal = sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-                title: 'Updating...',
-                text: 'Please wait while we update the Serve MPS record.',
+                title: 'Creating...',
+                text: 'Please wait while we create the Serve MPS record.',
                 allowOutsideClick: false,
                 didOpen: function didOpen() {
                   sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.showLoading();
                 }
               });
-              console.log('Updating form data:', _this6.form);
+              console.log('📝 Creating form data:', _this4.form);
 
               // Make sure qvse_cid is filled
-              if (!_this6.form.qvse_cid && _this6.selectedServeData) {
-                _this6.form.qvse_cid = _this6.selectedServeData.qvse_cid;
+              if (!_this4.form.qvse_cid && _this4.selectedServeData) {
+                _this4.form.qvse_cid = _this4.selectedServeData.qvse_cid;
               }
-
-              // Prepare the data for submission
-              formData = _objectSpread({}, _this6.form); // Remove fields that shouldn't be sent
-              delete formData.created_at;
-              delete formData.updated_at;
-              delete formData.deleted_at;
-              _context4.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/serve-mps/".concat(_this6.id), formData);
+              _context2.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/serve-mps', _this4.form);
             case 2:
-              response = _context4.v;
+              response = _context2.v;
               loadingSwal.close();
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 icon: 'success',
                 title: 'Success!',
-                text: 'Serve MPS record has been updated successfully.',
+                text: 'Serve MPS record has been created successfully.',
                 showConfirmButton: false,
                 timer: 1500
               });
 
-              // Refresh the data
-              _this6.fetchEntry();
-              _context4.n = 4;
+              // Redirect to index after successful creation
+              setTimeout(function () {
+                _this4.$router.push({
+                  name: 'serve-mps.index'
+                });
+              }, 1500);
+              _context2.n = 4;
               break;
             case 3:
-              _context4.p = 3;
-              _t5 = _context4.v;
-              console.error('Error updating record:', _t5);
-              if (_t5.response && _t5.response.status === 422) {
-                _this6.errors = _t5.response.data.errors || {};
+              _context2.p = 3;
+              _t2 = _context2.v;
+              console.error('❌ Error creating record:', _t2);
+              if (_t2.response && _t2.response.status === 422) {
+                _this4.errors = _t2.response.data.errors || {};
                 errorMessage = 'Please fix the following errors:<br><ul class="text-left">';
-                Object.values(_this6.errors).forEach(function (errorArray) {
+                Object.values(_this4.errors).forEach(function (errorArray) {
                   if (Array.isArray(errorArray)) {
                     errorArray.forEach(function (message) {
                       errorMessage += "<li>".concat(message, "</li>");
@@ -17342,125 +17187,19 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
                 sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                   icon: 'error',
                   title: 'Error!',
-                  text: _t5.response && _t5.response.data && _t5.response.data.message || 'Failed to update record. Please try again.',
+                  text: _t2.response && _t2.response.data && _t2.response.data.message || 'Failed to create record. Please try again.',
                   confirmButtonText: 'OK'
                 });
               }
             case 4:
-              _context4.p = 4;
-              _this6.loading = false;
-              return _context4.f(4);
+              _context2.p = 4;
+              _this4.loading = false;
+              return _context2.f(4);
             case 5:
-              return _context4.a(2);
+              return _context2.a(2);
           }
-        }, _callee4, null, [[1, 3, 4, 5]]);
+        }, _callee2, null, [[1, 3, 4, 5]]);
       }))();
-    },
-    confirmDelete: function confirmDelete() {
-      var _this7 = this;
-      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-        title: 'Are you sure?',
-        text: "You want to delete ".concat(this.form.qvse_cid || 'this entry', "?"),
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          _this7.deleteEntry();
-        }
-      });
-    },
-    deleteEntry: function deleteEntry() {
-      var _this8 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        var response, _response$data2, _error$response, _t6;
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.p = _context5.n) {
-            case 0:
-              _context5.p = 0;
-              _context5.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/serve-mps/".concat(_this8.id));
-            case 1:
-              response = _context5.v;
-              if (!(response.data && response.data.success)) {
-                _context5.n = 2;
-                break;
-              }
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Entry has been deleted successfully.', 'success');
-              _this8.fetchEntry(); // Refresh to show deleted status
-              _context5.n = 3;
-              break;
-            case 2:
-              throw new Error(((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || 'Delete failed');
-            case 3:
-              _context5.n = 5;
-              break;
-            case 4:
-              _context5.p = 4;
-              _t6 = _context5.v;
-              console.error('Error deleting:', _t6);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-                icon: 'error',
-                title: 'Error',
-                text: ((_error$response = _t6.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to delete entry'
-              });
-            case 5:
-              return _context5.a(2);
-          }
-        }, _callee5, null, [[0, 4]]);
-      }))();
-    },
-    restoreEntry: function restoreEntry() {
-      var _this9 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var response, _response$data3, _error$response2, _t7;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.p = _context6.n) {
-            case 0:
-              _context6.p = 0;
-              _context6.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/serve-mps/".concat(_this9.id, "/restore"));
-            case 1:
-              response = _context6.v;
-              if (!(response.data && response.data.success)) {
-                _context6.n = 2;
-                break;
-              }
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Restored!', 'Entry has been restored successfully.', 'success');
-              _this9.fetchEntry();
-              _context6.n = 3;
-              break;
-            case 2:
-              throw new Error(((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : _response$data3.message) || 'Restore failed');
-            case 3:
-              _context6.n = 5;
-              break;
-            case 4:
-              _context6.p = 4;
-              _t7 = _context6.v;
-              console.error('Error restoring:', _t7);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-                icon: 'error',
-                title: 'Error',
-                text: ((_error$response2 = _t7.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to restore entry'
-              });
-            case 5:
-              return _context6.a(2);
-          }
-        }, _callee6, null, [[0, 4]]);
-      }))();
-    },
-    formatDateTime: function formatDateTime(date) {
-      if (!date) return 'N/A';
-      return new Date(date).toLocaleString('en-MY', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
     }
   }
 });
@@ -21610,7 +21349,7 @@ var staticRenderFns = [function () {
       padding: "10px",
       "font-size": "10px"
     }
-  }, [_c("br"), _vm._v("Version 0.0.2 By Enigma Code Solution\n            ")])])])]);
+  }, [_c("br"), _vm._v("Version 0.0.3 By Enigma Code Solution\n            ")])])])]);
 }];
 render._withStripped = true;
 
@@ -44272,21 +44011,12 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "serve-mps-edit"
+    staticClass: "serve-mps-create"
   }, [_c("div", {
     staticClass: "card"
-  }, [_c("div", {
-    staticClass: "card-header d-flex justify-content-between align-items-center"
-  }, [_c("h5", {
-    staticClass: "card-title mb-0"
-  }, [_vm._v("Edit Serve MPS Entry")]), _vm._v(" "), _c("div", [_c("span", {
-    staticClass: "badge badge-info mr-2"
-  }, [_vm._v("ID: " + _vm._s(_vm.id))]), _vm._v(" "), _c("span", {
-    staticClass: "badge",
-    "class": _vm.form.deleted_at ? "badge-danger" : "badge-success"
-  }, [_vm._v("\n          " + _vm._s(_vm.form.deleted_at ? "Deleted" : "Active") + "\n        ")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "card-body"
-  }, [_vm.formLoaded ? _c("form", {
+  }, [_c("form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
@@ -44295,11 +44025,11 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "form-section mb-5"
-  }, [_vm._m(0), _vm._v(" "), _c("div", {
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-6 mb-3"
-  }, [_vm._m(1), _vm._v(" "), _c("div", {
+  }, [_vm._m(2), _vm._v(" "), _c("div", {
     staticClass: "input-group"
   }, [_c("input", {
     directives: [{
@@ -44390,7 +44120,7 @@ var render = function render() {
     staticClass: "search-dropdown mt-1"
   }, [_c("div", {
     staticClass: "card shadow-sm"
-  }, [_vm._m(2), _vm._v(" "), _c("div", {
+  }, [_vm._m(3), _vm._v(" "), _c("div", {
     staticClass: "card-body p-0"
   }, [_vm.loadingServeData ? _c("div", {
     staticClass: "text-center p-3"
@@ -44480,7 +44210,7 @@ var render = function render() {
     staticClass: "fas fa-check-circle mr-2"
   }), _vm._v("\n                Selected: "), _c("strong", [_vm._v(_vm._s(_vm.selectedServeData.qvse_cid))]), _vm._v("\n                (Serve Data ID: " + _vm._s(_vm.selectedServeData.id) + ")\n              ")])]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 mb-3"
-  }, [_vm._m(3), _vm._v(" "), _c("input", {
+  }, [_vm._m(4), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -44508,7 +44238,7 @@ var render = function render() {
     staticClass: "invalid-feedback"
   }, [_vm._v("\n                " + _vm._s(_vm.errors.date_start[0]) + "\n              ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(4), _vm._v(" "), _c("div", {
+  }, [_vm._m(5), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -44640,7 +44370,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                    2 Advance Cable Management (First Year)\n                  ")])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(5), _vm._v(" "), _c("div", {
+  }, [_vm._m(6), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -44784,7 +44514,7 @@ var render = function render() {
     }
   })])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(6), _vm._v(" "), _c("div", {
+  }, [_vm._m(7), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -44928,7 +44658,7 @@ var render = function render() {
     }
   })])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(7), _vm._v(" "), _c("div", {
+  }, [_vm._m(8), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -45100,7 +44830,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                    30% Off Labour Fees For Upgrade Service (First Year)\n                  ")])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(8), _vm._v(" "), _c("div", {
+  }, [_vm._m(9), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -45110,33 +44840,31 @@ var render = function render() {
     staticClass: "form-group"
   }, [_c("label", {
     attrs: {
-      "for": "rm100_promo_code_claim"
+      "for": "rm100_promo_code_next_build"
     }
   }, [_vm._v("RM 100 Promo Code")]), _vm._v(" "), _c("input", {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.form.rm100_promo_code_claim,
-      expression: "form.rm100_promo_code_claim"
+      value: _vm.form.rm100_promo_code_next_build,
+      expression: "form.rm100_promo_code_next_build"
     }],
     staticClass: "form-control",
     attrs: {
       type: "text",
-      id: "rm100_promo_code_claim",
+      id: "rm100_promo_code_next_build",
       placeholder: "Enter promo code..."
     },
     domProps: {
-      value: _vm.form.rm100_promo_code_claim
+      value: _vm.form.rm100_promo_code_next_build
     },
     on: {
       input: function input($event) {
         if ($event.target.composing) return;
-        _vm.$set(_vm.form, "rm100_promo_code_claim", $event.target.value);
+        _vm.$set(_vm.form, "rm100_promo_code_next_build", $event.target.value);
       }
     }
-  }), _vm._v(" "), _c("small", {
-    staticClass: "form-text text-muted"
-  }, [_vm._v('Will be auto-generated if blank and "Generate Code" is checked')])])]), _vm._v(" "), _c("div", {
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
     staticClass: "form-check mt-4"
@@ -45156,7 +44884,7 @@ var render = function render() {
       checked: Array.isArray(_vm.form.generate_code) ? _vm._i(_vm.form.generate_code, null) > -1 : _vm.form.generate_code
     },
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$a = _vm.form.generate_code,
           $$el = $event.target,
           $$c = $$el.checked ? true : false;
@@ -45171,7 +44899,7 @@ var render = function render() {
         } else {
           _vm.$set(_vm.form, "generate_code", $$c);
         }
-      }, _vm.handleGenerateCodeChange]
+      }
     }
   }), _vm._v(" "), _c("label", {
     staticClass: "form-check-label",
@@ -45192,8 +44920,7 @@ var render = function render() {
     staticClass: "form-check-input",
     attrs: {
       type: "checkbox",
-      id: "rm100_promo_code_claim",
-      disabled: !_vm.form.rm100_promo_code_claim
+      id: "rm100_promo_code_claim"
     },
     domProps: {
       checked: Array.isArray(_vm.form.rm100_promo_code_claim) ? _vm._i(_vm.form.rm100_promo_code_claim, null) > -1 : _vm.form.rm100_promo_code_claim
@@ -45221,13 +44948,9 @@ var render = function render() {
     attrs: {
       "for": "rm100_promo_code_claim"
     }
-  }, [_vm._v("\n                    Promo Code Claimed\n                  ")])])])]), _vm._v(" "), _vm.form.generate_code && !_vm.form.rm100_promo_code_claim ? _c("div", {
-    staticClass: "alert alert-warning mt-2"
-  }, [_c("i", {
-    staticClass: "fas fa-exclamation-triangle mr-2"
-  }), _vm._v("\n              Promo code will be auto-generated on save\n            ")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    Promo Code Claimed\n                  ")])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(9), _vm._v(" "), _c("div", {
+  }, [_vm._m(10), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "form-group"
@@ -45253,51 +44976,6 @@ var render = function render() {
       }
     }
   })])])]), _vm._v(" "), _c("div", {
-    staticClass: "card mt-4"
-  }, [_vm._m(10), _vm._v(" "), _c("div", {
-    staticClass: "card-body"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", [_vm._v("Created At")]), _vm._v(" "), _c("input", {
-    staticClass: "form-control bg-light",
-    attrs: {
-      type: "text",
-      readonly: ""
-    },
-    domProps: {
-      value: _vm.formatDateTime(_vm.form.created_at)
-    }
-  })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", [_vm._v("Updated At")]), _vm._v(" "), _c("input", {
-    staticClass: "form-control bg-light",
-    attrs: {
-      type: "text",
-      readonly: ""
-    },
-    domProps: {
-      value: _vm.formatDateTime(_vm.form.updated_at)
-    }
-  })])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", [_vm._v("Deleted At")]), _vm._v(" "), _c("input", {
-    staticClass: "form-control bg-light",
-    attrs: {
-      type: "text",
-      readonly: ""
-    },
-    domProps: {
-      value: _vm.form.deleted_at ? _vm.formatDateTime(_vm.form.deleted_at) : "Not deleted"
-    }
-  })])])])])]), _vm._v(" "), _c("div", {
     staticClass: "form-group mt-4"
   }, [_c("button", {
     staticClass: "btn btn-primary",
@@ -45307,9 +44985,9 @@ var render = function render() {
     }
   }, [_vm.loading ? _c("span", [_c("i", {
     staticClass: "fas fa-spinner fa-spin"
-  }), _vm._v(" Updating...\n            ")]) : _c("span", [_c("i", {
+  }), _vm._v(" Creating...\n            ")]) : _c("span", [_c("i", {
     staticClass: "fas fa-save"
-  }), _vm._v(" Update Entry\n            ")])]), _vm._v(" "), _c("router-link", {
+  }), _vm._v(" Create Entry\n            ")])]), _vm._v(" "), _c("router-link", {
     staticClass: "btn btn-secondary ml-2",
     attrs: {
       to: {
@@ -45318,33 +44996,17 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-arrow-left"
-  }), _vm._v(" Back to List\n          ")]), _vm._v(" "), !_vm.form.deleted_at ? _c("button", {
-    staticClass: "btn btn-danger float-right",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.confirmDelete
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-trash"
-  }), _vm._v(" Delete Entry\n          ")]) : _c("button", {
-    staticClass: "btn btn-warning float-right",
-    attrs: {
-      type: "button"
-    },
-    on: {
-      click: _vm.restoreEntry
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-redo"
-  }), _vm._v(" Restore Entry\n          ")])], 1)]) : _c("div", {
-    staticClass: "text-center py-5"
-  }, [_vm._m(11), _vm._v(" "), _c("p", {
-    staticClass: "mt-3"
-  }, [_vm._v("Loading entry data...")])])])])]);
+  }), _vm._v(" Back to List\n          ")])], 1)])])])]);
 };
 var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "card-header"
+  }, [_c("h5", {
+    staticClass: "card-title mb-0"
+  }, [_vm._v("\n        Create New Serve MPS Entry\n      ")])]);
+}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("h5", {
@@ -45424,25 +45086,6 @@ var staticRenderFns = [function () {
   }, [_c("h6", {
     staticClass: "mb-0"
   }, [_vm._v("Additional Notes")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "card-header bg-light"
-  }, [_c("h6", {
-    staticClass: "mb-0"
-  }, [_vm._v("Timestamps")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "spinner-border text-primary",
-    attrs: {
-      role: "status"
-    }
-  }, [_c("span", {
-    staticClass: "sr-only"
-  }, [_vm._v("Loading...")])]);
 }];
 render._withStripped = true;
 
@@ -57734,7 +57377,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.form-section[data-v-169fc8b6] {\n  background-color: #f8f9fc;\n  border-radius: 8px;\n  padding: 20px;\n  margin-bottom: 20px;\n  border: 1px solid #e3e6f0;\n}\n.form-section h5[data-v-169fc8b6] {\n  color: #4e73df;\n}\n.form-label[data-v-169fc8b6] {\n  font-weight: 500;\n  color: #5a5c69;\n}\n.form-control[data-v-169fc8b6]:focus {\n  border-color: #4e73df;\n  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);\n}\n.form-check-input[data-v-169fc8b6]:checked {\n  background-color: #4e73df;\n  border-color: #4e73df;\n}\n.btn-primary[data-v-169fc8b6] {\n  background-color: #4e73df;\n  border-color: #4e73df;\n}\n.btn-primary[data-v-169fc8b6]:hover {\n  background-color: #2e59d9;\n  border-color: #2e59d9;\n}\n.btn-secondary[data-v-169fc8b6] {\n  background-color: #858796;\n  border-color: #858796;\n}\n.btn-secondary[data-v-169fc8b6]:hover {\n  background-color: #717384;\n  border-color: #717384;\n}\n.card[data-v-169fc8b6] {\n  border: 1px solid #e3e6f0;\n  border-radius: 8px;\n}\n.card-header[data-v-169fc8b6] {\n  border-radius: 8px 8px 0 0 !important;\n}\n\n/* Search Dropdown Styles */\n.search-dropdown[data-v-169fc8b6] {\n  position: absolute;\n  z-index: 1050;\n  width: calc(100% - 30px);\n  max-height: 400px;\n  overflow-y: auto;\n  border: 1px solid #dee2e6;\n  border-radius: 0.25rem;\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);\n}\n.search-dropdown .card[data-v-169fc8b6] {\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;\n}\n.list-group-item[data-v-169fc8b6] {\n  border: none;\n  border-bottom: 1px solid #e3e6f0;\n  cursor: pointer;\n  transition: background-color 0.2s;\n  padding: 10px 15px;\n}\n.list-group-item[data-v-169fc8b6]:last-child {\n  border-bottom: none;\n}\n.list-group-item[data-v-169fc8b6]:hover {\n  background-color: #f8f9fc;\n}\n.list-group-item[data-v-169fc8b6]:active {\n  background-color: #e3e6f0;\n}\n\n/* Customer Info Display */\n.customer-info[data-v-169fc8b6] {\n  border-left: 4px solid #4e73df;\n}\n.customer-info i[data-v-169fc8b6] {\n  width: 16px;\n}\n\n/* Selected QVSE CID display */\n.alert-info[data-v-169fc8b6] {\n  border-left: 4px solid #17a2b8;\n}\n\n/* Form section headers */\n.form-section h5[data-v-169fc8b6] {\n  border-bottom: 2px solid #4e73df;\n  padding-bottom: 10px;\n  margin-bottom: 20px;\n}\n\n/* Loading animation */\n.fa-spin[data-v-169fc8b6] {\n  animation: fa-spin 2s infinite linear;\n}\n\n/* Better scrollbar for dropdown */\n.search-dropdown .card-body[data-v-169fc8b6] {\n  scrollbar-width: thin;\n  scrollbar-color: #4e73df #f8f9fc;\n}\n.search-dropdown .card-body[data-v-169fc8b6]::-webkit-scrollbar {\n  width: 8px;\n}\n.search-dropdown .card-body[data-v-169fc8b6]::-webkit-scrollbar-track {\n  background: #f8f9fc;\n}\n.search-dropdown .card-body[data-v-169fc8b6]::-webkit-scrollbar-thumb {\n  background-color: #4e73df;\n  border-radius: 4px;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.search-dropdown[data-v-169fc8b6] {\n    position: relative;\n    width: 100%;\n    margin-top: 10px;\n}\n.form-section[data-v-169fc8b6] {\n    padding: 15px;\n}\n.float-right[data-v-169fc8b6] {\n    float: none !important;\n    display: block;\n    width: 100%;\n    margin-top: 10px;\n}\n}\n", ""]);
+exports.push([module.i, "\n.form-section[data-v-169fc8b6] {\n  background-color: #f8f9fc;\n  border-radius: 8px;\n  padding: 20px;\n  margin-bottom: 20px;\n  border: 1px solid #e3e6f0;\n}\n.form-section h5[data-v-169fc8b6] {\n  color: #4e73df;\n}\n.form-label[data-v-169fc8b6] {\n  font-weight: 500;\n  color: #5a5c69;\n}\n.form-control[data-v-169fc8b6]:focus {\n  border-color: #4e73df;\n  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);\n}\n.form-check-input[data-v-169fc8b6]:checked {\n  background-color: #4e73df;\n  border-color: #4e73df;\n}\n.btn-primary[data-v-169fc8b6] {\n  background-color: #4e73df;\n  border-color: #4e73df;\n}\n.btn-primary[data-v-169fc8b6]:hover {\n  background-color: #2e59d9;\n  border-color: #2e59d9;\n}\n.btn-secondary[data-v-169fc8b6] {\n  background-color: #858796;\n  border-color: #858796;\n}\n.btn-secondary[data-v-169fc8b6]:hover {\n  background-color: #717384;\n  border-color: #717384;\n}\n.card[data-v-169fc8b6] {\n  border: 1px solid #e3e6f0;\n  border-radius: 8px;\n}\n.card-header[data-v-169fc8b6] {\n  border-radius: 8px 8px 0 0 !important;\n}\n\n/* Search Dropdown Styles */\n.search-dropdown[data-v-169fc8b6] {\n  position: absolute;\n  z-index: 1050;\n  width: calc(100% - 30px);\n  max-height: 400px;\n  overflow-y: auto;\n  border: 1px solid #dee2e6;\n  border-radius: 0.25rem;\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);\n}\n.search-dropdown .card[data-v-169fc8b6] {\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;\n}\n.list-group-item[data-v-169fc8b6] {\n  border: none;\n  border-bottom: 1px solid #e3e6f0;\n  cursor: pointer;\n  transition: background-color 0.2s;\n  padding: 10px 15px;\n}\n.list-group-item[data-v-169fc8b6]:last-child {\n  border-bottom: none;\n}\n.list-group-item[data-v-169fc8b6]:hover {\n  background-color: #f8f9fc;\n}\n.list-group-item[data-v-169fc8b6]:active {\n  background-color: #e3e6f0;\n}\n\n/* Customer Info Display */\n.customer-info[data-v-169fc8b6] {\n  border-left: 4px solid #4e73df;\n}\n.customer-info i[data-v-169fc8b6] {\n  width: 16px;\n}\n\n/* Selected QVSE CID display */\n.alert-info[data-v-169fc8b6] {\n  border-left: 4px solid #17a2b8;\n}\n\n/* Form section headers */\n.form-section h5[data-v-169fc8b6] {\n  border-bottom: 2px solid #4e73df;\n  padding-bottom: 10px;\n  margin-bottom: 20px;\n}\n\n/* Responsive styles */\n@media (max-width: 768px) {\n.search-dropdown[data-v-169fc8b6] {\n    width: 100%;\n}\n.card-header[data-v-169fc8b6] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.card-header h5[data-v-169fc8b6] {\n    margin-bottom: 10px;\n}\n.form-group.mt-4[data-v-169fc8b6] {\n    display: flex;\n    flex-direction: column;\n    gap: 10px;\n}\n.form-group.mt-4 .btn[data-v-169fc8b6] {\n    width: 100%;\n    margin: 5px 0 !important;\n}\n}\n", ""]);
 
 // exports
 
