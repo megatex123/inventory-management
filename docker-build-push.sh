@@ -1,6 +1,9 @@
 #export SOFTWAREVERSION=0.0.3
-source .env
-echo "Version is " $SOFTWAREVERSION
+#source .env
+. ./.env
+echo "**********************************"
+echo "* Version is " $SOFTWAREVERSION " *"
+echo "**********************************"
 docker build . \
     -t telur.penyahpepijat.com/enigma/quivitech/inventory-management:latest \
     -t telur.penyahpepijat.com/enigma/quivitech/inventory-management:release \
