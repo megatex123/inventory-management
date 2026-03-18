@@ -181,7 +181,7 @@
                 <div class="alert alert-light">
                   <h6 class="alert-heading">Service Tier</h6>
                   <div v-if="totalSub <= 7000.00" class="mb-2">
-                    <strong>QuiviCraft:</strong> Inessential Kit
+                    <strong>QuiviCraft:</strong> Essential kit
                   </div>
                   <div v-else-if="totalSub > 10000.00" class="mb-2">
                     <strong>QuiviCraft:</strong> Premium
@@ -295,8 +295,16 @@ export default {
         'PSU': { min: 1, max: null, description: 'Minimum 1 required' },
         'CSE': { min: 1, max: 1, description: 'Exactly 1 required' },
         'FAN': { description: 'No restrictions' },
-        'ACC': { description: 'No restrictions' },
-        'PER': { description: 'No restrictions' },
+        'ACC-SAG': { description: 'No restrictions' },
+        'ACC-CTL': { description: 'No restrictions' },
+        'ACC-HUB': { description: 'No restrictions' },
+        'PER-MON': { description: 'No restrictions' },
+        'PER-MOU': { description: 'No restrictions' },
+        'PER-HDS': { description: 'No restrictions' },
+        'PER-MIC': { description: 'No restrictions' },
+        'PER-MSP': { description: 'No restrictions' },
+        'PER-KEY': { description: 'No restrictions' },
+        'PER-CAM': { description: 'No restrictions' },
       }
     }
   },
@@ -305,7 +313,9 @@ export default {
         // Define your custom order
         const categoryOrder = [
         'CPU', 'MBD', 'GPU', 'RAM', 'SSD', 'HDD',
-        'AIO', 'HSF', 'PSU', 'CSE', 'FAN', 'ACC', 'PER'
+        'AIO', 'HSF', 'PSU', 'CSE', 'FAN', 'ACC',
+        'PER-MON', 'PER-MOU', 'PER-HDS', 'PER-MIC',
+        'PER-MSP', 'PER-KEY', 'PER-CAM',
         ];
 
         // Sort categories based on the custom order
@@ -369,7 +379,7 @@ export default {
       const categoryMap = this.cartByCategory;
 
       // Check mandatory categories (min 1)
-      const mandatoryCategories = ['CPU', 'MBD', 'RAM', 'CSE', 'PSU'];
+      const mandatoryCategories = ['CPU', 'MBD', 'RAM', 'PSU'];
       mandatoryCategories.forEach(catName => {
         if (!categoryMap[catName]) {
           errors.push(`${catName} is required (minimum 1)`);
@@ -1062,7 +1072,7 @@ img#em_photo {
   font-size: 0.85rem;
 }
 
-/* Hover popup styling */
+/* HOVER POPUP STYLING - UPDATED TO SHOW ONLY ON IMAGE HOVER */
 .hover-popup {
   position: absolute;
   top: 50%;
@@ -1077,6 +1087,28 @@ img#em_photo {
   min-width: 350px;
   max-width: 400px;
   width: max-content;
+  pointer-events: auto; /* Ensure popup can be interacted with */
+}
+
+/* Show popup ONLY when hovering over the image */
+.image-container img:hover + .hover-popup {
+  display: block;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Keep popup visible when hovering over it (allows interaction) */
+.hover-popup:hover {
+  display: block;
+}
+
+/* Position adjustment for items near the right edge */
+.image-container:nth-child(4n) img:hover + .hover-popup,
+.image-container:last-child img:hover + .hover-popup,
+.image-container:nth-child(4n) .hover-popup:hover,
+.image-container:last-child .hover-popup:hover {
+  left: auto;
+  right: 100%;
+  transform: translateY(-50%) translateX(-10px);
 }
 
 .popup-image-wrapper {
@@ -1138,19 +1170,6 @@ img#em_photo {
   border-left: 3px solid #ffc107;
 }
 
-.image-container:hover .hover-popup {
-  display: block;
-  animation: fadeIn 0.2s ease-out;
-}
-
-/* Position adjustment for items near the right edge */
-.image-container:nth-child(4n) .hover-popup,
-.image-container:last-child .hover-popup {
-  left: auto;
-  right: 100%;
-  transform: translateY(-50%) translateX(-10px);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1163,8 +1182,8 @@ img#em_photo {
 }
 
 /* Animation for items showing on the left */
-.image-container:nth-child(4n):hover .hover-popup,
-.image-container:last-child:hover .hover-popup {
+.image-container:nth-child(4n) img:hover + .hover-popup,
+.image-container:last-child img:hover + .hover-popup {
   animation: fadeInLeft 0.2s ease-out;
 }
 
@@ -1258,7 +1277,7 @@ img#em_photo {
   }
 }
 
-/* Mobile responsive */
+/* Mobile responsive - UPDATED */
 @media (max-width: 768px) {
   .product-card {
     width: 100% !important;
@@ -1292,6 +1311,7 @@ img#em_photo {
     font-size: 9px !important;
   }
 
+  /* Mobile popup styling */
   .hover-popup {
     position: fixed;
     top: 50%;
@@ -1304,6 +1324,12 @@ img#em_photo {
     z-index: 100000;
   }
 
+  /* Show popup on image hover for mobile */
+  .image-container img:hover + .hover-popup,
+  .hover-popup:hover {
+    display: block;
+  }
+
   .popup-image-wrapper {
     max-height: 50vh;
   }
@@ -1313,15 +1339,18 @@ img#em_photo {
     min-height: auto;
   }
 
-  .image-container:nth-child(4n) .hover-popup,
-  .image-container:last-child .hover-popup {
+  /* Center popup for all items on mobile */
+  .image-container:nth-child(4n) img:hover + .hover-popup,
+  .image-container:last-child img:hover + .hover-popup,
+  .image-container:nth-child(4n) .hover-popup:hover,
+  .image-container:last-child .hover-popup:hover {
     left: 50%;
     right: auto;
     transform: translate(-50%, -50%);
   }
 
-  .image-container:nth-child(4n):hover .hover-popup,
-  .image-container:last-child:hover .hover-popup {
+  .image-container:nth-child(4n) img:hover + .hover-popup,
+  .image-container:last-child img:hover + .hover-popup {
     animation: fadeInMobile 0.2s ease-out;
   }
 

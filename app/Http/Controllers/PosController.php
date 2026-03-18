@@ -68,7 +68,7 @@ public function orderdone(Request $request)
 
     $nextId = DB::table('order')->max('id') + 1;
     $orderNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-    $orderId = 'ODR-' . $orderNumber;
+    $orderId = 'QV-ORDR-' . $orderNumber;
 
     $data = [
         'order_id' => $orderId,

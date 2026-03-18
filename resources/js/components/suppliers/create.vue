@@ -54,20 +54,29 @@
                                             <div class="form-row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Phone Number *</label>
-                                                    <input type="text" class="form-control" v-model='form.phone'
-                                                        placeholder="Enter Phone Number" required>
+                                                    <input
+                                                        type="tel"
+                                                        class="form-control"
+                                                        v-model="formattedPhone"
+                                                        placeholder="012-3456789"
+                                                        required
+                                                        maxlength="12"
+                                                        pattern="[0-9]{3}-[0-9]{7,8}"
+                                                        title="Please enter a valid phone number in format: 012-3456789"
+                                                    >
+                                                    <small class="text-muted d-block mt-1">Format: 012-3456789 (3 digits + hyphen + 7-8 digits)</small>
                                                     <small class="text-danger" v-if='errors.phone'>{{ errors.phone[0] }}</small>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Photo</label>
                                                     <div class="custom-file">
-                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="photoInput">
+                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="photoInput" accept="image/jpeg,image/jpg,image/png">
                                                         <label class="custom-file-label" for="photoInput" id="photoLabel">
                                                             {{ photoFileName || 'Choose file' }}
                                                         </label>
                                                     </div>
                                                     <small class="text-danger" v-if='errors.photo'>{{ errors.photo[0] }}</small>
-                                                    <small class="text-muted">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
+                                                    <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
                                                 </div>
                                             </div>
                                         </div>
@@ -127,6 +136,29 @@
                 errors: {},
                 loading: false,
                 photoFileName: ''
+            }
+        },
+        computed: {
+            formattedPhone: {
+                get() {
+                    return this.form.phone;
+                },
+                set(value) {
+                    // Remove all non-digit characters
+                    let digits = value.replace(/\D/g, '');
+
+                    // Limit to 10 digits (3 for prefix + 7 for number)
+                    if (digits.length > 10) {
+                        digits = digits.slice(0, 10);
+                    }
+
+                    // Format with hyphen after first 3 digits
+                    if (digits.length <= 3) {
+                        this.form.phone = digits;
+                    } else {
+                        this.form.phone = digits.slice(0, 3) + '-' + digits.slice(3);
+                    }
+                }
             }
         },
         methods: {
@@ -201,8 +233,17 @@
                 };
                 this.errors = {};
                 this.photoFileName = '';
-                document.getElementById('photoInput').value = '';
-                document.getElementById('photoLabel').textContent = 'Choose file';
+
+                // Reset file input
+                const photoInput = document.getElementById('photoInput');
+                if (photoInput) {
+                    photoInput.value = '';
+                }
+
+                const photoLabel = document.getElementById('photoLabel');
+                if (photoLabel) {
+                    photoLabel.textContent = 'Choose file';
+                }
             }
         }
     }
@@ -220,6 +261,7 @@
 
 .btn:disabled {
     cursor: not-allowed;
+    opacity: 0.65;
 }
 
 /* Responsive adjustments */
@@ -227,5 +269,17 @@
     .btn-block {
         margin-bottom: 10px;
     }
+}
+
+/* Optional: Style for the phone input hint */
+.form-control[pattern] + .text-muted {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Improve focus states */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 </style>

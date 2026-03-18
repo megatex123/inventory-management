@@ -29,6 +29,8 @@ class Order extends Model
         'order_month',
         'order_year',
         'categories_id',
+        'reject_id',
+        'no_craft',
         'serve_id',
         'care_id',
         'approve',

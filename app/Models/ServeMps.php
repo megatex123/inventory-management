@@ -13,6 +13,7 @@ class ServeMps extends Model
 
     protected $fillable = [
         'serve_data_id',
+        'serve_mps_id',
         'date_start',
         'two_year_assembly_warranty',
         'two_free_onsite_troubleshooting_first_6_months',

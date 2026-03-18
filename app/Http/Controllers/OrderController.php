@@ -27,7 +27,8 @@ class OrderController extends Controller
                 'customer',
                 'craft',
                 'serve',
-                'care'
+                'care',
+                'care_data'
             ])
             ->orderByDesc('id')
             ->get()
@@ -36,6 +37,9 @@ class OrderController extends Controller
                     $today = Carbon::now();
                     $approvedAt = Carbon::parse($order->approved_at);
                     $expiryDate = $approvedAt->copy()->addMonths(6);
+
+                    $order->care_price = $order->care_data->first()->price;
+                    // dd($order->price);
 
                     if ($today->gt($expiryDate)) {
                         $order->time_remaining = "Expired";
@@ -184,56 +188,59 @@ class OrderController extends Controller
 
                 $careCategories = [2, 4, 5, 7, 8, 9, 10, 11];
 
-                $calculateCareServiceCharge = function($totalAmount) {
-                    $totalAmount = (float) $totalAmount;
+                $calculateCareServiceCharge = function($totalAmount) use ($order) {
+                    $totalAmount = $order->total;
 
                     if ($totalAmount >= 0 && $totalAmount <= 5999) {
-                        return ['lkp_care_id' => 1, 'charge' => 379, 'range' => '0 - 5,999'];
+                        return ['lkp_care_id' => 1, 'care_charge' => 379, 'range' => '0 - 5,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 6000 && $totalAmount <= 6999) {
-                        return ['lkp_care_id' => 1, 'charge' => 479, 'range' => '6,000 - 6,999'];
+                        return ['lkp_care_id' => 1, 'care_charge' => 479, 'range' => '6,000 - 6,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 7000 && $totalAmount <= 7999) {
-                        return ['lkp_care_id' => 2, 'charge' => 689, 'range' => '7,000 - 7,999'];
+                        return ['lkp_care_id' => 2, 'care_charge' => 689, 'range' => '7,000 - 7,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 8000 && $totalAmount <= 8999) {
-                        return ['lkp_care_id' => 2, 'charge' => 789, 'range' => '8,000 - 8,999'];
+                        return ['lkp_care_id' => 2, 'care_charge' => 789, 'range' => '8,000 - 8,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 9000 && $totalAmount <= 9999) {
-                        return ['lkp_care_id' => 2, 'charge' => 889, 'range' => '9,000 - 9,999'];
+                        return ['lkp_care_id' => 2, 'care_charge' => 889, 'range' => '9,000 - 9,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 10000 && $totalAmount <= 10999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1159, 'range' => '10,000 - 10,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1159, 'range' => '10,000 - 10,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 11000 && $totalAmount <= 11999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1269, 'range' => '11,000 - 11,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1269, 'range' => '11,000 - 11,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 12000 && $totalAmount <= 12999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1379, 'range' => '12,000 - 12,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1379, 'range' => '12,000 - 12,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 13000 && $totalAmount <= 13999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1489, 'range' => '13,000 - 13,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1489, 'range' => '13,000 - 13,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 14000 && $totalAmount <= 14999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1599, 'range' => '14,000 - 14,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1599, 'range' => '14,000 - 14,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 15000 && $totalAmount <= 15999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1709, 'range' => '15,000 - 15,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1709, 'range' => '15,000 - 15,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 16000 && $totalAmount <= 16999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1819, 'range' => '16,000 - 16,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1819, 'range' => '16,000 - 16,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 17000 && $totalAmount <= 17999) {
-                        return ['lkp_care_id' => 3, 'charge' => 1929, 'range' => '17,000 - 17,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 1929, 'range' => '17,000 - 17,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 18000 && $totalAmount <= 18999) {
-                        return ['lkp_care_id' => 3, 'charge' => 2039, 'range' => '18,000 - 18,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 2039, 'range' => '18,000 - 18,999', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 19000 && $totalAmount <= 20000) {
-                        return ['lkp_care_id' => 3, 'charge' => 2149, 'range' => '19,000 - 20,000'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 2149, 'range' => '19,000 - 20,000', 'total_amount' => $totalAmount];
                     } elseif ($totalAmount >= 20000 && $totalAmount <= 20999) {
-                        return ['lkp_care_id' => 3, 'charge' => 2239, 'range' => '20,000 - 20,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 2239, 'range' => '20,000 - 20,999', 'total_amount' => $totalAmount];
                     } else {
-                        return ['lkp_care_id' => 3, 'charge' => 2479, 'range' => 'Above 20,999'];
+                        return ['lkp_care_id' => 3, 'care_charge' => 2479, 'range' => 'Above 20,999', 'total_amount' => $totalAmount];;
                     }
                 };
 
                 $careProductTotal = $orderdetails
                     ->filter(fn($item) => in_array($item->product->cat_id, $careCategories))
-                    ->reduce(function ($carry, $item) {
+                    ->reduce(function ($carry, $item) use ($calculateCareServiceCharge,$order) {
                         $qty = $item->product->product_qty ?? 0;
                         $price = $item->product->price ?? 0;
 
+                        // Calculate total amount properly (price * quantity)
+                        $itemTotal = $price * $qty;
+
                         return [
                             'total_products' => $carry['total_products'] + 1,
-                            'total_quantity' => $carry['total_quantity'] + $qty,
-                            'total_amount' => $carry['total_amount'] + ($qty * $price)
+                            'total_quantity' => (int)$order->qty,
+                            'total_amount' => $calculateCareServiceCharge('care_charge'),
                         ];
                     }, ['total_products' => 0, 'total_quantity' => 0, 'total_amount' => 0]);
 
@@ -241,20 +248,20 @@ class OrderController extends Controller
 
                 $lkp_care_id = $careServiceCharge['lkp_care_id'];
                 $care_part_price = $careProductTotal['total_amount'] ?? 0;
-                $care_charge = $careServiceCharge['charge'];
+                $care_charge = $careServiceCharge['care_charge'];
 
                 if ($careData) {
                     $careData->update([
                         'customer_id' => $order->customer_id,
                         'lkp_care_id' => $lkp_care_id,
-                        'total_part' => $care_part_price,
+                        'total_part' => (int)$order->total,
                         'price' => $care_charge,
                     ]);
 
                     $message = 'Care data updated successfully';
                 } else {
                     $careType = Care::find($lkp_care_id);
-                    $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QVCR';
+                    $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QV-CARE';
                     $lastCare = CareData::where('lkp_care_id', $lkp_care_id)
                         ->orderBy('id', 'desc')
                         ->first();
@@ -276,7 +283,7 @@ class OrderController extends Controller
                         'customer_id' => $order->customer_id,
                         'order_id' => $order->id,
                         'lkp_care_id' => $lkp_care_id,
-                        'total_part' => $care_part_price,
+                        'total_part' => (int)$order->total,
                         'price' => $care_charge,
                     ]);
 
@@ -327,7 +334,7 @@ class OrderController extends Controller
                 $totalServes = ServeData::count();
                 $nextId = $totalServes + 1;
                 $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-                $serveId = "QVSE-{$serveNumber}";
+                $serveId = "QV-SERV-{$serveNumber}";
 
                 // Get serve type for QVSE CID generation based on order total
                 if ($order->total <= 7000.00) {
@@ -485,8 +492,6 @@ class OrderController extends Controller
             // Update the order
             $order->approve = $approveValue;
             $order->invoice_id = $invoiceId;
-
-
 
             // Set approved_at only when approving
             if ($approveValue == 1) {

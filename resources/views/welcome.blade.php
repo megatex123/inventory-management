@@ -45,6 +45,24 @@
     body.sidebar-toggled #content-wrapper {
       width: 100%;
     }
+
+    /* Fix collapsed menu items spacing */
+    .sidebar.toggled .nav-item .collapse {
+      position: absolute;
+      left: 100px;
+      top: 0;
+      z-index: 1;
+      min-width: 200px;
+    }
+
+    /* Ensure dropdown arrows are visible */
+    .sidebar .nav-link .fas.fa-fw {
+      margin-right: 0.5rem;
+    }
+
+    .sidebar.toggled .nav-link .fas.fa-fw {
+      margin-right: 0;
+    }
   </style>
 </head>
 
@@ -71,7 +89,7 @@
         <div class="sidebar-heading">Features</div>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Suppliers" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Suppliers" aria-expanded="true" aria-controls="Suppliers">
             <i class="fas fa-fw fa-truck-loading"></i>
             <span>Suppliers</span>
           </a>
@@ -85,7 +103,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category" aria-expanded="true" aria-controls="category">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Category</span>
           </a>
@@ -105,7 +123,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#craft" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#craft" aria-expanded="true" aria-controls="craft">
             <i class="fas fa-fw fa-tools"></i>
             <span>QuiviCraft</span>
           </a>
@@ -125,7 +143,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#serve" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#serve" aria-expanded="true" aria-controls="serve">
             <i class="fas fa-fw fa-hammer"></i>
             <span>QuiviServe</span>
           </a>
@@ -163,7 +181,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#care" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#care" aria-expanded="true" aria-controls="care">
             <i class="fas fa-fw fa-stethoscope"></i>
             <span>QuiviCare</span>
           </a>
@@ -189,7 +207,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Product" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Product" aria-expanded="true" aria-controls="Product">
             <i class="fas fa-fw fa-truck"></i>
             <span>Inventory</span>
           </a>
@@ -209,12 +227,16 @@
 
               <h6 class="collapse-header text-primary font-weight-bold">Stock Management</h6>
               <router-link class="collapse-item" to="/product/stock">All Stock</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">Product Brand <br> Management</h6>
+              <router-link class="collapse-item" to="/brand">All Products Brand</router-link>
+              <router-link class="collapse-item" to="/brand/create">Add Product Brand</router-link>
             </div>
           </div>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Customer" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Customer" aria-expanded="true" aria-controls="Customer">
             <i class="fas fa-users"></i>
             <span>Customer</span>
           </a>
@@ -228,7 +250,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Meeting" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Meeting" aria-expanded="true" aria-controls="Meeting">
             <i class="fas fa-calendar-alt"></i>
             <span>Meeting</span>
           </a>
@@ -248,7 +270,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Orders" aria-expanded="true">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Orders" aria-expanded="true" aria-controls="Orders">
             <i class="fa fa-check-circle"></i>
             <span>Orders</span>
           </a>
@@ -279,7 +301,7 @@
                   <span class="ml-2 d-none d-lg-inline text-white small">Admin</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                  <a class="dropdown-item" href="/logout" id="logout-trigger">
+                  <a class="dropdown-item" href="#" id="logout-trigger">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
                   </a>
@@ -310,7 +332,8 @@
       const sidebar = document.getElementById('accordionSidebar');
 
       if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
+        sidebarToggle.addEventListener('click', function(e) {
+          e.preventDefault();
           document.body.classList.toggle('sidebar-toggled');
           sidebar.classList.toggle('toggled');
         });
@@ -342,19 +365,71 @@
         });
       }
 
-      // 3. RE-INIT BOOTSTRAP FOR VUE ROUTES
-      const appElement = document.getElementById('app');
-      if (appElement && appElement.__vue__ && appElement.__vue__.$router) {
-        appElement.__vue__.$router.afterEach(() => {
-          setTimeout(() => {
-            $('.dropdown-toggle').dropdown();
-            $('[data-toggle="collapse"]').on('click', function(e) {
-                e.preventDefault();
-                $($(this).data('target')).collapse('toggle');
+      // 3. FIX BOOTSTRAP COLLAPSE INITIALIZATION
+      function initBootstrapComponents() {
+        // Initialize all dropdowns
+        $('.dropdown-toggle').dropdown();
+
+        // Reinitialize collapse functionality
+        $('[data-toggle="collapse"]').off('click.collapse').on('click.collapse', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const target = $(this).data('target');
+          const $target = $(target);
+
+          // Close other collapses in the same accordion if needed
+          const $parent = $(this).closest('.accordion');
+          if ($parent.length) {
+            const $siblings = $parent.find('.collapse.show');
+            $siblings.not(target).collapse('hide');
+          }
+
+          // Toggle current collapse
+          $target.collapse('toggle');
+        });
+
+        // Ensure all collapse elements are properly initialized
+        $('.collapse').each(function() {
+          const $this = $(this);
+          if (!$this.data('bs.collapse')) {
+            $this.collapse({
+              toggle: false
             });
-          }, 200);
+          }
         });
       }
+
+      // Initial call
+      initBootstrapComponents();
+
+      // 4. RE-INIT BOOTSTRAP FOR VUE ROUTES
+      const appElement = document.getElementById('app');
+      if (appElement && appElement.__vue__ && appElement.__vue__.$router) {
+        appElement.__vue__.$router.afterEach((to, from) => {
+          // Small delay to ensure DOM updates
+          setTimeout(() => {
+            initBootstrapComponents();
+
+            // Close any open collapses on route change if needed
+            if (from.path !== to.path) {
+              $('.collapse.show').collapse('hide');
+            }
+          }, 100);
+        });
+      }
+
+      // 5. Handle sidebar collapse state persistence
+      const sidebarState = localStorage.getItem('sidebar_toggled');
+      if (sidebarState === 'true') {
+        document.body.classList.add('sidebar-toggled');
+        sidebar.classList.add('toggled');
+      }
+
+      sidebarToggle.addEventListener('click', function() {
+        const isToggled = sidebar.classList.contains('toggled');
+        localStorage.setItem('sidebar_toggled', isToggled);
+      });
     });
   </script>
 </body>

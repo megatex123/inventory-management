@@ -226,6 +226,11 @@ export default {
             .then(res => {
                 this.suppliers = res.data
             })
+
+        axios.get('/api/suppliers')
+            .then(res => {
+                this.suppliers = res.data
+            })
     },
     data() {
         return {

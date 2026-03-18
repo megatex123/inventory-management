@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\ServeMps;
 use App\Models\ServeData;
+use App\Models\Serves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -309,8 +310,21 @@ class ServeMpsController extends Controller
      */
     public function store(Request $request)
     {
+        $serveData = ServeData::find($request->serve_data_id);
+        $validated['qvse_cid'] = $serveData->qvse_cid;
+        $lkp_serve_id = $serveData->serve_id;
+        $serveType = Serves::find($lkp_serve_id);
+        $serveTypeCode = $serveType ? strtoupper(substr($serveType->code, 0)) : 'MPS-0407-';
+        $lastServeMps = ServeMps::orderBy('id', 'desc')->first();
+        $sequence = $lastServeMps ?
+            intval(substr($lastServeMps->id, -4)) + 1 : 1;
+        $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        $serveId = "{$serveTypeCode}-{$sequenceNumber}";
+        $request->merge(['serve_mps_id' => $serveId]);
+
         try {
             $validated = $request->validate([
+                'serve_mps_id' => 'required',
                 'serve_data_id' => 'required|exists:serve_data,id',
                 'date_start' => 'required|date',
                 'two_year_assembly_warranty' => 'boolean',
@@ -328,15 +342,11 @@ class ServeMpsController extends Controller
                 'one_free_dust_cleaning_claim' => 'boolean',
                 'fifty_percent_off_dust_cleaning_second_year' => 'boolean',
                 'thirty_percent_off_labour_fees_upgrade_first_year' => 'boolean',
-                'rm100_promo_code_next_build' => 'nullable|string|max:100', // UPDATED FIELD
+                'rm100_promo_code_next_build' => 'nullable|string|max:100',
                 'generate_code' => 'boolean',
                 'rm100_promo_code_claim' => 'boolean',
                 'notes' => 'nullable|string',
             ]);
-
-            // Get QVSE CID from serve_data table
-            $serveData = ServeData::find($validated['serve_data_id']);
-            $validated['qvse_cid'] = $serveData->qvse_cid;
 
             // Auto-generate promo code if requested
             if ($validated['generate_code'] && empty($validated['rm100_promo_code_next_build'])) {

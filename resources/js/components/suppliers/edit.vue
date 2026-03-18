@@ -54,38 +54,38 @@
                                             <div class="form-row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Phone Number *</label>
-                                                    <input type="text" class="form-control" v-model='form.phone'
-                                                        placeholder="Enter Phone Number" required>
+                                                    <input
+                                                        type="tel"
+                                                        class="form-control"
+                                                        v-model="formattedPhone"
+                                                        placeholder="012-3456789"
+                                                        required
+                                                        maxlength="12"
+                                                        pattern="[0-9]{3}-[0-9]{7,8}"
+                                                        title="Please enter a valid phone number in format: 012-3456789"
+                                                    >
+                                                    <small class="text-muted d-block mt-1">Format: 012-3456789 (3 digits + hyphen + 7-8 digits)</small>
                                                     <small class="text-danger" v-if='errors.phone'>{{ errors.phone[0] }}</small>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Photo</label>
                                                     <div class="custom-file">
-                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="photoInputEdit">
+                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="photoInputEdit" accept="image/jpeg,image/jpg,image/png">
                                                         <label class="custom-file-label" for="photoInputEdit" id="photoLabelEdit">
                                                             {{ photoFileName || 'Choose new file (optional)' }}
                                                         </label>
                                                     </div>
                                                     <small class="text-danger" v-if='errors.photo'>{{ errors.photo[0] }}</small>
-                                                    <small class="text-muted">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
+                                                    <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="form-group" v-if="form.photo || previewPhoto">
                                             <div class="form-row">
                                                 <div class="col-md-12 text-center">
-                                                    <p class="small text-muted mb-2">Current Photo:</p>
-                                                    <img :src="form.photo || '/img/default-avatar.png'"
-                                                         class="img-thumbnail"
-                                                         width="150"
-                                                         height="150"
-                                                         alt="Current Photo">
-                                                    <div v-if="form.photo" class="mt-2">
-                                                        <button type="button" @click="removePhoto" class="btn btn-sm btn-outline-danger">
-                                                            <i class="fas fa-trash mr-1"></i> Remove Photo
-                                                        </button>
-                                                    </div>
+                                                    <p class="small text-muted mb-2">{{ previewPhoto ? 'New Photo Preview:' : 'Current Photo:' }}</p>
+                                                    <img :src="previewPhoto || form.photo" class="img-thumbnail" width="150" height="150" alt="Preview">
                                                 </div>
                                             </div>
                                         </div>
@@ -127,11 +127,7 @@
             axios.get('/api/suppliers/' + id)
                 .then(res => {
                     this.form = res.data;
-                    // If the photo is a full URL, keep it as is
-                    // If it's just a path, prepend the base URL if needed
-                    if (this.form.photo && !this.form.photo.startsWith('http') && !this.form.photo.startsWith('data:')) {
-                        this.form.photo = this.form.photo;
-                    }
+                    this.originalPhoto = res.data.photo;
                 })
                 .catch(err => {
                     console.error(err);
@@ -151,7 +147,32 @@
                 },
                 errors: {},
                 loading: false,
-                photoFileName: ''
+                photoFileName: '',
+                previewPhoto: null,
+                originalPhoto: null
+            }
+        },
+        computed: {
+            formattedPhone: {
+                get() {
+                    return this.form.phone;
+                },
+                set(value) {
+                    // Remove all non-digit characters
+                    let digits = value.replace(/\D/g, '');
+
+                    // Limit to 10 digits (3 for prefix + 7 for number)
+                    if (digits.length > 10) {
+                        digits = digits.slice(0, 10);
+                    }
+
+                    // Format with hyphen after first 3 digits
+                    if (digits.length <= 3) {
+                        this.form.phone = digits;
+                    } else {
+                        this.form.phone = digits.slice(0, 3) + '-' + digits.slice(3);
+                    }
+                }
             }
         },
         methods: {
@@ -184,6 +205,7 @@
 
                 let reader = new FileReader();
                 reader.onload = event => {
+                    this.previewPhoto = event.target.result;
                     this.form.photo = event.target.result;
                 };
                 reader.readAsDataURL(file);
@@ -197,6 +219,12 @@
                 this.errors = {};
 
                 let id = this.$route.params.id;
+
+                // If no new photo selected, keep the original
+                if (!this.previewPhoto && this.originalPhoto) {
+                    this.form.photo = this.originalPhoto;
+                }
+
                 axios.patch('/api/suppliers/' + id, this.form)
                     .then(() => {
                         this.loading = false;
@@ -211,13 +239,6 @@
                             notification.error('Failed to update supplier');
                         }
                     });
-            },
-
-            removePhoto() {
-                this.form.photo = null;
-                this.photoFileName = '';
-                document.getElementById('photoInputEdit').value = '';
-                document.getElementById('photoLabelEdit').textContent = 'Choose new file (optional)';
             },
 
             cancelEdit() {
@@ -239,6 +260,7 @@
 
 .btn:disabled {
     cursor: not-allowed;
+    opacity: 0.65;
 }
 
 /* Responsive adjustments */
@@ -246,5 +268,17 @@
     .btn-block {
         margin-bottom: 10px;
     }
+}
+
+/* Style for the phone input hint */
+.form-control[pattern] + .text-muted {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Improve focus states */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 </style>

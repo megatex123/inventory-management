@@ -12,7 +12,7 @@
 
           <div class="row mb-3">
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="row align-items-center">
@@ -29,9 +29,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- Earnings (Annual) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -48,7 +48,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- New User Card Example -->
             <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
@@ -93,13 +93,12 @@
           </div>
           <!--Row-->
           <div class="row">
-                            <div class="col-lg-12">
-
-<div class="card">
+            <!-- <div class="col-lg-12">
+                <div class="card">
                 <div class="card-header py-3 d-flex   flex-row align-items-center justify-content-between">
                   <h5 class="m-0 font-weight-bold text-primary">Stock Out List</h5>
-      </div>
-     <div class="table-responsive">
+                </div>
+                <div class="table-responsive">
                   <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                       <tr>
@@ -112,7 +111,6 @@
                       </tr>
                     </thead>
                     <tbody>
-
                       <tr v-for='data in products' :key="data.id" >
                         <td><img :src="data.image" class="img-fluid" width='40px' height='40px' /></td>
                         <td>{{data.product_name}}</td>
@@ -123,23 +121,19 @@
                            <span v-else='' class="badge badge-pill badge-danger">Stock Out</span>
                         </td>
                         <td>{{data.product_qty}}</td>
-
                       </tr>
                       <tr v-if="products.length === 0">
                         <td colspan="6" class="text-center text-muted">
                             No data found.
                         </td>
                       </tr>
-
                     </tbody>
                   </table>
                 </div>
                 </div>
-                                    <div class="text-center">
-                                    </div>
-
-                            </div>
-                        </div>
+                <div class="text-center"></div>
+            </div> -->
+          </div>
     </div>
 </template>
 <script>

@@ -36,7 +36,7 @@ class MeetingController extends Controller
         try {
             $nextId = DB::table('meetings')->max('id') + 1;
             $meetingNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $meetingId = 'LGMT-' . $meetingNumber;
+            $meetingId = 'QV-MEET-' . $meetingNumber;
 
             $meeting = Meeting::create([
                 'meeting_id'       => $meetingId,

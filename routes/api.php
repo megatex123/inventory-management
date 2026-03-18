@@ -42,6 +42,7 @@ Route::apiResource('/serves', 'ServesController');
 Route::apiResource('/product', 'ProductsController');
 Route::apiResource('/expens', 'ExpensesController');
 Route::apiResource('/customer', 'CustomersController');
+Route::apiResource('/brand', 'BrandController');
 
 Route::post('/customer/{id}/generate-update-link', 'CustomersController@generateUpdateLink');
 Route::put('/customer/{id}/approve', 'CustomersController@updateApprove');

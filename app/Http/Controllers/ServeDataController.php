@@ -168,7 +168,7 @@ class ServeDataController extends Controller
             $totalServes = ServeData::count();
             $nextId = $totalServes + 1;
             $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $serveId = "QVSE-{$serveNumber}"; // Changed from QV-SRV-
+            $serveId = "QV-SERV-{$serveNumber}"; // Changed from QV-SRV-
 
             // Get serve type for QVSE CID generation
             $serveType = Serves::find($request->lkp_serve_id);

@@ -200,6 +200,7 @@
                                                     <th class="align-top">Photo</th>
                                                     <th class="align-top">Name</th>
                                                     <th class="align-top">Shop Name</th>
+                                                    <th class="align-top">Country</th>
                                                     <th class="align-top">Phone</th>
                                                     <th class="align-top">Created At</th>
                                                     <th class="align-top">Action</th>
@@ -216,6 +217,7 @@
                                                              :alt="supplier.name">
                                                     </td>
                                                     <td>
+                                                        <small class="text-muted">{{ supplier.supplier_id }}</small>
                                                         <div class="font-weight-bold">{{ supplier.name }}</div>
                                                         <small class="text-muted">{{ supplier.email }}</small>
                                                     </td>
@@ -224,6 +226,11 @@
                                                             {{ supplier.shopname }}
                                                         </span>
                                                         <span v-else class="text-muted">-</span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="font-weight-bold">
+                                                            {{ supplier.address }}
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <a :href="`tel:${supplier.phone}`" class="text-primary">

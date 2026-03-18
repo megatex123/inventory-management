@@ -19,6 +19,11 @@ let createCategory = require('./components/category/create').default;
 let Category = require('./components/category/index').default;
 let Categoryedit = require('./components/category/edit').default;
 
+//Brand
+let createBrand = require('./components/brand/create').default;
+let Brand = require('./components/brand/index').default;
+let Brandedit = require('./components/brand/edit').default;
+
 //SubCategory
 let createSubCategory = require('./components/sub_category/create').default;
 let SubCategory = require('./components/sub_category/index').default;
@@ -152,6 +157,11 @@ export const routes=[
      {path: '/sub-category/create',component:createSubCategory,name: 'createSubCategory',meta: { layout: 'app' }},
      {path: '/sub-category/edit/:id',component:SubCategoryedit,name: 'SubCategoryedit',meta: { layout: 'app' }},
      {path: '/sub-category',component:SubCategory,name: 'SubCategory',meta: { layout: 'app' }},
+
+      // Brand:
+     {path: '/brand/create',component:createBrand,name: 'createBrand',meta: { layout: 'app' }},
+     {path: '/brand/edit/:id',component:Brandedit,name: 'Brandedit',meta: { layout: 'app' }},
+     {path: '/brand',component:Brand,name: 'Brand',meta: { layout: 'app' }},
 
      // Craft:
      {path: '/craft/create',component:createCraft,name: 'createCraft',meta: { layout: 'app' }},

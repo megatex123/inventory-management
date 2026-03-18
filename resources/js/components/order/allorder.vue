@@ -176,9 +176,17 @@
                                                         formatNumber(
                                                             (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
                                                             (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
-                                                            (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                                                            (order && order.care_price ? Number(order.care_price) : 0)
                                                         )
-                                                    }}</small>
+                                                    }}</small><br>
+                                                    <strong>
+                                                        Grand Total <br> RM {{ formatNumber(
+                                                                (order && order.total ? Number(order.total) : 0) +
+                                                                (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
+                                                                (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
+                                                                (order && order.care_price ? Number(order.care_price) : 0)
+                                                            ) }}
+                                                    </strong>
                                                 </td>
                                                 <td>
                                                     {{ formatDate(order.order_date) }}
@@ -197,9 +205,17 @@
                                                     <span v-else class="badge badge-secondary">N/A</span>
                                                 </td>
                                                 <td>
-                                                    <span class="badge badge-secondary">
+                                                     <span
+                                                        v-if="order.serve"
+                                                        class="badge serve-badge"
+                                                        :style="{
+                                                            backgroundColor: order.serve.colour,
+                                                            color: isLightColor(order.serve.colour) ? '#000' : '#fff'
+                                                        }"
+                                                    >
                                                         {{ order.care && order.care.name ? order.care.name : 'N/A' }}
                                                     </span>
+                                                    <span v-else class="badge badge-secondary">N/A</span>
                                                 </td>
                                                 <td>
                                                     <span :class="getStatusBadgeClass(order)" class="badge">
