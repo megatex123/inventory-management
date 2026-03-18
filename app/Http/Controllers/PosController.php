@@ -56,14 +56,17 @@ public function orderdone(Request $request)
         }
     }
 
-    if($request->total <= 7000.00 ){
+    if($request->total <= 6999.00 ){
         $categories_id = 1;
     }
-    elseif($request->total > 10000.00){
+    elseif($request->total > 7000.00 && $request->total <= 9999.00){
+        $categories_id = 2;
+    }
+    elseif($request->total > 10000.00 && $request->total <= 19999.00){
         $categories_id = 3;
     }
     else{
-        $categories_id = 2;
+        $categories_id = 4;
     }
 
     $nextId = DB::table('order')->max('id') + 1;

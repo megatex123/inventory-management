@@ -180,14 +180,17 @@
                 <!-- Service Tiers -->
                 <div class="alert alert-light">
                   <h6 class="alert-heading">Service Tier</h6>
-                  <div v-if="totalSub <= 7000.00" class="mb-2">
-                    <strong>QuiviCraft:</strong> Essential kit
+                  <div v-if="totalSub <= 6999.00" class="mb-2">
+                    <strong>QuiviCraft:</strong> Basic
                   </div>
-                  <div v-else-if="totalSub > 10000.00" class="mb-2">
+                  <div v-else-if="totalSub > 7000.00 && totalSub <= 9999.00" class="mb-2">
+                    <strong>QuiviCraft:</strong> Medium
+                  </div>
+                  <div v-else-if="totalSub > 10000.00 && totalSub <= 19999.00" class="mb-2">
                     <strong>QuiviCraft:</strong> Premium
                   </div>
                   <div v-else class="mb-2">
-                    <strong>QuiviCraft:</strong> Silver
+                    <strong>QuiviCraft:</strong> Ultra
                   </div>
 
                   <div class="small text-muted">
