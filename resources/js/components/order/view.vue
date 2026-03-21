@@ -7,10 +7,10 @@
               <div class="col-lg-12">
                 <div class="login-form">
                   <div class="text-center">
-                    <span v-if="orders.approve == 1">
+                    <span v-if="order && order.approve == 1">
                         <!-- <h1 class="h4 text-gray-900 mb-4">Order Invoice Details</h1> -->
                     </span>
-                    <span v-else>
+                    <span v-else-if="order && order.approve == 0">
                         <h1 class="h4 text-gray-900 mb-4">Order Draft Details</h1>
                     </span>
                   </div>
@@ -28,7 +28,7 @@
                   </div>
 
                   <!-- Company Header Section -->
-                  <div class="row pt-4">
+                  <div class="row pt-4" v-if="order">
                       <div class="col-lg-12">
                           <div class="card">
                               <div class="card-body">
@@ -43,15 +43,15 @@
                                           <p class="mb-0">+0197017420</p>
                                       </div>
                                       <div class="col-md-6 text-right">
-                                          <span v-if="orders.approve == 1">
+                                          <span v-if="order.approve == 1">
                                               <h3 class="font-weight-bold mb-3">INVOICE</h3>
                                           </span>
                                           <span v-else>
                                               <h3 class="font-weight-bold mb-3"></h3>
                                           </span>
-                                          <p class="mb-1"><strong>DATE:</strong> {{ formatDate(orders.order_date) }}</p>
-                                          <span v-if="orders.invoice_id">
-                                              <p class="mb-0"><strong>INVOICE NO:</strong> {{ orders.invoice_id || '-' }}</p>
+                                          <p class="mb-1"><strong>DATE:</strong> {{ formatDate(order.order_date) }}</p>
+                                          <span v-if="order.invoice_id">
+                                              <p class="mb-0"><strong>INVOICE NO:</strong> {{ order.invoice_id || '-' }}</p>
                                           </span>
                                       </div>
                                   </div>
@@ -61,7 +61,7 @@
                   </div>
 
                   <!-- Bill To Section -->
-                  <div class="row pt-4">
+                  <div class="row pt-4" v-if="order && order.customer">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -73,22 +73,22 @@
                             <div v-show="showOrder" class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <p class="mb-1"><strong>Customer ID:</strong> {{ orders.customer.customer_id }}</p>
-                                        <p class="mb-1"><strong>Name:</strong> {{ orders.customer.full_name }}</p>
-                                        <p class="mb-1"><strong>Preferred Name:</strong> {{ orders.customer.preferred_name }}</p>
+                                        <p class="mb-1"><strong>Customer ID:</strong> {{ order.customer.customer_id }}</p>
+                                        <p class="mb-1"><strong>Name:</strong> {{ order.customer.full_name }}</p>
+                                        <p class="mb-1"><strong>Preferred Name:</strong> {{ order.customer.preferred_name }}</p>
                                     </div>
                                     <div class="col-md-6 text-right">
-                                        <span v-if="orders.customer.phone">
-                                            <p class="mb-1"><strong>Phone:</strong> {{ orders.customer.phone }}</p>
+                                        <span v-if="order.customer.phone">
+                                            <p class="mb-1"><strong>Phone:</strong> {{ order.customer.phone }}</p>
                                         </span>
-                                        <span v-if="orders.customer.email">
-                                            <p class="mb-0"><strong>Email:</strong> {{ orders.customer.email }}</p>
+                                        <span v-if="order.customer.email">
+                                            <p class="mb-0"><strong>Email:</strong> {{ order.customer.email }}</p>
                                         </span>
-                                        <span v-if="orders.is_reason">
+                                        <span v-if="order.is_reason">
                                             <p class="mb-0">
                                                 <strong>Build Type:</strong>
-                                                <span v-if="orders.is_reason == 1">Workstation</span>
-                                                <span v-else-if="orders.is_reason == 2">Gaming</span>
+                                                <span v-if="order.is_reason == 1">Workstation</span>
+                                                <span v-else-if="order.is_reason == 2">Gaming</span>
                                             </p>
                                         </span>
                                     </div>
@@ -106,8 +106,8 @@
                                 <h5 class="m-0 font-weight-bold text-primary">Order Details</h5>
                                 <div class="row">
                                     <div class="ml-auto">
-                                        <span v-if="orders.approve == null">
-                                            <router-link :to="'/order/edit/' + orders.id" class="btn btn-sm btn-outline-primary">
+                                        <span v-if="order && order.approve == null">
+                                            <router-link :to="'/order/edit/' + order.id" class="btn btn-sm btn-outline-primary">
                                                 <i class="fa fa-edit"></i> Edit
                                             </router-link>
                                         </span>
@@ -186,7 +186,7 @@
                   </div>
 
                   <!-- Payment Section -->
-                  <div class="row pt-4">
+                  <div class="row pt-4" v-if="order">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -199,47 +199,74 @@
                                 <table class="table table-bordered table-sm mb-0">
                                     <tbody>
                                     <tr>
-                                        <td colspan="3" class="font-weight-bold">Total Product Payment</td>
+                                        <td colspan="5" class="font-weight-bold">Total Product Payment</td>
                                         <td class="text-right">RM {{ formatNumber(grandTotalPrice) }}</td>
                                     </tr>
 
-                                    <tr>
+                                    <tr v-if="order.craft">
                                         <td colspan="3" class="font-weight-bold">QuiviCraft</td>
+                                        <td class="text-left">{{ order.craft.name }}</td>
+                                        <td class="text-right">{{ order.craft.code }}</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(orders.craft && orders.craft.fee ? orders.craft.fee : 0) }}
+                                            RM {{ formatNumber(order.craft.fee ? order.craft.fee : 0) }}
+                                        </td>
+                                    </tr>
+                                    <tr class="table-active" v-if="order.approve != 1">
+                                        <td colspan="5" class="font-weight-bold text-uppercase">Total Deposit Amount</td>
+                                        <td class="text-right font-weight-bold text-primary">
+                                        RM {{ formatNumber(totalPayAmount) }}
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <tr v-if="serve">
+                                        <td colspan="3" class="font-weight-bold">QuiviServe</td>
+                                        <td class="text-left">{{ serve.name }}</td>
+                                        <td class="text-right">{{ serve.code }}</td>
+                                        <td class="text-right">
+                                            RM {{ formatNumber(serve.fee) }}
+                                        </td>
+                                    </tr>
+                                    <tr v-else-if="order.serve_data && order.serve_data[0] && order.serve_data[0].serve">
                                         <td class="font-weight-bold">QuiviServe</td>
-                                        <template v-if="orders.serve_data && orders.serve_data[0] && orders.serve_data[0].serve">
-                                            <td class="text-left">{{ orders.serve_data[0].serve.name }}</td>
-                                            <td class="text-right">{{ orders.serve_data[0].serve.code }}</td>
-                                            <td class="text-right">
-                                                RM {{ formatNumber(orders.serve_data[0].serve.fee) }}
-                                            </td>
-                                        </template>
-                                        <template v-else>
-                                            <td colspan="3" class="text-center">-</td>
-                                        </template>
+                                        <td class="text-left">{{ order.serve_data[0].serve.name }}</td>
+                                        <td class="text-right">{{ order.serve_data[0].serve.code }}</td>
+                                        <td class="text-right">
+                                            RM {{ formatNumber(order.serve_data[0].serve.fee) }}
+                                        </td>
+                                    </tr>
+                                    <tr v-else>
+                                        <td class="font-weight-bold">QuiviServe</td>
+                                        <td colspan="4" class="text-center">-</td>
                                     </tr>
 
-                                    <tr>
+                                    <tr v-if="care">
+                                        <td colspan="3" class="font-weight-bold">QuiviCare</td>
+                                        <td class="text-left">{{ care.name }}</td>
+                                        <td class="text-right">{{ care.code }}</td>
+                                        <td class="text-right">
+                                            RM {{ formatNumber(care.care_charge) }}
+                                        </td>
+                                    </tr>
+                                    <tr v-else-if="order.care_data && order.care_data[0] && order.care_data[0].care">
                                         <td class="font-weight-bold">QuiviCare</td>
-                                        <template v-if="orders.care_data && orders.care_data[0] && orders.care_data[0].care">
-                                            <td class="text-left">{{ orders.care_data[0].care.name }}</td>
-                                            <td class="text-right">{{ orders.care_data[0].care.code }}</td>
-                                            <td class="text-right">
-                                                RM {{ formatNumber(orders.care_data[0].price) }}
-                                            </td>
-                                        </template>
-                                        <template v-else>
-                                            <td colspan="3" class="text-center">-</td>
-                                        </template>
+                                        <td class="text-left">{{ order.care_data[0].care.name }}</td>
+                                        <td class="text-right">{{ order.care_data[0].care.code }}</td>
+                                        <td class="text-right">
+                                            RM {{ formatNumber(order.care_data[0].price) }}
+                                        </td>
                                     </tr>
-
-                                    <tr class="table-active">
-                                        <td colspan="3" class="font-weight-bold text-uppercase">Total Pay Amount</td>
+                                    <tr v-else>
+                                        <td class="font-weight-bold">QuiviCare</td>
+                                        <td colspan="4" class="text-center">-</td>
+                                    </tr>
+                                    <tr class="table-active" v-if="order.approve != 1">
+                                        <td colspan="5" class="font-weight-bold text-uppercase">Grand Total Amount</td>
+                                        <td class="text-right font-weight-bold text-primary">
+                                         RM {{ formatNumber(grandTotalAmount) }}
+                                        </td>
+                                    </tr>
+                                    <tr class="table-active" v-else>
+                                        <td colspan="5" class="font-weight-bold text-uppercase">Grand Total Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                         RM {{ formatNumber(totalPayAmount) }}
                                         </td>
@@ -252,7 +279,7 @@
                   </div>
 
                   <!-- Footer Section -->
-                  <div class="row pt-4">
+                  <div class="row pt-4" v-if="order">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body text-center">
@@ -277,24 +304,19 @@ export default {
     if (!User.loggedIn()) {
       this.$router.push({ name: 'login' });
     }
-    let id = this.$route.params.id;
-    axios.get('/api/orders/details/' + id)
-      .then(res => {
-        this.orders = res.data;
-      });
-    axios.get('/api/orders/orderdetails/' + id)
-      .then(res => {
-        this.details = res.data;
-      });
+    this.fetchOrderDetails();
   },
   data() {
     return {
-      orders: {},
+      order: null,  // Changed from 'orders' to 'order'
+      care: null,
+      careCharge: 0,  // Add this to store care charge
       details: [],
       showOrder: true,
       showProducts: true,
       showPayment: true,
-      errors: {}
+      errors: {},
+      loading: false  // Optional: add loading state
     };
   },
   computed: {
@@ -305,18 +327,72 @@ export default {
       return this.details.reduce((sum, item) => sum + Number(item.sub_total || 0), 0);
     },
     totalPayAmount() {
-        const craftFee = this.orders.craft && this.orders.craft.fee ? Number(this.orders.craft.fee) : 0;
-        const serveFee = this.orders.serve_data && this.orders.serve_data[0] && this.orders.serve_data[0].serve && this.orders.serve_data[0].serve.fee
-            ? Number(this.orders.serve_data[0].serve.fee)
-            : 0;
-        const carePrice = this.orders.care_data && this.orders.care_data[0] && this.orders.care_data[0].price
-            ? Number(this.orders.care_data[0].price)
-            : 0;
+      if (!this.order) return 0;
 
-        return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
+      const craftFee = this.order.craft && this.order.craft.fee ? Number(this.order.craft.fee) : 0;
+      const serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
+          ? Number(this.order.serve_data[0].serve.fee)
+          : 0;
+      const carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
+          ? Number(this.order.care_data[0].price)
+          : 0);
+
+      return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
+    },
+    grandTotalAmount() {
+      if (!this.order) return 0;
+
+      const craftFee = this.order.craft && this.order.craft.fee ? Number(this.order.craft.fee) : 0;
+
+      let serveFee = 0;
+        if (this.serve){
+            serveFee = this.serve && this.serve.fee ? Number(this.serve.fee) : 0;
+        }
+        else{
+            serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
+            ? Number(this.order.serve_data[0].serve.fee)
+            : 0;
+        }
+
+      let carePrice = 0;
+        if (this.care) {
+            carePrice = this.care && this.care.care_charge ? Number(this.care.care_charge) : 0;
+        } else {
+            carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
+                ? Number(this.order.care_data[0].price)
+                : 0);
+        }
+
+      return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     }
   },
   methods: {
+    fetchOrderDetails() {
+      this.loading = true;
+      let id = this.$route.params.id;
+
+      // Fetch order and care details
+      axios.get('/api/orders/details/' + id)
+        .then(res => {
+          this.order = res.data.order;
+          this.serve = res.data.serve;
+          this.care = res.data.care;
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error('Error fetching order details:', error);
+          this.loading = false;
+        });
+
+      // Fetch order products
+      axios.get('/api/orders/orderdetails/' + id)
+        .then(res => {
+          this.details = res.data;
+        })
+        .catch(error => {
+          console.error('Error fetching order products:', error);
+        });
+    },
     toggleOrder() {
       this.showOrder = !this.showOrder;
     },
@@ -349,8 +425,8 @@ export default {
 </script>
 
 <style>
+    /* Your existing styles remain the same */
     @media print {
-        /* Hide navigation sidebars and topbars */
         #accordionSidebar,
         #sidebarToggleTop,
         .topbar,
@@ -358,18 +434,15 @@ export default {
             display: none !important;
         }
 
-        /* Hide all buttons */
         .btn {
             display: none !important;
         }
 
-        /* Optional: Remove the card shadow and border for a cleaner look on paper */
         .card {
             border: 1px solid #ddd !important;
             box-shadow: none !important;
         }
 
-        /* Adjust the layout to use the full page width */
         #content-wrapper {
             margin-left: 0 !important;
             width: 100% !important;

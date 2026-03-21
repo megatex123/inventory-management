@@ -71,9 +71,76 @@ class OrderController extends Controller
 
     public function details($id)
     {
-        $order = Order::with(['customer', 'craft', 'serve', 'care', 'serve_data.serve', 'care_data.care'])
-            ->findOrFail($id);
-        return response()->json($order);
+        $order = Order::with(['customer', 'craft', 'serve', 'care', 'serve_data.serve', 'care_data.care'])->findOrFail($id);
+
+        // $orderdetails = OrderDetails::where('order_id', $id)
+        //             ->with([
+        //                 'product' => function($query) {
+        //                     $query->select('id', 'product_name', 'product_code', 'image', 'cat_id', 'product_qty', 'price', 'product_code')
+        //                         ->with('category:id,name');
+        //                 }
+        //             ])->get();
+
+        if ($order->total <= 7000.00) {
+            $lkp_serve_id = 1; // Inessential kit
+        } elseif ($order->total > 10000.00) {
+            $lkp_serve_id = 3; // Premium
+        } else {
+            $lkp_serve_id = 2; // Silver
+        }
+
+        $serve = Serves::findOrFail($lkp_serve_id);
+
+        $calculateCareServiceCharge = function($totalAmount) use ($order) {
+            $totalAmount = $order->total;
+            if ($totalAmount >= 0 && $totalAmount <= 5999) {
+                return ['lkp_care_id' => 1, 'care_charge' => 379, 'range' => '0 - 5,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 6000 && $totalAmount <= 6999) {
+                return ['lkp_care_id' => 1, 'care_charge' => 479, 'range' => '6,000 - 6,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 7000 && $totalAmount <= 7999) {
+                return ['lkp_care_id' => 2, 'care_charge' => 689, 'range' => '7,000 - 7,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 8000 && $totalAmount <= 8999) {
+                return ['lkp_care_id' => 2, 'care_charge' => 789, 'range' => '8,000 - 8,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 9000 && $totalAmount <= 9999) {
+                return ['lkp_care_id' => 2, 'care_charge' => 889, 'range' => '9,000 - 9,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 10000 && $totalAmount <= 10999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1159, 'range' => '10,000 - 10,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 11000 && $totalAmount <= 11999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1269, 'range' => '11,000 - 11,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 12000 && $totalAmount <= 12999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1379, 'range' => '12,000 - 12,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 13000 && $totalAmount <= 13999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1489, 'range' => '13,000 - 13,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 14000 && $totalAmount <= 14999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1599, 'range' => '14,000 - 14,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 15000 && $totalAmount <= 15999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1709, 'range' => '15,000 - 15,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 16000 && $totalAmount <= 16999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1819, 'range' => '16,000 - 16,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 17000 && $totalAmount <= 17999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 1929, 'range' => '17,000 - 17,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 18000 && $totalAmount <= 18999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 2039, 'range' => '18,000 - 18,999', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 19000 && $totalAmount <= 20000) {
+                return ['lkp_care_id' => 3, 'care_charge' => 2149, 'range' => '19,000 - 20,000', 'total_amount' => $totalAmount];
+            } elseif ($totalAmount >= 20000 && $totalAmount <= 20999) {
+                return ['lkp_care_id' => 3, 'care_charge' => 2239, 'range' => '20,000 - 20,999', 'total_amount' => $totalAmount];
+            } else {
+                return ['lkp_care_id' => 3, 'care_charge' => 2479, 'range' => 'Above 20,999', 'total_amount' => $totalAmount];;
+            }
+        };
+
+        $care = Care::findOrFail($calculateCareServiceCharge('lkp_care_id')['lkp_care_id']);
+
+        $care = collect($care->toArray())->merge([
+            'care_charge' => $calculateCareServiceCharge('lkp_care_id')['care_charge']
+        ]);
+
+        return response()->json([
+            'order' => $order,
+            'serve' => $serve,
+            'care' => $care
+        ]);
     }
 
     public function orderdetails($id)
@@ -330,6 +397,12 @@ class OrderController extends Controller
             $serveData = ServeData::withTrashed()->where('order_id', $order->id)->first();
 
             if (!$serveData) {
+
+                $totalServesPce = ServePce::count();
+                $nextId = $totalServesPce + 1;
+                $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+                $serve_pce_id = "PCE-2610-{$serveNumber}";
+
                 // Create new serve data if it doesn't exist
                 $totalServes = ServeData::count();
                 $nextId = $totalServes + 1;
@@ -403,6 +476,7 @@ class OrderController extends Controller
 
                 else{
                     $serveBek = ServePce::create([
+                        'serve_pce_id' => $serve_pce_id,
                         'serve_data_id' => $serveData->id,
                     ]);
 
@@ -500,6 +574,7 @@ class OrderController extends Controller
                 // Only create/update serve when approving
                 $serveResponse = $this->updateserve($request, $order, $id);
                 $careResponse = $this->updatecare($request, $order, $id);
+                // dd($request->all());
 
                 // Check if responses are valid
                 if (!$serveResponse || !$careResponse) {

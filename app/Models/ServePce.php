@@ -12,6 +12,7 @@ class ServePce extends Model
     protected $table = 'serve_pce';
 
     protected $fillable = [
+        'serve_pce_id',
         'serve_data_id',
         'date_start',
         'three_year_warranty',

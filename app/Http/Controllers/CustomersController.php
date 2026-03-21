@@ -88,7 +88,7 @@ class CustomersController extends Controller
         DB::beginTransaction();
 
         try {
-            $totalCustomers = Customers::count();
+            $totalCustomers = Customers::where('deleted_at', null)->count();
             $nextId = $totalCustomers + 1;
             $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
             $customerId = "QVCST-{$serveNumber}";

@@ -82,10 +82,18 @@ class ServePceController extends Controller
 
     public function store(Request $request)
     {
+        $totalServesPce = ServePce::count();
+        $nextId = $totalServesPce + 1;
+        $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        $serve_pce_id = "PCE-2610-{$serveNumber}";
+
+        $request->merge(['serve_pce_id' => $serve_pce_id]);
+
         DB::beginTransaction();
 
         try {
             $validator = Validator::make($request->all(), [
+                'serve_pce_id' => 'required',
                 'serve_data_id' => 'required|exists:serve_data,id',
                 'date_start' => 'required|date',
                 'three_year_warranty' => 'nullable|string|max:255',
