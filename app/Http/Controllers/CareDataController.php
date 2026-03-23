@@ -562,8 +562,8 @@ class CareDataController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'customer_id' => 'sometimes|required|exists:customers,id',
-                'order_id' => 'nullable|exists:orders,id',
-                'lkp_care_id' => 'sometimes|required|exists:cares,id',
+                // 'order_id' => 'nullable|exists:orders,id',
+                // 'lkp_care_id' => 'sometimes|required|exists:cares,id',
                 'total_part' => 'nullable|numeric|min:0',
                 'price' => 'sometimes|required|numeric|min:0',
                 'update_membership' => 'boolean',

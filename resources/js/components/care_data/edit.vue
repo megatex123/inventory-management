@@ -13,83 +13,9 @@
       </div>
 
       <div class="card-body">
-        <!-- Care Information -->
-        <div class="alert alert-info">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">QuickCare ID</small>
-              <strong class="h6">{{ careData.care_id }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Created Date</small>
-              <strong class="h6">{{ formatDate(careData.created_at) }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Last Updated</small>
-              <strong class="h6">{{ formatDate(careData.updated_at) }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Total Price</small>
-              <strong class="h6">{{ formatCurrency(careData.price) }}</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- Summary Card -->
-        <div class="alert alert-success">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">QuickCare ID</small>
-              <strong class="h6">{{ careData.care_id }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVCA ID</small>
-              <strong class="h6" v-if="selectedCustomer">{{ getCustomerCode(selectedCustomer) }}</strong>
-              <em class="text-muted" v-else>Select customer</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVCST ID</small>
-              <strong class="h6" v-if="selectedOrder">{{ getOrderCode(selectedOrder) }}</strong>
-              <em class="text-muted" v-else>Select order</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVCR ID</small>
-              <strong class="h6" v-if="selectedCare">{{ getCareCode(selectedCare) }}</strong>
-              <em class="text-muted" v-else>Select care tier</em>
-            </div>
-          </div>
-        </div>
-
-        <!-- Price Details Card -->
-        <div class="alert alert-warning">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">QuiviCare Tier</small>
-              <strong class="h6" v-if="selectedCare">{{ selectedCare.name }}</strong>
-              <em class="text-muted" v-else>Select care tier</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Price</small>
-              <strong class="h6">{{ formatCurrency(form.price || 0) }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Parts Value</small>
-              <strong class="h6">{{ formatCurrency(form.total_part || 0) }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Membership</small>
-              <span class="badge" :class="getMembershipBadgeClass()">
-                {{ getMembershipText() }}
-              </span>
-            </div>
-          </div>
-        </div>
-
         <form @submit.prevent="updateCareData">
           <div class="row">
-            <!-- Left Column -->
             <div class="col-md-6">
-              <!-- Customer Selection -->
               <div class="form-group">
                 <label for="customer_id" class="form-label">
                   <i class="fas fa-user text-primary mr-1"></i> Customer (QVCA ID)
@@ -114,16 +40,8 @@
                   </option>
                 </select>
                 <small v-if="loadingCustomers" class="text-muted">Loading customers...</small>
-                <div v-if="selectedCustomer" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Selected Customer:</small>
-                  <div class="d-flex justify-content-between">
-                    <strong>{{ selectedCustomer.name }}</strong>
-                    <span class="badge badge-info">QVCA ID: {{ getCustomerCode(selectedCustomer) }}</span>
-                  </div>
-                </div>
               </div>
 
-              <!-- Order Selection -->
               <div class="form-group">
                 <label for="order_id" class="form-label">
                   <i class="fas fa-shopping-cart text-primary mr-1"></i> Order (QVCST ID)
@@ -147,19 +65,11 @@
                     <template v-if="order.status"> ({{ order.status }})</template>
                   </option>
                 </select>
-                <div v-if="selectedOrder" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Selected Order:</small>
-                  <div class="d-flex justify-content-between">
-                    <strong>QVCST ID: {{ getOrderCode(selectedOrder) }}</strong>
-                    <span class="badge badge-success">Total: {{ formatCurrency(selectedOrder.total) }}</span>
-                  </div>
-                </div>
                 <small class="form-text text-muted">
                   Orders filtered for selected customer
                 </small>
               </div>
 
-              <!-- Total Parts Value -->
               <div class="form-group">
                 <label for="total_part" class="form-label">
                   <i class="fas fa-cubes text-primary mr-1"></i> Total Included Parts
@@ -176,6 +86,7 @@
                     step="0.01"
                     min="0"
                     placeholder="0.00"
+                    disabled
                   >
                 </div>
                 <small class="form-text text-muted">
@@ -184,9 +95,7 @@
               </div>
             </div>
 
-            <!-- Right Column -->
             <div class="col-md-6">
-              <!-- Care Tier Selection -->
               <div class="form-group">
                 <label for="lkp_care_id" class="form-label">
                   <i class="fas fa-star text-primary mr-1"></i> QuiviCare Tier
@@ -198,6 +107,7 @@
                   id="lkp_care_id"
                   required
                   @change="onCareChange"
+                  disabled
                 >
                   <option value="">Select Care Tier</option>
                   <option
@@ -208,21 +118,23 @@
                     {{ care.name }} ({{ care.code }})
                   </option>
                 </select>
-                <div v-if="selectedCare" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Care Tier Details:</small>
-                  <div class="d-flex justify-content-between">
-                    <span>{{ selectedCare.name }}</span>
-                    <span class="badge" :class="getCareTypeClass(selectedCare.name)">
-                      {{ selectedCare.code }}
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              <!-- Price -->
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-id-card text-primary mr-1"></i> QuickCare ID
+                </label>
+                <div class="form-control-plaintext bg-light p-2 rounded" disabled>
+                  <span class="font-weight-bold text-primary">{{ careData.care_id || 'N/A' }}</span>
+                </div>
+                <small class="form-text text-muted">
+                  Auto-generated based on care tier (cannot be changed)
+                </small>
+              </div>
+
               <div class="form-group">
                 <label for="price" class="form-label">
-                  <i class="fas fa-tag text-primary mr-1"></i> Price
+                  <i class="fas fa-tag text-primary mr-1"></i> Care Service
                   <span class="text-danger">*</span>
                 </label>
                 <div class="input-group">
@@ -238,6 +150,7 @@
                     min="0"
                     required
                     placeholder="0.00"
+                    disabled
                   >
                 </div>
                 <small class="form-text text-muted">
@@ -266,63 +179,9 @@
                   Check this box if customer membership information needs to be updated
                 </small>
               </div>
-
-              <!-- QuickCare ID Display -->
-              <div class="form-group">
-                <label class="form-label">
-                  <i class="fas fa-id-card text-primary mr-1"></i> QuickCare ID
-                </label>
-                <div class="form-control-plaintext bg-light p-2 rounded">
-                  <span class="font-weight-bold text-primary">{{ careData.care_id || 'N/A' }}</span>
-                </div>
-                <small class="form-text text-muted">
-                  Auto-generated based on care tier (cannot be changed)
-                </small>
-              </div>
             </div>
           </div>
 
-          <!-- Quick Actions -->
-          <div class="row mt-4">
-            <div class="col-md-12">
-              <div class="d-flex justify-content-between">
-                <div class="btn-group" role="group">
-                  <button
-                    type="button"
-                    class="btn btn-outline-info btn-sm"
-                    @click="calculatePartsValue"
-                    :disabled="!selectedOrder"
-                  >
-                    <i class="fas fa-calculator mr-1"></i> Calculate Parts
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-warning btn-sm"
-                    @click="suggestPrice"
-                    :disabled="!selectedCare"
-                  >
-                    <i class="fas fa-money-bill-wave mr-1"></i> Suggest Price
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    @click="resetForm"
-                  >
-                    <i class="fas fa-redo mr-1"></i> Reset Changes
-                  </button>
-                </div>
-
-                <div>
-                  <small class="text-muted">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Fields marked with <span class="text-danger">*</span> are required
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Validation Summary -->
           <div v-if="errors.length > 0" class="alert alert-danger mt-4">
             <h6 class="alert-heading">
               <i class="fas fa-exclamation-triangle mr-1"></i> Please fix the following errors:
@@ -334,7 +193,6 @@
             </ul>
           </div>
 
-          <!-- Form Actions -->
           <div class="form-actions mt-4 pt-3 border-top">
             <div class="d-flex justify-content-between align-items-center">
               <div>
@@ -380,7 +238,6 @@
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div v-if="showDeleteModal" class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -407,7 +264,6 @@
       </div>
     </div>
 
-    <!-- Success Modal -->
     <div v-if="showSuccessModal" class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -423,7 +279,7 @@
               <h5>Care Data Updated Successfully!</h5>
               <div class="text-left mt-3">
                 <p><strong>QuickCare ID:</strong> {{ careData.care_id }}</p>
-                <p><strong>Customer:</strong> {{ selectedCustomer ? selectedCustomer.name : 'N/A' }}</p>
+                <p><strong>Customer:</strong> {{ careData.customer.full_name }}</p>
                 <p><strong>Care Tier:</strong> {{ selectedCare ? selectedCare.name : 'N/A' }}</p>
                 <p><strong>Price:</strong> {{ formatCurrency(form.price) }}</p>
                 <p><strong>Membership Update:</strong> {{ form.update_membership ? 'Required' : 'Not Required' }}</p>
@@ -629,17 +485,12 @@ export default {
       this.selectedCare = this.cares.find(c => c.id == this.form.lkp_care_id) || null;
     },
 
-    onMembershipToggle() {
-      // Optional: Add any logic that needs to run when membership toggle changes
-    },
-
     calculatePartsValue() {
       if (!this.selectedOrder) {
         Swal.fire('Info', 'Please select an order first', 'info');
         return;
       }
 
-      // Calculate parts value as 50% of order total (example calculation)
       const orderTotal = parseFloat(this.selectedOrder.total) || 0;
       const partsValue = orderTotal * 0.5;
       this.form.total_part = partsValue.toFixed(2);
@@ -648,51 +499,6 @@ export default {
         title: 'Calculated!',
         text: `Parts value calculated as 50% of order total: ${this.formatCurrency(partsValue)}`,
         icon: 'success',
-        timer: 1500,
-        showConfirmButton: false
-      });
-    },
-
-    suggestPrice() {
-      if (!this.selectedCare) {
-        Swal.fire('Info', 'Please select a care tier first', 'info');
-        return;
-      }
-
-      const basePrices = {
-        'VISION': 1489.00,
-        'PRIME': 899.00,
-        'PREMIUM': 1299.00,
-        'ESSENTIAL': 499.00
-      };
-
-      const careName = this.selectedCare.name.toUpperCase();
-      let suggestedPrice = 0;
-
-      // Find matching price based on care name
-      for (const [key, price] of Object.entries(basePrices)) {
-        if (careName.includes(key)) {
-          suggestedPrice = price;
-          break;
-        }
-      }
-
-      // If no match found, use a default price
-      if (suggestedPrice === 0) {
-        suggestedPrice = 799.00;
-      }
-
-      // Add random variation ±10%
-      const variation = suggestedPrice * 0.1;
-      const randomVariation = (Math.random() * 2 - 1) * variation;
-      suggestedPrice += randomVariation;
-
-      this.form.price = suggestedPrice.toFixed(2);
-
-      Swal.fire({
-        title: 'Price Suggested!',
-        text: `Suggested price for ${this.selectedCare.name}: ${this.formatCurrency(suggestedPrice)}`,
-        icon: 'info',
         timer: 1500,
         showConfirmButton: false
       });
@@ -708,7 +514,6 @@ export default {
         update_membership: Boolean(this.careData.update_membership)
       };
 
-      // Reset selected references
       if (this.careData.customer) {
         this.selectedCustomer = this.careData.customer;
       }
@@ -756,9 +561,9 @@ export default {
       if (this.form.price && this.form.total_part) {
         const price = parseFloat(this.form.price);
         const parts = parseFloat(this.form.total_part);
-        if (parts > price) {
-          this.errors.push('Parts value cannot exceed total price');
-        }
+        // if (parts > price) {
+        //   this.errors.push('Parts value cannot exceed total price');
+        // }
       }
 
       return this.errors.length === 0;
@@ -776,10 +581,8 @@ export default {
         const id = this.$route.params.id;
         const response = await axios.put(`/api/care-data/${id}`, this.form);
 
-        // Update local data
         this.careData = response.data.data;
 
-        // Refresh form data
         await this.fetchCareData();
 
         this.showSuccessModal = true;
