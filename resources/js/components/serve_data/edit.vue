@@ -13,90 +13,9 @@
       </div>
 
       <div class="card-body">
-        <!-- Serve Information -->
-        <div class="alert alert-info">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVSE ID</small>
-              <strong class="h6">{{ serveData.serve_id }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVSE CID</small>
-              <strong class="h6">{{ serveData.qvse_cid || 'N/A' }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Created Date</small>
-              <strong class="h6">{{ formatDate(serveData.created_at) }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Total Build</small>
-              <strong class="h6" v-if="selectedOrder">RM{{ formatNumber(selectedOrder.total || 0) }}</strong>
-              <em class="text-muted" v-else>No order selected</em>
-            </div>
-          </div>
-        </div>
-
-        <!-- Summary Card -->
-        <div class="alert alert-success">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVSE ID</small>
-              <strong class="h6">{{ serveData.serve_id }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVCST ID</small>
-              <strong class="h6" v-if="selectedCustomer">{{ selectedCustomer.customer_id }}</strong>
-              <em class="text-muted" v-else>Select customer</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVCR ID</small>
-              <strong class="h6" v-if="selectedOrder">{{ selectedOrder.order_id }}</strong>
-              <em class="text-muted" v-else>Select order</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Total Build</small>
-              <strong class="h6" v-if="selectedOrder">RM{{ formatNumber(selectedOrder.total || 0) }}</strong>
-              <em class="text-muted" v-else>No order selected</em>
-            </div>
-          </div>
-        </div>
-
-        <!-- Package Details Card -->
-        <div class="alert alert-warning">
-          <div class="row">
-            <div class="col-md-3">
-              <small class="text-muted d-block">Tier</small>
-              <strong class="h6" v-if="selectedServe">{{ selectedServe.name }}</strong>
-              <em class="text-muted" v-else>Select serve type</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Package Price</small>
-              <strong class="h6" v-if="selectedServe">
-                RM{{ getPackagePrice() }}
-                <small v-if="selectedServe.id === 3 && form.upgrade_pce_enabled" class="text-success">
-                  (includes upgrade)
-                </small>
-              </strong>
-              <em class="text-muted" v-else>Select serve type</em>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">QVSE CID</small>
-              <strong class="h6">{{ serveData.qvse_cid || 'N/A' }}</strong>
-            </div>
-            <div class="col-md-3">
-              <small class="text-muted d-block">Status</small>
-              <span class="badge" :class="getStatusBadgeClass()">
-                {{ getStatusText() }}
-              </span>
-            </div>
-          </div>
-        </div>
-
         <form @submit.prevent="updateServeData">
           <div class="row">
-            <!-- Left Column -->
             <div class="col-md-6">
-              <!-- Customer Selection -->
               <div class="form-group">
                 <label for="customer_id" class="form-label">
                   <i class="fas fa-user text-primary mr-1"></i> Customer (QVCST ID)
@@ -121,16 +40,8 @@
                   </option>
                 </select>
                 <small v-if="loadingCustomers" class="text-muted">Loading customers...</small>
-                <div v-if="selectedCustomer" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Selected Customer:</small>
-                  <div class="d-flex justify-content-between">
-                    <strong>{{ selectedCustomer.full_name }}</strong>
-                    <span class="badge badge-info">QVCST ID: {{ selectedCustomer.customer_id }}</span>
-                  </div>
-                </div>
               </div>
 
-              <!-- Order Selection -->
               <div class="form-group">
                 <label for="order_id" class="form-label">
                   <i class="fas fa-shopping-cart text-primary mr-1"></i> Order (QVCR ID)
@@ -154,19 +65,8 @@
                     <template v-if="order.status"> ({{ order.status }})</template>
                   </option>
                 </select>
-                <div v-if="selectedOrder" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Selected Order:</small>
-                  <div class="d-flex justify-content-between">
-                    <strong>QVCR ID: {{ selectedOrder.order_id }}</strong>
-                    <span class="badge badge-success">Total: RM{{ formatNumber(selectedOrder.total) }}</span>
-                  </div>
-                </div>
-                <small class="form-text text-muted">
-                  Orders filtered for selected customer
-                </small>
               </div>
 
-              <!-- Total Build Display -->
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-calculator text-primary mr-1"></i> Total Build
@@ -181,17 +81,13 @@
                     class="form-control bg-light"
                     readonly
                     style="cursor: not-allowed;"
+                    disabled
                   >
                 </div>
-                <small class="form-text text-muted">
-                  Total amount from selected order
-                </small>
               </div>
             </div>
 
-            <!-- Right Column -->
             <div class="col-md-6">
-              <!-- Serve Type -->
               <div class="form-group">
                 <label for="lkp_serve_id" class="form-label">
                   <i class="fas fa-cogs text-primary mr-1"></i> Tier / Serve Type
@@ -214,24 +110,8 @@
                     {{ serve.name }}
                   </option>
                 </select>
-                <div v-if="selectedServe" class="mt-2 p-2 bg-light rounded">
-                  <small class="text-muted">Serve Type Details:</small>
-                  <div class="d-flex justify-content-between">
-                    <span>{{ selectedServe.name }}</span>
-                    <span class="badge" :class="getServeTypeClass(selectedServe.name)">
-                      RM{{ selectedServe.fee }}
-                      <template v-if="selectedServe.id === 3 && form.upgrade_pce_enabled">
-                        + RM69.90 = RM469.90
-                      </template>
-                    </span>
-                  </div>
-                  <small v-if="selectedOrder" class="text-muted">
-                    Auto-selected based on total build: RM{{ formatNumber(selectedOrder.total) }}
-                  </small>
-                </div>
               </div>
 
-              <!-- Package Price Display -->
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-tag text-primary mr-1"></i> Package Price
@@ -248,20 +128,8 @@
                     style="cursor: not-allowed;"
                   >
                 </div>
-                <small class="form-text text-muted">
-                  <template v-if="selectedServe">
-                    Base Fee: RM{{ selectedServe.fee }}
-                    <template v-if="selectedServe.id === 3 && form.upgrade_pce_enabled">
-                      + Upgrade Fee: RM69.90 = RM469.90
-                    </template>
-                  </template>
-                  <template v-else>
-                    Fee from selected serve type
-                  </template>
-                </small>
               </div>
 
-              <!-- QVSE CID Display -->
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-key text-primary mr-1"></i> QVSE CID
@@ -269,16 +137,12 @@
                 <div class="form-control-plaintext bg-light p-2 rounded">
                   <span class="font-weight-bold text-primary">{{ serveData.qvse_cid || 'N/A' }}</span>
                 </div>
-                <small class="form-text text-muted">
-                  Auto-generated based on serve type (cannot be changed)
-                </small>
               </div>
             </div>
           </div>
 
           <div class="row mt-4">
             <div class="col-md-6">
-              <!-- Start Serve Switch -->
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-play-circle text-primary mr-1"></i> Start QuiviServe?
@@ -389,21 +253,6 @@
                     :disabled="!form.start_serve_enabled"
                   >
                     <i class="fas fa-clock mr-1"></i> Set Current Time
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-warning btn-sm"
-                    @click="suggestUpgradeNotes"
-                    :disabled="!form.upgrade_pce_enabled"
-                  >
-                    <i class="fas fa-lightbulb mr-1"></i> Suggest Notes
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    @click="resetForm"
-                  >
-                    <i class="fas fa-redo mr-1"></i> Reset Changes
                   </button>
                 </div>
 

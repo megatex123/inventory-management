@@ -14,7 +14,7 @@
 
       <div class="card-body">
         <!-- Quick Stats -->
-        <div class="alert alert-info">
+        <!-- <div class="alert alert-info">
           <div class="row text-center">
             <div class="col-md-3">
               <small class="text-muted d-block">Total Serves</small>
@@ -33,10 +33,10 @@
               <strong class="h5">{{ stats.unique_customers || 0 }}</strong>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Summary Card -->
-        <div class="alert alert-success">
+        <!-- <div class="alert alert-success">
           <div class="row">
             <div class="col-md-3">
               <small class="text-muted d-block">QVSE ID</small>
@@ -59,10 +59,10 @@
               <em class="text-muted" v-else>No order selected</em>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Package Details Card -->
-        <div class="alert alert-warning">
+        <!-- <div class="alert alert-warning">
           <div class="row">
             <div class="col-md-3">
               <small class="text-muted d-block">Tier</small>
@@ -91,7 +91,7 @@
               </span>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <form @submit.prevent="submitServeData">
           <div class="row">
