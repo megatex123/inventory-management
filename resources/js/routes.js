@@ -128,6 +128,21 @@ let productwarranty = require ('./components/product_warranty/index.vue').defaul
 let productwarrantycreate = require ('./components/product_warranty/create.vue').default;
 let productwarrantyedit = require ('./components/product_warranty/edit.vue').default;
 
+//master sku
+let mastersku = require('./components/master_sku/index.vue').default;
+let masterskucreate = require('./components/master_sku/create.vue').default;
+let masterskuedit = require('./components/master_sku/edit.vue').default;
+
+//inv care
+let invcare = require('./components/inv_care/index.vue').default;
+let invcarecreate = require('./components/inv_care/create.vue').default;
+let invcareedit = require('./components/inv_care/edit.vue').default;
+
+//inv excl serve
+let invexclserve = require('./components/inv_excl_serve/index.vue').default;
+let invexclservecreate = require('./components/inv_excl_serve/create.vue').default;
+let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
+
 export const routes=[
 
     {path: '/',component:login,name: 'login',meta: { layout: 'auth' }},
@@ -256,4 +271,19 @@ export const routes=[
       { path: '/product-warranty', component: productwarranty, name: 'productwarranty', meta: { layout: 'app' } },
       { path: '/product-warranty/create', component: productwarrantycreate, name: 'productwarrantycreate', meta: { layout: 'app' } },
       { path: '/product-warranty/edit/:id', component: productwarrantyedit, name: 'productwarrantyedit', meta: { layout: 'app' } },
+
+      // master-sku
+      { path: '/master-sku', component: mastersku, name: 'mastersku', meta: { layout: 'app' } },
+      { path: '/master-sku/create', component: masterskucreate, name: 'masterskucreate', meta: { layout: 'app' } },
+      { path: '/master-sku/edit/:id', component: masterskuedit, name: 'masterskuedit', meta: { layout: 'app' } },
+
+      // inv-care
+      { path: '/inv-care', component: invcare, name: 'invcare', meta: { layout: 'app' } },
+      { path: '/inv-care/create', component: invcarecreate, name: 'invcarecreate', meta: { layout: 'app' } },
+      { path: '/inv-care/edit/:id', component: invcareedit, name: 'invcareedit', meta: { layout: 'app' } },
+
+      // inv-excl-serve
+      { path: '/inv-excl-serve', component: invexclserve, name: 'invexclserve', meta: { layout: 'app' } },
+      { path: '/inv-excl-serve/create', component: invexclservecreate, name: 'invexclservecreate', meta: { layout: 'app' } },
+      { path: '/inv-excl-serve/edit/:id', component: invexclserveedit, name: 'invexclserveedit', meta: { layout: 'app' } },
 ]

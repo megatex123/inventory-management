@@ -1,0 +1,49 @@
+---
+tags: [api, routes]
+---
+
+# API Routes (`routes/api.php`)
+
+Base prefix: `/api`. Mix of `Route::apiResource` (standard CRUD) and hand-rolled prefixed groups.
+
+## Auth (`prefix: auth`)
+`POST auth/login`, `signup`, `logout`, `refresh`, `me` — `AuthController` (JWT via `tymon/jwt-auth`).
+
+## Public (no login)
+`GET|POST /customer/public/{token}` — hash-link based customer self-update (`CustomersController@publicShow/publicUpdate`).
+
+## Standard `apiResource` CRUD
+`employee`, `suppliers`, `categories`, `sub-categories`, `craft`, `care`, `serves`, `product`, `expens`, `customer`, `brand` — each maps to its `*Controller` (index/store/show/update/destroy).
+
+Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`update`.
+
+## POS / Cart / Orders
+- `PosController`: `catProduct`, `addCategoryToCart`, `orderdone`, dashboard stats (`todaySell`, `todayincome`, `todaydue`, `todayexp`, `todaystock`)
+- `CartController`: add/get/remove/inc/dec
+- `OrderController`: list, details, approve, edit, update, statistics
+- `SalariesController`: `paid/{id}`, `salary`, `salaryview/{id}`
+- `ExtraController@vats`
+
+## Meetings
+`MeetingController` (index/show/store/update/destroy), `MeetingDetailsController` (same pattern).
+
+## Serve/Care data — richer REST pattern (search, statistics, export, restore)
+- `prefix: serve-data` → `ServeDataController`: index, store, statistics, search, byCustomer, byOrder, exportToCSV, plus `{id}` show/update/destroy/restore
+- `prefix: care-data` → `CareDataController`: identical shape to serve-data
+- `prefix: care-warranty` → `CareWarrantyController`: CRUD + statistics + `getNextId`
+- `prefix: product-warranty` → `ProductWarrantyController`: CRUD + statistics, export, bulkDelete, generateSerialNo, checkSerialNo, `by-category`, `available` (these last two are registered *outside* the prefix group, directly above it)
+- `prefix: serve-pce` → `ServePceController`: index/store/statistics/search + `{id}` CRUD (comment flags this prefix should probably be `serve-pces`, wasn't fixed)
+- `prefix: serve-mps` → `ServeMpsController`: index/store/statistics + `{id}` CRUD + search + restore
+- `prefix: serve-beks` → `ServeBekController`: CRUD + restore + `getByServeDataId` + `makeClaim`
+
+## Diagnostics
+- `GET /test-connection` — health check, returns timestamp/version
+- `Route::fallback` — JSON 404 with a hint list of serve-mps endpoints (debug aid left in from that module's build-out)
+
+## Observations
+- The serve/care/warranty controllers are the most recently developed (see route-comment cruft: "Corrected - no duplicate routes", "Updated to match Vue component", "Removed duplicate, corrected") — treat these as the actively-evolving part of the API surface.
+- No `product-raw`, `master-sku`, or `inv-move` routes exist yet, even though the models do — see [[Work-In-Progress]].
+
+## Related
+- [[Domain-Models]]
+- [[Architecture]]

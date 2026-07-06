@@ -179,6 +179,57 @@ Route::prefix('care-warranty')->group(function () {
     Route::get('/next-id', 'CareWarrantyController@getNextId');
 });
 
+/*
+|--------------------------------------------------------------------------
+| MASTER SKU / INVENTORY ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('master-sku')->group(function () {
+    Route::get('/', 'MasterSkuController@index');
+    Route::post('/', 'MasterSkuController@store');
+    Route::get('/statistics', 'MasterSkuController@statistics');
+    Route::get('/search', 'MasterSkuController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'MasterSkuController@show');
+        Route::get('/edit', 'MasterSkuController@edit');
+        Route::put('/', 'MasterSkuController@update');
+        Route::patch('/', 'MasterSkuController@update');
+        Route::delete('/', 'MasterSkuController@destroy');
+        Route::patch('/status', 'MasterSkuController@updateStatus');
+    });
+});
+
+Route::prefix('inv-care')->group(function () {
+    Route::get('/', 'InvCareController@index');
+    Route::post('/', 'InvCareController@store');
+    Route::get('/statistics', 'InvCareController@statistics');
+    Route::get('/search', 'InvCareController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvCareController@show');
+        Route::get('/edit', 'InvCareController@edit');
+        Route::put('/', 'InvCareController@update');
+        Route::patch('/', 'InvCareController@update');
+        Route::delete('/', 'InvCareController@destroy');
+    });
+});
+
+Route::prefix('inv-excl-serve')->group(function () {
+    Route::get('/', 'InvExclServeController@index');
+    Route::post('/', 'InvExclServeController@store');
+    Route::get('/statistics', 'InvExclServeController@statistics');
+    Route::get('/search', 'InvExclServeController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvExclServeController@show');
+        Route::get('/edit', 'InvExclServeController@edit');
+        Route::put('/', 'InvExclServeController@update');
+        Route::patch('/', 'InvExclServeController@update');
+        Route::delete('/', 'InvExclServeController@destroy');
+    });
+});
+
 Route::get('/product-warranty/by-category', 'ProductWarrantyController@getByCategory');
 Route::get('/product-warranty/available', 'ProductWarrantyController@getAvailableWarranties');
 Route::prefix('product-warranty')->group(function () {

@@ -266,6 +266,20 @@
               <h6 class="collapse-header text-primary font-weight-bold">Product Brand <br> Management</h6>
               <router-link class="collapse-item" to="/brand">All Products Brand</router-link>
               <router-link class="collapse-item" to="/brand/create">Add Product Brand</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Master SKU <br> Management</h6>
+              <router-link class="collapse-item" to="/master-sku">All Master SKUs</router-link>
+              <router-link class="collapse-item" to="/master-sku/create">Add Master SKU</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Inventory</h6>
+              <router-link class="collapse-item" to="/inv-care">All QuiviCare Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-care/create">Add QuiviCare Inventory</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Excl. Inventory</h6>
+              <router-link class="collapse-item" to="/inv-excl-serve">All QuiviServe Excl. Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-excl-serve/create">Add QuiviServe Excl. Inventory</router-link>
             </div>
           </div>
         </li>
