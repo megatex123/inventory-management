@@ -143,6 +143,9 @@ let invexclserve = require('./components/inv_excl_serve/index.vue').default;
 let invexclservecreate = require('./components/inv_excl_serve/create.vue').default;
 let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
 
+//craft inspection
+let craftinspection = require('./components/craft_inspection/index.vue').default;
+
 export const routes=[
 
     {path: '/',component:login,name: 'login',meta: { layout: 'auth' }},
@@ -286,4 +289,7 @@ export const routes=[
       { path: '/inv-excl-serve', component: invexclserve, name: 'invexclserve', meta: { layout: 'app' } },
       { path: '/inv-excl-serve/create', component: invexclservecreate, name: 'invexclservecreate', meta: { layout: 'app' } },
       { path: '/inv-excl-serve/edit/:id', component: invexclserveedit, name: 'invexclserveedit', meta: { layout: 'app' } },
+
+      // craft inspection
+      { path: '/order/:id/inspection/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
 ]

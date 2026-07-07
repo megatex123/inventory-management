@@ -252,6 +252,20 @@
                                                         >
                                                             <i class="fas fa-info-circle"></i>
                                                         </button>
+                                                        <router-link
+                                                            :to="{name:'craftinspection', params:{id:order.id, round:1}}"
+                                                            class="btn btn-sm btn-dark ml-1"
+                                                            title="Pre-Build Inspection — Round 1"
+                                                        >
+                                                            <i class="fas fa-clipboard-check"></i>1
+                                                        </router-link>
+                                                        <router-link
+                                                            :to="{name:'craftinspection', params:{id:order.id, round:2}}"
+                                                            class="btn btn-sm btn-dark ml-1"
+                                                            title="Pre-Build Inspection — Round 2"
+                                                        >
+                                                            <i class="fas fa-clipboard-check"></i>2
+                                                        </router-link>
                                                         <!-- Approve Button -->
                                                         <button
                                                             v-if="order.approve === null || order.approve === '' || order.approve === undefined"

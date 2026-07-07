@@ -91,6 +91,19 @@ Route::get('/orders/statistics', 'OrderController@getStatistics');
 
 /*
 |--------------------------------------------------------------------------
+| CRAFT INSPECTION (Phase 2: Pre-Build Inspection)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
+    Route::get('/', 'CraftInspectionController@show');
+    Route::post('/items', 'CraftInspectionController@storeItem');
+    Route::post('/items/{itemId}', 'CraftInspectionController@updateItem');
+    Route::delete('/items/{itemId}', 'CraftInspectionController@destroyItem');
+    Route::post('/complete', 'CraftInspectionController@complete');
+});
+
+/*
+|--------------------------------------------------------------------------
 | ADMIN DASHBOARD
 |--------------------------------------------------------------------------
 */
