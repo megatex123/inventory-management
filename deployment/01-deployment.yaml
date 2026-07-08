@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: quivitech-im
-          image: telur.penyahpepijat.com/enigma/quivitech/inventory-management:release
+          image: telur.enigmacode.com.my/enigma/quivitech/inventory-management:release
           imagePullPolicy: Always
           ports:
             - containerPort: 80

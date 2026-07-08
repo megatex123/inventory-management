@@ -1,0 +1,13 @@
+services:
+  quivitech-im:
+    image: telur.enigmacode.com.my/enigma/quivitech/inventory-management:release
+    container_name: quivitech-im
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - tunnel
+
+networks:
+  tunnel:
+    external: true
