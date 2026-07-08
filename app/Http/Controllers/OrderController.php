@@ -167,6 +167,7 @@ class OrderController extends Controller
             ->get()
             ->map(function($detail) {
                 return [
+                    'id' => $detail->id,
                     'product_name' => $detail->product->product_name ?? null,
                     'product_code' => $detail->product->product_code ?? null,
                     'image' => $detail->product->image ?? null,

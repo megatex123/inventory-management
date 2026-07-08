@@ -58,6 +58,7 @@ class CraftInspectionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'component_type' => 'required|string|in:' . implode(',', self::COMPONENT_TYPES),
+            'order_detail_id' => 'nullable|integer|exists:order_details,id',
             'fields' => 'nullable|array',
             'model_verified' => 'boolean',
             'serial_recorded' => 'boolean',

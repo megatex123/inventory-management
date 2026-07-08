@@ -73,21 +73,42 @@
 
       <!-- Add component -->
       <div class="card mb-4 no-print">
-        <div class="card-body d-flex align-items-center">
-          <select v-model="newItemType" class="form-control mr-2" style="max-width: 300px;">
-            <option value="">Select component to add...</option>
-            <option v-for="type in componentTypes" :key="type" :value="type">{{ componentLabel(type) }}</option>
-          </select>
-          <button class="btn btn-primary" :disabled="!newItemType" @click="addItem">
-            <i class="fas fa-plus-circle mr-1"></i> Add Component
-          </button>
+        <div class="card-header"><h5 class="mb-0"><i class="fas fa-boxes mr-2"></i>Add Component</h5></div>
+        <div class="card-body">
+          <div class="d-flex align-items-center flex-wrap">
+            <select v-model="newItemSelection" class="form-control mr-2 mb-2" style="max-width: 420px;">
+              <option value="">Select component to add...</option>
+              <optgroup label="Parts in this Order" v-if="availableOrderParts.length">
+                <option v-for="part in availableOrderParts" :key="'part-' + part.id" :value="'part:' + part.id">
+                  {{ componentLabel(part._componentType) }} — {{ part.product_name }}
+                </option>
+              </optgroup>
+              <optgroup label="Other / Manual">
+                <option v-for="type in componentTypes" :key="'type-' + type" :value="'type:' + type">{{ componentLabel(type) }}</option>
+              </optgroup>
+            </select>
+            <button class="btn btn-primary mb-2" :disabled="!newItemSelection" @click="addItem">
+              <i class="fas fa-plus-circle mr-1"></i> Add Component
+            </button>
+          </div>
+          <p class="text-muted small mb-0" v-if="orderParts.length">
+            Components from this order are added automatically.
+            <span v-if="availableOrderParts.length">{{ availableOrderParts.length }} order part(s) not yet added below — use the dropdown to bring one back if removed.</span>
+            <span v-if="unmappedOrderParts.length" class="text-warning">
+              {{ unmappedOrderParts.length }} part(s) have a category with no matching inspection type — add manually.
+            </span>
+          </p>
         </div>
       </div>
 
       <!-- Per-component detail cards -->
       <div class="card mb-3" v-for="item in items" :key="item._key">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">{{ componentLabel(item.component_type) }} Details Verification</h5>
+          <div>
+            <h5 class="mb-0">{{ componentLabel(item.component_type) }} Details Verification</h5>
+            <small v-if="item.order_detail_id" class="text-success"><i class="fas fa-link mr-1"></i>Linked to order part</small>
+            <small v-else class="text-muted"><i class="fas fa-pen mr-1"></i>Manually added</small>
+          </div>
           <button class="btn btn-sm btn-outline-danger" @click="deleteItem(item)"><i class="fas fa-trash"></i></button>
         </div>
         <div class="card-body">
@@ -203,64 +224,64 @@ import InspectionGroup from './InspectionGroup.vue';
 
 const FIELD_SCHEMAS = {
   cpu: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'batch', label: 'Batch' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'batch', label: 'Batch' },
     { key: 'visual', label: 'Visual' }, { key: 'pins', label: 'Pins' }
   ],
   mbd: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'cpu_socket', label: 'CPU Socket' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'cpu_socket', label: 'CPU Socket' },
     { key: 'dimm_slot', label: 'DIMM Slot' }, { key: 'pcie_slots', label: 'PCIe Slots' }, { key: 'm2_slots', label: 'M.2 Slots' },
     { key: 'vrm_heatsinks', label: 'VRM Heatsinks' }, { key: 'rear_io', label: 'Rear I/O' },
     { key: 'cmos_batt', label: 'CMOS Batt' }, { key: 'accessories', label: 'Accessories' }
   ],
   gpu: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'connector_pin', label: 'Connector Pin' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'connector_pin', label: 'Connector Pin' },
     { key: 'pcie_connector', label: 'PCIe Connector' }, { key: 'power_connector', label: 'Power Connector' },
     { key: 'fan_rotation', label: 'Fan Rotation' }, { key: 'vrm_heatsinks', label: 'VRM Heatsinks' },
     { key: 'backplate', label: 'Backplate' }, { key: 'rgb', label: 'RGB' }
   ],
   ram: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'capacity', label: 'Capacity' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'capacity', label: 'Capacity' },
     { key: 'speed', label: 'Speed' }, { key: 'timing', label: 'Timing' }, { key: 'voltage', label: 'Voltage' },
     { key: 'quantity', label: 'Quantity' }, { key: 'heatspreader', label: 'Heatspreader' }, { key: 'gold_contacts', label: 'Gold Contacts' }
   ],
   ssd: [
-    { key: 'type', label: 'Type' }, { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' },
+    { key: 'type', label: 'Type' }, { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' },
     { key: 'capacity', label: 'Capacity' }, { key: 'connector', label: 'Connector' },
     { key: 'contact_pins', label: 'Contact Pins' }, { key: 'label_condition', label: 'Label Condition' }
   ],
   hdd: [
-    { key: 'type', label: 'Type' }, { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' },
+    { key: 'type', label: 'Type' }, { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' },
     { key: 'capacity', label: 'Capacity' }, { key: 'connector', label: 'Connector' },
     { key: 'contact_pins', label: 'Contact Pins' }, { key: 'label_condition', label: 'Label Condition' }
   ],
   aio: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'radiator', label: 'Radiator' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'radiator', label: 'Radiator' },
     { key: 'pump_housing', label: 'Pump Housing' }, { key: 'cold_plate', label: 'Cold Plate' },
     { key: 'tubes', label: 'Tubes' }, { key: 'fans', label: 'Fans' }, { key: 'accessories', label: 'Accessories' }
   ],
   hsf: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'fan', label: 'Fan' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'fan', label: 'Fan' },
     { key: 'mounting_kit', label: 'Mounting Kit' }, { key: 'cold_plate', label: 'Cold Plate' },
     { key: 'fins', label: 'Fins' }, { key: 'accessories', label: 'Accessories' }
   ],
   psu: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'wattage', label: 'Wattage' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'wattage', label: 'Wattage' },
     { key: 'efficiency_rating', label: 'Efficiency Rating' }, { key: 'modularity', label: 'Modularity' },
     { key: 'cables_inclusion', label: 'Cables Inclusion' }, { key: 'housing', label: 'Housing' }, { key: 'fan', label: 'Fan' }
   ],
   cse: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'case_size', label: 'Case Size' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'case_size', label: 'Case Size' },
     { key: 'front_panel', label: 'Front Panel' }, { key: 'glass_panel', label: 'Glass Panel' },
     { key: 'dust_filters', label: 'Dust Filters' }, { key: 'included_fans', label: 'Included Fans' },
     { key: 'front_io', label: 'Front I/O' }, { key: 'accessories', label: 'Accessories' }
   ],
   fan: [
-    { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' }, { key: 'size', label: 'Size' },
+    { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'size', label: 'Size' },
     { key: 'airflow_direction', label: 'Airflow Direction' }, { key: 'position', label: 'Position' },
     { key: 'cable', label: 'Cable' }, { key: 'quantity', label: 'Quantity' }
   ],
   acc: [
-    { key: 'type', label: 'Type' }, { key: 'model', label: 'Model' }, { key: 'serial', label: 'Serial' },
+    { key: 'type', label: 'Type' }, { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' },
     { key: 'description', label: 'Description' }, { key: 'quantity', label: 'Quantity' }
   ]
 };
@@ -269,6 +290,20 @@ const COMPONENT_LABELS = {
   cpu: 'CPU', mbd: 'Motherboard', gpu: 'GPU', ram: 'RAM', ssd: 'SSD / Storage', hdd: 'HDD / Storage',
   aio: 'Water Cooler (AIO)', hsf: 'Air Cooler (HSF)', psu: 'PSU', cse: 'Case', fan: 'Case Fan*', acc: 'Accessories*'
 };
+
+// Maps the order's product category (from categories.name) to an inspection component_type
+const CATEGORY_TO_COMPONENT_TYPE = {
+  CPU: 'cpu', MBD: 'mbd', GPU: 'gpu', RAM: 'ram', SSD: 'ssd', HDD: 'hdd',
+  AIO: 'aio', HSF: 'hsf', PSU: 'psu', CSE: 'cse', FAN: 'fan'
+};
+
+function mapCategoryToComponentType(categoryName) {
+  if (!categoryName) return null;
+  const key = categoryName.trim().toUpperCase();
+  if (CATEGORY_TO_COMPONENT_TYPE[key]) return CATEGORY_TO_COMPONENT_TYPE[key];
+  if (key.startsWith('ACC') || key.startsWith('PER')) return 'acc';
+  return null;
+}
 
 let keySeq = 0;
 
@@ -280,7 +315,8 @@ export default {
       inspection: null,
       items: [],
       componentTypes: [],
-      newItemType: '',
+      orderParts: [],
+      newItemSelection: '',
       loading: true
     };
   },
@@ -290,10 +326,26 @@ export default {
     },
     apiBase() {
       return `/api/order/${this.$route.params.id}/inspection/${this.round}`;
+    },
+    // Order parts whose category maps to a known inspection type
+    mappedOrderParts() {
+      return this.orderParts
+        .map(part => ({ ...part, _componentType: mapCategoryToComponentType(part.category_name) }))
+        .filter(part => part._componentType);
+    },
+    unmappedOrderParts() {
+      return this.orderParts.filter(part => !mapCategoryToComponentType(part.category_name));
+    },
+    // Order parts not yet linked to an existing inspection item
+    availableOrderParts() {
+      const usedOrderDetailIds = new Set(this.items.map(i => i.order_detail_id).filter(id => id != null));
+      return this.mappedOrderParts.filter(part => !usedOrderDetailIds.has(part.id));
     }
   },
   mounted() {
-    this.fetchData();
+    Promise.all([this.fetchData(), this.fetchOrderParts()]).then(() => {
+      this.autoPopulateOrderParts();
+    });
   },
   methods: {
     componentLabel(type) {
@@ -323,6 +375,14 @@ export default {
         this.loading = false;
       }
     },
+    async fetchOrderParts() {
+      try {
+        const res = await axios.get(`/api/orders/orderdetails/${this.$route.params.id}`);
+        this.orderParts = res.data || [];
+      } catch (error) {
+        console.error('Error fetching order parts:', error);
+      }
+    },
     hydrateItem(record) {
       return {
         ...record,
@@ -341,13 +401,17 @@ export default {
         _errors: []
       };
     },
-    addItem() {
-      if (!this.newItemType) return;
-      this.items.push({
+    buildItem(componentType, orderDetailId, prefilledModel) {
+      const fields = this.blankFields(componentType);
+      if (prefilledModel && Object.prototype.hasOwnProperty.call(fields, 'model')) {
+        fields.model = prefilledModel;
+      }
+
+      return {
         id: null,
-        component_type: this.newItemType,
-        fields: this.blankFields(this.newItemType),
-        order_detail_id: null,
+        component_type: componentType,
+        fields,
+        order_detail_id: orderDetailId,
         model_verified: false,
         serial_recorded: false,
         factory_seal: false,
@@ -370,8 +434,35 @@ export default {
         _key: 'item-' + (keySeq++),
         _saving: false,
         _errors: []
+      };
+    },
+    // Auto-add an inspection item for every purchased order part whose category
+    // maps to a known component type, so the inspector doesn't have to pick each one manually.
+    autoPopulateOrderParts() {
+      this.availableOrderParts.forEach(part => {
+        this.items.push(this.buildItem(part._componentType, part.id, part.product_name));
       });
-      this.newItemType = '';
+    },
+    addItem() {
+      if (!this.newItemSelection) return;
+
+      const [kind, value] = this.newItemSelection.split(':');
+      let componentType;
+      let orderDetailId = null;
+      let prefilledModel = '';
+
+      if (kind === 'part') {
+        const part = this.availableOrderParts.find(p => String(p.id) === value);
+        if (!part) return;
+        componentType = part._componentType;
+        orderDetailId = part.id;
+        prefilledModel = part.product_name || '';
+      } else {
+        componentType = value;
+      }
+
+      this.items.push(this.buildItem(componentType, orderDetailId, prefilledModel));
+      this.newItemSelection = '';
     },
     addPhotos(item, field, fileList) {
       const existingKey = field === '_newInspectionPhotos' ? 'inspection_photos'
@@ -391,6 +482,9 @@ export default {
 
       const formData = new FormData();
       formData.append('component_type', item.component_type);
+      if (item.order_detail_id != null) {
+        formData.append('order_detail_id', item.order_detail_id);
+      }
       Object.keys(item.fields).forEach(key => formData.append(`fields[${key}]`, item.fields[key] || ''));
       formData.append('model_verified', item.model_verified ? '1' : '0');
       formData.append('serial_recorded', item.serial_recorded ? '1' : '0');
@@ -493,9 +587,31 @@ export default {
         display: none !important;
     }
 
-    #content-wrapper {
-        margin-left: 0 !important;
+    html, body {
         width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #wrapper,
+    #content-wrapper,
+    #content,
+    #container-wrapper {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 0.5in !important;
+        padding-right: 0.5in !important;
+        box-sizing: border-box !important;
     }
 
     .my-4 {
