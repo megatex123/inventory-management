@@ -807,6 +807,17 @@ class OrderController extends Controller
             });
 
         // Get service/care/craft distribution
+        $craftDistribution = Order::with('craft')
+            ->select('craft_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('craft_id')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'name' => $item->craft->name ?? 'Unknown',
+                    'count' => $item->count
+                ];
+            });
+
         $serveDistribution = Order::with('serve')
             ->select('serve_id', DB::raw('COUNT(*) as count'))
             ->groupBy('serve_id')
@@ -842,6 +853,7 @@ class OrderController extends Controller
             'monthly_stats' => $monthlyStats,
             'top_customers' => $topCustomers,
             'top_products' => $topProducts,
+            'craft_distribution' => $craftDistribution,
             'serve_distribution' => $serveDistribution,
             'care_distribution' => $careDistribution,
             'today_orders' => Order::whereDate('order_date', Carbon::today())->count(),

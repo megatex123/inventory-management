@@ -230,6 +230,40 @@ class CraftInspectionController extends Controller
         ]);
     }
 
+    public function statistics()
+    {
+        $total = CraftInspection::count();
+        $draftCount = CraftInspection::where('status', 'draft')->count();
+        $completedCount = CraftInspection::where('status', 'completed')->count();
+
+        $pending = CraftInspection::with(['order.customer'])
+            ->where('status', 'draft')
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($inspection) {
+                return [
+                    'id' => $inspection->id,
+                    'order_pk' => $inspection->order_id,
+                    'order_code' => optional($inspection->order)->order_id,
+                    'customer' => optional(optional($inspection->order)->customer)->full_name,
+                    'round' => $inspection->round,
+                    'status' => $inspection->status,
+                    'updated_at' => $inspection->updated_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => $total,
+                'draft' => $draftCount,
+                'completed' => $completedCount,
+                'pending' => $pending,
+            ],
+        ]);
+    }
+
     // Enforce: "good" status requires 1-2 photos, otherwise a note is required.
     private function validateGroups(Request $request, array $existingPhotos)
     {

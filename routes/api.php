@@ -94,6 +94,8 @@ Route::get('/orders/statistics', 'OrderController@getStatistics');
 | CRAFT INSPECTION (Phase 2: Pre-Build Inspection)
 |--------------------------------------------------------------------------
 */
+Route::get('/craft-inspections/statistics', 'CraftInspectionController@statistics');
+
 Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
     Route::get('/', 'CraftInspectionController@show');
     Route::post('/items', 'CraftInspectionController@storeItem');
