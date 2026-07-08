@@ -5,17 +5,17 @@ composer install && npm install && npm run dev
 echo "**********************************"
 echo "* Version is " $SOFTWAREVERSION " *"
 echo "**********************************"
-docker compose down
 docker build . \
     -t telur.enigmacode.com.my/enigma/quivitech/inventory-management:latest \
     -t telur.enigmacode.com.my/enigma/quivitech/inventory-management:release \
     -t telur.enigmacode.com.my/enigma/quivitech/inventory-management:${SOFTWAREVERSION}
 echo "#  Pushing Container #"
 docker push telur.enigmacode.com.my/enigma/quivitech/inventory-management -a
-docker image rm telur.enigmacode.com.my/enigma/quivitech/inventory-management:latest \
-    telur.enigmacode.com.my/enigma/quivitech/inventory-management:release \
-    telur.enigmacode.com.my/enigma/quivitech/inventory-management:${SOFTWAREVERSION}
+# docker image rm telur.enigmacode.com.my/enigma/quivitech/inventory-management:latest \
+#     telur.enigmacode.com.my/enigma/quivitech/inventory-management:release \
+#     telur.enigmacode.com.my/enigma/quivitech/inventory-management:${SOFTWAREVERSION}
 echo "# updating docker #"
+docker compose down
 docker compose pull
 docker compose up -d
 echo "# finish #"

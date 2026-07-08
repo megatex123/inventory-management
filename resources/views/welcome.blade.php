@@ -313,11 +313,10 @@
         </li>
 
         <hr class="sidebar-divider">
-        <div class="version" style="padding:10px; font-size: 10px;">Version @{{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solutiontest</div>
-        <div class="version" style="padding:10px; font-size: 10px;">Version {{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solutiontest</div>
-        <div class="version" style="padding:10px; font-size: 10px;">Version {!! env('SOFTWAREVERSION')!!} <br>By Enigma Code Solutiontest</div>
-        <div class="version" style="padding:10px; font-size: 10px;">version <?php echo env('softwareversion')?> <br>by enigma code solutiontest</div>
-        <div class="version" style="padding:10px; font-size: 10px;">Version none <br>By Enigma Code Solutiontest</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version @{{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solution1</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version {{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solution2</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version {!! env('SOFTWAREVERSION')!!} <br>By Enigma Code Solution3</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version <?php echo env('SOFTWAREVERSION')?> <br>By Enigma Code Solution4</div>
       </ul>
 
       <div id="content-wrapper" class="d-flex flex-column">

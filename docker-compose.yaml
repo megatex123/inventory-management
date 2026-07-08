@@ -1,6 +1,6 @@
 services:
   quivitech-im:
-    image: telur.enigmacode.com.my/enigma/quivitech/inventory-management:release
+    image: telur.enigmacode.com.my/enigma/quivitech/inventory-management:0.0.5
     container_name: quivitech-im
     restart: always
     ports:

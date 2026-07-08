@@ -79,7 +79,7 @@
             <p class="text-muted mt-2">
               Build something amazing with QuiviTech
               <span class="version" style="padding:10px; font-size: 10px;">
-                <br>Version 0.0.4 By Enigma Code Solution
+                <br>Version {{ softwareVersion }} By Enigma Code Solution
               </span>
             </p>
           </div>
@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      softwareVersion: process.env.MIX_SOFTWAREVERSION,
       form: {
         email: '',
         password: '',
