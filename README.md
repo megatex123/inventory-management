@@ -15,7 +15,7 @@ Basically, feel free to use and re-use any way you want.
 - Laravel v7.0
 - Vue Js v2.0
 - PHP 7.4
-- NPM 10.9.8 (node v22.23.0)
+- NVM 12
 
 ---
 
