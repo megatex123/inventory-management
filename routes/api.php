@@ -104,6 +104,25 @@ Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| DOCUMENT MANAGEMENT
+|--------------------------------------------------------------------------
+*/
+Route::prefix('documents')->group(function () {
+    Route::get('/', 'DocumentController@index');
+    Route::post('/', 'DocumentController@store');
+    Route::get('/statistics', 'DocumentController@statistics');
+    Route::get('/categories', 'DocumentController@categories');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'DocumentController@show');
+        Route::post('/', 'DocumentController@update');
+        Route::delete('/', 'DocumentController@destroy');
+        Route::get('/download', 'DocumentController@download');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | ADMIN DASHBOARD
 |--------------------------------------------------------------------------
 */

@@ -146,6 +146,11 @@ let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
 //craft inspection
 let craftinspection = require('./components/craft_inspection/index.vue').default;
 
+//document management
+let document_index = require('./components/document/index.vue').default;
+let document_create = require('./components/document/create.vue').default;
+let document_edit = require('./components/document/edit.vue').default;
+
 export const routes=[
 
     {path: '/',component:login,name: 'login',meta: { layout: 'auth' }},
@@ -292,4 +297,9 @@ export const routes=[
 
       // craft inspection
       { path: '/order/:id/inspection/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
+
+      // document management
+      { path: '/documents', component: document_index, name: 'documents', meta: { layout: 'app' } },
+      { path: '/documents/create', component: document_create, name: 'documentcreate', meta: { layout: 'app' } },
+      { path: '/documents/edit/:id', component: document_edit, name: 'documentedit', meta: { layout: 'app' } },
 ]

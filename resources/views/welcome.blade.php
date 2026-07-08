@@ -298,6 +298,20 @@
           </div>
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Documents" aria-expanded="true" aria-controls="Documents">
+            <i class="fas fa-fw fa-folder-open"></i>
+            <span>Documents</span>
+          </a>
+          <div id="Documents" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Document Management</h6>
+              <router-link class="collapse-item" to="/documents">All Documents</router-link>
+              <router-link class="collapse-item" to="/documents/create">Upload Document</router-link>
+            </div>
+          </div>
+        </li>
+
         <hr class="sidebar-divider">
         <div class="version" style="padding:10px; font-size: 10px;">Version 0.0.4 <br>By Enigma Code Solution</div>
       </ul>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateServeTable extends Migration
+class CreateDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,16 @@ class CreateServeTable extends Migration
      */
     public function up()
     {
-        Schema::create('serves', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code');
-            $table->string('colour')->nullable();
-            $table->string('fee')->nullable();
+            $table->string('title');
             $table->text('description')->nullable();
+            $table->string('category')->nullable();
+            $table->string('file_path');
+            $table->string('file_name');
+            $table->string('file_type', 20)->nullable();
+            $table->unsignedBigInteger('file_size')->nullable();
+            $table->string('uploaded_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +35,6 @@ class CreateServeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('serves');
+        Schema::dropIfExists('documents');
     }
 }
