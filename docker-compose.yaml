@@ -3,6 +3,8 @@ services:
     image: telur.enigmacode.com.my/enigma/quivitech/inventory-management:release
     container_name: quivitech-im
     restart: always
+    ports:
+      - 8089:80
     env_file:
       - .env
     networks:
