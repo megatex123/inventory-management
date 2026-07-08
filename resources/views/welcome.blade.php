@@ -313,7 +313,7 @@
         </li>
 
         <hr class="sidebar-divider">
-        <div class="version" style="padding:10px; font-size: 10px;">Version 0.0.4 <br>By Enigma Code Solution</div>
+        <div class="version" style="padding:10px; font-size: 10px;">Version {{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solutiontest</div>
       </ul>
 
       <div id="content-wrapper" class="d-flex flex-column">
