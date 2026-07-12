@@ -47,9 +47,16 @@ class CareDataController extends Controller
                 });
             }
 
-            // Filter by update_membership
-            if ($request->has('update_membership') && $request->update_membership != '') {
-                $query->where('care_data.update_membership', $request->update_membership);
+            // Filter by membership status — auto-derived from remaining QuiviCare
+            // coverage time (order date + care tier period), not a stored flag.
+            // See CareData::getMembershipActiveAttribute().
+            if ($request->has('membership_status') && $request->membership_status != '') {
+                $query->leftJoin('order', 'care_data.order_id', '=', 'order.id')
+                    ->join('care', 'care_data.lkp_care_id', '=', 'care.id')
+                    ->whereRaw(
+                        'DATE_ADD(COALESCE(order.order_date, care_data.created_at), INTERVAL CAST(SUBSTRING_INDEX(care.period, " ", 1) AS UNSIGNED) YEAR) ' .
+                        ($request->membership_status === 'active' ? '>= NOW()' : '< NOW()')
+                    );
             }
 
             // Filter by customer
@@ -467,7 +474,6 @@ class CareDataController extends Controller
                 'lkp_care_id' => 'required|exists:cares,id',
                 'total_part' => 'nullable|numeric|min:0',
                 'price' => 'required|numeric|min:0',
-                'update_membership' => 'boolean',
                 'status' => 'nullable|in:pending,scheduled,in_progress,completed,cancelled,no_show',
                 'appointment_date' => 'nullable|date',
                 'appointment_time' => 'nullable|date_format:H:i',
@@ -519,7 +525,6 @@ class CareDataController extends Controller
                 'lkp_care_id' => $request->lkp_care_id,
                 'total_part' => $request->total_part ?? 0,
                 'price' => $request->price,
-                'update_membership' => $request->update_membership ?? false,
                 'status' => $request->status ?? 'pending',
                 'appointment_date' => $request->appointment_date,
                 'appointment_time' => $request->appointment_time,
@@ -566,7 +571,6 @@ class CareDataController extends Controller
                 // 'lkp_care_id' => 'sometimes|required|exists:cares,id',
                 'total_part' => 'nullable|numeric|min:0',
                 'price' => 'sometimes|required|numeric|min:0',
-                'update_membership' => 'boolean',
                 'status' => 'nullable|in:pending,scheduled,in_progress,completed,cancelled,no_show',
                 'appointment_date' => 'nullable|date',
                 'appointment_time' => 'nullable|date_format:H:i',
@@ -621,9 +625,6 @@ class CareDataController extends Controller
                 'lkp_care_id' => $request->lkp_care_id ?? $careData->lkp_care_id,
                 'total_part' => $request->total_part ?? $careData->total_part,
                 'price' => $request->price ?? $careData->price,
-                'update_membership' => $request->has('update_membership')
-                    ? $request->update_membership
-                    : $careData->update_membership,
                 'status' => $request->status ?? $careData->status,
                 'appointment_date' => $request->appointment_date ?? $careData->appointment_date,
                 'appointment_time' => $request->appointment_time ?? $careData->appointment_time,
@@ -798,11 +799,11 @@ class CareDataController extends Controller
             $totalPrice = $query->sum(DB::raw('CAST(price AS DECIMAL(10,2))'));
             $totalPart = $query->sum(DB::raw('CAST(total_part AS DECIMAL(10,2))'));
 
-            // Group by update_membership
-            $membershipStats = $query->select('update_membership', DB::raw('COUNT(*) as count'))
-                ->groupBy('update_membership')
-                ->get()
-                ->pluck('count', 'update_membership');
+            // Membership is derived from remaining QuiviCare coverage time (order
+            // date + care tier period), not a stored flag — see CareData::getMembershipActiveAttribute().
+            $membershipRecords = (clone $query)->with(['order', 'care'])->get();
+            $withMembership = $membershipRecords->filter->membership_active->count();
+            $withoutMembership = $membershipRecords->count() - $withMembership;
 
             // Status statistics
             $statusStats = CareData::whereNull('deleted_at')
@@ -894,8 +895,8 @@ class CareDataController extends Controller
                 'average_price' => $totalCareData > 0 ? (float) $totalPrice / $totalCareData : 0,
                 'average_part' => $totalCareData > 0 ? (float) $totalPart / $totalCareData : 0,
                 'membership_stats' => [
-                    'with_membership' => $membershipStats->get(1, 0),
-                    'without_membership' => $membershipStats->get(0, 0)
+                    'with_membership' => $withMembership,
+                    'without_membership' => $withoutMembership
                 ],
                 'status_stats' => $statusStats,
                 'monthly_stats' => $monthlyStats,
@@ -943,7 +944,7 @@ class CareDataController extends Controller
             fputcsv($output, [
                 'Care ID', 'Customer Name', 'Customer Email', 'Order Number',
                 'Care Type', 'Price (RM)', 'Parts Value (RM)', 'Total Value (RM)',
-                'Status', 'Appointment Date', 'Update Membership', 'Notes',
+                'Status', 'Appointment Date', 'Membership Active', 'Notes',
                 'Created Date', 'Completed Date'
             ]);
 
@@ -960,7 +961,7 @@ class CareDataController extends Controller
                     number_format($data->price + $data->total_part, 2),
                     ucfirst(str_replace('_', ' ', $data->status)),
                     $data->appointment_date ? Carbon::parse($data->appointment_date)->format('Y-m-d') : '',
-                    $data->update_membership ? 'Yes' : 'No',
+                    $data->membership_active ? 'Yes' : 'No',
                     substr($data->notes ?? '', 0, 100),
                     $data->created_at->format('Y-m-d H:i:s'),
                     $data->completed_at ? Carbon::parse($data->completed_at)->format('Y-m-d H:i:s') : ''

@@ -312,58 +312,9 @@
                 </small>
               </div>
 
-              <!-- Update Membership Switch -->
-              <div class="form-group">
-                <label class="form-label">
-                  <i class="fas fa-user-check text-primary mr-1"></i> Update Membership?
-                </label>
-                <div class="custom-control custom-switch">
-                  <input
-                    type="checkbox"
-                    v-model="form.update_membership"
-                    class="custom-control-input"
-                    id="update_membership"
-                    @change="onMembershipToggle"
-                  >
-                  <label class="custom-control-label" for="update_membership">
-                    {{ form.update_membership ? 'Membership Update Required' : 'No Membership Update' }}
-                  </label>
-                </div>
-                <small class="form-text text-muted">
-                  Check this box if customer membership information needs to be updated
-                </small>
-              </div>
-
-              <!-- Membership Notes (when enabled) -->
-              <div v-if="form.update_membership" class="form-group">
-                <label for="membership_notes" class="form-label">
-                  <i class="fas fa-sticky-note text-primary mr-1"></i> Membership Notes
-                </label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text bg-light">
-                      <i class="fas fa-comment"></i>
-                    </span>
-                  </div>
-                  <textarea
-                    v-model="form.membership_notes"
-                    class="form-control"
-                    id="membership_notes"
-                    placeholder="Enter membership update details or requirements..."
-                    rows="2"
-                    :maxlength="500"
-                  ></textarea>
-                </div>
-                <div class="d-flex justify-content-between mt-1">
-                  <small class="form-text text-muted">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Details about the membership update
-                  </small>
-                  <small class="form-text text-muted" v-if="form.membership_notes">
-                    {{ form.membership_notes.length }}/500 characters
-                  </small>
-                </div>
-              </div>
+              <!-- Membership status is auto-computed (order date + care tier
+                   period) once this record is saved — see the Care Data list
+                   or edit page for the live Active/Expired status. -->
             </div>
           </div>
 
@@ -479,9 +430,7 @@ export default {
         order_id: '',
         lkp_care_id: '',
         total_part: '',
-        price: '',
-        update_membership: false,
-        membership_notes: ''
+        price: ''
       },
       predictedCareId: null,
       selectedCustomer: null,
@@ -561,14 +510,6 @@ export default {
       const price = parseFloat(this.form.price) || 0;
       const parts = parseFloat(this.form.total_part) || 0;
       return (price + parts).toFixed(2);
-    },
-
-    getMembershipBadgeClass() {
-      return this.form.update_membership ? 'badge-success' : 'badge-secondary';
-    },
-
-    getMembershipText() {
-      return this.form.update_membership ? 'Update Required' : 'No Update';
     },
 
     async fetchCustomers() {
@@ -729,12 +670,6 @@ export default {
       this.form.price = suggestedPrice.toFixed(2);
     },
 
-    onMembershipToggle() {
-      if (this.form.update_membership && !this.form.membership_notes) {
-        this.suggestMembershipNotes();
-      }
-    },
-
     calculatePartsValue() {
       if (!this.selectedOrder) {
         Swal.fire({
@@ -782,30 +717,6 @@ export default {
         timer: 1500,
         showConfirmButton: false
       });
-    },
-
-    suggestMembershipNotes() {
-      const suggestions = [
-        "Customer requires membership update due to service tier change. Recommend updating membership details for enhanced benefits.",
-        "Membership update needed to align with new care package. Customer should be informed about upgraded membership privileges.",
-        "Service upgrade requires membership details update. Customer should receive notification about new membership benefits.",
-        "Membership information needs to be updated to match current service level. Customer should be briefed on new member features.",
-        "Update membership records to reflect new care tier assignment. Customer may qualify for additional member discounts.",
-        "Membership details require synchronization with updated service package. Customer should review new membership terms.",
-        "Service tier adjustment necessitates membership update. Customer should be enrolled in appropriate membership level.",
-        "Update membership to align with enhanced care services. Customer benefits include priority support and extended coverage.",
-        "Membership records need revision for service consistency. Customer should acknowledge membership policy updates.",
-        "Service package change requires membership data update. Customer should be informed about membership renewal options."
-      ];
-
-      const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-
-      if (this.selectedCare) {
-        const careContext = `Care Tier: ${this.selectedCare.name}\n\n`;
-        this.form.membership_notes = careContext + randomSuggestion;
-      } else {
-        this.form.membership_notes = randomSuggestion;
-      }
     },
 
     validatePartsValue() {
@@ -866,9 +777,7 @@ export default {
             order_id: '',
             lkp_care_id: '',
             total_part: '',
-            price: '',
-            update_membership: false,
-            membership_notes: ''
+            price: ''
           };
           this.predictedCareId = null;
           this.selectedCustomer = null;
@@ -914,10 +823,6 @@ export default {
         }
       }
 
-      if (this.form.membership_notes && this.form.membership_notes.length > 500) {
-        this.errors.push('Membership notes cannot exceed 500 characters');
-      }
-
       return this.errors.length === 0;
     },
 
@@ -934,9 +839,7 @@ export default {
         order_id: parseInt(this.form.order_id),
         lkp_care_id: parseInt(this.form.lkp_care_id),
         total_part: this.form.total_part ? parseFloat(this.form.total_part) : 0,
-        price: parseFloat(this.form.price),
-        update_membership: this.form.update_membership ? 1 : 0,
-        membership_notes: this.form.membership_notes || null
+        price: parseFloat(this.form.price)
       };
 
       console.log('Submitting data:', formData);
@@ -968,8 +871,7 @@ export default {
             <p><strong>Price:</strong> ${this.formatCurrency(createdData.price)}</p>
             <p><strong>Parts Value:</strong> ${this.formatCurrency(createdData.total_part)}</p>
             <p><strong>Total Package:</strong> ${this.formatCurrency(parseFloat(createdData.price) + parseFloat(createdData.total_part))}</p>
-            <p><strong>Membership Update:</strong> ${createdData.update_membership ? 'Required' : 'Not Required'}</p>
-            ${createdData.membership_notes ? `<p><strong>Membership Notes:</strong><br><span class="font-italic">${createdData.membership_notes}</span></p>` : ''}
+            <p><strong>Membership:</strong> ${createdData.membership_active ? 'Active' : 'Expired'} (${createdData.membership_remaining || 'N/A'})</p>
           </div>
           `,
           icon: 'success',
@@ -1035,9 +937,7 @@ export default {
         order_id: parseInt(this.form.order_id),
         lkp_care_id: parseInt(this.form.lkp_care_id),
         total_part: this.form.total_part ? parseFloat(this.form.total_part) : 0,
-        price: parseFloat(this.form.price),
-        update_membership: this.form.update_membership ? 1 : 0,
-        membership_notes: this.form.membership_notes || null
+        price: parseFloat(this.form.price)
       };
 
       try {
@@ -1058,9 +958,7 @@ export default {
           order_id: '',
           lkp_care_id: '',
           total_part: '',
-          price: '',
-          update_membership: false,
-          membership_notes: ''
+          price: ''
         };
 
         this.selectedOrder = null;

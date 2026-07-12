@@ -1,382 +1,381 @@
 <template>
   <div class="row justify-content-center">
     <div class="col-xl-12 col-lg-12 col-md-12">
-      <div class="card shadow-sm my-5">
-        <div class="card-body p-0">
-          <div class="row">
-            <div class="col-lg-12">
-              <!-- Statistics Section -->
-              <div class="card mb-4">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                  <h5 class="m-0 font-weight-bold">
-                    <i class="fas fa-chart-bar mr-2"></i>Serve PCE Statistics
-                  </h5>
-                  <router-link to="/serve-pce/create" class="btn btn-success btn-sm">
-                    <i class="fas fa-plus-circle mr-1"></i> Create New Record
-                  </router-link>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <!-- Total Records -->
-                    <div class="col-md-3 col-sm-6 mb-4">
-                      <div class="stat-card shadow-sm p-3 border rounded">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h6 class="text-muted mb-1">Total Records</h6>
-                            <h4 class="mb-0 text-primary">{{ statistics.total_records || 0 }}</h4>
-                          </div>
-                          <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white"></i>
-                          </div>
-                        </div>
-                        <small class="text-muted">All time records</small>
-                      </div>
-                    </div>
+      <div class="col-lg-12">
+        <!-- Title -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="mb-0"><i class="fas fa-crown text-primary mr-2"></i>Serve PCE Management</h2>
+          <router-link to="/serve-pce/create" class="btn btn-primary">
+            <i class="fas fa-plus mr-1"></i> Create New Record
+          </router-link>
+        </div>
 
-                    <!-- Active Warranty -->
-                    <div class="col-md-3 col-sm-6 mb-4">
-                      <div class="stat-card shadow-sm p-3 border rounded">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h6 class="text-muted mb-1">Active Warranty</h6>
-                            <h4 class="mb-0 text-success">{{ statistics.active_warranty || 0 }}</h4>
-                          </div>
-                          <div class="icon-circle bg-success">
-                            <i class="fas fa-shield-alt text-white"></i>
-                          </div>
-                        </div>
-                        <small class="text-muted">{{ statistics.active_warranty_percentage || 0 }}% of total</small>
-                      </div>
+        <!-- Statistics Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="m-0 font-weight-bold">
+              <i class="fas fa-chart-bar mr-2"></i>Serve PCE Statistics
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Total Records -->
+              <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card shadow-sm p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="text-muted mb-1">Total Records</h6>
+                      <h4 class="mb-0 text-primary">{{ statistics.total_records || 0 }}</h4>
                     </div>
-
-                    <!-- Expired Warranty -->
-                    <div class="col-md-3 col-sm-6 mb-4">
-                      <div class="stat-card shadow-sm p-3 border rounded">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h6 class="text-muted mb-1">Expired Warranty</h6>
-                            <h4 class="mb-0 text-danger">{{ statistics.expired_warranty || 0 }}</h4>
-                          </div>
-                          <div class="icon-circle bg-danger">
-                            <i class="fas fa-exclamation-triangle text-white"></i>
-                          </div>
-                        </div>
-                        <small class="text-muted">{{ statistics.expired_warranty_percentage || 0 }}% of total</small>
-                      </div>
-                    </div>
-
-                    <!-- Available Promo Codes -->
-                    <div class="col-md-3 col-sm-6 mb-4">
-                      <div class="stat-card shadow-sm p-3 border rounded">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h6 class="text-muted mb-1">Available Promo Codes</h6>
-                            <h4 class="mb-0 text-purple">{{ statistics.available_promo_codes || 0 }}</h4>
-                          </div>
-                          <div class="icon-circle bg-purple">
-                            <i class="fas fa-tags text-white"></i>
-                          </div>
-                        </div>
-                        <small class="text-muted">Not claimed yet</small>
-                      </div>
+                    <div class="icon-circle bg-primary">
+                      <i class="fas fa-file-alt text-white"></i>
                     </div>
                   </div>
+                  <small class="text-muted">All time records</small>
                 </div>
               </div>
 
-              <!-- Filter Section -->
-              <div class="card mb-4">
-                <div class="card-header bg-light">
-                  <h5 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-filter mr-2"></i>Filter Records
-                  </h5>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <!-- Search by QVSE CID -->
-                    <div class="col-md-3 mb-3">
-                      <label class="form-label">Search QVSE CID</label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
-                        </div>
-                        <input
-                          type="text"
-                          class="form-control"
-                          v-model="filters.qvse_cid"
-                          placeholder="Enter QVSE CID..."
-                          @keyup.enter="applyFilters"
-                        >
-                      </div>
+              <!-- Active Warranty -->
+              <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card shadow-sm p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="text-muted mb-1">Active Warranty</h6>
+                      <h4 class="mb-0 text-success">{{ statistics.active_warranty || 0 }}</h4>
                     </div>
-
-                    <!-- Filter by Warranty Status -->
-                    <div class="col-md-3 mb-3">
-                      <label class="form-label">Warranty Status</label>
-                      <select class="form-control" v-model="filters.warranty_status" @change="applyFilters">
-                        <option value="">All Status</option>
-                        <option value="active">Active Warranty</option>
-                        <option value="expired">Expired Warranty</option>
-                      </select>
-                    </div>
-
-                    <!-- Filter by Promo Code Status -->
-                    <div class="col-md-3 mb-3">
-                      <label class="form-label">Promo Code Status</label>
-                      <select class="form-control" v-model="filters.promo_status" @change="applyFilters">
-                        <option value="">All Promo Codes</option>
-                        <option value="available">Available</option>
-                        <option value="claimed">Claimed</option>
-                        <option value="generated">Generated</option>
-                      </select>
-                    </div>
-
-                    <!-- Date From -->
-                    <div class="col-md-3 mb-3">
-                      <label class="form-label">Date From</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        v-model="filters.start_date_from"
-                        @change="applyFilters"
-                      >
+                    <div class="icon-circle bg-success">
+                      <i class="fas fa-shield-alt text-white"></i>
                     </div>
                   </div>
-
-                  <div class="row">
-                    <!-- Date To -->
-                    <div class="col-md-3 mb-3">
-                      <label class="form-label">Date To</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        v-model="filters.start_date_to"
-                        @change="applyFilters"
-                      >
-                    </div>
-
-                    <div class="col-md-9 mb-3 d-flex align-items-end">
-                      <div class="w-100">
-                        <button class="btn btn-secondary mr-2" @click="resetFilters">
-                          <i class="fas fa-redo mr-1"></i> Reset Filters
-                        </button>
-                        <button class="btn btn-primary" @click="applyFilters">
-                          <i class="fas fa-filter mr-1"></i> Apply Filters
-                        </button>
-                        <span class="ml-3 text-muted">
-                          Showing {{ filteredServePces.length }} of {{ servePces.length }} records
-                          <span v-if="hasActiveFilters"> (filtered)</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Active Filters Display -->
-                  <div v-if="hasActiveFilters" class="mt-3 pt-3 border-top">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div>
-                        <span class="text-muted">Active filters:</span>
-                        <div class="d-flex flex-wrap gap-2 mt-1">
-                          <span
-                            v-if="filters.qvse_cid"
-                            class="badge badge-primary"
-                          >
-                            QVSE CID: {{ filters.qvse_cid }}
-                            <button @click="clearFilter('qvse_cid')" class="btn btn-xs btn-link text-white p-0 ml-1">
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </span>
-                          <span
-                            v-if="filters.warranty_status"
-                            class="badge" :class="filters.warranty_status === 'active' ? 'badge-success' : 'badge-danger'"
-                          >
-                            Warranty: {{ filters.warranty_status === 'active' ? 'Active' : 'Expired' }}
-                            <button @click="clearFilter('warranty_status')" class="btn btn-xs btn-link text-white p-0 ml-1">
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </span>
-                          <span
-                            v-if="filters.promo_status"
-                            class="badge badge-purple"
-                          >
-                            Promo: {{ filters.promo_status }}
-                            <button @click="clearFilter('promo_status')" class="btn btn-xs btn-link text-white p-0 ml-1">
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </span>
-                          <span
-                            v-if="filters.start_date_from || filters.start_date_to"
-                            class="badge badge-warning"
-                          >
-                            Date: {{ filters.start_date_from || 'Any' }} to {{ filters.start_date_to || 'Any' }}
-                            <button @click="clearDateFilter" class="btn btn-xs btn-link text-dark p-0 ml-1">
-                              <i class="fas fa-times"></i>
-                            </button>
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        @click="clearAllFilters"
-                        class="btn btn-sm btn-outline-danger"
-                      >
-                        Clear all filters
-                      </button>
-                    </div>
-                  </div>
+                  <small class="text-muted">{{ statistics.active_warranty_percentage || 0 }}% of total</small>
                 </div>
               </div>
 
-              <!-- Records Table -->
-              <div class="card">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h5 class="m-0 font-weight-bold text-primary">Serve PCE Records</h5>
-                  <div>
-                    <button class="btn btn-sm btn-success mr-2" @click="exportToExcel">
-                      <i class="fas fa-file-excel mr-1"></i> Export
-                    </button>
-                    <button class="btn btn-sm btn-info" @click="refreshData">
-                      <i class="fas fa-sync-alt mr-1"></i> Refresh
-                    </button>
+              <!-- Expired Warranty -->
+              <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card shadow-sm p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="text-muted mb-1">Expired Warranty</h6>
+                      <h4 class="mb-0 text-danger">{{ statistics.expired_warranty || 0 }}</h4>
+                    </div>
+                    <div class="icon-circle bg-danger">
+                      <i class="fas fa-exclamation-triangle text-white"></i>
+                    </div>
                   </div>
+                  <small class="text-muted">{{ statistics.expired_warranty_percentage || 0 }}% of total</small>
                 </div>
+              </div>
 
-                <!-- Loading State -->
-                <div v-if="loading" class="text-center py-5">
-                  <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
+              <!-- Available Promo Codes -->
+              <div class="col-md-3 col-sm-6 mb-4">
+                <div class="stat-card shadow-sm p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="text-muted mb-1">Available Promo Codes</h6>
+                      <h4 class="mb-0 text-purple">{{ statistics.available_promo_codes || 0 }}</h4>
+                    </div>
+                    <div class="icon-circle bg-purple">
+                      <i class="fas fa-tags text-white"></i>
+                    </div>
                   </div>
-                  <p class="mt-2 text-muted">Loading records...</p>
-                </div>
-
-                <!-- Empty State -->
-                <div v-else-if="servePces.length === 0" class="text-center py-5">
-                  <i class="fas fa-database fa-4x text-muted mb-3"></i>
-                  <h4>No Records Found</h4>
-                  <p class="text-muted">The serve_pce table is empty. Create your first record.</p>
-                  <router-link to="/serve-pce/create" class="btn btn-primary mt-2">
-                    <i class="fas fa-plus-circle mr-1"></i> Create First Record
-                  </router-link>
-                </div>
-
-                <!-- Data Table -->
-                <div v-else class="table-responsive">
-                  <table class="table align-items-center table-flush">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>QVSE CID</th>
-                        <th>Start Date</th>
-                        <th>3 Year Warranty</th>
-                        <th>Unlimited Troubleshooting</th>
-                        <th>50% Troubleshooting</th>
-                        <th>Cable Management</th>
-                        <th>Annual Dust Cleaning</th>
-                        <th>Promo Code</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="item in paginatedServePces" :key="item.id">
-                        <td>
-                          <strong>{{ item.qvse_cid || 'N/A' }}</strong>
-                        </td>
-                        <td>
-                          {{ formatDate(item.date_start) }}
-                        </td>
-                        <td>
-                          <span :class="getWarrantyStatus(item.date_start).class">
-                            {{ getWarrantyStatus(item.date_start).text }}
-                          </span>
-                        </td>
-                        <td>
-                          <span :class="getUnlimitedTroubleshootingStatus(item.date_start).class">
-                            {{ getUnlimitedTroubleshootingStatus(item.date_start).text }}
-                          </span>
-                        </td>
-                        <td>
-                          <span :class="getTroubleshootingStatus(item.date_start).class">
-                            {{ getTroubleshootingStatus(item.date_start).text }}
-                          </span>
-                        </td>
-                        <td>
-                          <span :class="getCableManagementStatus(item).class">
-                            {{ getCableManagementStatus(item).text }}
-                          </span>
-                        </td>
-                        <td>
-                          <span :class="getAnnualDustCleaningStatus(item).class">
-                            {{ getAnnualDustCleaningStatus(item).text }}
-                          </span>
-                        </td>
-                        <td>
-                          <div v-if="item.promo_code">
-                            <span class="badge badge-purple mb-1 d-block">
-                              {{ item.promo_code }}
-                            </span>
-                            <small class="text-muted">
-                              {{ item.promo_claim ? 'Claimed' : item.generate_code ? 'Generated' : 'Not Generated' }}
-                            </small>
-                          </div>
-                          <span v-else class="text-muted">-</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <router-link
-                              :to="`/serve-pce/edit/${item.id}`"
-                              class="btn btn-sm btn-primary"
-                              title="Edit"
-                            >
-                              <i class="fas fa-edit"></i>
-                            </router-link>
-                            <button
-                              class="btn btn-sm btn-info ml-1"
-                              @click="showQuickInfo(item)"
-                              title="Quick Info"
-                            >
-                              <i class="fas fa-info-circle"></i>
-                            </button>
-                            <button
-                              class="btn btn-sm btn-danger ml-1"
-                              @click="deleteItem(item.id)"
-                              title="Delete"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="card-footer" v-if="!loading && servePces.length > 0 && totalPages > 1">
-                  <nav aria-label="Record navigation">
-                    <ul class="pagination justify-content-center mb-0">
-                      <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                        <button class="page-link" @click="prevPage">
-                          <i class="fas fa-chevron-left"></i>
-                        </button>
-                      </li>
-                      <li
-                        class="page-item"
-                        v-for="page in totalPages"
-                        :key="page"
-                        :class="{ active: page === currentPage }"
-                      >
-                        <button class="page-link" @click="goToPage(page)">
-                          {{ page }}
-                        </button>
-                      </li>
-                      <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                        <button class="page-link" @click="nextPage">
-                          <i class="fas fa-chevron-right"></i>
-                        </button>
-                      </li>
-                    </ul>
-                  </nav>
+                  <small class="text-muted">Not claimed yet</small>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-light">
+            <h5 class="m-0 font-weight-bold text-primary">
+              <i class="fas fa-filter mr-2"></i>Filter Records
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Search by QVSE CID -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Search QVSE CID</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="filters.qvse_cid"
+                    placeholder="Enter QVSE CID..."
+                    @keyup.enter="applyFilters"
+                  >
+                </div>
+              </div>
+
+              <!-- Filter by Warranty Status -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Warranty Status</label>
+                <select class="form-control" v-model="filters.warranty_status" @change="applyFilters">
+                  <option value="">All Status</option>
+                  <option value="active">Active Warranty</option>
+                  <option value="expired">Expired Warranty</option>
+                </select>
+              </div>
+
+              <!-- Filter by Promo Code Status -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Promo Code Status</label>
+                <select class="form-control" v-model="filters.promo_status" @change="applyFilters">
+                  <option value="">All Promo Codes</option>
+                  <option value="available">Available</option>
+                  <option value="claimed">Claimed</option>
+                  <option value="generated">Generated</option>
+                </select>
+              </div>
+
+              <!-- Date From -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Date From</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  v-model="filters.start_date_from"
+                  @change="applyFilters"
+                >
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Date To -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Date To</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  v-model="filters.start_date_to"
+                  @change="applyFilters"
+                >
+              </div>
+
+              <div class="col-md-9 mb-3 d-flex align-items-end">
+                <div class="w-100">
+                  <button class="btn btn-secondary mr-2" @click="resetFilters">
+                    <i class="fas fa-redo mr-1"></i> Reset Filters
+                  </button>
+                  <button class="btn btn-primary" @click="applyFilters">
+                    <i class="fas fa-filter mr-1"></i> Apply Filters
+                  </button>
+                  <span class="ml-3 text-muted">
+                    Showing {{ filteredServePces.length }} of {{ servePces.length }} records
+                    <span v-if="hasActiveFilters"> (filtered)</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div v-if="hasActiveFilters" class="mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="text-muted">Active filters:</span>
+                  <div class="d-flex flex-wrap gap-2 mt-1">
+                    <span
+                      v-if="filters.qvse_cid"
+                      class="badge badge-primary"
+                    >
+                      QVSE CID: {{ filters.qvse_cid }}
+                      <button @click="clearFilter('qvse_cid')" class="btn btn-xs btn-link text-white p-0 ml-1">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                    <span
+                      v-if="filters.warranty_status"
+                      class="badge" :class="filters.warranty_status === 'active' ? 'badge-success' : 'badge-danger'"
+                    >
+                      Warranty: {{ filters.warranty_status === 'active' ? 'Active' : 'Expired' }}
+                      <button @click="clearFilter('warranty_status')" class="btn btn-xs btn-link text-white p-0 ml-1">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                    <span
+                      v-if="filters.promo_status"
+                      class="badge badge-purple"
+                    >
+                      Promo: {{ filters.promo_status }}
+                      <button @click="clearFilter('promo_status')" class="btn btn-xs btn-link text-white p-0 ml-1">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                    <span
+                      v-if="filters.start_date_from || filters.start_date_to"
+                      class="badge badge-warning"
+                    >
+                      Date: {{ filters.start_date_from || 'Any' }} to {{ filters.start_date_to || 'Any' }}
+                      <button @click="clearDateFilter" class="btn btn-xs btn-link text-dark p-0 ml-1">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+                <button
+                  @click="clearAllFilters"
+                  class="btn btn-sm btn-outline-danger"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Records Table -->
+        <div class="card">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h5 class="m-0 font-weight-bold text-primary">Serve PCE Records</h5>
+            <div>
+              <button class="btn btn-sm btn-success mr-2" @click="exportToExcel">
+                <i class="fas fa-file-excel mr-1"></i> Export
+              </button>
+              <button class="btn btn-sm btn-info" @click="refreshData">
+                <i class="fas fa-sync-alt mr-1"></i> Refresh
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading records...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="servePces.length === 0" class="text-center py-5">
+            <i class="fas fa-database fa-4x text-muted mb-3"></i>
+            <h4>No Records Found</h4>
+            <p class="text-muted">The serve_pce table is empty. Create your first record.</p>
+            <router-link to="/serve-pce/create" class="btn btn-primary mt-2">
+              <i class="fas fa-plus-circle mr-1"></i> Create First Record
+            </router-link>
+          </div>
+
+          <!-- Data Table -->
+          <div v-else class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th>QVSE CID</th>
+                  <th>Start Date</th>
+                  <th>3 Year Warranty</th>
+                  <th>Unlimited Troubleshooting</th>
+                  <th>50% Troubleshooting</th>
+                  <th>Cable Management</th>
+                  <th>Annual Dust Cleaning</th>
+                  <th>Promo Code</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in paginatedServePces" :key="item.id">
+                  <td>
+                    <strong>{{ item.qvse_cid || 'N/A' }}</strong>
+                  </td>
+                  <td>
+                    {{ formatDate(item.date_start) }}
+                  </td>
+                  <td>
+                    <span :class="getWarrantyStatus(item.date_start).class">
+                      {{ getWarrantyStatus(item.date_start).text }}
+                    </span>
+                  </td>
+                  <td>
+                    <span :class="getUnlimitedTroubleshootingStatus(item.date_start).class">
+                      {{ getUnlimitedTroubleshootingStatus(item.date_start).text }}
+                    </span>
+                  </td>
+                  <td>
+                    <span :class="getTroubleshootingStatus(item.date_start).class">
+                      {{ getTroubleshootingStatus(item.date_start).text }}
+                    </span>
+                  </td>
+                  <td>
+                    <span :class="getCableManagementStatus(item).class">
+                      {{ getCableManagementStatus(item).text }}
+                    </span>
+                  </td>
+                  <td>
+                    <span :class="getAnnualDustCleaningStatus(item).class">
+                      {{ getAnnualDustCleaningStatus(item).text }}
+                    </span>
+                  </td>
+                  <td>
+                    <div v-if="item.promo_code">
+                      <span class="badge badge-purple mb-1 d-block">
+                        {{ item.promo_code }}
+                      </span>
+                      <small class="text-muted">
+                        {{ item.promo_claim ? 'Claimed' : item.generate_code ? 'Generated' : 'Not Generated' }}
+                      </small>
+                    </div>
+                    <span v-else class="text-muted">-</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <router-link
+                        :to="`/serve-pce/edit/${item.id}`"
+                        class="btn btn-sm btn-primary"
+                        title="Edit"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </router-link>
+                      <button
+                        class="btn btn-sm btn-info ml-1"
+                        @click="showQuickInfo(item)"
+                        title="Quick Info"
+                      >
+                        <i class="fas fa-info-circle"></i>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-danger ml-1"
+                        @click="deleteItem(item.id)"
+                        title="Delete"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="card-footer" v-if="!loading && servePces.length > 0 && totalPages > 1">
+            <nav aria-label="Record navigation">
+              <ul class="pagination justify-content-center mb-0">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                  <button class="page-link" @click="prevPage">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                </li>
+                <li
+                  class="page-item"
+                  v-for="page in totalPages"
+                  :key="page"
+                  :class="{ active: page === currentPage }"
+                >
+                  <button class="page-link" @click="goToPage(page)">
+                    {{ page }}
+                  </button>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                  <button class="page-link" @click="nextPage">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
@@ -793,50 +792,51 @@ export default {
       }
     },
 
-    // Calculate cable management status
-    getCableManagementStatus(item) {
-      if (!item.cable_management) {
-        return { status: 'no', text: 'No', class: 'badge badge-secondary' }
-      }
-
-      // Check if within 1 year
-      if (item.cable_management_date) {
-        const serviceDate = new Date(item.cable_management_date)
-        const currentDate = new Date()
-        const oneYearLater = new Date(serviceDate)
-        oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
-
-        if (currentDate > oneYearLater) {
-          return { status: 'expired', text: 'Expired', class: 'badge badge-danger' }
-        } else {
-          return { status: 'active', text: 'Active', class: 'badge badge-success' }
-        }
-      }
-
-      return { status: 'unknown', text: 'Unknown', class: 'badge badge-warning' }
+    // Whether a claim flag is "used" — DB stores tinyint 0/1, but some paths
+    // pass through 'Yes'/'No' strings or booleans, so check all of them.
+    isClaimUsed(value) {
+      return value === 1 || value === '1' || value === true || value === 'Yes'
     },
 
-    // Calculate annual dust cleaning status
+    // Calculate cable management status from the 4 real Premium Cable
+    // Management claim flags (cable_management_claim1..4), not the
+    // nonexistent cable_management_date field this used to check.
+    getCableManagementStatus(item) {
+      const claims = [
+        item.cable_management_claim1,
+        item.cable_management_claim2,
+        item.cable_management_claim3,
+        item.cable_management_claim4
+      ]
+      const claimedCount = claims.filter(c => this.isClaimUsed(c)).length
+
+      if (claimedCount === 0) {
+        return { status: 'available', text: 'Available', class: 'badge badge-success' }
+      }
+      if (claimedCount === claims.length) {
+        return { status: 'fully_claimed', text: 'Fully Claimed', class: 'badge badge-secondary' }
+      }
+      return { status: 'partial', text: `${claimedCount}/${claims.length} Claimed`, class: 'badge badge-warning' }
+    },
+
+    // Calculate annual dust cleaning status from the 3 real Free Annual Deep
+    // Cleaning claim flags (annual_dust_cleaning_year1..3), not the
+    // nonexistent last_dust_cleaning_date field this used to check.
     getAnnualDustCleaningStatus(item) {
-      if (!item.annual_dust_cleaning) {
-        return { status: 'no', text: 'No', class: 'badge badge-secondary' }
+      const claims = [
+        item.annual_dust_cleaning_year1,
+        item.annual_dust_cleaning_year2,
+        item.annual_dust_cleaning_year3
+      ]
+      const claimedCount = claims.filter(c => this.isClaimUsed(c)).length
+
+      if (claimedCount === 0) {
+        return { status: 'available', text: 'Available', class: 'badge badge-success' }
       }
-
-      // Check if within 1 year of last cleaning
-      if (item.last_dust_cleaning_date) {
-        const lastCleaningDate = new Date(item.last_dust_cleaning_date)
-        const currentDate = new Date()
-        const nextCleaningDate = new Date(lastCleaningDate)
-        nextCleaningDate.setFullYear(nextCleaningDate.getFullYear() + 1)
-
-        if (currentDate > nextCleaningDate) {
-          return { status: 'due', text: 'Due', class: 'badge badge-warning' }
-        } else {
-          return { status: 'active', text: 'Active', class: 'badge badge-success' }
-        }
+      if (claimedCount === claims.length) {
+        return { status: 'fully_claimed', text: 'Fully Claimed', class: 'badge badge-secondary' }
       }
-
-      return { status: 'unknown', text: 'Unknown', class: 'badge badge-warning' }
+      return { status: 'partial', text: `${claimedCount}/${claims.length} Claimed`, class: 'badge badge-warning' }
     },
 
     // Export to Excel

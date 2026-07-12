@@ -164,11 +164,11 @@ class ServeDataController extends Controller
         try {
             DB::beginTransaction();
 
-            // Generate serve ID - Change from QV-SRV- to QVSE-
+            // Generate serve ID — QV-SRV- per the global ID registry (Serve Tier prefix)
             $totalServes = ServeData::count();
             $nextId = $totalServes + 1;
             $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $serveId = "QV-SERV-{$serveNumber}"; // Changed from QV-SRV-
+            $serveId = "QV-SRV-{$serveNumber}";
 
             // Get serve type for QVSE CID generation
             $serveType = Serves::find($request->lkp_serve_id);

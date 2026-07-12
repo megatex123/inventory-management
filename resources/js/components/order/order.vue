@@ -127,7 +127,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for='data in todaysOrders' :key="data.id" >
+                                            <tr v-for='data in filteredOrders' :key="data.id" >
                                                 <td>
                                                     <span class="badge badge-light font-weight-bold">{{ data.order_id }}</span>
                                                 </td>
@@ -211,7 +211,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr v-if="todaysOrders.length === 0">
+                                            <tr v-if="filteredOrders.length === 0">
                                                 <td colspan="9" class="text-center py-4">
                                                     <div class="empty-state">
                                                         <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
@@ -254,23 +254,12 @@ export default {
             });
         },
 
-        // Get only today's orders
-        todaysOrders() {
-            const today = new Date();
-            const todayString = today.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+        // Backend already scopes /api/orders/today to order_date = Carbon::today()
+        // (same definition getStatistics() uses for the All Orders page's "Today's
+        // Summary" card) — only the free-text search is applied client-side here.
+        filteredOrders() {
+            let filtered = this.orders;
 
-            let filtered = this.orders.filter(order => {
-                if (!order.created_at) return false;
-
-                // Convert order date to YYYY-MM-DD format
-                const orderDate = new Date(order.created_at);
-                const orderDateString = orderDate.toISOString().split('T')[0];
-
-                // Check if order is from today
-                return orderDateString === todayString;
-            });
-
-            // Apply search filter if searchItem exists
             if (this.searchItem) {
                 const search = this.searchItem.toLowerCase();
                 filtered = filtered.filter(order => {
@@ -290,23 +279,23 @@ export default {
         },
 
         totalOrders() {
-            return this.todaysOrders.length;
+            return this.filteredOrders.length;
         },
         approvedOrders() {
-            return this.todaysOrders.filter(order => order.approve == 1).length;
+            return this.filteredOrders.filter(order => order.approve == 1).length;
         },
         draftOrders() {
-            return this.todaysOrders.filter(order =>
+            return this.filteredOrders.filter(order =>
                 order.approve === null ||
                 order.approve === '' ||
                 order.approve === undefined
             ).length;
         },
         rejectedOrders() {
-            return this.todaysOrders.filter(order => order.approve == 0).length;
+            return this.filteredOrders.filter(order => order.approve == 0).length;
         },
         totalRevenue() {
-            return this.todaysOrders.reduce((total, order) => {
+            return this.filteredOrders.reduce((total, order) => {
                 return total + Number(order.total || 0);
             }, 0);
         },
@@ -318,7 +307,7 @@ export default {
     methods: {
         getOrders() {
             this.loading = true;
-            axios.get('/api/orders')
+            axios.get('/api/orders/today')
             .then(res => {
                 this.orders = res.data;
                 this.loading = false;
@@ -351,24 +340,28 @@ export default {
             });
         },
         formatDate(date) {
+            // UTC-based, matching allorder.vue's formatDate — avoids re-interpreting
+            // the server's naive datetime string in the browser's local timezone.
             if (!date) return '';
             const d = new Date(date);
-            return d.toLocaleDateString('en-MY', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            });
+            const day = String(d.getUTCDate()).padStart(2, '0');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = monthNames[d.getUTCMonth()];
+            const year = d.getUTCFullYear();
+            return `${parseInt(day)} ${month} ${year}`;
         },
         formatDateTime(date) {
             if (!date) return '';
             const d = new Date(date);
-            return d.toLocaleDateString('en-MY', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            const day = String(d.getUTCDate()).padStart(2, '0');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = monthNames[d.getUTCMonth()];
+            const year = d.getUTCFullYear();
+            const hours = String(d.getUTCHours()).padStart(2, '0');
+            const minutes = String(d.getUTCMinutes()).padStart(2, '0');
+            return `${parseInt(day)} ${month} ${year}, ${hours}:${minutes}`;
         },
         isLightColor(hex) {
             if (!hex) return false;

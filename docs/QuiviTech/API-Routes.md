@@ -36,14 +36,33 @@ Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`up
 - `prefix: serve-mps` → `ServeMpsController`: index/store/statistics + `{id}` CRUD + search + restore
 - `prefix: serve-beks` → `ServeBekController`: CRUD + restore + `getByServeDataId` + `makeClaim`
 
+## Craft inspection (pre-build QC, "Phase 2")
+- `GET /craft-inspections/statistics` — `CraftInspectionController@statistics`
+- `prefix: order/{orderId}/inspection/{round}` → `CraftInspectionController`: `show` (GET `/`), `storeItem`/`updateItem`/`destroyItem` (per-component checklist items), `complete` (POST `/complete`)
+
+## Customer progress management (2026-07-11 — replaced "Document management")
+- `prefix: customer-progress` → `CustomerProgressController`: `index`, `store`, `statistics`, then `{id}` sub-group: `show`, `update` (POST, not PUT — multipart optional file re-upload), `destroy`, `download`
+- No more `categories` endpoint (that was Document's free-text category list) — replaced by a fixed `status` enum (`pending`/`in_progress`/`completed`/`on_hold`).
+
+## Raw inventory / master SKU (built 2026-07-02, migrations backfilled 2026-07-08 — see [[Work-In-Progress]])
+- `prefix: master-sku` → `MasterSkuController`: index/store/statistics/search + `{id}` show/edit/update/destroy/`status` (PATCH)
+- `prefix: inv-care` → `InvCareController`: index/store/statistics/search + `{id}` show/edit/update/destroy
+- `prefix: inv-excl-serve` → `InvExclServeController`: index/store/statistics/search + `{id}` show/edit/update/destroy
+
+## Inventory movement (built 2026-07-11, see [[Domain-Models]] for the rebuilt `inv_move` schema)
+- `prefix: inventory-movements` → `InventoryMovementController`: `index`, `store`, `statistics`, then `{id}` sub-group: `show`, `update` (PUT/PATCH), `destroy`
+- `store`/`update` accept `sku_code`/`destination` as plain strings, not IDs — the controller resolves or auto-creates the matching `MasterSku`/`Destination` row (`findOrCreateMasterSku`/`findOrCreateDestination`)
+- `prefix: destinations` → `DestinationController`: `index`, `store`, `update`, `destroy` — no dedicated UI page, only consumed by the movement form's datalist and by the auto-create path above
+
 ## Diagnostics
 - `GET /test-connection` — health check, returns timestamp/version
 - `Route::fallback` — JSON 404 with a hint list of serve-mps endpoints (debug aid left in from that module's build-out)
 
 ## Observations
 - The serve/care/warranty controllers are the most recently developed (see route-comment cruft: "Corrected - no duplicate routes", "Updated to match Vue component", "Removed duplicate, corrected") — treat these as the actively-evolving part of the API surface.
-- No `product-raw`, `master-sku`, or `inv-move` routes exist yet, even though the models do — see [[Work-In-Progress]].
+- `master-sku`, `inv-care`, `inv-excl-serve` routes exist and are wired to Vue (see [[Frontend-Components]]); their underlying tables were created directly in the DB without migration files until 2026-07-08 — see [[Domain-Models]] for the audit. `product-raw` and `inv-move` still have models and DB tables but no routes/controller — intentionally out of scope, see [[Work-In-Progress]].
 
 ## Related
 - [[Domain-Models]]
 - [[Architecture]]
+- [[Dev-Setup]]

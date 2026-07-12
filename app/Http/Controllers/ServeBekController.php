@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServeBek;
 use App\Models\ServeData;
+use App\Models\Serves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +61,67 @@ class ServeBekController extends Controller
                 'success' => false,
                 'message' => 'Failed to retrieve ServeBek records.',
                 'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * Statistics for the Serve BEK dashboard — same shape/style as
+     * ServeMpsController::getStatistics(), adapted for BEK's single-claim
+     * perks (no promo code perk on Essential Kit, so the 4th card is
+     * "available claims" instead of "available promo codes").
+     */
+    public function statistics()
+    {
+        try {
+            $total = ServeBek::active()->count();
+
+            $activeWarranty = ServeBek::active()
+                ->where('one_year_assembly_warranty', true)
+                ->where('date_start', '>=', now()->subYear()->format('Y-m-d'))
+                ->count();
+            $expiredWarranty = $total - $activeWarranty;
+
+            $activeWarrantyPercentage = $total > 0 ? round(($activeWarranty / $total) * 100, 1) : 0;
+            $expiredWarrantyPercentage = $total > 0 ? round(($expiredWarranty / $total) * 100, 1) : 0;
+
+            $availableTroubleshootingClaims = ServeBek::active()
+                ->where('one_free_onsite_troubleshooting_first_3_months', true)
+                ->where('one_free_onsite_troubleshooting_claim_1', false)
+                ->count();
+
+            $availableCableManagementClaims = ServeBek::active()
+                ->where('one_basic_cable_management_3_months', true)
+                ->where('one_basic_cable_management_claim_1', false)
+                ->count();
+
+            $availableDustCleaningClaims = ServeBek::active()
+                ->where('fifty_percent_off_dust_cleaning_first_year', true)
+                ->where('fifty_percent_off_dust_cleaning_claim_1', false)
+                ->count();
+
+            $availableClaims = $availableTroubleshootingClaims + $availableCableManagementClaims + $availableDustCleaningClaims;
+
+            return response()->json([
+                'success' => true,
+                'statistics' => [
+                    'total_records' => $total,
+                    'active_warranty' => $activeWarranty,
+                    'expired_warranty' => $expiredWarranty,
+                    'active_warranty_percentage' => $activeWarrantyPercentage,
+                    'expired_warranty_percentage' => $expiredWarrantyPercentage,
+                    'available_troubleshooting_claims' => $availableTroubleshootingClaims,
+                    'available_cable_management_claims' => $availableCableManagementClaims,
+                    'available_dust_cleaning_claims' => $availableDustCleaningClaims,
+                    'available_claims' => $availableClaims,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('ServeBekController@statistics error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve statistics.',
+                'statistics' => []
             ], 500);
         }
     }
@@ -331,6 +393,62 @@ class ServeBekController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve ServeBek record.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * Resolve (or create) the ServeBek record for a given order, the same
+     * way Craft Inspection resolves its record from an order id — lets the
+     * order list jump straight to the right record instead of making staff
+     * search for the QVSE CID manually. Only valid for Essential Kit orders
+     * (lkp_serve_id = 1); the ServeData row itself is created by
+     * OrderController::updateserve() when the order is approved, so this
+     * 404s if the order hasn't been approved yet.
+     */
+    public function getByOrder($orderId)
+    {
+        try {
+            $serveData = ServeData::withTrashed()->where('order_id', $orderId)->first();
+
+            if (!$serveData) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order has no QuiviServe record yet — approve the order first.'
+                ], 404);
+            }
+
+            if ((int) $serveData->lkp_serve_id !== 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order is not on the Essential Kit (BEK) tier.'
+                ], 422);
+            }
+
+            $serveBek = ServeBek::byServeData($serveData->id)->active()->first();
+
+            if (!$serveBek) {
+                $serveType = Serves::find($serveData->lkp_serve_id);
+                $serveTypeCode = $serveType ? strtoupper($serveType->code) : 'BEK';
+                $serveBekNumber = str_pad(ServeBek::count() + 1, 4, '0', STR_PAD_LEFT);
+
+                $serveBek = ServeBek::create([
+                    'serve_bek_id' => "{$serveTypeCode}-{$serveBekNumber}",
+                    'serve_data_id' => $serveData->id,
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $this->formatServeBekItem($serveBek->load('serveData')),
+                'message' => 'ServeBek record resolved successfully.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('ServeBekController@getByOrder error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resolve ServeBek record.',
                 'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }

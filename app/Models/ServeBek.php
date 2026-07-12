@@ -12,6 +12,7 @@ class ServeBek extends Model
     protected $table = 'serve_bek';
 
     protected $fillable = [
+        'serve_bek_id',
         'serve_data_id',
         'date_start',
         'one_year_assembly_warranty',

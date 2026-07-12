@@ -407,25 +407,23 @@ class ProductWarrantyController extends Controller
     public function generateSerialNo()
     {
         try {
-            $prefix = 'PW-';
-            $year = date('Y');
-            $month = date('m');
+            // QV-WRTY-XXXXXX per the "Normalize ID" spec (generic warranty entity) —
+            // continuously incrementing, no date component (unlike the old PW-YYYYMM#### scheme).
+            $prefix = 'QV-WRTY-';
 
-            // Get the last record for current year/month
-            $lastRecord = ProductWarranty::where('serial_no', 'like', $prefix . $year . $month . '%')
+            $lastRecord = ProductWarranty::where('serial_no', 'like', $prefix . '%')
                 ->orderBy('id', 'desc')
                 ->first();
 
             if ($lastRecord) {
-                // Extract the sequence number
-                preg_match('/' . $prefix . $year . $month . '(\d+)/', $lastRecord->serial_no, $matches);
+                preg_match('/' . preg_quote($prefix, '/') . '(\d+)/', $lastRecord->serial_no, $matches);
                 $lastNumber = isset($matches[1]) ? intval($matches[1]) : 0;
-                $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+                $nextNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
             } else {
-                $nextNumber = '0001';
+                $nextNumber = '000001';
             }
 
-            $serialNo = $prefix . $year . $month . $nextNumber;
+            $serialNo = $prefix . $nextNumber;
 
             return response()->json([
                 'success' => true,
@@ -433,8 +431,6 @@ class ProductWarrantyController extends Controller
                     'serial_no' => $serialNo,
                     'serialNo' => $serialNo,
                     'prefix' => $prefix,
-                    'year' => $year,
-                    'month' => $month,
                     'sequence' => $nextNumber
                 ],
                 'message' => 'Serial number generated successfully'

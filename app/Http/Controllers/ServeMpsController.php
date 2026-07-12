@@ -306,6 +306,59 @@ class ServeMpsController extends Controller
     }
 
     /**
+     * Resolve (or create) the ServeMps record for a given order — same
+     * order-row quick-launch pattern as Craft Inspection, and ServeBek's
+     * getByOrder(). Only valid for Prime Series orders (lkp_serve_id = 2);
+     * the ServeData row itself is created by OrderController::updateserve()
+     * on order approval, so this 404s if the order isn't approved yet.
+     */
+    public function getByOrder($orderId)
+    {
+        try {
+            $serveData = ServeData::withTrashed()->where('order_id', $orderId)->first();
+
+            if (!$serveData) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order has no QuiviServe record yet — approve the order first.'
+                ], 404);
+            }
+
+            if ((int) $serveData->lkp_serve_id !== 2) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order is not on the Prime Series (MPS) tier.'
+                ], 422);
+            }
+
+            $serveMps = ServeMps::withTrashed()->where('serve_data_id', $serveData->id)->first();
+
+            if (!$serveMps) {
+                // serve_mps_id is NOT NULL in the DB — must be set on create.
+                $serveType = Serves::find($serveData->lkp_serve_id);
+                $serveTypeCode = $serveType ? strtoupper($serveType->code) : 'MPS';
+                $serveMpsNumber = str_pad(ServeMps::count() + 1, 4, '0', STR_PAD_LEFT);
+
+                $serveMps = ServeMps::create([
+                    'serve_mps_id' => "{$serveTypeCode}-{$serveMpsNumber}",
+                    'serve_data_id' => $serveData->id,
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => ['id' => $serveMps->id, 'serve_data_id' => $serveMps->serve_data_id],
+                'message' => 'ServeMps record resolved successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resolve ServeMps record: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

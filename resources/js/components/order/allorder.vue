@@ -195,12 +195,16 @@
                                                     <span
                                                         v-if="order.serve"
                                                         class="badge serve-badge"
+                                                        :class="{ 'serve-badge-clickable': canOpenServeRecord(order) }"
                                                         :style="{
                                                             backgroundColor: order.serve.colour,
                                                             color: isLightColor(order.serve.colour) ? '#000' : '#fff'
                                                         }"
+                                                        :title="canOpenServeRecord(order) ? `Open ${order.serve.name} record` : null"
+                                                        @click="canOpenServeRecord(order) && goToServeRecord(order, serveTierFor(order))"
                                                     >
                                                         {{ order.serve.name }}
+                                                        <i v-if="canOpenServeRecord(order)" class="fas fa-arrow-right ml-1"></i>
                                                     </span>
                                                     <span v-else class="badge badge-secondary">N/A</span>
                                                 </td>
@@ -578,6 +582,38 @@ export default {
             this.currentPage = 1;
             this.getOrders();
         },
+        canOpenServeRecord(order) {
+            return order.approve == 1 && [1, 2, 3].includes(Number(order.serve_id));
+        },
+
+        serveTierFor(order) {
+            return { 1: 'bek', 2: 'mps', 3: 'pce' }[Number(order.serve_id)];
+        },
+
+        goToServeRecord(order, tier) {
+            const endpoints = {
+                bek: `/api/serve-beks/order/${order.id}`,
+                mps: `/api/serve-mps/order/${order.id}`,
+                pce: `/api/serve-pce/order/${order.id}`
+            };
+            const routeNames = {
+                bek: 'servebekedit',
+                mps: 'servempsedit',
+                pce: 'servepceedit'
+            };
+            const endpoint = endpoints[tier];
+            const routeName = routeNames[tier];
+
+            axios.get(endpoint)
+                .then((response) => {
+                    const record = response.data.data;
+                    this.$router.push({ name: routeName, params: { id: record.id } });
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', error.response?.data?.message || 'Failed to open the Serve record', 'error');
+                });
+        },
+
         approveOrder(order, status) {
             const statusText = status === 1 ? 'approve' :
                              status === 0 ? 'reject' :
@@ -1356,6 +1392,10 @@ export default {
     font-weight: 500;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.15s ease;
+}
+
+.serve-badge-clickable {
+    cursor: pointer;
 }
 
 .serve-badge:hover {

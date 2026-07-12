@@ -88,7 +88,7 @@
             </div>
             <p class="mt-3 mb-0 text-sm">
               <span class="text-danger mr-2"><i class="fas fa-user-times"></i> {{ stats.without_membership || 0 }}</span>
-              <span class="text-nowrap">Without Update</span>
+              <span class="text-nowrap">Expired</span>
             </p>
           </div>
         </div>
@@ -131,10 +131,10 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Membership Status</label>
-              <select v-model="filters.update_membership" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.membership_status" class="form-control form-control-sm" @change="applyFilters">
                 <option value="">All Status</option>
-                <option value="1">With Membership Update</option>
-                <option value="0">Without Membership Update</option>
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
               </select>
             </div>
           </div>
@@ -376,12 +376,13 @@
                   </div>
                 </td>
                 <td class="text-center align-middle">
-                  <span v-if="care.update_membership" class="badge badge-success">
+                  <span v-if="care.membership_active" class="badge badge-success">
                     <i class="fas fa-check-circle mr-1"></i> Yes
                   </span>
                   <span v-else class="badge badge-secondary">
                     <i class="fas fa-times-circle mr-1"></i> No
                   </span>
+                  <div class="small text-muted mt-1">{{ care.membership_remaining }}</div>
                 </td>
                 <td class="text-center align-middle">
                   <div>
@@ -643,7 +644,7 @@ export default {
       loading: true,
       filters: {
         search: '',
-        update_membership: '',
+        membership_status: '',
         customer_id: '',
         lkp_care_id: '',
         date_from: '',
@@ -737,8 +738,9 @@ export default {
       }
 
       // Apply other filters
-      if (this.filters.update_membership !== '') {
-        filtered = filtered.filter(care => care.update_membership == this.filters.update_membership);
+      if (this.filters.membership_status !== '') {
+        const wantActive = this.filters.membership_status === 'active';
+        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
       }
 
       if (this.filters.customer_id) {
@@ -883,9 +885,9 @@ export default {
     getFilterLabel(key, value) {
       const labels = {
         search: `Search: "${value}"`,
-        update_membership: {
-          '1': 'Membership: With Update',
-          '0': 'Membership: Without Update'
+        membership_status: {
+          active: 'Membership: Active',
+          expired: 'Membership: Expired'
         },
         customer_id: () => {
           const customer = this.customers.find(c => c.id == value);
@@ -1050,7 +1052,8 @@ export default {
               lkp_care_id: 1,
               total_part: 100.50,
               price: 150.00,
-              update_membership: true,
+              membership_active: true,
+              membership_remaining: '2 Years 0 Months 0 Days',
               created_at: '2024-01-15T10:30:00',
               customer: {
                 id: 1,
@@ -1077,7 +1080,8 @@ export default {
               lkp_care_id: 2,
               total_part: 250.75,
               price: 300.00,
-              update_membership: false,
+              membership_active: false,
+              membership_remaining: 'Expired',
               created_at: '2024-01-16T14:45:00',
               customer: {
                 id: 2,
@@ -1148,7 +1152,7 @@ export default {
       const totalCareData = filteredData.length;
       const totalPrice = filteredData.reduce((sum, care) => sum + (parseFloat(care.price) || 0), 0);
       const totalPart = filteredData.reduce((sum, care) => sum + (parseFloat(care.total_part) || 0), 0);
-      const withMembership = filteredData.filter(care => care.update_membership).length;
+      const withMembership = filteredData.filter(care => care.membership_active).length;
       const withoutMembership = totalCareData - withMembership;
 
       const today = new Date().toISOString().split('T')[0];
@@ -1259,7 +1263,7 @@ export default {
     resetFilters() {
       this.filters = {
         search: '',
-        update_membership: '',
+        membership_status: '',
         customer_id: '',
         lkp_care_id: '',
         date_from: '',
@@ -1458,7 +1462,7 @@ export default {
         const totalRecords = dataToExport.length;
         const totalPrice = dataToExport.reduce((sum, care) => sum + (parseFloat(care.price) || 0), 0);
         const totalPart = dataToExport.reduce((sum, care) => sum + (parseFloat(care.total_part) || 0), 0);
-        const withMembership = dataToExport.filter(care => care.update_membership).length;
+        const withMembership = dataToExport.filter(care => care.membership_active).length;
         const withoutMembership = totalRecords - withMembership;
 
         // Generate filter info string
@@ -1682,8 +1686,8 @@ export default {
                     <td class="text-center">${this.escapeHtml(care.care?.name || 'N/A')}</td>
                     <td class="text-right">RM${parseFloat(care.total_part || 0).toFixed(2)}</td>
                     <td class="text-right">RM${parseFloat(care.price || 0).toFixed(2)}</td>
-                    <td class="text-center ${care.update_membership ? 'membership-yes' : 'membership-no'}">
-                        ${care.update_membership ? 'Yes' : 'No'}
+                    <td class="text-center ${care.membership_active ? 'membership-yes' : 'membership-no'}">
+                        ${care.membership_active ? 'Yes' : 'No'}
                     </td>
                     <td class="text-center">${this.formatDate(care.created_at)}</td>
                 </tr>
@@ -1814,8 +1818,9 @@ export default {
       }
 
       // Apply other filters
-      if (this.filters.update_membership !== '') {
-        filtered = filtered.filter(care => care.update_membership == this.filters.update_membership);
+      if (this.filters.membership_status !== '') {
+        const wantActive = this.filters.membership_status === 'active';
+        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
       }
 
       if (this.filters.customer_id) {
@@ -1875,8 +1880,8 @@ export default {
         filterParts.push(`Search: "${this.filters.search}"`);
       }
 
-      if (this.filters.update_membership !== '') {
-        filterParts.push(`Membership: ${this.filters.update_membership === '1' ? 'With Update' : 'Without Update'}`);
+      if (this.filters.membership_status !== '') {
+        filterParts.push(`Membership: ${this.filters.membership_status === 'active' ? 'Active' : 'Expired'}`);
       }
 
       if (this.filters.customer_id) {
@@ -1968,7 +1973,7 @@ export default {
             care.care?.name || '',
             care.total_part || '0',
             care.price || '0',
-            care.update_membership ? 'Yes' : 'No',
+            care.membership_active ? 'Yes' : 'No',
             new Date(care.created_at).toISOString()
           ].map(cell => `"${cell}"`); // Wrap all cells in quotes
         });
@@ -2047,8 +2052,9 @@ export default {
       }
 
       // Apply other filters
-      if (this.filters.update_membership !== '') {
-        filtered = filtered.filter(care => care.update_membership == this.filters.update_membership);
+      if (this.filters.membership_status !== '') {
+        const wantActive = this.filters.membership_status === 'active';
+        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
       }
 
       if (this.filters.customer_id) {
@@ -2109,8 +2115,11 @@ export default {
       }
 
       // Check membership filter
-      if (this.filters.update_membership !== '' && care.update_membership != this.filters.update_membership) {
-        return false;
+      if (this.filters.membership_status !== '') {
+        const wantActive = this.filters.membership_status === 'active';
+        if (Boolean(care.membership_active) !== wantActive) {
+          return false;
+        }
       }
 
       // Check other filters...

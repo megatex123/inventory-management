@@ -1,68 +1,145 @@
 <template>
   <div class="serve-bek-index">
-    <div class="page-header">
-      <h1>ServeBek Management</h1>
+    <!-- Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0"><i class="fas fa-shield-alt text-primary mr-2"></i>Serve BEK Management</h2>
       <router-link to="/serve-bek/create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Create New ServeBek
+        <i class="fas fa-plus mr-1"></i> Create New Record
       </router-link>
     </div>
 
-    <!-- Filters -->
-    <div class="card filters-card">
+    <!-- Statistics Section -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5 class="m-0 font-weight-bold">
+          <i class="fas fa-chart-bar mr-2"></i>Serve BEK Statistics
+        </h5>
+      </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>Search by QVSE CID</label>
+          <div class="col-md-3 col-sm-6 mb-4">
+            <div class="stat-card shadow-sm p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1">Total Records</h6>
+                  <h4 class="mb-0 text-primary">{{ statistics.total_records || 0 }}</h4>
+                </div>
+                <div class="icon-circle bg-primary">
+                  <i class="fas fa-database text-white"></i>
+                </div>
+              </div>
+              <small class="text-muted">All time records</small>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-4">
+            <div class="stat-card shadow-sm p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1">Active Warranty</h6>
+                  <h4 class="mb-0 text-success">{{ statistics.active_warranty || 0 }}</h4>
+                </div>
+                <div class="icon-circle bg-success">
+                  <i class="fas fa-shield-alt text-white"></i>
+                </div>
+              </div>
+              <small class="text-muted">{{ statistics.active_warranty_percentage || 0 }}% of total</small>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-4">
+            <div class="stat-card shadow-sm p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1">Expired Warranty</h6>
+                  <h4 class="mb-0 text-danger">{{ statistics.expired_warranty || 0 }}</h4>
+                </div>
+                <div class="icon-circle bg-danger">
+                  <i class="fas fa-exclamation-triangle text-white"></i>
+                </div>
+              </div>
+              <small class="text-muted">{{ statistics.expired_warranty_percentage || 0 }}% of total</small>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 mb-4">
+            <div class="stat-card shadow-sm p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1">Available Claims</h6>
+                  <h4 class="mb-0 text-purple">{{ statistics.available_claims || 0 }}</h4>
+                </div>
+                <div class="icon-circle bg-purple">
+                  <i class="fas fa-gift text-white"></i>
+                </div>
+              </div>
+              <small class="text-muted">Not claimed yet</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+      <div class="card-header bg-light">
+        <h5 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-filter mr-2"></i>Filter Records
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Search QVSE CID</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
+              </div>
               <input
                 type="text"
                 v-model="filters.qvse_cid"
                 class="form-control"
-                placeholder="Enter QVSE CID"
+                placeholder="Enter QVSE CID..."
                 @keyup.enter="applyFilters"
               />
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>Serve Data ID</label>
-              <input
-                type="text"
-                v-model="filters.serve_data_id"
-                class="form-control"
-                placeholder="Enter Serve Data ID"
-                @keyup.enter="applyFilters"
-              />
-            </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Serve Data ID</label>
+            <input
+              type="text"
+              v-model="filters.serve_data_id"
+              class="form-control"
+              placeholder="Enter Serve Data ID"
+              @keyup.enter="applyFilters"
+            />
           </div>
-          <div class="col-md-2">
-            <div class="form-group">
-              <label>Date From</label>
-              <input
-                type="date"
-                v-model="filters.date_from"
-                class="form-control"
-                @change="applyFilters"
-              />
-            </div>
+          <div class="col-md-2 mb-3">
+            <label class="form-label">Start Date From</label>
+            <input
+              type="date"
+              v-model="filters.date_from"
+              class="form-control"
+              @change="applyFilters"
+            />
           </div>
-          <div class="col-md-2">
-            <div class="form-group">
-              <label>Date To</label>
-              <input
-                type="date"
-                v-model="filters.date_to"
-                class="form-control"
-                @change="applyFilters"
-              />
-            </div>
+          <div class="col-md-2 mb-3">
+            <label class="form-label">Start Date To</label>
+            <input
+              type="date"
+              v-model="filters.date_to"
+              class="form-control"
+              @change="applyFilters"
+            />
           </div>
-          <div class="col-md-2 d-flex align-items-end">
+        </div>
+        <div class="row">
+          <div class="col-md-12">
             <button @click="applyFilters" class="btn btn-primary mr-2">
-              <i class="fas fa-search"></i> Search
+              <i class="fas fa-search mr-1"></i> Search
             </button>
             <button @click="resetFilters" class="btn btn-secondary">
-              <i class="fas fa-redo"></i> Reset
+              <i class="fas fa-redo mr-1"></i> Reset
             </button>
           </div>
         </div>
@@ -112,7 +189,7 @@
                   <span v-else class="text-muted">N/A</span>
                 </td>
                 <td>{{ item.serve_data_id }}</td>
-                <td>{{ item.date_start }}</td>
+                <td>{{ formatDate(item.date_start) }}</td>
                 <td>
                   <span class="badge" :class="getWarrantyClass(item)">
                     {{ getWarrantyStatus(item) }}
@@ -124,7 +201,7 @@
                       {{ getTroubleshootingStatus(item) }}
                     </span>
                     <small v-if="isTroubleshootingClaimed(item)" class="d-block text-muted">
-                      {{ getTroubleshootingClaimDate(item) }}
+                      {{ formatDate(getTroubleshootingClaimDate(item)) }}
                     </small>
                   </div>
                   <span v-else class="badge bg-secondary">Not Available</span>
@@ -135,7 +212,7 @@
                       {{ getCableManagementStatus(item) }}
                     </span>
                     <small v-if="isCableManagementClaimed(item)" class="d-block text-muted">
-                      {{ getCableManagementClaimDate(item) }}
+                      {{ formatDate(getCableManagementClaimDate(item)) }}
                     </small>
                   </div>
                   <span v-else class="badge bg-secondary">Not Available</span>
@@ -146,12 +223,12 @@
                       {{ getDustCleaningStatus(item) }}
                     </span>
                     <small v-if="isDustCleaningClaimed(item)" class="d-block text-muted">
-                      {{ getDustCleaningClaimDate(item) }}
+                      {{ formatDate(getDustCleaningClaimDate(item)) }}
                     </small>
                   </div>
                   <span v-else class="badge bg-secondary">Not Available</span>
                 </td>
-                <td>{{ item.created_at }}</td>
+                <td>{{ formatDate(item.created_at) }}</td>
                 <td>
                   <div class="btn-group btn-group-sm">
                     <router-link
@@ -321,6 +398,7 @@ export default {
         date_to: '',
       },
       perPage: 15,
+      statistics: {},
     };
   },
   computed: {
@@ -355,8 +433,29 @@ export default {
   },
   mounted() {
     this.fetchServeBeks();
+    this.fetchStatistics();
   },
   methods: {
+    async fetchStatistics() {
+      try {
+        const response = await axios.get('/api/serve-beks/statistics');
+        this.statistics = response.data.statistics || {};
+      } catch (error) {
+        console.error('Error fetching ServeBek statistics:', error);
+      }
+    },
+
+    // Formats any date/datetime string as dd-mm-yyyy (preserves the time
+    // portion, if present, after the date).
+    formatDate(dateString) {
+      if (!dateString) return '';
+      const [datePart, timePart] = dateString.split(/[T ]/);
+      const [year, month, day] = datePart.split('-');
+      if (!year || !month || !day) return dateString;
+      const formatted = `${day}-${month}-${year}`;
+      return timePart ? `${formatted} ${timePart.substring(0, 8)}` : formatted;
+    },
+
     // Safe property access methods
     getWarrantyClass(item) {
       return item.warranty && item.warranty.one_year_assembly_warranty ? 'bg-success' : 'bg-secondary';
@@ -544,15 +643,14 @@ export default {
 
         this.$toast.success(response.data.message || 'Claim made successfully');
 
-        // Reload the page after successful claim
-        setTimeout(() => {
-          this.fetchServeBeks();
-        }, 500); // Small delay to show success message
-
-        // Alternative: Force reload the entire page
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 500);
+        // Patch this row in place with the updated record the claim endpoint
+        // already returns, so the claim date shows immediately instead of
+        // waiting on a full list refetch.
+        const updated = response.data.data;
+        const index = this.serveBeks.data.findIndex(item => item.id === id);
+        if (index !== -1 && updated) {
+          this.serveBeks.data.splice(index, 1, updated);
+        }
 
       } catch (error) {
         console.error('Error making claim:', error);
@@ -567,15 +665,32 @@ export default {
 </script>
 
 <style scoped>
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.stat-card {
+  background: white;
+  transition: transform 0.2s;
 }
 
-.filters-card {
-  margin-bottom: 20px;
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important;
+}
+
+.text-purple {
+  color: #6f42c1 !important;
 }
 
 .table th {

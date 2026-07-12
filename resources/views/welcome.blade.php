@@ -280,6 +280,10 @@
               <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Excl. Inventory</h6>
               <router-link class="collapse-item" to="/inv-excl-serve">All QuiviServe Excl. Inventory</router-link>
               <router-link class="collapse-item" to="/inv-excl-serve/create">Add QuiviServe Excl. Inventory</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">Inventory Movement</h6>
+              <router-link class="collapse-item" to="/inventory-movements">All Movements</router-link>
+              <router-link class="collapse-item" to="/inventory-movements/create">Add Movement</router-link>
             </div>
           </div>
         </li>
@@ -299,15 +303,15 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Documents" aria-expanded="true" aria-controls="Documents">
-            <i class="fas fa-fw fa-folder-open"></i>
-            <span>Documents</span>
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CustomerProgress" aria-expanded="true" aria-controls="CustomerProgress">
+            <i class="fas fa-fw fa-tasks"></i>
+            <span>Customer Progress</span>
           </a>
-          <div id="Documents" class="collapse" data-parent="#accordionSidebar">
+          <div id="CustomerProgress" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Document Management</h6>
-              <router-link class="collapse-item" to="/documents">All Documents</router-link>
-              <router-link class="collapse-item" to="/documents/create">Upload Document</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">Customer Progress Management</h6>
+              <router-link class="collapse-item" to="/customer-progress">All Progress Entries</router-link>
+              <router-link class="collapse-item" to="/customer-progress/create">Add Progress Entry</router-link>
             </div>
           </div>
         </li>

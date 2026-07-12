@@ -158,26 +158,19 @@
                 </small>
               </div>
 
-              <!-- Update Membership -->
+              <!-- Membership (auto-computed from order date + care tier period) -->
               <div class="form-group">
                 <label class="form-label">
-                  <i class="fas fa-user-check text-primary mr-1"></i> Update Membership?
+                  <i class="fas fa-user-check text-primary mr-1"></i> Membership
                 </label>
-                <div class="custom-control custom-switch">
-                  <input
-                    type="checkbox"
-                    v-model="form.update_membership"
-                    class="custom-control-input"
-                    id="update_membership"
-                    @change="onMembershipToggle"
-                  >
-                  <label class="custom-control-label" for="update_membership">
-                    {{ form.update_membership ? 'Membership Update Required' : 'No Membership Update' }}
-                  </label>
+                <div>
+                  <span class="badge" :class="careData && careData.membership_active ? 'badge-success' : 'badge-secondary'">
+                    {{ careData && careData.membership_active ? 'Active' : 'Expired' }}
+                  </span>
+                  <small class="form-text text-muted mb-0">
+                    {{ careData ? careData.membership_remaining : 'N/A' }}
+                  </small>
                 </div>
-                <small class="form-text text-muted">
-                  Check this box if customer membership information needs to be updated
-                </small>
               </div>
             </div>
           </div>
@@ -282,7 +275,7 @@
                 <p><strong>Customer:</strong> {{ careData.customer.full_name }}</p>
                 <p><strong>Care Tier:</strong> {{ selectedCare ? selectedCare.name : 'N/A' }}</p>
                 <p><strong>Price:</strong> {{ formatCurrency(form.price) }}</p>
-                <p><strong>Membership Update:</strong> {{ form.update_membership ? 'Required' : 'Not Required' }}</p>
+                <p><strong>Membership:</strong> {{ careData.membership_active ? 'Active' : 'Expired' }} ({{ careData.membership_remaining || 'N/A' }})</p>
               </div>
             </div>
           </div>
@@ -317,8 +310,7 @@ export default {
         order_id: '',
         lkp_care_id: '',
         total_part: '',
-        price: '',
-        update_membership: false
+        price: ''
       },
       selectedCustomer: null,
       selectedOrder: null,
@@ -393,14 +385,6 @@ export default {
       return 'badge-secondary';
     },
 
-    getMembershipBadgeClass() {
-      return this.form.update_membership ? 'badge-success' : 'badge-secondary';
-    },
-
-    getMembershipText() {
-      return this.form.update_membership ? 'Update Required' : 'No Update';
-    },
-
     async fetchCareData() {
       this.loading = true;
       try {
@@ -414,8 +398,7 @@ export default {
           order_id: this.careData.order_id,
           lkp_care_id: this.careData.lkp_care_id,
           total_part: this.careData.total_part || '',
-          price: this.careData.price || '',
-          update_membership: Boolean(this.careData.update_membership)
+          price: this.careData.price || ''
         };
 
         // Set selected references
@@ -510,8 +493,7 @@ export default {
         order_id: this.careData.order_id,
         lkp_care_id: this.careData.lkp_care_id,
         total_part: this.careData.total_part || '',
-        price: this.careData.price || '',
-        update_membership: Boolean(this.careData.update_membership)
+        price: this.careData.price || ''
       };
 
       if (this.careData.customer) {

@@ -78,6 +78,7 @@ Route::get('/vats', 'ExtraController@vats');
 Route::post('/orderdone', 'PosController@orderdone');
 
 Route::get('/orders', 'OrderController@getorders');
+Route::get('/orders/today', 'OrderController@today');
 Route::get('/orders/details/{id}', 'OrderController@details');
 Route::get('/orders/orderdetails/{id}', 'OrderController@orderdetails');
 Route::put('/order/{id}/approve', 'OrderController@updateApprove');
@@ -106,20 +107,19 @@ Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| DOCUMENT MANAGEMENT
+| CUSTOMER PROGRESS MANAGEMENT
 |--------------------------------------------------------------------------
 */
-Route::prefix('documents')->group(function () {
-    Route::get('/', 'DocumentController@index');
-    Route::post('/', 'DocumentController@store');
-    Route::get('/statistics', 'DocumentController@statistics');
-    Route::get('/categories', 'DocumentController@categories');
+Route::prefix('customer-progress')->group(function () {
+    Route::get('/', 'CustomerProgressController@index');
+    Route::post('/', 'CustomerProgressController@store');
+    Route::get('/statistics', 'CustomerProgressController@statistics');
 
     Route::prefix('{id}')->group(function () {
-        Route::get('/', 'DocumentController@show');
-        Route::post('/', 'DocumentController@update');
-        Route::delete('/', 'DocumentController@destroy');
-        Route::get('/download', 'DocumentController@download');
+        Route::get('/', 'CustomerProgressController@show');
+        Route::post('/', 'CustomerProgressController@update');
+        Route::delete('/', 'CustomerProgressController@destroy');
+        Route::get('/download', 'CustomerProgressController@download');
     });
 });
 
@@ -264,6 +264,26 @@ Route::prefix('inv-excl-serve')->group(function () {
     });
 });
 
+Route::prefix('inventory-movements')->group(function () {
+    Route::get('/', 'InventoryMovementController@index');
+    Route::post('/', 'InventoryMovementController@store');
+    Route::get('/statistics', 'InventoryMovementController@statistics');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InventoryMovementController@show');
+        Route::put('/', 'InventoryMovementController@update');
+        Route::patch('/', 'InventoryMovementController@update');
+        Route::delete('/', 'InventoryMovementController@destroy');
+    });
+});
+
+Route::prefix('destinations')->group(function () {
+    Route::get('/', 'DestinationController@index');
+    Route::post('/', 'DestinationController@store');
+    Route::put('/{id}', 'DestinationController@update');
+    Route::delete('/{id}', 'DestinationController@destroy');
+});
+
 Route::get('/product-warranty/by-category', 'ProductWarrantyController@getByCategory');
 Route::get('/product-warranty/available', 'ProductWarrantyController@getAvailableWarranties');
 Route::prefix('product-warranty')->group(function () {
@@ -290,6 +310,7 @@ Route::prefix('serve-pce')->group(function () {  // <-- This should be 'serve-pc
     Route::post('/', 'ServePceController@store');
     Route::get('/statistics', 'ServePceController@statistics');
     Route::get('/search', 'ServePceController@search');
+    Route::get('/order/{orderId}', 'ServePceController@getByOrder');
 
     Route::prefix('{id}')->group(function () {
         Route::get('/', 'ServePceController@show');
@@ -309,6 +330,7 @@ Route::prefix('serve-mps')->group(function () {
     Route::get('/', 'ServeMpsController@index');          // GET /api/serve-mps
     Route::post('/', 'ServeMpsController@store');         // POST /api/serve-mps
     Route::get('/statistics', 'ServeMpsController@statistics'); // GET /api/serve-mps/statistics
+    Route::get('/order/{orderId}', 'ServeMpsController@getByOrder'); // GET /api/serve-mps/order/{orderId}
 
     // Individual item routes
     Route::get('/{id}', 'ServeMpsController@show');       // GET /api/serve-mps/{id}
@@ -329,6 +351,7 @@ Route::prefix('serve-mps')->group(function () {
 Route::prefix('serve-beks')->group(function () {
     Route::get('/', 'ServeBekController@index');
     Route::post('/', 'ServeBekController@store');
+    Route::get('/statistics', 'ServeBekController@statistics');
     Route::get('/{id}', 'ServeBekController@show');
     Route::put('/{id}', 'ServeBekController@update');
     Route::delete('/{id}', 'ServeBekController@destroy');
@@ -336,6 +359,7 @@ Route::prefix('serve-beks')->group(function () {
     // Custom routes
     Route::post('/{id}/restore', 'ServeBekController@restore');
     Route::get('/serve-data/{serveDataId}', 'ServeBekController@getByServeDataId');
+    Route::get('/order/{orderId}', 'ServeBekController@getByOrder');
     Route::post('/{id}/claim', 'ServeBekController@makeClaim');
 });
 

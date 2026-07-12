@@ -505,19 +505,29 @@
                       </div>
                     </div>
 
-                    <!-- Annual Dust Cleaning Section -->
+                    <!-- Free Annual Deep Cleaning Section -->
                     <div class="form-section mb-5">
                       <h5 class="font-weight-bold text-primary mb-4 border-bottom pb-2">
-                        <i class="fas fa-broom mr-2"></i>Annual Dust Cleaning
+                        <i class="fas fa-broom mr-2"></i>Free Annual Deep Cleaning
                       </h5>
                       <div class="alert alert-info">
                         <i class="fas fa-info-circle mr-2"></i>
-                        Free Annual Dust Cleaning available for first 3 years
+                        Free Annual Deep Cleaning available for first 3 years
                       </div>
                       <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label">Annual Deep Cleaning (Description)</label>
+                          <input
+                            v-model="form.annual_dust_cleaning"
+                            type="text"
+                            class="form-control"
+                            placeholder="Free Annual Deep Cleaning"
+                          >
+                        </div>
+
                         <!-- Year 1 -->
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual Dust Cleaning Year 1</label>
+                          <label class="form-label">Annual Deep Cleaning Year 1</label>
                           <div class="form-check">
                             <input
                               v-model="form.annual_dust_cleaning_year1"
@@ -551,7 +561,7 @@
 
                         <!-- Year 2 -->
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual Dust Cleaning Year 2</label>
+                          <label class="form-label">Annual Deep Cleaning Year 2</label>
                           <div class="form-check">
                             <input
                               v-model="form.annual_dust_cleaning_year2"
@@ -582,7 +592,7 @@
 
                         <!-- Year 3 -->
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Annual Dust Cleaning Year 3</label>
+                          <label class="form-label">Annual Deep Cleaning Year 3</label>
                           <div class="form-check">
                             <input
                               v-model="form.annual_dust_cleaning_year3"
@@ -613,71 +623,150 @@
                       </div>
                     </div>
 
-                    <!-- Additional Options Section -->
+                    <!-- 50% off Annual Dust Cleaning Section (Years 4-7) -->
                     <div class="form-section mb-5">
                       <h5 class="font-weight-bold text-primary mb-4 border-bottom pb-2">
-                        <i class="fas fa-cogs mr-2"></i>Additional Options
+                        <i class="fas fa-broom mr-2"></i>50% off Annual Dust Cleaning
                       </h5>
+                      <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        50% Off Annual Dust Cleaning available for years 4-7
+                      </div>
                       <div class="row">
-                        <!-- 50% Dust Cleaning -->
-                        <div class="col-md-4 mb-3">
-                          <div class="form-check">
-                            <input
-                              v-model="form['50_dust_cleaning']"
-                              type="checkbox"
-                              id="50_dust_cleaning"
-                              class="form-check-input"
-                              true-value="Yes"
-                              false-value="No"
-                            >
-                            <label for="50_dust_cleaning" class="form-check-label">
-                              50% Off Dust Cleaning
-                            </label>
-                            <div v-if="form.date_start" class="small text-muted">
-                              Available from year 3-10
-                            </div>
-                          </div>
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label">Annual Dust Cleaning (Description)</label>
+                          <input
+                            v-model="form.dust_cleaning_50_description"
+                            type="text"
+                            class="form-control"
+                            placeholder="50% Off Annual Dust Cleaning"
+                          >
                         </div>
 
-                        <!-- 50% Upgrade Service -->
-                        <div class="col-md-4 mb-3">
-                          <div class="form-check">
-                            <input
-                              v-model="form['50_upgrade_service']"
-                              type="checkbox"
-                              id="50_upgrade_service"
-                              class="form-check-input"
-                              true-value="Yes"
-                              false-value="No"
-                            >
-                            <label for="50_upgrade_service" class="form-check-label">
-                              50% Off Upgrade Service
-                            </label>
-                            <div v-if="form.date_start" class="small text-muted">
-                              First 3 years
+                        <template v-for="year in [4, 5, 6, 7]">
+                          <div class="col-md-6 mb-3" :key="'dust50-check-' + year">
+                            <label class="form-label">Annual Dust Cleaning Year {{ year }}</label>
+                            <div class="form-check">
+                              <input
+                                v-model="form['dust_cleaning_50_year' + year]"
+                                type="checkbox"
+                                :id="'dust_cleaning_50_year' + year"
+                                class="form-check-input"
+                                true-value="1"
+                                false-value="0"
+                              >
+                              <label :for="'dust_cleaning_50_year' + year" class="form-check-label">
+                                Year {{ year }} Claim
+                              </label>
                             </div>
                           </div>
+                          <div class="col-md-6 mb-3" :key="'dust50-date-' + year">
+                            <label class="form-label">Year {{ year }} Claim Date</label>
+                            <input
+                              v-model="form['dust_cleaning_50_claim_date_year' + year]"
+                              type="date"
+                              class="form-control"
+                            >
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+
+                    <!-- 50% off Annual Upgrade Service Section (Years 1-3) -->
+                    <div class="form-section mb-5">
+                      <h5 class="font-weight-bold text-primary mb-4 border-bottom pb-2">
+                        <i class="fas fa-cogs mr-2"></i>50% off Annual Upgrade Service
+                      </h5>
+                      <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        50% Off Annual Upgrade Service available for first 3 years
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label">Annual Upgrade Service (Description)</label>
+                          <input
+                            v-model="form.upgrade_service_50_description"
+                            type="text"
+                            class="form-control"
+                            placeholder="50% Off Annual Upgrade Service"
+                          >
                         </div>
 
-                        <!-- 30% Upgrade Service -->
-                        <div class="col-md-4 mb-3">
-                          <div class="form-check">
-                            <input
-                              v-model="form['30_upgrade_service']"
-                              type="checkbox"
-                              id="30_upgrade_service"
-                              class="form-check-input"
-                              true-value="Yes"
-                              false-value="No"
-                            >
-                            <label for="30_upgrade_service" class="form-check-label">
-                              30% Off Upgrade Service
-                            </label>
-                            <div v-if="form.date_start" class="small text-muted">
-                              Years 3-10
+                        <template v-for="year in [1, 2, 3]">
+                          <div class="col-md-6 mb-3" :key="'upgrade50-check-' + year">
+                            <label class="form-label">Annual Upgrade Service Year {{ year }}</label>
+                            <div class="form-check">
+                              <input
+                                v-model="form['upgrade_service_50_year' + year]"
+                                type="checkbox"
+                                :id="'upgrade_service_50_year' + year"
+                                class="form-check-input"
+                                true-value="1"
+                                false-value="0"
+                              >
+                              <label :for="'upgrade_service_50_year' + year" class="form-check-label">
+                                Year {{ year }} Claim
+                              </label>
                             </div>
                           </div>
+                          <div class="col-md-6 mb-3" :key="'upgrade50-date-' + year">
+                            <label class="form-label">Year {{ year }} Claim Date</label>
+                            <input
+                              v-model="form['upgrade_service_50_claim_date_year' + year]"
+                              type="date"
+                              class="form-control"
+                            >
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+
+                    <!-- 30% off Annual Upgrade Service Section (Years 4-7) -->
+                    <div class="form-section mb-5">
+                      <h5 class="font-weight-bold text-primary mb-4 border-bottom pb-2">
+                        <i class="fas fa-cogs mr-2"></i>30% off Annual Upgrade Service
+                      </h5>
+                      <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        30% Off Annual Upgrade Service available for years 4-7
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label">Annual Upgrade Service (Description)</label>
+                          <input
+                            v-model="form.upgrade_service_30_description"
+                            type="text"
+                            class="form-control"
+                            placeholder="30% Off Annual Upgrade Service"
+                          >
                         </div>
+
+                        <template v-for="year in [4, 5, 6, 7]">
+                          <div class="col-md-6 mb-3" :key="'upgrade30-check-' + year">
+                            <label class="form-label">Annual Upgrade Service Year {{ year }}</label>
+                            <div class="form-check">
+                              <input
+                                v-model="form['upgrade_service_30_year' + year]"
+                                type="checkbox"
+                                :id="'upgrade_service_30_year' + year"
+                                class="form-check-input"
+                                true-value="1"
+                                false-value="0"
+                              >
+                              <label :for="'upgrade_service_30_year' + year" class="form-check-label">
+                                Year {{ year }} Claim
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-3" :key="'upgrade30-date-' + year">
+                            <label class="form-label">Year {{ year }} Claim Date</label>
+                            <input
+                              v-model="form['upgrade_service_30_claim_date_year' + year]"
+                              type="date"
+                              class="form-control"
+                            >
+                          </div>
+                        </template>
                       </div>
                     </div>
 
@@ -694,7 +783,7 @@
                             type="text"
                             class="form-control"
                             :class="{ 'is-invalid': errors.promo_code }"
-                            placeholder="e.g., CDNQB37Q"
+                            placeholder="e.g., CDNQ3B"
                           >
                           <div v-if="errors.promo_code" class="invalid-feedback">
                             {{ errors.promo_code[0] }}
@@ -705,7 +794,6 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                          <label class="form-label">Generate Code</label>
                           <div class="form-check">
                             <input
                               v-model="form.generate_code"
@@ -714,6 +802,7 @@
                               class="form-check-input"
                               true-value="1"
                               false-value="0"
+                              @change="form.generate_code === '1' && generatePromoCode()"
                             >
                             <label for="generate_code" class="form-check-label">
                               Generate Promo Code
@@ -813,16 +902,38 @@ export default {
         cable_management_claim3_date: '',
         cable_management_claim4: '0',
         cable_management_claim4_date: '',
-        annual_dust_cleaning: 'Free Annual Dust Cleaning',
+        annual_dust_cleaning: 'Free Annual Deep Cleaning',
         annual_dust_cleaning_year1: '0',
         claim_date_year1: '',
         annual_dust_cleaning_year2: '0',
         claim_date_year2: '',
         annual_dust_cleaning_year3: '0',
         claim_date_year3: '',
-        '50_dust_cleaning': 'Yes',
-        '50_upgrade_service': 'Yes',
-        '30_upgrade_service': 'Yes',
+        dust_cleaning_50_description: '50% Off Annual Dust Cleaning',
+        dust_cleaning_50_year4: '0',
+        dust_cleaning_50_claim_date_year4: '',
+        dust_cleaning_50_year5: '0',
+        dust_cleaning_50_claim_date_year5: '',
+        dust_cleaning_50_year6: '0',
+        dust_cleaning_50_claim_date_year6: '',
+        dust_cleaning_50_year7: '0',
+        dust_cleaning_50_claim_date_year7: '',
+        upgrade_service_50_description: '50% Off Annual Upgrade Service',
+        upgrade_service_50_year1: '0',
+        upgrade_service_50_claim_date_year1: '',
+        upgrade_service_50_year2: '0',
+        upgrade_service_50_claim_date_year2: '',
+        upgrade_service_50_year3: '0',
+        upgrade_service_50_claim_date_year3: '',
+        upgrade_service_30_description: '30% Off Annual Upgrade Service',
+        upgrade_service_30_year4: '0',
+        upgrade_service_30_claim_date_year4: '',
+        upgrade_service_30_year5: '0',
+        upgrade_service_30_claim_date_year5: '',
+        upgrade_service_30_year6: '0',
+        upgrade_service_30_claim_date_year6: '',
+        upgrade_service_30_year7: '0',
+        upgrade_service_30_claim_date_year7: '',
         promo_code: '',
         generate_code: '1',
         promo_claim: '0',
@@ -1217,11 +1328,11 @@ export default {
       return `${claim.remainingDays} days left`
     },
 
-    // Generate a random promo code
+    // Generate a random 6-character promo code
     generatePromoCode() {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
       let code = ''
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 6; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length))
       }
       this.form.promo_code = code

@@ -70,6 +70,11 @@ class Order extends Model
         return $this->hasMany(CareData::class,'order_id','id');
     }
 
+    public function inv_moves()
+    {
+        return $this->hasMany(InvMove::class,'order_id','id');
+    }
+
     public function getServeNameAttribute()
     {
         return optional($this->serve)->name;

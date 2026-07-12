@@ -4,12 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Models\ServePce;
 use App\Models\ServeData;
+use App\Models\Serves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class ServePceController extends Controller
 {
+    /**
+     * Resolve (or create) the ServePce record for a given order — same
+     * order-row quick-launch pattern as ServeBek::getByOrder() /
+     * ServeMps::getByOrder(). Only valid for Collector's Edition orders
+     * (lkp_serve_id = 3); the ServeData row itself is created by
+     * OrderController::updateserve() on order approval, so this 404s if
+     * the order hasn't been approved yet.
+     */
+    public function getByOrder($orderId)
+    {
+        try {
+            $serveData = ServeData::withTrashed()->where('order_id', $orderId)->first();
+
+            if (!$serveData) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This order has no QuiviServe record yet — approve the order first.'
+                ], 404);
+            }
+
+            if ((int) $serveData->lkp_serve_id !== 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "This order is not on the Collector's Edition (PCE) tier."
+                ], 422);
+            }
+
+            $servePce = ServePce::where('serve_data_id', $serveData->id)->first();
+
+            if (!$servePce) {
+                $serveType = Serves::find($serveData->lkp_serve_id);
+                $serveTypeCode = $serveType ? strtoupper($serveType->code) : 'PCE-2610';
+                $servePceNumber = str_pad(ServePce::count() + 1, 4, '0', STR_PAD_LEFT);
+
+                $servePce = ServePce::create([
+                    'serve_pce_id' => "{$serveTypeCode}-{$servePceNumber}",
+                    'serve_data_id' => $serveData->id,
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => ['id' => $servePce->id, 'serve_data_id' => $servePce->serve_data_id],
+                'message' => 'ServePce record resolved successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to resolve ServePce record: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function index(Request $request)
     {
         // Start the query with ServePce and join with ServeData
@@ -115,9 +168,31 @@ class ServePceController extends Controller
                 'claim_date_year2' => 'nullable|date',
                 'annual_dust_cleaning_year3' => 'nullable|in:0,1,Yes,No',
                 'claim_date_year3' => 'nullable|date',
-                '50_dust_cleaning' => 'nullable|string|max:255',
-                '50_upgrade_service' => 'nullable|string|max:255',
-                '30_upgrade_service' => 'nullable|string|max:255',
+                'dust_cleaning_50_description' => 'nullable|string|max:100',
+                'dust_cleaning_50_year4' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year4' => 'nullable|date',
+                'dust_cleaning_50_year5' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year5' => 'nullable|date',
+                'dust_cleaning_50_year6' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year6' => 'nullable|date',
+                'dust_cleaning_50_year7' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year7' => 'nullable|date',
+                'upgrade_service_50_description' => 'nullable|string|max:100',
+                'upgrade_service_50_year1' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year1' => 'nullable|date',
+                'upgrade_service_50_year2' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year2' => 'nullable|date',
+                'upgrade_service_50_year3' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year3' => 'nullable|date',
+                'upgrade_service_30_description' => 'nullable|string|max:100',
+                'upgrade_service_30_year4' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year4' => 'nullable|date',
+                'upgrade_service_30_year5' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year5' => 'nullable|date',
+                'upgrade_service_30_year6' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year6' => 'nullable|date',
+                'upgrade_service_30_year7' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year7' => 'nullable|date',
                 'promo_code' => 'nullable|string|max:50|unique:serve_pce,promo_code',
                 'generate_code' => 'nullable|in:0,1',
                 'promo_claim' => 'nullable|in:0,1',
@@ -155,6 +230,9 @@ class ServePceController extends Controller
             $checkboxFields = [
                 'cable_management_claim1', 'cable_management_claim2', 'cable_management_claim3', 'cable_management_claim4',
                 'annual_dust_cleaning_year1', 'annual_dust_cleaning_year2', 'annual_dust_cleaning_year3',
+                'dust_cleaning_50_year4', 'dust_cleaning_50_year5', 'dust_cleaning_50_year6', 'dust_cleaning_50_year7',
+                'upgrade_service_50_year1', 'upgrade_service_50_year2', 'upgrade_service_50_year3',
+                'upgrade_service_30_year4', 'upgrade_service_30_year5', 'upgrade_service_30_year6', 'upgrade_service_30_year7',
                 'generate_code', 'promo_claim'
             ];
 
@@ -173,10 +251,10 @@ class ServePceController extends Controller
             $data['unlimited_troubleshooting'] = $data['unlimited_troubleshooting'] ?? 'Yes';
             $data['troubleshooting'] = $data['troubleshooting'] ?? 'Yes';
             $data['cable_management'] = $data['cable_management'] ?? 'Premium Cable Management';
-            $data['annual_dust_cleaning'] = $data['annual_dust_cleaning'] ?? 'Free Annual Dust Cleaning';
-            $data['50_dust_cleaning'] = $data['50_dust_cleaning'] ?? 'Yes';
-            $data['50_upgrade_service'] = $data['50_upgrade_service'] ?? 'Yes';
-            $data['30_upgrade_service'] = $data['30_upgrade_service'] ?? 'Yes';
+            $data['annual_dust_cleaning'] = $data['annual_dust_cleaning'] ?? 'Free Annual Deep Cleaning';
+            $data['dust_cleaning_50_description'] = $data['dust_cleaning_50_description'] ?? '50% Off Annual Dust Cleaning';
+            $data['upgrade_service_50_description'] = $data['upgrade_service_50_description'] ?? '50% Off Annual Upgrade Service';
+            $data['upgrade_service_30_description'] = $data['upgrade_service_30_description'] ?? '30% Off Annual Upgrade Service';
 
             $servePce = ServePce::create($data);
 
@@ -249,9 +327,31 @@ class ServePceController extends Controller
                 'claim_date_year2' => 'nullable|date',
                 'annual_dust_cleaning_year3' => 'nullable|in:0,1,Yes,No',
                 'claim_date_year3' => 'nullable|date',
-                '50_dust_cleaning' => 'nullable|string|max:255',
-                '50_upgrade_service' => 'nullable|string|max:255',
-                '30_upgrade_service' => 'nullable|string|max:255',
+                'dust_cleaning_50_description' => 'nullable|string|max:100',
+                'dust_cleaning_50_year4' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year4' => 'nullable|date',
+                'dust_cleaning_50_year5' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year5' => 'nullable|date',
+                'dust_cleaning_50_year6' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year6' => 'nullable|date',
+                'dust_cleaning_50_year7' => 'nullable|in:0,1,Yes,No',
+                'dust_cleaning_50_claim_date_year7' => 'nullable|date',
+                'upgrade_service_50_description' => 'nullable|string|max:100',
+                'upgrade_service_50_year1' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year1' => 'nullable|date',
+                'upgrade_service_50_year2' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year2' => 'nullable|date',
+                'upgrade_service_50_year3' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_50_claim_date_year3' => 'nullable|date',
+                'upgrade_service_30_description' => 'nullable|string|max:100',
+                'upgrade_service_30_year4' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year4' => 'nullable|date',
+                'upgrade_service_30_year5' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year5' => 'nullable|date',
+                'upgrade_service_30_year6' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year6' => 'nullable|date',
+                'upgrade_service_30_year7' => 'nullable|in:0,1,Yes,No',
+                'upgrade_service_30_claim_date_year7' => 'nullable|date',
                 'promo_code' => 'nullable|string|max:50|unique:serve_pce,promo_code,' . $id,
                 'generate_code' => 'nullable|in:0,1',
                 'promo_claim' => 'nullable|in:0,1',
@@ -271,6 +371,9 @@ class ServePceController extends Controller
             $checkboxFields = [
                 'cable_management_claim1', 'cable_management_claim2', 'cable_management_claim3', 'cable_management_claim4',
                 'annual_dust_cleaning_year1', 'annual_dust_cleaning_year2', 'annual_dust_cleaning_year3',
+                'dust_cleaning_50_year4', 'dust_cleaning_50_year5', 'dust_cleaning_50_year6', 'dust_cleaning_50_year7',
+                'upgrade_service_50_year1', 'upgrade_service_50_year2', 'upgrade_service_50_year3',
+                'upgrade_service_30_year4', 'upgrade_service_30_year5', 'upgrade_service_30_year6', 'upgrade_service_30_year7',
                 'generate_code', 'promo_claim'
             ];
 

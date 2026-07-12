@@ -143,13 +143,18 @@ let invexclserve = require('./components/inv_excl_serve/index.vue').default;
 let invexclservecreate = require('./components/inv_excl_serve/create.vue').default;
 let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
 
+//inventory movement
+let inventorymovement = require('./components/inventory_movement/index.vue').default;
+let inventorymovementcreate = require('./components/inventory_movement/create.vue').default;
+let inventorymovementedit = require('./components/inventory_movement/edit.vue').default;
+
 //craft inspection
 let craftinspection = require('./components/craft_inspection/index.vue').default;
 
-//document management
-let document_index = require('./components/document/index.vue').default;
-let document_create = require('./components/document/create.vue').default;
-let document_edit = require('./components/document/edit.vue').default;
+//customer progress management
+let customer_progress_index = require('./components/customer_progress/index.vue').default;
+let customer_progress_create = require('./components/customer_progress/create.vue').default;
+let customer_progress_edit = require('./components/customer_progress/edit.vue').default;
 
 export const routes=[
 
@@ -295,11 +300,16 @@ export const routes=[
       { path: '/inv-excl-serve/create', component: invexclservecreate, name: 'invexclservecreate', meta: { layout: 'app' } },
       { path: '/inv-excl-serve/edit/:id', component: invexclserveedit, name: 'invexclserveedit', meta: { layout: 'app' } },
 
+      // inventory movement
+      { path: '/inventory-movements', component: inventorymovement, name: 'inventorymovement', meta: { layout: 'app' } },
+      { path: '/inventory-movements/create', component: inventorymovementcreate, name: 'inventorymovementcreate', meta: { layout: 'app' } },
+      { path: '/inventory-movements/edit/:id', component: inventorymovementedit, name: 'inventorymovementedit', meta: { layout: 'app' } },
+
       // craft inspection
       { path: '/order/:id/inspection/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
 
-      // document management
-      { path: '/documents', component: document_index, name: 'documents', meta: { layout: 'app' } },
-      { path: '/documents/create', component: document_create, name: 'documentcreate', meta: { layout: 'app' } },
-      { path: '/documents/edit/:id', component: document_edit, name: 'documentedit', meta: { layout: 'app' } },
+      // customer progress management
+      { path: '/customer-progress', component: customer_progress_index, name: 'customerprogress', meta: { layout: 'app' } },
+      { path: '/customer-progress/create', component: customer_progress_create, name: 'customerprogresscreate', meta: { layout: 'app' } },
+      { path: '/customer-progress/edit/:id', component: customer_progress_edit, name: 'customerprogressedit', meta: { layout: 'app' } },
 ]

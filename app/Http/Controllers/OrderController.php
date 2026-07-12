@@ -21,6 +21,70 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    // QuiviCare RMA-eligible part categories: CPU, SSD, GPU, HDD, RAM, MBD,
+    // PSU, HSF, AIO. Excludes CSE (Case — spec lists it as "optional", not
+    // included by default), FAN, and all ACC-*/PER-* accessory/peripheral
+    // categories, which the spec explicitly excludes.
+    const CARE_ELIGIBLE_CATEGORIES = [1, 2, 3, 4, 5, 6, 7, 8, 11];
+
+    /**
+     * Sum of order_details.sub_total for products in a CARE-eligible category.
+     * This — not the whole order total — is what should decide the QuiviCare tier.
+     */
+    private function eligibleCarePartsTotal($orderId)
+    {
+        return (float) OrderDetails::where('order_id', $orderId)
+            ->whereHas('product', function ($q) {
+                $q->whereIn('cat_id', self::CARE_ELIGIBLE_CATEGORIES);
+            })
+            ->sum('sub_total');
+    }
+
+    /**
+     * QuiviCare tier + fee for a given eligible-parts amount. care table IDs
+     * are 1=COR3, 2=RI5E, 3=VIS10N (already in ascending order). Fee brackets
+     * are business-defined RM amounts — kept as-is, only the input changed
+     * from the whole order total to the eligible-parts-only total.
+     */
+    private function resolveCareTier($amount)
+    {
+        if ($amount <= 5999) {
+            return ['lkp_care_id' => 1, 'care_charge' => 379, 'range' => '0 - 5,999'];
+        } elseif ($amount <= 6999) {
+            return ['lkp_care_id' => 1, 'care_charge' => 479, 'range' => '6,000 - 6,999'];
+        } elseif ($amount <= 7999) {
+            return ['lkp_care_id' => 2, 'care_charge' => 689, 'range' => '7,000 - 7,999'];
+        } elseif ($amount <= 8999) {
+            return ['lkp_care_id' => 2, 'care_charge' => 789, 'range' => '8,000 - 8,999'];
+        } elseif ($amount <= 9999) {
+            return ['lkp_care_id' => 2, 'care_charge' => 889, 'range' => '9,000 - 9,999'];
+        } elseif ($amount <= 10999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1159, 'range' => '10,000 - 10,999'];
+        } elseif ($amount <= 11999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1269, 'range' => '11,000 - 11,999'];
+        } elseif ($amount <= 12999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1379, 'range' => '12,000 - 12,999'];
+        } elseif ($amount <= 13999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1489, 'range' => '13,000 - 13,999'];
+        } elseif ($amount <= 14999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1599, 'range' => '14,000 - 14,999'];
+        } elseif ($amount <= 15999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1709, 'range' => '15,000 - 15,999'];
+        } elseif ($amount <= 16999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1819, 'range' => '16,000 - 16,999'];
+        } elseif ($amount <= 17999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 1929, 'range' => '17,000 - 17,999'];
+        } elseif ($amount <= 18999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 2039, 'range' => '18,000 - 18,999'];
+        } elseif ($amount <= 19999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 2149, 'range' => '19,000 - 19,999'];
+        } elseif ($amount <= 20999) {
+            return ['lkp_care_id' => 3, 'care_charge' => 2239, 'range' => '20,000 - 20,999'];
+        } else {
+            return ['lkp_care_id' => 3, 'care_charge' => 2479, 'range' => 'Above 20,999'];
+        }
+    }
+
     public function getorders()
     {
         $orders = Order::with([
@@ -69,6 +133,54 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+    /**
+     * Orders placed today — same "today" definition already used by getStatistics()
+     * (Order::whereDate('order_date', Carbon::today())), so the Today's Orders page
+     * and the All Orders page's "Today's Summary" card never disagree.
+     */
+    public function today()
+    {
+        $orders = Order::with([
+                'customer',
+                'craft',
+                'serve',
+                'care',
+                'care_data'
+            ])
+            ->whereDate('order_date', Carbon::today())
+            ->orderByDesc('id')
+            ->get()
+            ->map(function($order) {
+                if ($order->approved_at) {
+                    $today = Carbon::now();
+                    $approvedAt = Carbon::parse($order->approved_at);
+                    $expiryDate = $approvedAt->copy()->addMonths(6);
+
+                    $order->care_price = $order->care_data->first()->price;
+
+                    if ($today->gt($expiryDate)) {
+                        $order->time_remaining = "Expired";
+                        $order->months_remaining = 0;
+                        $order->days_remaining = 0;
+                    } else {
+                        $diff = $today->diff($expiryDate);
+
+                        $order->months_remaining = $diff->m + ($diff->y * 12);
+                        $order->days_remaining = $diff->d;
+
+                        $order->time_remaining = $order->months_remaining . " Months " . $order->days_remaining . " Days";
+                    }
+                } else {
+                    $order->time_remaining = "Not Approved";
+                    $order->months_remaining = null;
+                    $order->days_remaining = null;
+                }
+                return $order;
+            });
+
+        return response()->json($orders);
+    }
+
     public function details($id)
     {
         $order = Order::with(['customer', 'craft', 'serve', 'care', 'serve_data.serve', 'care_data.care'])->findOrFail($id);
@@ -81,59 +193,26 @@ class OrderController extends Controller
         //                 }
         //             ])->get();
 
-        if ($order->total <= 7000.00) {
-            $lkp_serve_id = 1; // Inessential kit
-        } elseif ($order->total > 10000.00) {
-            $lkp_serve_id = 3; // Premium
+        // QuiviServe tier — < RM7,000 Essential Kit, RM7,000-9,999 Prime Series,
+        // >= RM10,000 Collector's Edition (serves table: 1/2/3 in that order already).
+        if ($order->total < 7000.00) {
+            $lkp_serve_id = 1; // Essential Kit
+        } elseif ($order->total < 10000.00) {
+            $lkp_serve_id = 2; // Prime Series
         } else {
-            $lkp_serve_id = 2; // Silver
+            $lkp_serve_id = 3; // Collector's Edition
         }
 
         $serve = Serves::findOrFail($lkp_serve_id);
 
-        $calculateCareServiceCharge = function($totalAmount) use ($order) {
-            $totalAmount = $order->total;
-            if ($totalAmount >= 0 && $totalAmount <= 5999) {
-                return ['lkp_care_id' => 1, 'care_charge' => 379, 'range' => '0 - 5,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 6000 && $totalAmount <= 6999) {
-                return ['lkp_care_id' => 1, 'care_charge' => 479, 'range' => '6,000 - 6,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 7000 && $totalAmount <= 7999) {
-                return ['lkp_care_id' => 2, 'care_charge' => 689, 'range' => '7,000 - 7,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 8000 && $totalAmount <= 8999) {
-                return ['lkp_care_id' => 2, 'care_charge' => 789, 'range' => '8,000 - 8,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 9000 && $totalAmount <= 9999) {
-                return ['lkp_care_id' => 2, 'care_charge' => 889, 'range' => '9,000 - 9,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 10000 && $totalAmount <= 10999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1159, 'range' => '10,000 - 10,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 11000 && $totalAmount <= 11999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1269, 'range' => '11,000 - 11,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 12000 && $totalAmount <= 12999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1379, 'range' => '12,000 - 12,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 13000 && $totalAmount <= 13999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1489, 'range' => '13,000 - 13,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 14000 && $totalAmount <= 14999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1599, 'range' => '14,000 - 14,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 15000 && $totalAmount <= 15999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1709, 'range' => '15,000 - 15,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 16000 && $totalAmount <= 16999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1819, 'range' => '16,000 - 16,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 17000 && $totalAmount <= 17999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 1929, 'range' => '17,000 - 17,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 18000 && $totalAmount <= 18999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 2039, 'range' => '18,000 - 18,999', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 19000 && $totalAmount <= 20000) {
-                return ['lkp_care_id' => 3, 'care_charge' => 2149, 'range' => '19,000 - 20,000', 'total_amount' => $totalAmount];
-            } elseif ($totalAmount >= 20000 && $totalAmount <= 20999) {
-                return ['lkp_care_id' => 3, 'care_charge' => 2239, 'range' => '20,000 - 20,999', 'total_amount' => $totalAmount];
-            } else {
-                return ['lkp_care_id' => 3, 'care_charge' => 2479, 'range' => 'Above 20,999', 'total_amount' => $totalAmount];;
-            }
-        };
+        // QuiviCare tier is based on the sum of RMA-eligible parts only, not
+        // the whole order total (see self::CARE_ELIGIBLE_CATEGORIES).
+        $careTier = $this->resolveCareTier($this->eligibleCarePartsTotal($order->id));
 
-        $care = Care::findOrFail($calculateCareServiceCharge('lkp_care_id')['lkp_care_id']);
+        $care = Care::findOrFail($careTier['lkp_care_id']);
 
         $care = collect($care->toArray())->merge([
-            'care_charge' => $calculateCareServiceCharge('lkp_care_id')['care_charge']
+            'care_charge' => $careTier['care_charge']
         ]);
 
         return response()->json([
@@ -246,76 +325,26 @@ class OrderController extends Controller
             $careServiceCharge = ['lkp_care_id' => 1, 'charge' => 0, 'range' => ''];
 
             if (!$careData) {
-                $orderdetails = OrderDetails::where('order_id', $order->id)
-                    ->with([
-                        'product' => function($query) {
-                            $query->select('id', 'product_name', 'product_code', 'image', 'cat_id', 'product_qty', 'price', 'product_code')
-                                ->with('category:id,name');
-                        }
-                    ])->get();
+                // QuiviCare tier is based on the sum of RMA-eligible parts only
+                // (self::CARE_ELIGIBLE_CATEGORIES), not the whole order total.
+                $eligibleOrderDetails = OrderDetails::where('order_id', $order->id)
+                    ->whereHas('product', function ($q) {
+                        $q->whereIn('cat_id', self::CARE_ELIGIBLE_CATEGORIES);
+                    })
+                    ->get();
 
-                $careCategories = [2, 4, 5, 7, 8, 9, 10, 11];
+                $eligibleTotal = (float) $eligibleOrderDetails->sum('sub_total');
 
-                $calculateCareServiceCharge = function($totalAmount) use ($order) {
-                    $totalAmount = $order->total;
+                $careProductTotal = [
+                    'total_products' => $eligibleOrderDetails->count(),
+                    'total_quantity' => (int) $eligibleOrderDetails->sum('pro_qty'),
+                    'total_amount' => $eligibleTotal,
+                ];
 
-                    if ($totalAmount >= 0 && $totalAmount <= 5999) {
-                        return ['lkp_care_id' => 1, 'care_charge' => 379, 'range' => '0 - 5,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 6000 && $totalAmount <= 6999) {
-                        return ['lkp_care_id' => 1, 'care_charge' => 479, 'range' => '6,000 - 6,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 7000 && $totalAmount <= 7999) {
-                        return ['lkp_care_id' => 2, 'care_charge' => 689, 'range' => '7,000 - 7,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 8000 && $totalAmount <= 8999) {
-                        return ['lkp_care_id' => 2, 'care_charge' => 789, 'range' => '8,000 - 8,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 9000 && $totalAmount <= 9999) {
-                        return ['lkp_care_id' => 2, 'care_charge' => 889, 'range' => '9,000 - 9,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 10000 && $totalAmount <= 10999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1159, 'range' => '10,000 - 10,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 11000 && $totalAmount <= 11999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1269, 'range' => '11,000 - 11,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 12000 && $totalAmount <= 12999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1379, 'range' => '12,000 - 12,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 13000 && $totalAmount <= 13999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1489, 'range' => '13,000 - 13,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 14000 && $totalAmount <= 14999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1599, 'range' => '14,000 - 14,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 15000 && $totalAmount <= 15999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1709, 'range' => '15,000 - 15,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 16000 && $totalAmount <= 16999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1819, 'range' => '16,000 - 16,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 17000 && $totalAmount <= 17999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 1929, 'range' => '17,000 - 17,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 18000 && $totalAmount <= 18999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 2039, 'range' => '18,000 - 18,999', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 19000 && $totalAmount <= 20000) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 2149, 'range' => '19,000 - 20,000', 'total_amount' => $totalAmount];
-                    } elseif ($totalAmount >= 20000 && $totalAmount <= 20999) {
-                        return ['lkp_care_id' => 3, 'care_charge' => 2239, 'range' => '20,000 - 20,999', 'total_amount' => $totalAmount];
-                    } else {
-                        return ['lkp_care_id' => 3, 'care_charge' => 2479, 'range' => 'Above 20,999', 'total_amount' => $totalAmount];;
-                    }
-                };
-
-                $careProductTotal = $orderdetails
-                    ->filter(fn($item) => in_array($item->product->cat_id, $careCategories))
-                    ->reduce(function ($carry, $item) use ($calculateCareServiceCharge,$order) {
-                        $qty = $item->product->product_qty ?? 0;
-                        $price = $item->product->price ?? 0;
-
-                        // Calculate total amount properly (price * quantity)
-                        $itemTotal = $price * $qty;
-
-                        return [
-                            'total_products' => $carry['total_products'] + 1,
-                            'total_quantity' => (int)$order->qty,
-                            'total_amount' => $calculateCareServiceCharge('care_charge'),
-                        ];
-                    }, ['total_products' => 0, 'total_quantity' => 0, 'total_amount' => 0]);
-
-                $careServiceCharge = $calculateCareServiceCharge($careProductTotal['total_amount'] ?? 0);
+                $careServiceCharge = $this->resolveCareTier($eligibleTotal);
 
                 $lkp_care_id = $careServiceCharge['lkp_care_id'];
-                $care_part_price = $careProductTotal['total_amount'] ?? 0;
+                $care_part_price = $eligibleTotal;
                 $care_charge = $careServiceCharge['care_charge'];
 
                 if ($careData) {
@@ -408,15 +437,17 @@ class OrderController extends Controller
                 $totalServes = ServeData::count();
                 $nextId = $totalServes + 1;
                 $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-                $serveId = "QV-SERV-{$serveNumber}";
+                $serveId = "QV-SRV-{$serveNumber}";
 
                 // Get serve type for QVSE CID generation based on order total
-                if ($order->total <= 7000.00) {
-                    $lkp_serve_id = 1; // Inessential kit
-                } elseif ($order->total > 10000.00) {
-                    $lkp_serve_id = 3; // Premium
+                // QuiviServe tier — < RM7,000 Essential Kit, RM7,000-9,999 Prime
+                // Series, >= RM10,000 Collector's Edition.
+                if ($order->total < 7000.00) {
+                    $lkp_serve_id = 1; // Essential Kit
+                } elseif ($order->total < 10000.00) {
+                    $lkp_serve_id = 2; // Prime Series
                 } else {
-                    $lkp_serve_id = 2; // Silver
+                    $lkp_serve_id = 3; // Collector's Edition
                 }
 
                 $serveType = Serves::find($lkp_serve_id);
@@ -448,7 +479,12 @@ class OrderController extends Controller
 
 
                 if($lkp_serve_id == 1){
+                    // serve_bek_id is NOT NULL in the DB — must be set on create,
+                    // same as serve_pce_id is for the PCE branch below.
+                    $totalServeBeks = ServeBek::count();
+                    $serveBekNumber = str_pad($totalServeBeks + 1, 4, '0', STR_PAD_LEFT);
                     $serveBek = ServeBek::create([
+                        'serve_bek_id' => "{$serveTypeCode}-{$serveBekNumber}",
                         'serve_data_id' => $serveData->id,
                     ]);
 
@@ -462,7 +498,11 @@ class OrderController extends Controller
                 }
 
                 elseif($lkp_serve_id == 2){
+                    // serve_mps_id is NOT NULL in the DB — must be set on create.
+                    $totalServeMps = ServeMps::count();
+                    $serveMpsNumber = str_pad($totalServeMps + 1, 4, '0', STR_PAD_LEFT);
                     $serveBek = ServeMps::create([
+                        'serve_mps_id' => "{$serveTypeCode}-{$serveMpsNumber}",
                         'serve_data_id' => $serveData->id,
                     ]);
 
@@ -671,6 +711,7 @@ class OrderController extends Controller
 
             $totalQty = 0;
             $subTotal = 0;
+            $eligibleCareTotal = 0;
 
             // Insert new order details
             foreach ($request->products as $productData) {
@@ -696,18 +737,41 @@ class OrderController extends Controller
                 // Decrement product stock
                 $product->decrement('product_qty', $productData['qty']);
 
+                $lineTotal = $productData['qty'] * $productData['price'];
                 $totalQty += $productData['qty'];
-                $subTotal += $productData['qty'] * $productData['price'];
+                $subTotal += $lineTotal;
+
+                if (in_array($product->cat_id, self::CARE_ELIGIBLE_CATEGORIES)) {
+                    $eligibleCareTotal += $lineTotal;
+                }
             }
 
-            // Determine categories based on total
-            if ($subTotal <= 7000.00) {
-                $categories_id = 1; // Inessential kit
-            } elseif ($subTotal > 10000.00) {
-                $categories_id = 3; // Premium
+            // QuiviCraft build-class tier — see PosController::orderdone() for the
+            // same bands. craft table IDs are 1=BASIC, 2=PREMIUM, 3=MEDIUM, 4=ULTRA.
+            if ($subTotal <= 6999.00) {
+                $craftId = 1; // BASIC
+            } elseif ($subTotal <= 9999.00) {
+                $craftId = 3; // MEDIUM
+            } elseif ($subTotal <= 19999.00) {
+                $craftId = 2; // PREMIUM
             } else {
-                $categories_id = 2; // Silver
+                $craftId = 4; // ULTRA
             }
+
+            // QuiviServe tier — < RM7,000 Essential Kit, RM7,000-9,999 Prime
+            // Series, >= RM10,000 Collector's Edition (serves table IDs 1/2/3
+            // already in that order).
+            if ($subTotal < 7000.00) {
+                $serveTierId = 1; // Essential Kit
+            } elseif ($subTotal < 10000.00) {
+                $serveTierId = 2; // Prime Series
+            } else {
+                $serveTierId = 3; // Collector's Edition
+            }
+
+            // QuiviCare tier — based on the sum of RMA-eligible parts only
+            // ($eligibleCareTotal, accumulated above), not the whole order total.
+            $careTierId = $this->resolveCareTier($eligibleCareTotal)['lkp_care_id'];
 
             // Update order
             $order->update([
@@ -715,9 +779,9 @@ class OrderController extends Controller
                 'qty' => $totalQty,
                 'sub_total' => $subTotal,
                 'total' => $subTotal,
-                'craft_id' => $categories_id,
-                'serve_id' => $categories_id,
-                'care_id' => $categories_id
+                'craft_id' => $craftId,
+                'serve_id' => $serveTierId,
+                'care_id' => $careTierId
             ]);
 
             DB::commit();

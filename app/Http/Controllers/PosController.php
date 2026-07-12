@@ -39,11 +39,19 @@ public function orderdone(Request $request)
 
     $cartProducts = DB::table('pos')->get();
 
+    // QuiviCare RMA-eligible categories — CPU, SSD, GPU, HDD, RAM, MBD, PSU,
+    // HSF, AIO. Must match OrderController::CARE_ELIGIBLE_CATEGORIES.
+    $careCategories = [1, 2, 3, 4, 5, 6, 7, 8, 11];
+
     $categoryCount = [];
+    $eligibleCareTotal = 0;
     foreach ($cartProducts as $product) {
         $prodCategoryId = DB::table('products')->where('id', $product->pro_id)->value('cat_id');
         if ($prodCategoryId) {
             $categoryCount[$prodCategoryId] = ($categoryCount[$prodCategoryId] ?? 0) + 1;
+            if (in_array($prodCategoryId, $careCategories)) {
+                $eligibleCareTotal += $product->sub_total;
+            }
         }
     }
 
@@ -56,17 +64,44 @@ public function orderdone(Request $request)
         }
     }
 
-    if($request->total <= 6999.00 ){
-        $categories_id = 1;
+    // QuiviCraft build-class tier — RM0-6999 BASIC, RM7000-9999 MEDIUM,
+    // RM10000-19999 PREMIUM, RM20000+ ULTRA. Boundaries are inclusive on both
+    // ends (no RM7000.00-exactly gap), and mapped to the actual craft table
+    // IDs (1=BASIC, 2=PREMIUM, 3=MEDIUM, 4=ULTRA — PREMIUM/MEDIUM are NOT in
+    // numeric order in that table).
+    // Reads total_amount (the validated request field) — $request->total does
+    // not exist on this request and silently evaluated to null/0 previously,
+    // which is why every order was landing on BASIC regardless of its real total.
+    if ($request->total_amount <= 6999.00) {
+        $craftId = 1; // BASIC
+    } elseif ($request->total_amount <= 9999.00) {
+        $craftId = 3; // MEDIUM
+    } elseif ($request->total_amount <= 19999.00) {
+        $craftId = 2; // PREMIUM
+    } else {
+        $craftId = 4; // ULTRA
     }
-    elseif($request->total > 7000.00 && $request->total <= 9999.00){
-        $categories_id = 2;
+
+    // QuiviServe tier — < RM7,000 Essential Kit, RM7,000-9,999 Prime Series,
+    // >= RM10,000 Collector's Edition (serves table IDs 1/2/3 already in that
+    // order).
+    if ($request->total_amount < 7000.00) {
+        $serveTierId = 1; // Essential Kit
+    } elseif ($request->total_amount < 10000.00) {
+        $serveTierId = 2; // Prime Series
+    } else {
+        $serveTierId = 3; // Collector's Edition
     }
-    elseif($request->total > 10000.00 && $request->total <= 19999.00){
-        $categories_id = 3;
-    }
-    else{
-        $categories_id = 4;
+
+    // QuiviCare tier — based on the sum of RMA-eligible parts only
+    // ($eligibleCareTotal, computed above), not the whole order total.
+    // care table IDs are 1=COR3, 2=RI5E, 3=VIS10N (already in ascending order).
+    if ($eligibleCareTotal <= 6999.00) {
+        $careTierId = 1; // COR3
+    } elseif ($eligibleCareTotal <= 9999.00) {
+        $careTierId = 2; // RI5E
+    } else {
+        $careTierId = 3; // VIS10N
     }
 
     $nextId = DB::table('order')->max('id') + 1;
@@ -82,9 +117,9 @@ public function orderdone(Request $request)
         'order_date' => now(),
         'order_month' => date('F'),
         'order_year' => date('Y'),
-        'craft_id' => $categories_id,
-        'serve_id' => $categories_id,
-        'care_id' => $categories_id,
+        'craft_id' => $craftId,
+        'serve_id' => $serveTierId,
+        'care_id' => $careTierId,
         'is_reason' => $request->is_reason,
     ];
 

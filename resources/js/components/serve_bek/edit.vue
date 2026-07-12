@@ -658,6 +658,12 @@ export default {
 .alert-warning {
   background-color: #fff3cd;
   border-color: #ffeaa7;
+  color: #664d03;
+}
+
+.alert-warning small,
+.alert-warning i {
+  color: inherit;
 }
 
 .badge {

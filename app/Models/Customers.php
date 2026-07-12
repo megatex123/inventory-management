@@ -37,4 +37,9 @@ class Customers extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function progressEntries()
+    {
+        return $this->hasMany(CustomerProgress::class, 'customer_id');
+    }
 }
