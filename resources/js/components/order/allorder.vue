@@ -212,12 +212,16 @@
                                                      <span
                                                         v-if="order.serve"
                                                         class="badge serve-badge"
+                                                        :class="{ 'serve-badge-clickable': canOpenCareRecord(order) }"
                                                         :style="{
                                                             backgroundColor: order.serve.colour,
                                                             color: isLightColor(order.serve.colour) ? '#000' : '#fff'
                                                         }"
+                                                        :title="canOpenCareRecord(order) ? 'Open QuiviCare record' : null"
+                                                        @click="canOpenCareRecord(order) && goToCareRecord(order)"
                                                     >
                                                         {{ order.care && order.care.name ? order.care.name : 'N/A' }}
+                                                        <i v-if="canOpenCareRecord(order)" class="fas fa-arrow-right ml-1"></i>
                                                     </span>
                                                     <span v-else class="badge badge-secondary">N/A</span>
                                                 </td>
@@ -611,6 +615,25 @@ export default {
                 })
                 .catch((error) => {
                     Swal.fire('Error!', error.response?.data?.message || 'Failed to open the Serve record', 'error');
+                });
+        },
+
+        canOpenCareRecord(order) {
+            return order.approve == 1 && !!order.care_id;
+        },
+
+        goToCareRecord(order) {
+            axios.get(`/api/care-data/order/${order.id}`)
+                .then((response) => {
+                    const record = (response.data.data || [])[0];
+                    if (!record) {
+                        Swal.fire('Not Found', 'No QuiviCare record exists for this order yet.', 'warning');
+                        return;
+                    }
+                    this.$router.push({ name: 'caredataedit', params: { id: record.id } });
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', error.response?.data?.message || 'Failed to open the Care record', 'error');
                 });
         },
 

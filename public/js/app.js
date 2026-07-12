@@ -13750,8 +13750,30 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Error!', ((_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to open the Serve record', 'error');
       });
     },
-    approveOrder: function approveOrder(order, status) {
+    canOpenCareRecord: function canOpenCareRecord(order) {
+      return order.approve == 1 && !!order.care_id;
+    },
+    goToCareRecord: function goToCareRecord(order) {
       var _this5 = this;
+      axios.get("/api/care-data/order/".concat(order.id)).then(function (response) {
+        var record = (response.data.data || [])[0];
+        if (!record) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Not Found', 'No QuiviCare record exists for this order yet.', 'warning');
+          return;
+        }
+        _this5.$router.push({
+          name: 'caredataedit',
+          params: {
+            id: record.id
+          }
+        });
+      })["catch"](function (error) {
+        var _error$response2;
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Error!', ((_error$response2 = error.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to open the Care record', 'error');
+      });
+    },
+    approveOrder: function approveOrder(order, status) {
+      var _this6 = this;
       var statusText = status === 1 ? 'approve' : status === 0 ? 'reject' : 'reset to draft';
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: "Are you sure?",
@@ -13763,12 +13785,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         confirmButtonText: "Yes, ".concat(statusText, " it!")
       }).then(function (result) {
         if (result.isConfirmed) {
-          _this5.updateApprove(order, status);
+          _this6.updateApprove(order, status);
         }
       });
     },
     updateApprove: function updateApprove(order, status) {
-      var _this6 = this;
+      var _this7 = this;
       var loading = sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: 'Updating...',
         text: 'Please wait',
@@ -13805,8 +13827,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
 
         // Refresh the data to get updated orders
-        _this6.getOrders();
-        _this6.getStatistics();
+        _this7.getOrders();
+        _this7.getStatistics();
       })["catch"](function (error) {
         loading.close();
         console.error('Error updating approval:', error);
@@ -13851,7 +13873,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     exportToExcel: function exportToExcel() {
-      var _this7 = this;
+      var _this8 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: 'Export Options',
         html: "\n                    <div class=\"text-left\">\n                        <p>Choose export format:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n                            <label class=\"form-check-label\" for=\"formatExcel\">\n                                Excel/HTML Format (Styled Report)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n                            <label class=\"form-check-label\" for=\"formatCSV\">\n                                Simple CSV Format\n                            </label>\n                        </div>\n                        <br>\n                        <p>Choose what to export:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n                            <label class=\"form-check-label\" for=\"exportFiltered\">\n                                Export filtered data (".concat(this.filteredOrders.length, " records)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n                            <label class=\"form-check-label\" for=\"exportAll\">\n                                Export all data (").concat(this.orders.length, " records)\n                            </label>\n                        </div>\n                    </div>\n                "),
@@ -13873,17 +13895,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             format = _result$value.format,
             scope = _result$value.scope;
           if (format === 'excel') {
-            _this7.generateStyledExcelReport(scope);
+            _this8.generateStyledExcelReport(scope);
           } else {
-            _this7.generateSimpleCSV(scope);
+            _this8.generateSimpleCSV(scope);
           }
         }
       });
     },
     generateStyledExcelReport: function generateStyledExcelReport(scope) {
-      var _this8 = this;
+      var _this9 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var dataToExport, params, res, totalOrders, totalRevenue, totalFees, approvedOrders, rejectedOrders, draftOrders, exportDate, filterSummary, statusMap, htmlContent, blob, url, link, date, filterType, filename, _error$response2, _t;
+        var dataToExport, params, res, totalOrders, totalRevenue, totalFees, approvedOrders, rejectedOrders, draftOrders, exportDate, filterSummary, statusMap, htmlContent, blob, url, link, date, filterType, filename, _error$response3, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
@@ -13902,7 +13924,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 break;
               }
               _context.n = 2;
-              return _this8.getAllFilteredOrders();
+              return _this9.getAllFilteredOrders();
             case 2:
               dataToExport = _context.v;
               _context.n = 5;
@@ -13953,23 +13975,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 minute: '2-digit'
               }); // Generate filter summary
               filterSummary = [];
-              if (_this8.filters.search) filterSummary.push("Search: \"".concat(_this8.filters.search, "\""));
-              if (_this8.filters.approve) {
+              if (_this9.filters.search) filterSummary.push("Search: \"".concat(_this9.filters.search, "\""));
+              if (_this9.filters.approve) {
                 statusMap = {
                   '1': 'Approved',
                   '0': 'Rejected',
                   'null': 'Draft'
                 };
-                filterSummary.push("Status: ".concat(statusMap[_this8.filters.approve] || _this8.filters.approve));
+                filterSummary.push("Status: ".concat(statusMap[_this9.filters.approve] || _this9.filters.approve));
               }
-              if (_this8.filters.date_from) filterSummary.push("From: ".concat(_this8.filters.date_from));
-              if (_this8.filters.date_to) filterSummary.push("To: ".concat(_this8.filters.date_to));
-              htmlContent = "\n                <html>\n                <head>\n                    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n                    <title>QuiviCraft Report</title>\n                    <style>\n                        body {\n                            font-family: Arial, Helvetica, sans-serif;\n                            margin: 20px;\n                            background-color: #ffffff;\n                        }\n                        h1 {\n                            color: #4e73df;\n                            text-align: center;\n                            font-size: 24px;\n                            margin-bottom: 5px;\n                        }\n                        h3 {\n                            text-align: center;\n                            color: #858796;\n                            font-size: 14px;\n                            margin-top: 0;\n                            margin-bottom: 20px;\n                            font-weight: normal;\n                        }\n                        .stats-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-bottom: 20px;\n                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n                            color: black;\n                        }\n                        .stats-table td {\n                            padding: 15px;\n                            text-align: center;\n                            border: none;\n                        }\n                        .stats-label {\n                            font-size: 12px;\n                            text-transform: uppercase;\n                        }\n                        .stats-value {\n                            font-size: 20px;\n                            font-weight: bold;\n                            margin-top: 5px;\n                        }\n                        .filter-section {\n                            background-color: #f8f9fc;\n                            padding: 15px;\n                            border-radius: 8px;\n                            margin-bottom: 20px;\n                            border: 1px solid #e3e6f0;\n                        }\n                        .filter-title {\n                            font-size: 14px;\n                            font-weight: bold;\n                            color: #4e73df;\n                            margin-bottom: 10px;\n                        }\n                        .filter-badge {\n                            background-color: #4e73df;\n                            color: white;\n                            padding: 5px 10px;\n                            border-radius: 20px;\n                            font-size: 12px;\n                            display: inline-block;\n                            margin-right: 5px;\n                            margin-bottom: 5px;\n                        }\n                        .generated-info {\n                            font-size: 11px;\n                            color: #858796;\n                            text-align: right;\n                            margin-bottom: 10px;\n                        }\n                        table.data-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-top: 20px;\n                            font-size: 12px;\n                        }\n                        table.data-table th {\n                            background-color: #4e73df;\n                            color: white;\n                            font-weight: bold;\n                            padding: 12px;\n                            text-align: center;\n                            border: 1px solid #ddd;\n                        }\n                        table.data-table td {\n                            padding: 8px;\n                            border: 1px solid #ddd;\n                            text-align: center;\n                            color: #000000; /* Black text for all cells */\n                        }\n                        table.data-table tr:nth-child(even) {\n                            background-color: #f2f2f2;\n                        }\n                        .total-row {\n                            font-weight: bold;\n                            background-color: #4e73df !important;\n                            color: white;\n                        }\n                        .total-row td {\n                            color: white !important; /* Keep total row white text */\n                        }\n                        .footer {\n                            text-align: center;\n                            font-size: 10px;\n                            color: #95a5a6;\n                            margin-top: 30px;\n                            padding-top: 10px;\n                            border-top: 1px solid #ecf0f1;\n                        }\n                        .text-right { text-align: right; }\n                        .text-left { text-align: left; }\n                        .text-center { text-align: center; }\n                        .text-black { color: #000000; } /* Utility class for black text */\n                    </style>\n                </head>\n                <body>\n                    <h1>ORDERS REPORT</h1>\n                    <h3>Comprehensive Order Data Analysis</h3>\n\n                    <!-- Statistics Table -->\n                    <table class=\"stats-table\" cellspacing=\"0\" cellpadding=\"0\">\n                        <tr>\n                            <td><div class=\"stats-label\">Total Orders</div><div class=\"stats-value\">".concat(totalOrders, "</div></td>\n                            <td><div class=\"stats-label\">Total Revenue</div><div class=\"stats-value\">RM ").concat(_this8.formatNumber(totalRevenue), "</div></td>\n                            <td><div class=\"stats-label\">Total Fees</div><div class=\"stats-value\">RM ").concat(_this8.formatNumber(totalFees), "</div></td>\n                            <td><div class=\"stats-label\">Approved</div><div class=\"stats-value\">").concat(approvedOrders, "</div></td>\n                            <td><div class=\"stats-label\">Draft</div><div class=\"stats-value\">").concat(draftOrders, "</div></td>\n                            <td><div class=\"stats-label\">Rejected</div><div class=\"stats-value\">").concat(rejectedOrders, "</div></td>\n                        </tr>\n                    </table>\n\n                    <div class=\"generated-info\">\n                        Generated on: ").concat(exportDate, "\n                    </div>\n\n                    <!-- Main Data Table -->\n                    <table class=\"data-table\" cellspacing=\"0\" cellpadding=\"0\" border=\"1\">\n                        <thead>\n                            <tr>\n                                <th>No.</th>\n                                <th>Order ID</th>\n                                <th>Customer Name</th>\n                                <th>Customer Email</th>\n                                <th>Order Date</th>\n                                <th>Total (RM)</th>\n                                <th>QuiviServe</th>\n                                <th>QuiviCare</th>\n                                <th>Status</th>\n                                <th>Time Remaining</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            ").concat(dataToExport.map(function (order, index) {
+              if (_this9.filters.date_from) filterSummary.push("From: ".concat(_this9.filters.date_from));
+              if (_this9.filters.date_to) filterSummary.push("To: ".concat(_this9.filters.date_to));
+              htmlContent = "\n                <html>\n                <head>\n                    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n                    <title>QuiviCraft Report</title>\n                    <style>\n                        body {\n                            font-family: Arial, Helvetica, sans-serif;\n                            margin: 20px;\n                            background-color: #ffffff;\n                        }\n                        h1 {\n                            color: #4e73df;\n                            text-align: center;\n                            font-size: 24px;\n                            margin-bottom: 5px;\n                        }\n                        h3 {\n                            text-align: center;\n                            color: #858796;\n                            font-size: 14px;\n                            margin-top: 0;\n                            margin-bottom: 20px;\n                            font-weight: normal;\n                        }\n                        .stats-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-bottom: 20px;\n                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n                            color: black;\n                        }\n                        .stats-table td {\n                            padding: 15px;\n                            text-align: center;\n                            border: none;\n                        }\n                        .stats-label {\n                            font-size: 12px;\n                            text-transform: uppercase;\n                        }\n                        .stats-value {\n                            font-size: 20px;\n                            font-weight: bold;\n                            margin-top: 5px;\n                        }\n                        .filter-section {\n                            background-color: #f8f9fc;\n                            padding: 15px;\n                            border-radius: 8px;\n                            margin-bottom: 20px;\n                            border: 1px solid #e3e6f0;\n                        }\n                        .filter-title {\n                            font-size: 14px;\n                            font-weight: bold;\n                            color: #4e73df;\n                            margin-bottom: 10px;\n                        }\n                        .filter-badge {\n                            background-color: #4e73df;\n                            color: white;\n                            padding: 5px 10px;\n                            border-radius: 20px;\n                            font-size: 12px;\n                            display: inline-block;\n                            margin-right: 5px;\n                            margin-bottom: 5px;\n                        }\n                        .generated-info {\n                            font-size: 11px;\n                            color: #858796;\n                            text-align: right;\n                            margin-bottom: 10px;\n                        }\n                        table.data-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-top: 20px;\n                            font-size: 12px;\n                        }\n                        table.data-table th {\n                            background-color: #4e73df;\n                            color: white;\n                            font-weight: bold;\n                            padding: 12px;\n                            text-align: center;\n                            border: 1px solid #ddd;\n                        }\n                        table.data-table td {\n                            padding: 8px;\n                            border: 1px solid #ddd;\n                            text-align: center;\n                            color: #000000; /* Black text for all cells */\n                        }\n                        table.data-table tr:nth-child(even) {\n                            background-color: #f2f2f2;\n                        }\n                        .total-row {\n                            font-weight: bold;\n                            background-color: #4e73df !important;\n                            color: white;\n                        }\n                        .total-row td {\n                            color: white !important; /* Keep total row white text */\n                        }\n                        .footer {\n                            text-align: center;\n                            font-size: 10px;\n                            color: #95a5a6;\n                            margin-top: 30px;\n                            padding-top: 10px;\n                            border-top: 1px solid #ecf0f1;\n                        }\n                        .text-right { text-align: right; }\n                        .text-left { text-align: left; }\n                        .text-center { text-align: center; }\n                        .text-black { color: #000000; } /* Utility class for black text */\n                    </style>\n                </head>\n                <body>\n                    <h1>ORDERS REPORT</h1>\n                    <h3>Comprehensive Order Data Analysis</h3>\n\n                    <!-- Statistics Table -->\n                    <table class=\"stats-table\" cellspacing=\"0\" cellpadding=\"0\">\n                        <tr>\n                            <td><div class=\"stats-label\">Total Orders</div><div class=\"stats-value\">".concat(totalOrders, "</div></td>\n                            <td><div class=\"stats-label\">Total Revenue</div><div class=\"stats-value\">RM ").concat(_this9.formatNumber(totalRevenue), "</div></td>\n                            <td><div class=\"stats-label\">Total Fees</div><div class=\"stats-value\">RM ").concat(_this9.formatNumber(totalFees), "</div></td>\n                            <td><div class=\"stats-label\">Approved</div><div class=\"stats-value\">").concat(approvedOrders, "</div></td>\n                            <td><div class=\"stats-label\">Draft</div><div class=\"stats-value\">").concat(draftOrders, "</div></td>\n                            <td><div class=\"stats-label\">Rejected</div><div class=\"stats-value\">").concat(rejectedOrders, "</div></td>\n                        </tr>\n                    </table>\n\n                    <div class=\"generated-info\">\n                        Generated on: ").concat(exportDate, "\n                    </div>\n\n                    <!-- Main Data Table -->\n                    <table class=\"data-table\" cellspacing=\"0\" cellpadding=\"0\" border=\"1\">\n                        <thead>\n                            <tr>\n                                <th>No.</th>\n                                <th>Order ID</th>\n                                <th>Customer Name</th>\n                                <th>Customer Email</th>\n                                <th>Order Date</th>\n                                <th>Total (RM)</th>\n                                <th>QuiviServe</th>\n                                <th>QuiviCare</th>\n                                <th>Status</th>\n                                <th>Time Remaining</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            ").concat(dataToExport.map(function (order, index) {
                 var _order$customer, _order$customer2, _order$serve, _order$care;
                 var statusText = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
                 var serveStyle = order.serve && order.serve.colour ? "background-color: ".concat(order.serve.colour, "; color: #000000;") : 'background-color: #f2f2f2; color: #000000;';
-                return "\n                                <tr>\n                                    <td class=\"text-center\">".concat(index + 1, "</td>\n                                    <td class=\"text-center\"><strong>").concat(_this8.escapeHtml(order.order_id || 'N/A'), "</strong></td>\n                                    <td class=\"text-left\">").concat(_this8.escapeHtml(((_order$customer = order.customer) === null || _order$customer === void 0 ? void 0 : _order$customer.full_name) || 'N/A'), "</td>\n                                    <td class=\"text-left\">").concat(_this8.escapeHtml(((_order$customer2 = order.customer) === null || _order$customer2 === void 0 ? void 0 : _order$customer2.email) || 'N/A'), "</td>\n                                    <td class=\"text-center\">").concat(_this8.formatDate(order.order_date), "</td>\n                                    <td class=\"text-right\"><strong>RM ").concat(_this8.formatNumber(order.total || 0), "</strong></td>\n                                    <td class=\"text-center\">\n                                        <span style=\"").concat(serveStyle, " padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this8.escapeHtml(((_order$serve = order.serve) === null || _order$serve === void 0 ? void 0 : _order$serve.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"background-color: #f2f2f2; padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this8.escapeHtml(((_order$care = order.care) === null || _order$care === void 0 ? void 0 : _order$care.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"color: #000000;\">\n                                            ").concat(statusText, "\n                                        </span>\n                                        ").concat(order.invoice_id ? "<br><small>".concat(_this8.escapeHtml(order.invoice_id), "</small>") : '', "\n                                    </td>\n                                    <td class=\"text-center\">\n                                        ").concat(order.approve == 1 && order.approved_at ? "<span style=\"color: #000000;\">\n                                                ".concat(_this8.escapeHtml(order.time_remaining || 'N/A'), "\n                                            </span>") : '-', "\n                                    </td>\n                                </tr>\n                            ");
-              }).join(''), "\n\n                            <tr class=\"total-row\">\n                                <td colspan=\"5\" class=\"text-center\"><strong>GRAND TOTAL</strong></td>\n                                <td class=\"text-right\"><strong>RM ").concat(_this8.formatNumber(totalRevenue), "</strong></td>\n                                <td colspan=\"4\"></td>\n                            </tr>\n                        </tbody>\n                    </table>\n\n                    <div class=\"footer\">\n                        <p>Generated by Order Management System | ").concat(exportDate, "</p>\n                        <p>This is a computer-generated report. No signature is required.</p>\n                        <p>Total Pages: 1 | Confidential</p>\n                    </div>\n                </body>\n                </html>");
+                return "\n                                <tr>\n                                    <td class=\"text-center\">".concat(index + 1, "</td>\n                                    <td class=\"text-center\"><strong>").concat(_this9.escapeHtml(order.order_id || 'N/A'), "</strong></td>\n                                    <td class=\"text-left\">").concat(_this9.escapeHtml(((_order$customer = order.customer) === null || _order$customer === void 0 ? void 0 : _order$customer.full_name) || 'N/A'), "</td>\n                                    <td class=\"text-left\">").concat(_this9.escapeHtml(((_order$customer2 = order.customer) === null || _order$customer2 === void 0 ? void 0 : _order$customer2.email) || 'N/A'), "</td>\n                                    <td class=\"text-center\">").concat(_this9.formatDate(order.order_date), "</td>\n                                    <td class=\"text-right\"><strong>RM ").concat(_this9.formatNumber(order.total || 0), "</strong></td>\n                                    <td class=\"text-center\">\n                                        <span style=\"").concat(serveStyle, " padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this9.escapeHtml(((_order$serve = order.serve) === null || _order$serve === void 0 ? void 0 : _order$serve.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"background-color: #f2f2f2; padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this9.escapeHtml(((_order$care = order.care) === null || _order$care === void 0 ? void 0 : _order$care.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"color: #000000;\">\n                                            ").concat(statusText, "\n                                        </span>\n                                        ").concat(order.invoice_id ? "<br><small>".concat(_this9.escapeHtml(order.invoice_id), "</small>") : '', "\n                                    </td>\n                                    <td class=\"text-center\">\n                                        ").concat(order.approve == 1 && order.approved_at ? "<span style=\"color: #000000;\">\n                                                ".concat(_this9.escapeHtml(order.time_remaining || 'N/A'), "\n                                            </span>") : '-', "\n                                    </td>\n                                </tr>\n                            ");
+              }).join(''), "\n\n                            <tr class=\"total-row\">\n                                <td colspan=\"5\" class=\"text-center\"><strong>GRAND TOTAL</strong></td>\n                                <td class=\"text-right\"><strong>RM ").concat(_this9.formatNumber(totalRevenue), "</strong></td>\n                                <td colspan=\"4\"></td>\n                            </tr>\n                        </tbody>\n                    </table>\n\n                    <div class=\"footer\">\n                        <p>Generated by Order Management System | ").concat(exportDate, "</p>\n                        <p>This is a computer-generated report. No signature is required.</p>\n                        <p>Total Pages: 1 | Confidential</p>\n                    </div>\n                </body>\n                </html>");
               blob = new Blob([htmlContent], {
                 type: 'application/vnd.ms-excel'
               });
@@ -14000,7 +14022,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               console.error('Export error:', _t);
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
                 title: 'Export Failed!',
-                text: ((_error$response2 = _t.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || _t.message || 'Failed to generate report',
+                text: ((_error$response3 = _t.response) === null || _error$response3 === void 0 || (_error$response3 = _error$response3.data) === null || _error$response3 === void 0 ? void 0 : _error$response3.message) || _t.message || 'Failed to generate report',
                 icon: 'error'
               });
             case 8:
@@ -14010,14 +14032,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     getAllFilteredOrders: function getAllFilteredOrders() {
-      var _this9 = this;
+      var _this0 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
         var params, res, filteredData, search, _t2;
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
               _context2.p = 0;
-              params = _objectSpread(_objectSpread({}, _this9.filters), {}, {
+              params = _objectSpread(_objectSpread({}, _this0.filters), {}, {
                 per_page: 10000,
                 page: 1
               }); // Handle null value for draft
@@ -14039,22 +14061,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 1:
               res = _context2.v;
               filteredData = res.data || []; // Apply any client-side filtering if needed
-              if (_this9.filters.search) {
-                search = _this9.filters.search.toLowerCase();
+              if (_this0.filters.search) {
+                search = _this0.filters.search.toLowerCase();
                 filteredData = filteredData.filter(function (order) {
                   return order.order_id && order.order_id.toString().toLowerCase().includes(search) || order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search) || order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search);
                 });
               }
 
               // Apply date filters again to ensure consistency
-              if (_this9.filters.date_from) {
+              if (_this0.filters.date_from) {
                 filteredData = filteredData.filter(function (order) {
-                  return order.order_date && new Date(order.order_date) >= new Date(_this9.filters.date_from);
+                  return order.order_date && new Date(order.order_date) >= new Date(_this0.filters.date_from);
                 });
               }
-              if (_this9.filters.date_to) {
+              if (_this0.filters.date_to) {
                 filteredData = filteredData.filter(function (order) {
-                  return order.order_date && new Date(order.order_date) <= new Date(_this9.filters.date_to + 'T23:59:59');
+                  return order.order_date && new Date(order.order_date) <= new Date(_this0.filters.date_to + 'T23:59:59');
                 });
               }
               console.log("Fetched ".concat(filteredData.length, " records for export"));
@@ -14064,13 +14086,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _t2 = _context2.v;
               console.error('Error fetching all filtered orders:', _t2);
               // Fallback to client-side filtering from current data
-              return _context2.a(2, _this9.getFilteredOrdersForExport());
+              return _context2.a(2, _this0.getFilteredOrdersForExport());
           }
         }, _callee2, null, [[0, 2]]);
       }))();
     },
     generateSimpleCSV: function generateSimpleCSV(scope) {
-      var _this0 = this;
+      var _this1 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: 'Generating CSV...',
         text: 'Please wait while we prepare your export',
@@ -14097,7 +14119,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           var _order$customer3, _order$customer4, _order$serve2, _order$care2;
           var fees = (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + (order.care && order.care.fee ? Number(order.care.fee) : 0);
           var status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
-          return [index + 1, order.order_id || '', ((_order$customer3 = order.customer) === null || _order$customer3 === void 0 ? void 0 : _order$customer3.full_name) || '', ((_order$customer4 = order.customer) === null || _order$customer4 === void 0 ? void 0 : _order$customer4.email) || '', _this0.formatDate(order.order_date), order.total || '0', fees.toFixed(2), ((_order$serve2 = order.serve) === null || _order$serve2 === void 0 ? void 0 : _order$serve2.name) || 'N/A', ((_order$care2 = order.care) === null || _order$care2 === void 0 ? void 0 : _order$care2.name) || 'N/A', status, order.invoice_id || '', order.time_remaining || 'N/A', order.approved_at ? _this0.formatDate(order.approved_at) : '', order.created_at ? _this0.formatDate(order.created_at) : ''].map(function (cell) {
+          return [index + 1, order.order_id || '', ((_order$customer3 = order.customer) === null || _order$customer3 === void 0 ? void 0 : _order$customer3.full_name) || '', ((_order$customer4 = order.customer) === null || _order$customer4 === void 0 ? void 0 : _order$customer4.email) || '', _this1.formatDate(order.order_date), order.total || '0', fees.toFixed(2), ((_order$serve2 = order.serve) === null || _order$serve2 === void 0 ? void 0 : _order$serve2.name) || 'N/A', ((_order$care2 = order.care) === null || _order$care2 === void 0 ? void 0 : _order$care2.name) || 'N/A', status, order.invoice_id || '', order.time_remaining || 'N/A', order.approved_at ? _this1.formatDate(order.approved_at) : '', order.created_at ? _this1.formatDate(order.created_at) : ''].map(function (cell) {
             return "\"".concat(cell, "\"");
           });
         });
@@ -14138,7 +14160,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     getFilteredOrdersForExport: function getFilteredOrdersForExport() {
-      var _this1 = this;
+      var _this10 = this;
       var filtered = _toConsumableArray(this.orders);
 
       // Search filter
@@ -14166,12 +14188,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       // Date range filter
       if (this.filters.date_from) {
         filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) >= new Date(_this1.filters.date_from);
+          return order.order_date && new Date(order.order_date) >= new Date(_this10.filters.date_from);
         });
       }
       if (this.filters.date_to) {
         filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) <= new Date(_this1.filters.date_to + 'T23:59:59');
+          return order.order_date && new Date(order.order_date) <= new Date(_this10.filters.date_to + 'T23:59:59');
         });
       }
       return filtered;
@@ -44985,11 +45007,24 @@ var render = function render() {
       staticClass: "badge badge-secondary"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", [order.serve ? _c("span", {
       staticClass: "badge serve-badge",
+      "class": {
+        "serve-badge-clickable": _vm.canOpenCareRecord(order)
+      },
       style: {
         backgroundColor: order.serve.colour,
         color: _vm.isLightColor(order.serve.colour) ? "#000" : "#fff"
+      },
+      attrs: {
+        title: _vm.canOpenCareRecord(order) ? "Open QuiviCare record" : null
+      },
+      on: {
+        click: function click($event) {
+          _vm.canOpenCareRecord(order) && _vm.goToCareRecord(order);
+        }
       }
-    }, [_vm._v("\n                                                    " + _vm._s(order.care && order.care.name ? order.care.name : "N/A") + "\n                                                ")]) : _c("span", {
+    }, [_vm._v("\n                                                    " + _vm._s(order.care && order.care.name ? order.care.name : "N/A") + "\n                                                    "), _vm.canOpenCareRecord(order) ? _c("i", {
+      staticClass: "fas fa-arrow-right ml-1"
+    }) : _vm._e()]) : _c("span", {
       staticClass: "badge badge-secondary"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge",
