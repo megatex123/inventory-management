@@ -17,6 +17,8 @@ class CareWarranty extends Model
         'care_invoice_id',
         'product_id',
         'category_id',
+        'eligible_warranty',
+        'eligible_qvca',
         'i_qvca_id',
         'spare_item_name',
         'spare_category_id',
@@ -27,6 +29,8 @@ class CareWarranty extends Model
 
     protected $casts = [
         'reset_status' => 'boolean',
+        'eligible_warranty' => 'boolean',
+        'eligible_qvca' => 'boolean',
         'date_start' => 'date',
         'loan_date_end' => 'date',
         'created_at' => 'datetime',
