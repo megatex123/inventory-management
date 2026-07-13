@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 class FixInventoryTablesSchema extends Migration
@@ -21,17 +19,11 @@ class FixInventoryTablesSchema extends Migration
         DB::statement("SET SESSION sql_mode = ''");
 
         try {
-            Schema::table('master_sku', function (Blueprint $table) {
-                $table->unsignedBigInteger('product_raw_id')->nullable()->change();
-            });
-
-            Schema::table('inv_care', function (Blueprint $table) {
-                $table->datetime('deleted_at')->nullable()->default(null)->change();
-            });
-
-            Schema::table('inv_excl_serve', function (Blueprint $table) {
-                $table->datetime('deleted_at')->nullable()->default(null)->change();
-            });
+            // Raw SQL instead of ->change() — requires doctrine/dbal, which is
+            // not installed in this project.
+            DB::statement("ALTER TABLE master_sku MODIFY `product_raw_id` BIGINT UNSIGNED NULL DEFAULT NULL");
+            DB::statement("ALTER TABLE inv_care MODIFY `deleted_at` DATETIME NULL DEFAULT NULL");
+            DB::statement("ALTER TABLE inv_excl_serve MODIFY `deleted_at` DATETIME NULL DEFAULT NULL");
 
             // Zero-date deleted_at rows (from the NOT NULL default) are not "deleted" in Laravel's
             // soft-delete sense; normalize them to NULL now that the column accepts it.
@@ -49,16 +41,8 @@ class FixInventoryTablesSchema extends Migration
      */
     public function down()
     {
-        Schema::table('master_sku', function (Blueprint $table) {
-            $table->unsignedBigInteger('product_raw_id')->nullable(false)->change();
-        });
-
-        Schema::table('inv_care', function (Blueprint $table) {
-            $table->datetime('deleted_at')->nullable(false)->change();
-        });
-
-        Schema::table('inv_excl_serve', function (Blueprint $table) {
-            $table->datetime('deleted_at')->nullable(false)->change();
-        });
+        DB::statement("ALTER TABLE master_sku MODIFY `product_raw_id` BIGINT UNSIGNED NOT NULL");
+        DB::statement("ALTER TABLE inv_care MODIFY `deleted_at` DATETIME NOT NULL");
+        DB::statement("ALTER TABLE inv_excl_serve MODIFY `deleted_at` DATETIME NOT NULL");
     }
 }

@@ -21,6 +21,8 @@ class CreateOrderDetailsTable extends Migration
             $table->string('pro_price')->nullable();
             $table->string('sub_total')->nullable();
             $table->timestamps();
+            $table->string('serial_no')->nullable();
+            $table->timestamp('start_warranty_at')->nullable();
         });
     }
 

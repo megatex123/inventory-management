@@ -10,11 +10,19 @@ class UpdateCustomersTableAddRegistrationFields extends Migration
     public function up()
     {
         // STEP 1: Rename name → full_name if exists
-        Schema::table('customers', function (Blueprint $table) {
-            if (Schema::hasColumn('customers', 'name') && !Schema::hasColumn('customers', 'full_name')) {
-                $table->renameColumn('name', 'full_name');
-            }
-        });
+        // Uses raw SQL instead of Schema::renameColumn()/->change() because both
+        // require doctrine/dbal, which is not installed in this project. Also
+        // widens full_name to nullable: the public registration flow
+        // (CustomersController@store) treats it as optional, matching live.
+        if (Schema::hasColumn('customers', 'name') && !Schema::hasColumn('customers', 'full_name')) {
+            DB::statement("ALTER TABLE customers CHANGE `name` `full_name` VARCHAR(191) NULL DEFAULT NULL");
+        }
+
+        // phone/address are nullable live (public registration leaves them
+        // blank pending admin approval) even though the original migration
+        // created them NOT NULL.
+        DB::statement("ALTER TABLE customers MODIFY `phone` VARCHAR(191) NULL DEFAULT NULL");
+        DB::statement("ALTER TABLE customers MODIFY `address` VARCHAR(191) NULL DEFAULT NULL");
 
         // STEP 2: Add / Drop columns safely
         Schema::table('customers', function (Blueprint $table) {
@@ -73,15 +81,22 @@ class UpdateCustomersTableAddRegistrationFields extends Migration
         }
 
         // STEP 4: Make customer_id UNIQUE & NOT NULL
-        Schema::table('customers', function (Blueprint $table) {
-            $table->string('customer_id')->nullable(false)->change();
-            $sm = Schema::getConnection()->getDoctrineSchemaManager();
-            $indexes = array_map(fn ($i) => $i->getColumns(), $sm->listTableIndexes('customers'));
-            $hasUnique = collect($indexes)->contains(fn ($cols) => in_array('customer_id', $cols));
-            if (!$hasUnique) {
+        // Raw SQL instead of ->change()/getDoctrineSchemaManager() — same
+        // doctrine/dbal-not-installed reason as STEP 1.
+        DB::statement("ALTER TABLE customers MODIFY `customer_id` VARCHAR(191) NOT NULL");
+
+        $hasUnique = DB::table('information_schema.statistics')
+            ->where('table_schema', DB::getDatabaseName())
+            ->where('table_name', 'customers')
+            ->where('column_name', 'customer_id')
+            ->where('non_unique', 0)
+            ->exists();
+
+        if (!$hasUnique) {
+            Schema::table('customers', function (Blueprint $table) {
                 $table->unique('customer_id');
-            }
-        });
+            });
+        }
     }
 
     public function down()
@@ -135,10 +150,8 @@ class UpdateCustomersTableAddRegistrationFields extends Migration
             }
         });
 
-        Schema::table('customers', function (Blueprint $table) {
-            if (Schema::hasColumn('customers', 'full_name')) {
-                $table->renameColumn('full_name', 'name');
-            }
-        });
+        if (Schema::hasColumn('customers', 'full_name')) {
+            DB::statement("ALTER TABLE customers CHANGE `full_name` `name` VARCHAR(191) NOT NULL");
+        }
     }
 }

@@ -10,7 +10,7 @@ class CreateMeetingsTable extends Migration
     {
         Schema::create('meetings', function (Blueprint $table) {
             $table->id();
-             $table->string('meeting_id')->nullable()->after('id');
+            $table->string('meeting_id');
             $table->string('title')->nullable();
             $table->foreignId('customer_id')
                   ->constrained('customers')
