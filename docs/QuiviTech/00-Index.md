@@ -9,6 +9,7 @@ Map of content for the Quivitech project notes. Open this folder (`docs/second-b
 ## Notes
 - [[Project-Overview]] — what this app is, tech stack, how to run it
 - [[Architecture]] — Laravel + Vue structure, how frontend/backend connect
+- [[Workflow]] — end-to-end business/system flow: customer → meeting → order → approval → tier assignment → craft/care/serve tracks → inventory
 - [[Domain-Models]] — Eloquent models grouped by business area, with relations
 - [[API-Routes]] — full `routes/api.php` map by feature
 - [[Frontend-Components]] — Vue component modules under `resources/js/components`
