@@ -13,11 +13,11 @@ Post-build service program — perks tied to the order's Serve tier (Essential K
 
 Tier lookup (`serves` table — see [[QuiviCraft]] for how the tier is assigned from order total):
 
-| Tier | Code prefix | Fee (RM) | Sub-record |
-|---|---|---|---|
-| Essential Kit | `BEK-2304` | 0 | `ServeBek` |
-| Prime Series | `MPS-0407` | 200 | `ServeMps` |
-| Collector's Edition | `PCE-2610` | 400 | `ServePce` |
+| Tier                | Code prefix | Fee (RM) | Sub-record |
+| ------------------- | ----------- | -------- | ---------- |
+| Essential Kit       | `BEK-2304`  | 0        | `ServeBek` |
+| Prime Series        | `MPS-0407`  | 200      | `ServeMps` |
+| Collector's Edition | `PCE-2610`  | 400      | `ServePce` |
 
 ## Perk claims — field by field
 
