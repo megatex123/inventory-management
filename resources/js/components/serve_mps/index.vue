@@ -325,7 +325,7 @@
                   <td>
                     <div v-if="item.generate_code">
                       <span class="badge badge-purple mb-1 d-block">
-                        {{ item.rm100_promo_code_claim || 'Code Generated' }}
+                        {{ item.rm100_promo_code_next_build || 'Code Generated' }}
                       </span>
                       <small class="text-muted">
                         {{ item.rm100_promo_code_claim ? 'Claimed' : 'Generated' }}

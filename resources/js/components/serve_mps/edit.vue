@@ -360,54 +360,112 @@
             </div>
             <div class="card-body">
               <div class="row">
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      id="one_free_dust_cleaning_first_year"
-                      class="form-check-input"
-                      v-model="form.one_free_dust_cleaning_first_year"
-                    />
-                    <label class="form-check-label" for="one_free_dust_cleaning_first_year">
-                      1 Free Dust Cleaning (First Year)
-                    </label>
-                  </div>
-                  <div class="form-check mt-2">
-                    <input
-                      type="checkbox"
-                      id="one_free_dust_cleaning_claim"
-                      class="form-check-input"
-                      v-model="form.one_free_dust_cleaning_claim"
-                    />
-                    <label class="form-check-label" for="one_free_dust_cleaning_claim">
-                      Dust Cleaning Claimed
-                    </label>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      id="fifty_percent_off_dust_cleaning_second_year"
-                      class="form-check-input"
-                      v-model="form.fifty_percent_off_dust_cleaning_second_year"
-                    />
-                    <label class="form-check-label" for="fifty_percent_off_dust_cleaning_second_year">
-                      50% Off Dust Cleaning (Second Year)
-                    </label>
+                <!-- 1 Free Dust Cleaning -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>1 Free Dust Cleaning (First Year)</label>
+                    <div class="d-flex align-items-center">
+                      <div class="form-check mr-3">
+                        <input
+                          type="checkbox"
+                          id="one_free_dust_cleaning_claim"
+                          class="form-check-input"
+                          v-model="form.one_free_dust_cleaning_claim"
+                        />
+                        <label class="form-check-label" for="one_free_dust_cleaning_claim">
+                          Claimed
+                        </label>
+                      </div>
+                      <div class="flex-grow-1">
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="form.one_free_dust_cleaning_claim_date"
+                          :disabled="!form.one_free_dust_cleaning_claim"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      id="thirty_percent_off_labour_fees_upgrade_first_year"
-                      class="form-check-input"
-                      v-model="form.thirty_percent_off_labour_fees_upgrade_first_year"
-                    />
-                    <label class="form-check-label" for="thirty_percent_off_labour_fees_upgrade_first_year">
-                      30% Off Labour Fees For Upgrade Service (First Year)
-                    </label>
+                <!-- 50% Off Dust Cleaning -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>50% Off Dust Cleaning (Second Year)</label>
+                    <div class="d-flex align-items-center">
+                      <div class="form-check mr-3">
+                        <input
+                          type="checkbox"
+                          id="fifty_percent_off_dust_cleaning_second_year"
+                          class="form-check-input"
+                          v-model="form.fifty_percent_off_dust_cleaning_second_year"
+                        />
+                        <label class="form-check-label" for="fifty_percent_off_dust_cleaning_second_year">
+                          Claimed
+                        </label>
+                      </div>
+                      <div class="flex-grow-1">
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="form.fifty_percent_off_dust_cleaning_claim_date"
+                          :disabled="!form.fifty_percent_off_dust_cleaning_second_year"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 30% Off Labour Fees -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>30% Off Labour Fees For Upgrade Service (First Year)</label>
+                    <div class="d-flex align-items-center">
+                      <div class="form-check mr-3">
+                        <input
+                          type="checkbox"
+                          id="thirty_percent_off_labour_fees_upgrade_first_year"
+                          class="form-check-input"
+                          v-model="form.thirty_percent_off_labour_fees_upgrade_first_year"
+                        />
+                        <label class="form-check-label" for="thirty_percent_off_labour_fees_upgrade_first_year">
+                          Claimed
+                        </label>
+                      </div>
+                      <div class="flex-grow-1">
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="form.thirty_percent_off_labour_fees_claim_date"
+                          :disabled="!form.thirty_percent_off_labour_fees_upgrade_first_year"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 30% Off Dust Cleaning -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>30% Off Dust Cleaning</label>
+                    <div class="d-flex align-items-center">
+                      <div class="form-check mr-3">
+                        <input
+                          type="checkbox"
+                          id="thirty_percent_off_dust_cleaning"
+                          class="form-check-input"
+                          v-model="form.thirty_percent_off_dust_cleaning"
+                        />
+                        <label class="form-check-label" for="thirty_percent_off_dust_cleaning">
+                          Claimed
+                        </label>
+                      </div>
+                      <div class="flex-grow-1">
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="form.thirty_percent_off_dust_cleaning_claim_date"
+                          :disabled="!form.thirty_percent_off_dust_cleaning"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -567,8 +625,13 @@ export default {
         two_advance_cable_management_claim_2_date: '',
         one_free_dust_cleaning_first_year: true,
         one_free_dust_cleaning_claim: false,
+        one_free_dust_cleaning_claim_date: '',
         fifty_percent_off_dust_cleaning_second_year: true,
+        fifty_percent_off_dust_cleaning_claim_date: '',
         thirty_percent_off_labour_fees_upgrade_first_year: true,
+        thirty_percent_off_labour_fees_claim_date: '',
+        thirty_percent_off_dust_cleaning: false,
+        thirty_percent_off_dust_cleaning_claim_date: '',
         rm100_promo_code_next_build: '',
         generate_code: false,
         rm100_promo_code_claim: false,

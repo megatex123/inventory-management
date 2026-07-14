@@ -21111,8 +21111,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         two_advance_cable_management_claim_2_date: '',
         one_free_dust_cleaning_first_year: true,
         one_free_dust_cleaning_claim: false,
+        one_free_dust_cleaning_claim_date: '',
         fifty_percent_off_dust_cleaning_second_year: true,
+        fifty_percent_off_dust_cleaning_claim_date: '',
         thirty_percent_off_labour_fees_upgrade_first_year: true,
+        thirty_percent_off_labour_fees_claim_date: '',
+        thirty_percent_off_dust_cleaning: false,
+        thirty_percent_off_dust_cleaning_claim_date: '',
         rm100_promo_code_next_build: '',
         generate_code: false,
         rm100_promo_code_claim: false,
@@ -55991,49 +55996,13 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "row"
   }, [_c("div", {
-    staticClass: "col-md-4"
+    staticClass: "col-md-6"
   }, [_c("div", {
-    staticClass: "form-check"
-  }, [_c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.form.one_free_dust_cleaning_first_year,
-      expression: "form.one_free_dust_cleaning_first_year"
-    }],
-    staticClass: "form-check-input",
-    attrs: {
-      type: "checkbox",
-      id: "one_free_dust_cleaning_first_year"
-    },
-    domProps: {
-      checked: Array.isArray(_vm.form.one_free_dust_cleaning_first_year) ? _vm._i(_vm.form.one_free_dust_cleaning_first_year, null) > -1 : _vm.form.one_free_dust_cleaning_first_year
-    },
-    on: {
-      change: function change($event) {
-        var $$a = _vm.form.one_free_dust_cleaning_first_year,
-          $$el = $event.target,
-          $$c = $$el.checked ? true : false;
-        if (Array.isArray($$a)) {
-          var $$v = null,
-            $$i = _vm._i($$a, $$v);
-          if ($$el.checked) {
-            $$i < 0 && _vm.$set(_vm.form, "one_free_dust_cleaning_first_year", $$a.concat([$$v]));
-          } else {
-            $$i > -1 && _vm.$set(_vm.form, "one_free_dust_cleaning_first_year", $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
-          }
-        } else {
-          _vm.$set(_vm.form, "one_free_dust_cleaning_first_year", $$c);
-        }
-      }
-    }
-  }), _vm._v(" "), _c("label", {
-    staticClass: "form-check-label",
-    attrs: {
-      "for": "one_free_dust_cleaning_first_year"
-    }
-  }, [_vm._v("\n                    1 Free Dust Cleaning (First Year)\n                  ")])]), _vm._v(" "), _c("div", {
-    staticClass: "form-check mt-2"
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v("1 Free Dust Cleaning (First Year)")]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center"
+  }, [_c("div", {
+    staticClass: "form-check mr-3"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -56072,10 +56041,37 @@ var render = function render() {
     attrs: {
       "for": "one_free_dust_cleaning_claim"
     }
-  }, [_vm._v("\n                    Dust Cleaning Claimed\n                  ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
+  }, [_vm._v("\n                        Claimed\n                      ")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex-grow-1"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.one_free_dust_cleaning_claim_date,
+      expression: "form.one_free_dust_cleaning_claim_date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "date",
+      disabled: !_vm.form.one_free_dust_cleaning_claim
+    },
+    domProps: {
+      value: _vm.form.one_free_dust_cleaning_claim_date
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "one_free_dust_cleaning_claim_date", $event.target.value);
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
   }, [_c("div", {
-    staticClass: "form-check"
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v("50% Off Dust Cleaning (Second Year)")]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center"
+  }, [_c("div", {
+    staticClass: "form-check mr-3"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -56114,10 +56110,37 @@ var render = function render() {
     attrs: {
       "for": "fifty_percent_off_dust_cleaning_second_year"
     }
-  }, [_vm._v("\n                    50% Off Dust Cleaning (Second Year)\n                  ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-4"
+  }, [_vm._v("\n                        Claimed\n                      ")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex-grow-1"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.fifty_percent_off_dust_cleaning_claim_date,
+      expression: "form.fifty_percent_off_dust_cleaning_claim_date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "date",
+      disabled: !_vm.form.fifty_percent_off_dust_cleaning_second_year
+    },
+    domProps: {
+      value: _vm.form.fifty_percent_off_dust_cleaning_claim_date
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "fifty_percent_off_dust_cleaning_claim_date", $event.target.value);
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
   }, [_c("div", {
-    staticClass: "form-check"
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v("30% Off Labour Fees For Upgrade Service (First Year)")]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center"
+  }, [_c("div", {
+    staticClass: "form-check mr-3"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -56156,7 +56179,99 @@ var render = function render() {
     attrs: {
       "for": "thirty_percent_off_labour_fees_upgrade_first_year"
     }
-  }, [_vm._v("\n                    30% Off Labour Fees For Upgrade Service (First Year)\n                  ")])])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                        Claimed\n                      ")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex-grow-1"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.thirty_percent_off_labour_fees_claim_date,
+      expression: "form.thirty_percent_off_labour_fees_claim_date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "date",
+      disabled: !_vm.form.thirty_percent_off_labour_fees_upgrade_first_year
+    },
+    domProps: {
+      value: _vm.form.thirty_percent_off_labour_fees_claim_date
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "thirty_percent_off_labour_fees_claim_date", $event.target.value);
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-6"
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", [_vm._v("30% Off Dust Cleaning")]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex align-items-center"
+  }, [_c("div", {
+    staticClass: "form-check mr-3"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.thirty_percent_off_dust_cleaning,
+      expression: "form.thirty_percent_off_dust_cleaning"
+    }],
+    staticClass: "form-check-input",
+    attrs: {
+      type: "checkbox",
+      id: "thirty_percent_off_dust_cleaning"
+    },
+    domProps: {
+      checked: Array.isArray(_vm.form.thirty_percent_off_dust_cleaning) ? _vm._i(_vm.form.thirty_percent_off_dust_cleaning, null) > -1 : _vm.form.thirty_percent_off_dust_cleaning
+    },
+    on: {
+      change: function change($event) {
+        var $$a = _vm.form.thirty_percent_off_dust_cleaning,
+          $$el = $event.target,
+          $$c = $$el.checked ? true : false;
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$el.checked) {
+            $$i < 0 && _vm.$set(_vm.form, "thirty_percent_off_dust_cleaning", $$a.concat([$$v]));
+          } else {
+            $$i > -1 && _vm.$set(_vm.form, "thirty_percent_off_dust_cleaning", $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+          }
+        } else {
+          _vm.$set(_vm.form, "thirty_percent_off_dust_cleaning", $$c);
+        }
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "form-check-label",
+    attrs: {
+      "for": "thirty_percent_off_dust_cleaning"
+    }
+  }, [_vm._v("\n                        Claimed\n                      ")])]), _vm._v(" "), _c("div", {
+    staticClass: "flex-grow-1"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.thirty_percent_off_dust_cleaning_claim_date,
+      expression: "form.thirty_percent_off_dust_cleaning_claim_date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "date",
+      disabled: !_vm.form.thirty_percent_off_dust_cleaning
+    },
+    domProps: {
+      value: _vm.form.thirty_percent_off_dust_cleaning_claim_date
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "thirty_percent_off_dust_cleaning_claim_date", $event.target.value);
+      }
+    }
+  })])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
   }, [_vm._m(8), _vm._v(" "), _c("div", {
     staticClass: "card-body"
@@ -56855,7 +56970,7 @@ var render = function render() {
       "class": item.one_free_dust_cleaning_claim ? "badge-success" : "badge-teal"
     }, [_vm._v("\n                    " + _vm._s(item.one_free_dust_cleaning_claim ? "Used" : "Available") + "\n                  ")])]), _vm._v(" "), _c("td", [item.generate_code ? _c("div", [_c("span", {
       staticClass: "badge badge-purple mb-1 d-block"
-    }, [_vm._v("\n                      " + _vm._s(item.rm100_promo_code_claim || "Code Generated") + "\n                    ")]), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                      " + _vm._s(item.rm100_promo_code_next_build || "Code Generated") + "\n                    ")]), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v("\n                      " + _vm._s(item.rm100_promo_code_claim ? "Claimed" : "Generated") + "\n                    ")])]) : _c("span", {
       staticClass: "badge badge-secondary"
