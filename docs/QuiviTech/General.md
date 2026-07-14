@@ -2,20 +2,32 @@
 tags: [moc]
 ---
 
-# Quivitech — Second Brain Index
+# Quivitech — General
 
-Map of content for the Quivitech project notes. Open this folder (`docs/second-brain/`) as an Obsidian vault.
+Map of content for the Quivitech project notes. Open this folder (`docs/QuiviTech/`) as an Obsidian vault.
 
 ## Notes
 - [[Project-Overview]] — what this app is, tech stack, how to run it
 - [[Architecture]] — Laravel + Vue structure, how frontend/backend connect
-- [[Workflow]] — end-to-end business/system flow: customer → meeting → order → approval → tier assignment → craft/care/serve tracks → inventory
+- [[Workflow]] — high-level orchestration view of the flow below; start here, then follow into the module notes
 - [[Domain-Models]] — Eloquent models grouped by business area, with relations
 - [[API-Routes]] — full `routes/api.php` map by feature
 - [[Frontend-Components]] — Vue component modules under `resources/js/components`
 - [[Dev-Setup]] — local dev environment: Docker workaround for host PHP, DB creds, nvm, known Doctrine/DBAL gotcha
 - [[Deployment]] — Docker + Kubernetes production deployment setup
 - [[Work-In-Progress]] — in-flight / not-yet-wired-up work
+
+## Workflow modules
+One note per connected module in [[Workflow]], in flow order:
+- [[Product-Catalog]] — sellable products, categories, brands, suppliers
+- [[Customer-Onboarding]] — customer registration, pre-order meetings
+- [[QuiviCraft]] — the `Order` itself: POS/cart, checkout, tier assignment, approval, pre-build QC
+- [[QuiviServe]] — post-build service perks (BEK/MPS/PCE)
+- [[QuiviCare]] — repair/RMA and warranty program
+- [[Customer-Progress]] — staff status updates
+- [[Product-Warranty]] — standalone per-serial warranty registry
+- [[Inventory-Movement]] — spare-parts catalog and stock ledger
+- [[HR-Operations]] — employees/salaries/expenses (disconnected from the customer flow)
 
 ## Quick facts
 - Laravel 7 + Vue 2 SPA ("Quivitech Management System")

@@ -13,7 +13,7 @@ Plus Inventory Movement tracking (stock transfers linked to `master_sku`/`destin
 
 ## Project docs
 
-Deeper documentation — architecture, API routes, DB schema quirks, frontend component map, and known dev-environment gotchas — lives in `docs/QuiviTech/`, an Obsidian vault. Start at [`docs/QuiviTech/00-Index.md`](docs/QuiviTech/00-Index.md). It's kept up to date as the source of truth for how this app actually works, including places where the live database has drifted from what the code alone would suggest.
+Deeper documentation — architecture, API routes, DB schema quirks, frontend component map, and known dev-environment gotchas — lives in `docs/QuiviTech/`, an Obsidian vault. Start at [`docs/QuiviTech/General.md`](docs/QuiviTech/General.md). It's kept up to date as the source of truth for how this app actually works, including places where the live database has drifted from what the code alone would suggest.
 
 ---
 

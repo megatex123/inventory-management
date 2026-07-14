@@ -4,7 +4,7 @@
 
 ## Standing Orders: Obsidian Vault
 
-The folder `docs/second-brain/` at the project root is an **Obsidian vault**. It is the living documentation for this project — open it in Obsidian as a vault, or just read the `.md` files directly.
+The folder `docs/QuiviTech/` at the project root is an **Obsidian vault**. It is the living documentation for this project — open it in Obsidian as a vault, or just read the `.md` files directly.
 
 **Before doing any non-trivial work, read the relevant vault note(s) first.** It will give you faster orientation than re-reading source files from scratch — this codebase has several non-obvious traps (untracked tables, a broken Doctrine/DBAL migration, a host PHP that's missing extensions) that are already documented there.
 
@@ -28,11 +28,11 @@ The folder `docs/second-brain/` at the project root is an **Obsidian vault**. It
 1. **Use Obsidian wiki-links** (`[[Note Name]]`) when referencing another note — never plain text or file paths.
 2. **Do not duplicate content** across notes — link instead.
 3. **The live DB is ground truth, not the migration files** — several tables (`brand`, `care_data`, `master_sku`, `serve_data`, etc.) were historically created outside of migrations. Always check `DESCRIBE <table>` against the running DB before trusting a model's `$fillable`/`$casts`, especially for anything not backed by a clean migration history. See [[Domain-Models]] for the ones already audited.
-4. If you create a genuinely new area (a whole new subsystem), create a new note and link it from `00-Index.md`.
+4. If you create a genuinely new area (a whole new subsystem), create a new note and link it from `General.md`.
 
 ### At the start of a new conversation
 
-Read `docs/second-brain/00-Index.md` first, then the note(s) relevant to the task.
+Read `docs/QuiviTech/General.md` first, then the note(s) relevant to the task.
 
 ---
 
