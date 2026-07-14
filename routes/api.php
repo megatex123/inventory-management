@@ -365,6 +365,157 @@ Route::prefix('serve-beks')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| QUIVIMERCH ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('merch-items')->group(function () {
+    Route::get('/', 'MerchItemController@index');
+    Route::post('/', 'MerchItemController@store');
+    Route::get('/statistics', 'MerchItemController@statistics');
+    Route::get('/search', 'MerchItemController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'MerchItemController@show');
+        Route::get('/edit', 'MerchItemController@edit');
+        Route::put('/', 'MerchItemController@update');
+        Route::patch('/', 'MerchItemController@update');
+        Route::delete('/', 'MerchItemController@destroy');
+    });
+});
+
+Route::prefix('inv-merch')->group(function () {
+    Route::get('/', 'InvMerchController@index');
+    Route::post('/', 'InvMerchController@store');
+    Route::get('/statistics', 'InvMerchController@statistics');
+    Route::get('/search', 'InvMerchController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvMerchController@show');
+        Route::get('/edit', 'InvMerchController@edit');
+        Route::put('/', 'InvMerchController@update');
+        Route::patch('/', 'InvMerchController@update');
+        Route::delete('/', 'InvMerchController@destroy');
+    });
+});
+
+Route::prefix('inv-excl-merch')->group(function () {
+    Route::get('/', 'InvExclMerchController@index');
+    Route::post('/', 'InvExclMerchController@store');
+    Route::get('/statistics', 'InvExclMerchController@statistics');
+    Route::get('/search', 'InvExclMerchController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvExclMerchController@show');
+        Route::get('/edit', 'InvExclMerchController@edit');
+        Route::put('/', 'InvExclMerchController@update');
+        Route::patch('/', 'InvExclMerchController@update');
+        Route::delete('/', 'InvExclMerchController@destroy');
+    });
+});
+
+Route::prefix('merch-orders')->group(function () {
+    Route::get('/', 'MerchOrderController@index');
+    Route::post('/', 'MerchOrderController@store');
+    Route::get('/statistics', 'MerchOrderController@statistics');
+    Route::get('/search', 'MerchOrderController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'MerchOrderController@show');
+        Route::get('/edit', 'MerchOrderController@edit');
+        Route::put('/', 'MerchOrderController@update');
+        Route::patch('/', 'MerchOrderController@update');
+        Route::delete('/', 'MerchOrderController@destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| QUIVIPLUS ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('plus-services')->group(function () {
+    Route::get('/', 'PlusServiceController@index');
+    Route::post('/', 'PlusServiceController@store');
+    Route::get('/statistics', 'PlusServiceController@statistics');
+    Route::get('/search', 'PlusServiceController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'PlusServiceController@show');
+        Route::get('/edit', 'PlusServiceController@edit');
+        Route::put('/', 'PlusServiceController@update');
+        Route::patch('/', 'PlusServiceController@update');
+        Route::delete('/', 'PlusServiceController@destroy');
+    });
+});
+
+Route::prefix('plus-orders')->group(function () {
+    Route::get('/', 'PlusOrderController@index');
+    Route::post('/', 'PlusOrderController@store');
+    Route::get('/statistics', 'PlusOrderController@statistics');
+    Route::get('/search', 'PlusOrderController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'PlusOrderController@show');
+        Route::get('/edit', 'PlusOrderController@edit');
+        Route::put('/', 'PlusOrderController@update');
+        Route::patch('/', 'PlusOrderController@update');
+        Route::delete('/', 'PlusOrderController@destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| QUIVITHREAD ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('thread-bom')->group(function () {
+    Route::get('/', 'ThreadBomController@index');
+    Route::post('/', 'ThreadBomController@store');
+    Route::get('/statistics', 'ThreadBomController@statistics');
+    Route::get('/search', 'ThreadBomController@search');
+    Route::get('/resolve', 'ThreadBomController@resolve');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'ThreadBomController@show');
+        Route::get('/edit', 'ThreadBomController@edit');
+        Route::put('/', 'ThreadBomController@update');
+        Route::patch('/', 'ThreadBomController@update');
+        Route::delete('/', 'ThreadBomController@destroy');
+    });
+});
+
+Route::prefix('inv-thread')->group(function () {
+    Route::get('/', 'InvThreadController@index');
+    Route::post('/', 'InvThreadController@store');
+    Route::get('/statistics', 'InvThreadController@statistics');
+    Route::get('/search', 'InvThreadController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvThreadController@show');
+        Route::get('/edit', 'InvThreadController@edit');
+        Route::put('/', 'InvThreadController@update');
+        Route::patch('/', 'InvThreadController@update');
+        Route::delete('/', 'InvThreadController@destroy');
+    });
+});
+
+Route::prefix('thread-orders')->group(function () {
+    Route::get('/', 'ThreadOrderController@index');
+    Route::post('/', 'ThreadOrderController@store');
+    Route::get('/statistics', 'ThreadOrderController@statistics');
+    Route::get('/search', 'ThreadOrderController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'ThreadOrderController@show');
+        Route::get('/edit', 'ThreadOrderController@edit');
+        Route::put('/', 'ThreadOrderController@update');
+        Route::patch('/', 'ThreadOrderController@update');
+        Route::delete('/', 'ThreadOrderController@destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | CARE DATA ROUTES (Removed duplicate, corrected)
 |--------------------------------------------------------------------------
 */

@@ -75,6 +75,21 @@ class Order extends Model
         return $this->hasMany(InvMove::class,'order_id','id');
     }
 
+    public function merch_orders()
+    {
+        return $this->hasMany(MerchOrder::class,'order_id','id');
+    }
+
+    public function plus_orders()
+    {
+        return $this->hasMany(PlusOrder::class,'order_id','id');
+    }
+
+    public function thread_orders()
+    {
+        return $this->hasMany(ThreadOrder::class,'order_id','id');
+    }
+
     public function getServeNameAttribute()
     {
         return optional($this->serve)->name;

@@ -242,6 +242,72 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#plus" aria-expanded="true" aria-controls="plus">
+            <i class="fas fa-fw fa-tools"></i>
+            <span>QuiviPlus</span>
+          </a>
+          <div id="plus" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Service Catalog</h6>
+              <router-link class="collapse-item" to="/plus-services">All Services</router-link>
+              <router-link class="collapse-item" to="/plus-services/create">Add Service</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Plus Orders</h6>
+              <router-link class="collapse-item" to="/plus-orders">All Plus Orders</router-link>
+              <router-link class="collapse-item" to="/plus-orders/create">Add Plus Order</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#thread" aria-expanded="true" aria-controls="thread">
+            <i class="fas fa-fw fa-plug"></i>
+            <span>QuiviThread</span>
+          </a>
+          <div id="thread" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Bill of Materials</h6>
+              <router-link class="collapse-item" to="/thread-bom">All BOMs</router-link>
+              <router-link class="collapse-item" to="/thread-bom/create">Add BOM</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Thread Inventory</h6>
+              <router-link class="collapse-item" to="/inv-thread">All Thread Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-thread/create">Add Thread Inventory</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Thread Orders</h6>
+              <router-link class="collapse-item" to="/thread-orders">All Thread Orders</router-link>
+              <router-link class="collapse-item" to="/thread-orders/create">Add Thread Order</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#merch" aria-expanded="true" aria-controls="merch">
+            <i class="fas fa-fw fa-tshirt"></i>
+            <span>QuiviMerch</span>
+          </a>
+          <div id="merch" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Merch Catalog</h6>
+              <router-link class="collapse-item" to="/merch-items">All Merch Items</router-link>
+              <router-link class="collapse-item" to="/merch-items/create">Add Merch Item</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Merch Orders</h6>
+              <router-link class="collapse-item" to="/merch-orders">All Merch Orders</router-link>
+              <router-link class="collapse-item" to="/merch-orders/create">Add Merch Order</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Product" aria-expanded="true" aria-controls="Product">
             <i class="fas fa-fw fa-truck"></i>
             <span>Inventory</span>
@@ -280,6 +346,14 @@
               <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Excl. Inventory</h6>
               <router-link class="collapse-item" to="/inv-excl-serve">All QuiviServe Excl. Inventory</router-link>
               <router-link class="collapse-item" to="/inv-excl-serve/create">Add QuiviServe Excl. Inventory</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviMerch Inventory</h6>
+              <router-link class="collapse-item" to="/inv-merch">All QuiviMerch Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-merch/create">Add QuiviMerch Inventory</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">QuiviMerch Excl. Inventory</h6>
+              <router-link class="collapse-item" to="/inv-excl-merch">All QuiviMerch Excl. Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-excl-merch/create">Add QuiviMerch Excl. Inventory</router-link>
 
               <h6 class="collapse-header text-primary font-weight-bold">Inventory Movement</h6>
               <router-link class="collapse-item" to="/inventory-movements">All Movements</router-link>

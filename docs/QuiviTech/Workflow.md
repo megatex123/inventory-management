@@ -21,6 +21,9 @@ flowchart TD
     C --> M[Inventory Movement:<br/>InvMove ledger]
     F --> N[Customer Progress]
     C -.not auto-linked.-> PW[Product Warranty]
+    C -.opt-in, staff-created.-> QM[QuiviMerch]
+    C -.opt-in, staff-created.-> QP[QuiviPlus]
+    C -.opt-in, staff-created.-> QT[QuiviThread]
     OPS[HR / Operations]:::detached
     classDef detached stroke-dasharray: 5 5
 ```
@@ -35,7 +38,8 @@ flowchart TD
 6. **[[Customer-Progress]]** — free-form staff status updates, not tied to any tier system.
 7. **[[Product-Warranty]]** — a standalone per-serial warranty registry that looks like it should auto-link to orders but doesn't.
 8. **[[Inventory-Movement]]** — the spare-parts/stock catalog (`MasterSku`) and ledger (`InvMove`), plus the `InvCare`/`InvExclServe` pools consumed by QuiviCare/QuiviServe.
-9. **[[HR-Operations]]** — `Employees`/`Salaries`/`Expenses`, entirely disconnected from the customer/order flow above.
+9. **[[QuiviMerch]]**, **[[QuiviPlus]]**, **[[QuiviThread]]** — merch store, paid add-on services, and the custom-cable BOM configurator. Unlike Serve/Care, none of these three auto-create from order approval — they're opt-in and staff-initiated, with an optional link back to a `Customer`/`Order`.
+10. **[[HR-Operations]]** — `Employees`/`Salaries`/`Expenses`, entirely disconnected from the customer/order flow above.
 
 ## Known gaps / caveats
 

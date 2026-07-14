@@ -20,5 +20,17 @@ class DatabaseSeeder extends Seeder
         $this->call(CareTableSeeder::class);
         $this->call(ServesTableSeeder::class);
         $this->call(DestinationTableSeeder::class);
+
+        // QuiviMerch reference data, from the QuiviTech Overview V2 source spreadsheets.
+        $this->call(MerchItemsTableSeeder::class);
+        $this->call(InvMerchTableSeeder::class);
+        $this->call(InvExclMerchTableSeeder::class);
+
+        // QuiviPlus reference data.
+        $this->call(PlusServicesTableSeeder::class);
+
+        // QuiviThread reference data.
+        $this->call(ThreadBomTableSeeder::class);
+        $this->call(InvThreadTableSeeder::class);
     }
 }

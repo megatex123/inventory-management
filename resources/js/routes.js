@@ -143,6 +143,51 @@ let invexclserve = require('./components/inv_excl_serve/index.vue').default;
 let invexclservecreate = require('./components/inv_excl_serve/create.vue').default;
 let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
 
+//merch items
+let merchitems = require('./components/merch_items/index.vue').default;
+let merchitemscreate = require('./components/merch_items/create.vue').default;
+let merchitemsedit = require('./components/merch_items/edit.vue').default;
+
+//inv merch
+let invmerch = require('./components/inv_merch/index.vue').default;
+let invmerchcreate = require('./components/inv_merch/create.vue').default;
+let invmerchedit = require('./components/inv_merch/edit.vue').default;
+
+//inv excl merch
+let invexclmerch = require('./components/inv_excl_merch/index.vue').default;
+let invexclmerchcreate = require('./components/inv_excl_merch/create.vue').default;
+let invexclmerchedit = require('./components/inv_excl_merch/edit.vue').default;
+
+//merch orders
+let merchorders = require('./components/merch_orders/index.vue').default;
+let merchorderscreate = require('./components/merch_orders/create.vue').default;
+let merchordersedit = require('./components/merch_orders/edit.vue').default;
+
+//plus services
+let plusservices = require('./components/plus_services/index.vue').default;
+let plusservicescreate = require('./components/plus_services/create.vue').default;
+let plusservicesedit = require('./components/plus_services/edit.vue').default;
+
+//plus orders
+let plusorders = require('./components/plus_orders/index.vue').default;
+let plusorderscreate = require('./components/plus_orders/create.vue').default;
+let plusordersedit = require('./components/plus_orders/edit.vue').default;
+
+//thread bom
+let threadbom = require('./components/thread_bom/index.vue').default;
+let threadbomcreate = require('./components/thread_bom/create.vue').default;
+let threadbomedit = require('./components/thread_bom/edit.vue').default;
+
+//inv thread
+let invthread = require('./components/inv_thread/index.vue').default;
+let invthreadcreate = require('./components/inv_thread/create.vue').default;
+let invthreadedit = require('./components/inv_thread/edit.vue').default;
+
+//thread orders
+let threadorders = require('./components/thread_orders/index.vue').default;
+let threadorderscreate = require('./components/thread_orders/create.vue').default;
+let threadordersedit = require('./components/thread_orders/edit.vue').default;
+
 //inventory movement
 let inventorymovement = require('./components/inventory_movement/index.vue').default;
 let inventorymovementcreate = require('./components/inventory_movement/create.vue').default;
@@ -299,6 +344,51 @@ export const routes=[
       { path: '/inv-excl-serve', component: invexclserve, name: 'invexclserve', meta: { layout: 'app' } },
       { path: '/inv-excl-serve/create', component: invexclservecreate, name: 'invexclservecreate', meta: { layout: 'app' } },
       { path: '/inv-excl-serve/edit/:id', component: invexclserveedit, name: 'invexclserveedit', meta: { layout: 'app' } },
+
+      // merch-items
+      { path: '/merch-items', component: merchitems, name: 'merchitems', meta: { layout: 'app' } },
+      { path: '/merch-items/create', component: merchitemscreate, name: 'merchitemscreate', meta: { layout: 'app' } },
+      { path: '/merch-items/edit/:id', component: merchitemsedit, name: 'merchitemsedit', meta: { layout: 'app' } },
+
+      // inv-merch
+      { path: '/inv-merch', component: invmerch, name: 'invmerch', meta: { layout: 'app' } },
+      { path: '/inv-merch/create', component: invmerchcreate, name: 'invmerchcreate', meta: { layout: 'app' } },
+      { path: '/inv-merch/edit/:id', component: invmerchedit, name: 'invmerchedit', meta: { layout: 'app' } },
+
+      // inv-excl-merch
+      { path: '/inv-excl-merch', component: invexclmerch, name: 'invexclmerch', meta: { layout: 'app' } },
+      { path: '/inv-excl-merch/create', component: invexclmerchcreate, name: 'invexclmerchcreate', meta: { layout: 'app' } },
+      { path: '/inv-excl-merch/edit/:id', component: invexclmerchedit, name: 'invexclmerchedit', meta: { layout: 'app' } },
+
+      // merch-orders
+      { path: '/merch-orders', component: merchorders, name: 'merchorders', meta: { layout: 'app' } },
+      { path: '/merch-orders/create', component: merchorderscreate, name: 'merchorderscreate', meta: { layout: 'app' } },
+      { path: '/merch-orders/edit/:id', component: merchordersedit, name: 'merchordersedit', meta: { layout: 'app' } },
+
+      // plus-services
+      { path: '/plus-services', component: plusservices, name: 'plusservices', meta: { layout: 'app' } },
+      { path: '/plus-services/create', component: plusservicescreate, name: 'plusservicescreate', meta: { layout: 'app' } },
+      { path: '/plus-services/edit/:id', component: plusservicesedit, name: 'plusservicesedit', meta: { layout: 'app' } },
+
+      // plus-orders
+      { path: '/plus-orders', component: plusorders, name: 'plusorders', meta: { layout: 'app' } },
+      { path: '/plus-orders/create', component: plusorderscreate, name: 'plusorderscreate', meta: { layout: 'app' } },
+      { path: '/plus-orders/edit/:id', component: plusordersedit, name: 'plusordersedit', meta: { layout: 'app' } },
+
+      // thread-bom
+      { path: '/thread-bom', component: threadbom, name: 'threadbom', meta: { layout: 'app' } },
+      { path: '/thread-bom/create', component: threadbomcreate, name: 'threadbomcreate', meta: { layout: 'app' } },
+      { path: '/thread-bom/edit/:id', component: threadbomedit, name: 'threadbomedit', meta: { layout: 'app' } },
+
+      // inv-thread
+      { path: '/inv-thread', component: invthread, name: 'invthread', meta: { layout: 'app' } },
+      { path: '/inv-thread/create', component: invthreadcreate, name: 'invthreadcreate', meta: { layout: 'app' } },
+      { path: '/inv-thread/edit/:id', component: invthreadedit, name: 'invthreadedit', meta: { layout: 'app' } },
+
+      // thread-orders
+      { path: '/thread-orders', component: threadorders, name: 'threadorders', meta: { layout: 'app' } },
+      { path: '/thread-orders/create', component: threadorderscreate, name: 'threadorderscreate', meta: { layout: 'app' } },
+      { path: '/thread-orders/edit/:id', component: threadordersedit, name: 'threadordersedit', meta: { layout: 'app' } },
 
       // inventory movement
       { path: '/inventory-movements', component: inventorymovement, name: 'inventorymovement', meta: { layout: 'app' } },
