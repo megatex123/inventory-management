@@ -11,10 +11,14 @@
             "id": "3c78c4bc9edd8613",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "QuiviServe.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "QuiviServe"
             }
           }
         ]
@@ -176,8 +180,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "3c78c4bc9edd8613",
+  "active": "5b5c5e7268285303",
   "lastOpenFiles": [
+    "QuiviCare.md.tmp.19754.7f4e4912b37b",
+    "QuiviServe.md.tmp.19754.24dd7b90db7f",
+    "QuiviCraft.md.tmp.19754.8fe3ff8f94dc",
+    "QuiviCraft.md.tmp.19754.f2ec5f08a1b1",
+    "QuiviCare.md",
+    "Inventory-Movement.md",
+    "Project-Overview.md",
+    "HR-Operations.md",
     "General.md.tmp.19754.e49a164ea763",
     "Workflow.md.tmp.19754.74caedef0dfc",
     "Workflow.md.tmp.19754.216ccf30b02e",
@@ -187,16 +199,9 @@
     "Workflow.md",
     "General.md.tmp.19754.570b7746ce15",
     "Workflow.md.tmp.19754.965252cb7093",
-    "HR-Operations.md",
     "HR-Operations.md.tmp.19754.720db6a7947d",
-    "Inventory-Movement.md",
-    "Inventory-Movement.md.tmp.19754.58d797a660ae",
     "Product-Warranty.md",
-    "Product-Warranty.md.tmp.19754.46d0f0201def",
     "Customer-Progress.md",
-    "Customer-Progress.md.tmp.19754.a162af7f7b8d",
-    "QuiviCare.md",
-    "QuiviCare.md.tmp.19754.3b9e389487cb",
     "QuiviServe.md",
     "Craft-Inspection.md",
     "Customer-Onboarding.md",
@@ -204,7 +209,6 @@
     "General.md",
     "00-Index.md",
     "Work-In-Progress.md",
-    "Project-Overview.md",
     "Deployment.md",
     "Domain-Models.md",
     "Dev-Setup.md",

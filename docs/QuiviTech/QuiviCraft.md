@@ -23,13 +23,34 @@ The build-order program — **the `Order` itself basically *is* QuiviCraft**. Un
 
 ## 2. Tier assignment logic
 
-All three tier systems are recomputed from the order's line items — **not** manually chosen by staff:
+All three tier systems are recomputed from the order's line items — **not** manually chosen by staff. Each has a lookup row in its own tiny table (`craft`/`serves`/`care`) holding the display name, business-code prefix, and flat fee:
 
-| Tier system | Basis | Bands |
-|---|---|---|
-| **Craft** (build class) | `sub_total` of all line items | ≤6,999 → BASIC(1); ≤9,999 → MEDIUM(3); ≤19,999 → PREMIUM(2); else → ULTRA(4) |
-| **Serve** (service perks) | `sub_total` of all line items | <7,000 → Essential Kit(1); <10,000 → Prime Series(2); else → Collector's Edition(3) |
-| **Care** (RMA/repair fee) | sum of **RMA-eligible categories only** (`OrderController::CARE_ELIGIBLE_CATEGORIES`), not the whole order | granular RM1,000 bands, see `OrderController::resolveCareTier()` — e.g. 0–5,999 → tier 1 / RM379, 7,000–7,999 → tier 2 / RM689, above 20,999 → tier 3 / RM2,479 |
+**QuiviCraft (`craft` table)** — the build-class tier, `id` = `Order.craft_id`. Note the `id`s are *not* in ascending fee order (all currently RM600 flat, but the mapping matters for `craft_id`):
+
+| id | name/code | fee (RM) | `sub_total` band |
+|---|---|---|---|
+| 1 | BASIC | 600 | ≤ 6,999 |
+| 3 | MEDIUM | 600 | 7,000 – 9,999 |
+| 2 | PREMIUM | 600 | 10,000 – 19,999 |
+| 4 | ULTRA | 600 | ≥ 20,000 |
+
+**Serve (`serves` table)** — see [[QuiviServe]] for the full perk breakdown per tier:
+
+| id | name | code prefix | fee (RM) | `sub_total` band |
+|---|---|---|---|---|
+| 1 | Essential Kit | `BEK-2304` | 0 | < 7,000 |
+| 2 | Prime Series | `MPS-0407` | 200 | 7,000 – 9,999 |
+| 3 | Collector's Edition | `PCE-2610` | 400 | ≥ 10,000 |
+
+**Care (`care` table)** — see [[QuiviCare]]; basis is the sum of **RMA-eligible categories only** (`OrderController::CARE_ELIGIBLE_CATEGORIES` — CPU, SSD, GPU, HDD, RAM, MBD, PSU, HSF, AIO), not the whole order. `OrderController::resolveCareTier()` has 15 granular RM1,000 sub-bands mapping into these 3 tiers, e.g. RM0–5,999 → COR3/RM379, RM6,000–6,999 → COR3/RM479, RM7,000–7,999 → RI5E/RM689, ... up to "above RM20,999" → VIS10N/RM2,479:
+
+| id | name | code prefix | flat fee shown on lookup (RM) |
+|---|---|---|---|
+| 1 | COR3 | `COR3-1402` | 1,479 |
+| 2 | RI5E | `RI5E-2109` | 1,499 |
+| 3 | VIS10N | `VIS10N-2712` | 2,499 |
+
+(The lookup table's flat fee is separate from the per-band `care_charge` computed by `resolveCareTier()` — the latter is what's actually charged.)
 
 This logic is duplicated in `OrderController::updateOrderDetails()` / `updateApprove()` and `PosController::orderdone()` — see [[Domain-Models]]'s "Repair/service domain" section for known bugs already fixed here (e.g. `ServeBek`/`ServeMps` stub creation).
 
@@ -45,7 +66,21 @@ This logic is duplicated in `OrderController::updateOrderDetails()` / `updateApp
 
 ## 4. Pre-build QC (Craft Inspection)
 
-Created after order approval, running in parallel with [[QuiviServe]]/[[QuiviCare]] rather than sequentially before or after them — this is QuiviCraft's own build-quality track, distinct from the tier assignment above. A `CraftInspection` (with its `round`) holds one `CraftInspectionItem` per component being inspected.
+Created after order approval, running in parallel with [[QuiviServe]]/[[QuiviCare]] rather than sequentially before or after them — this is QuiviCraft's own build-quality track, distinct from the tier assignment above.
+
+- **`CraftInspection`** — one per `(order_id, round)`. `phase` is hardcoded to `2` everywhere in `CraftInspectionController` (no `phase=1` exists in code — likely reserved for a pre-order QC step that hasn't been built). `status` is `draft` until `CraftInspectionController`'s completion action sets it to `completed`; `round` increments for re-inspection after a failed round.
+- **`CraftInspectionItem`** — one per component within an inspection. `component_type` is one of a fixed set (`CraftInspectionController::COMPONENT_TYPES`): `cpu`, `mbd`, `gpu`, `ram`, `ssd`, `hdd`, `aio`, `hsf`, `psu`, `cse` (case), `fan`, `acc` (accessory). Optionally links to the exact `OrderDetails` row sold (`order_detail_id`).
+- Each item is checked across **three independently-gated dimensions**, each with a status + note + photos:
+
+  | Dimension | "Good" status value | Any other value |
+  |---|---|---|
+  | `inspection_status` | `sound` | `not_sound` |
+  | `packaging_status` | `intact` | `damaged` |
+  | `condition_status` | `sound_pristine` | `issue` |
+
+  The "good" value per dimension is `CraftInspectionController::GOOD_VALUES` — when a dimension isn't the good value, `*_note` is expected instead of/alongside `*_photos` (photos are the happy-path evidence; a problem gets a written note).
+- Four boolean flags per item, independent of the three status dimensions above: `model_verified`, `serial_recorded`, `factory_seal`, `qc_pass`.
+- `fields` is a free-form JSON column (`json_valid` check constraint) for component-specific data that doesn't fit a fixed column — check current frontend usage before assuming its shape.
 
 ## Known gaps
 
