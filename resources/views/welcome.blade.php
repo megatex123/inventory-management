@@ -343,17 +343,17 @@
               <router-link class="collapse-item" to="/inv-care">All QuiviCare Inventory</router-link>
               <router-link class="collapse-item" to="/inv-care/create">Add QuiviCare Inventory</router-link>
 
-              <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Excl. Inventory</h6>
-              <router-link class="collapse-item" to="/inv-excl-serve">All QuiviServe Excl. Inventory</router-link>
-              <router-link class="collapse-item" to="/inv-excl-serve/create">Add QuiviServe Excl. Inventory</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">QS Excl. Inventory</h6>
+              <router-link class="collapse-item" to="/inv-excl-serve">All QS Excl. Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-excl-serve/create">Add QS Excl. Inventory</router-link>
 
-              <h6 class="collapse-header text-primary font-weight-bold">QuiviMerch Inventory</h6>
-              <router-link class="collapse-item" to="/inv-merch">All QuiviMerch Inventory</router-link>
-              <router-link class="collapse-item" to="/inv-merch/create">Add QuiviMerch Inventory</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">QM Inventory</h6>
+              <router-link class="collapse-item" to="/inv-merch">All QM Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-merch/create">Add QM Inventory</router-link>
 
-              <h6 class="collapse-header text-primary font-weight-bold">QuiviMerch Excl. Inventory</h6>
-              <router-link class="collapse-item" to="/inv-excl-merch">All QuiviMerch Excl. Inventory</router-link>
-              <router-link class="collapse-item" to="/inv-excl-merch/create">Add QuiviMerch Excl. Inventory</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">QM Excl. Inventory</h6>
+              <router-link class="collapse-item" to="/inv-excl-merch">All QM Excl. Inventory</router-link>
+              <router-link class="collapse-item" to="/inv-excl-merch/create">Add QM Excl. Inventory</router-link>
 
               <h6 class="collapse-header text-primary font-weight-bold">Inventory Movement</h6>
               <router-link class="collapse-item" to="/inventory-movements">All Movements</router-link>
