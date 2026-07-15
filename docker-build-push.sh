@@ -1,7 +1,7 @@
 #export SOFTWAREVERSION=0.0.3
 #source .env
 . ./.env
-composer install && npm install && npm run prod
+# composer/npm now handled inside multi-stage Dockerfile
 echo "**********************************"
 echo "* Version is " $SOFTWAREVERSION " *"
 echo "**********************************"
