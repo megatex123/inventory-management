@@ -62279,21 +62279,51 @@ var render = function render() {
       "class": _vm.getWarrantyClass(item)
     }, [_vm._v("\n                  " + _vm._s(_vm.getWarrantyStatus(item)) + "\n                ")])]), _vm._v(" "), _c("td", [_vm.isTroubleshootingAvailable(item) ? _c("div", [_c("span", {
       staticClass: "badge",
-      "class": _vm.getTroubleshootingClass(item)
+      "class": [_vm.getTroubleshootingClass(item), {
+        "claim-badge": _vm.canClaimTroubleshooting(item)
+      }],
+      attrs: {
+        title: _vm.canClaimTroubleshooting(item) ? "Click to claim" : ""
+      },
+      on: {
+        click: function click($event) {
+          _vm.canClaimTroubleshooting(item) && _vm.makeClaim(item.id, "troubleshooting");
+        }
+      }
     }, [_vm._v("\n                    " + _vm._s(_vm.getTroubleshootingStatus(item)) + "\n                  ")]), _vm._v(" "), _vm.isTroubleshootingClaimed(item) ? _c("small", {
       staticClass: "d-block text-muted"
     }, [_vm._v("\n                    " + _vm._s(_vm.formatDate(_vm.getTroubleshootingClaimDate(item))) + "\n                  ")]) : _vm._e()]) : _c("span", {
       staticClass: "badge bg-secondary"
     }, [_vm._v("Not Available")])]), _vm._v(" "), _c("td", [_vm.isCableManagementAvailable(item) ? _c("div", [_c("span", {
       staticClass: "badge",
-      "class": _vm.getCableManagementClass(item)
+      "class": [_vm.getCableManagementClass(item), {
+        "claim-badge": _vm.canClaimCableManagement(item)
+      }],
+      attrs: {
+        title: _vm.canClaimCableManagement(item) ? "Click to claim" : ""
+      },
+      on: {
+        click: function click($event) {
+          _vm.canClaimCableManagement(item) && _vm.makeClaim(item.id, "cable_management");
+        }
+      }
     }, [_vm._v("\n                    " + _vm._s(_vm.getCableManagementStatus(item)) + "\n                  ")]), _vm._v(" "), _vm.isCableManagementClaimed(item) ? _c("small", {
       staticClass: "d-block text-muted"
     }, [_vm._v("\n                    " + _vm._s(_vm.formatDate(_vm.getCableManagementClaimDate(item))) + "\n                  ")]) : _vm._e()]) : _c("span", {
       staticClass: "badge bg-secondary"
     }, [_vm._v("Not Available")])]), _vm._v(" "), _c("td", [_vm.isDustCleaningAvailable(item) ? _c("div", [_c("span", {
       staticClass: "badge",
-      "class": _vm.getDustCleaningClass(item)
+      "class": [_vm.getDustCleaningClass(item), {
+        "claim-badge": _vm.canClaimDustCleaning(item)
+      }],
+      attrs: {
+        title: _vm.canClaimDustCleaning(item) ? "Click to claim" : ""
+      },
+      on: {
+        click: function click($event) {
+          _vm.canClaimDustCleaning(item) && _vm.makeClaim(item.id, "dust_cleaning");
+        }
+      }
     }, [_vm._v("\n                    " + _vm._s(_vm.getDustCleaningStatus(item)) + "\n                  ")]), _vm._v(" "), _vm.isDustCleaningClaimed(item) ? _c("small", {
       staticClass: "d-block text-muted"
     }, [_vm._v("\n                    " + _vm._s(_vm.formatDate(_vm.getDustCleaningClaimDate(item))) + "\n                  ")]) : _vm._e()]) : _c("span", {
@@ -62321,43 +62351,7 @@ var render = function render() {
       }
     }, [_c("i", {
       staticClass: "fas fa-trash"
-    })]), _vm._v(" "), _vm.canClaimTroubleshooting(item) ? _c("button", {
-      staticClass: "btn btn-success",
-      attrs: {
-        title: "Claim Troubleshooting"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.makeClaim(item.id, "troubleshooting");
-        }
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-check"
-    }), _vm._v(" T\n                  ")]) : _vm._e(), _vm._v(" "), _vm.canClaimCableManagement(item) ? _c("button", {
-      staticClass: "btn btn-success",
-      attrs: {
-        title: "Claim Cable Management"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.makeClaim(item.id, "cable_management");
-        }
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-check"
-    }), _vm._v(" C\n                  ")]) : _vm._e(), _vm._v(" "), _vm.canClaimDustCleaning(item) ? _c("button", {
-      staticClass: "btn btn-success",
-      attrs: {
-        title: "Claim Dust Cleaning"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.makeClaim(item.id, "dust_cleaning");
-        }
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-check"
-    }), _vm._v(" D\n                  ")]) : _vm._e()], 1)])]);
+    })])], 1)])]);
   }), 0)])]), _vm._v(" "), _vm.serveBeks.data.length === 0 ? _c("div", {
     staticClass: "text-center py-5"
   }, [_c("i", {
@@ -81479,7 +81473,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.stat-card[data-v-88702b40] {\n  background: white;\n  transition: transform 0.2s;\n}\n.stat-card[data-v-88702b40]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;\n}\n.icon-circle[data-v-88702b40] {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: white;\n}\n.bg-purple[data-v-88702b40] {\n  background-color: #6f42c1 !important;\n}\n.text-purple[data-v-88702b40] {\n  color: #6f42c1 !important;\n}\n.table th[data-v-88702b40] {\n  font-weight: 600;\n  background-color: #f8f9fa;\n}\n.badge[data-v-88702b40] {\n  font-size: 0.85em;\n  color: #ffffff;\n}\n.btn-group-sm .btn[data-v-88702b40] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  margin-right: 2px;\n}\n.pagination[data-v-88702b40] {\n  margin-bottom: 0;\n}\n.modal[data-v-88702b40] {\n  z-index: 1050;\n}\n", ""]);
+exports.push([module.i, "\n.stat-card[data-v-88702b40] {\n  background: white;\n  transition: transform 0.2s;\n}\n.stat-card[data-v-88702b40]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;\n}\n.icon-circle[data-v-88702b40] {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: white;\n}\n.bg-purple[data-v-88702b40] {\n  background-color: #6f42c1 !important;\n}\n.text-purple[data-v-88702b40] {\n  color: #6f42c1 !important;\n}\n.table th[data-v-88702b40] {\n  font-weight: 600;\n  background-color: #f8f9fa;\n}\n.badge[data-v-88702b40] {\n  font-size: 0.85em;\n  color: #ffffff;\n}\n.claim-badge[data-v-88702b40] {\n  cursor: pointer;\n}\n.claim-badge[data-v-88702b40]:hover {\n  opacity: 0.8;\n}\n.btn-group-sm .btn[data-v-88702b40] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  margin-right: 2px;\n}\n.pagination[data-v-88702b40] {\n  margin-bottom: 0;\n}\n.modal[data-v-88702b40] {\n  z-index: 1050;\n}\n", ""]);
 
 // exports
 

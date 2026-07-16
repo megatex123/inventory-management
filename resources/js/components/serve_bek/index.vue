@@ -197,7 +197,12 @@
                 </td>
                 <td>
                   <div v-if="isTroubleshootingAvailable(item)">
-                    <span class="badge" :class="getTroubleshootingClass(item)">
+                    <span
+                      class="badge"
+                      :class="[getTroubleshootingClass(item), { 'claim-badge': canClaimTroubleshooting(item) }]"
+                      :title="canClaimTroubleshooting(item) ? 'Click to claim' : ''"
+                      @click="canClaimTroubleshooting(item) && makeClaim(item.id, 'troubleshooting')"
+                    >
                       {{ getTroubleshootingStatus(item) }}
                     </span>
                     <small v-if="isTroubleshootingClaimed(item)" class="d-block text-muted">
@@ -208,7 +213,12 @@
                 </td>
                 <td>
                   <div v-if="isCableManagementAvailable(item)">
-                    <span class="badge" :class="getCableManagementClass(item)">
+                    <span
+                      class="badge"
+                      :class="[getCableManagementClass(item), { 'claim-badge': canClaimCableManagement(item) }]"
+                      :title="canClaimCableManagement(item) ? 'Click to claim' : ''"
+                      @click="canClaimCableManagement(item) && makeClaim(item.id, 'cable_management')"
+                    >
                       {{ getCableManagementStatus(item) }}
                     </span>
                     <small v-if="isCableManagementClaimed(item)" class="d-block text-muted">
@@ -219,7 +229,12 @@
                 </td>
                 <td>
                   <div v-if="isDustCleaningAvailable(item)">
-                    <span class="badge" :class="getDustCleaningClass(item)">
+                    <span
+                      class="badge"
+                      :class="[getDustCleaningClass(item), { 'claim-badge': canClaimDustCleaning(item) }]"
+                      :title="canClaimDustCleaning(item) ? 'Click to claim' : ''"
+                      @click="canClaimDustCleaning(item) && makeClaim(item.id, 'dust_cleaning')"
+                    >
                       {{ getDustCleaningStatus(item) }}
                     </span>
                     <small v-if="isDustCleaningClaimed(item)" class="d-block text-muted">
@@ -245,30 +260,6 @@
                       :disabled="deleting"
                     >
                       <i class="fas fa-trash"></i>
-                    </button>
-                    <button
-                      v-if="canClaimTroubleshooting(item)"
-                      @click="makeClaim(item.id, 'troubleshooting')"
-                      class="btn btn-success"
-                      title="Claim Troubleshooting"
-                    >
-                      <i class="fas fa-check"></i> T
-                    </button>
-                    <button
-                      v-if="canClaimCableManagement(item)"
-                      @click="makeClaim(item.id, 'cable_management')"
-                      class="btn btn-success"
-                      title="Claim Cable Management"
-                    >
-                      <i class="fas fa-check"></i> C
-                    </button>
-                    <button
-                      v-if="canClaimDustCleaning(item)"
-                      @click="makeClaim(item.id, 'dust_cleaning')"
-                      class="btn btn-success"
-                      title="Claim Dust Cleaning"
-                    >
-                      <i class="fas fa-check"></i> D
                     </button>
                   </div>
                 </td>
@@ -701,6 +692,14 @@ export default {
 .badge {
   font-size: 0.85em;
   color: #ffffff;
+}
+
+.claim-badge {
+  cursor: pointer;
+}
+
+.claim-badge:hover {
+  opacity: 0.8;
 }
 
 .btn-group-sm .btn {
