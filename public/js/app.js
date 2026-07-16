@@ -10331,12 +10331,17 @@ __webpack_require__.r(__webpack_exports__);
       careDistribution: [],
       inspectionStats: {},
       careStats: {},
-      serveStats: {}
+      serveStats: {},
+      merchStats: {},
+      plusStats: {},
+      threadStats: {},
+      invMerchStats: {},
+      invThreadStats: {}
     };
   },
   computed: {
     totalLowStock: function totalLowStock() {
-      return (this.careStats.low_stock_count || 0) + (this.serveStats.low_stock_count || 0);
+      return (this.careStats.low_stock_count || 0) + (this.serveStats.low_stock_count || 0) + (this.invMerchStats.low_stock_count || 0) + (this.invThreadStats.low_stock_count || 0);
     }
   },
   mounted: function mounted() {
@@ -10344,6 +10349,11 @@ __webpack_require__.r(__webpack_exports__);
     this.fetchInspectionStats();
     this.fetchCareStats();
     this.fetchServeStats();
+    this.fetchMerchStats();
+    this.fetchPlusStats();
+    this.fetchThreadStats();
+    this.fetchInvMerchStats();
+    this.fetchInvThreadStats();
   },
   methods: {
     dash: function dash(value, fallback) {
@@ -10391,6 +10401,36 @@ __webpack_require__.r(__webpack_exports__);
       var _this4 = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/inv-excl-serve/statistics').then(function (res) {
         _this4.serveStats = res.data.data || {};
+      })["catch"](function () {});
+    },
+    fetchMerchStats: function fetchMerchStats() {
+      var _this5 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/merch-orders/statistics').then(function (res) {
+        _this5.merchStats = res.data.data || {};
+      })["catch"](function () {});
+    },
+    fetchPlusStats: function fetchPlusStats() {
+      var _this6 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/plus-orders/statistics').then(function (res) {
+        _this6.plusStats = res.data.data || {};
+      })["catch"](function () {});
+    },
+    fetchThreadStats: function fetchThreadStats() {
+      var _this7 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/thread-orders/statistics').then(function (res) {
+        _this7.threadStats = res.data.data || {};
+      })["catch"](function () {});
+    },
+    fetchInvMerchStats: function fetchInvMerchStats() {
+      var _this8 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/inv-merch/statistics').then(function (res) {
+        _this8.invMerchStats = res.data.data || {};
+      })["catch"](function () {});
+    },
+    fetchInvThreadStats: function fetchInvThreadStats() {
+      var _this9 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/inv-thread/statistics').then(function (res) {
+        _this9.invThreadStats = res.data.data || {};
       })["catch"](function () {});
     }
   }
@@ -41314,7 +41354,7 @@ var render = function render() {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
   }, [_vm._v(_vm._s(_vm.totalLowStock))]), _vm._v(" "), _c("div", {
     staticClass: "mt-2 mb-0 text-muted text-xs"
-  }, [_vm._v("across QuiviCare & QuiviServe inventory")])]), _vm._v(" "), _vm._m(4)])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("across QuiviCare, QuiviServe, QuiviMerch & QuiviThread inventory")])]), _vm._v(" "), _vm._m(4)])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-lg-12 mb-4"
@@ -41429,7 +41469,73 @@ var render = function render() {
     }, [_vm._v(_vm._s(care.count))])]);
   }), _vm._v(" "), _vm.careDistribution.length === 0 ? _c("div", {
     staticClass: "text-muted text-center py-3"
-  }, [_vm._v("No care data yet.")]) : _vm._e()], 2)])])])]);
+  }, [_vm._v("No care data yet.")]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "col-lg-3 col-md-6 mb-4"
+  }, [_c("div", {
+    staticClass: "card h-100"
+  }, [_vm._m(11), _vm._v(" "), _c("div", {
+    staticClass: "card-body"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Total Orders")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.merchStats.total_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Pending")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.merchStats.pending_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Completed")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.merchStats.completed_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Revenue")]), _vm._v(" "), _c("strong", [_vm._v("RM " + _vm._s(_vm.formatMoney(_vm.merchStats.total_revenue)))])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-lg-3 col-md-6 mb-4"
+  }, [_c("div", {
+    staticClass: "card h-100"
+  }, [_vm._m(12), _vm._v(" "), _c("div", {
+    staticClass: "card-body"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Total Orders")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.plusStats.total_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Scheduled")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.plusStats.scheduled_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Completed")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.plusStats.completed_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Revenue")]), _vm._v(" "), _c("strong", [_vm._v("RM " + _vm._s(_vm.formatMoney(_vm.plusStats.total_revenue)))])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "col-lg-3 col-md-6 mb-4"
+  }, [_c("div", {
+    staticClass: "card h-100"
+  }, [_vm._m(13), _vm._v(" "), _c("div", {
+    staticClass: "card-body"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Total Orders")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.threadStats.total_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("In Progress")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.threadStats.in_progress, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between mb-2"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Completed")]), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.dash(_vm.threadStats.completed_orders, 0)))])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between"
+  }, [_c("span", {
+    staticClass: "text-muted"
+  }, [_vm._v("Revenue")]), _vm._v(" "), _c("strong", [_vm._v("RM " + _vm._s(_vm.formatMoney(_vm.threadStats.total_revenue)))])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -41540,6 +41646,36 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-shield-halved mr-1"
   }), _vm._v(" QuiviCare")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "card-header py-3"
+  }, [_c("h6", {
+    staticClass: "m-0 font-weight-bold text-primary"
+  }, [_c("i", {
+    staticClass: "fas fa-shirt mr-1"
+  }), _vm._v(" QuiviMerch")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "card-header py-3"
+  }, [_c("h6", {
+    staticClass: "m-0 font-weight-bold text-primary"
+  }, [_c("i", {
+    staticClass: "fas fa-toolbox mr-1"
+  }), _vm._v(" QuiviPlus")])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "card-header py-3"
+  }, [_c("h6", {
+    staticClass: "m-0 font-weight-bold text-primary"
+  }, [_c("i", {
+    staticClass: "fas fa-plug mr-1"
+  }), _vm._v(" QuiviThread")])]);
 }];
 render._withStripped = true;
 
