@@ -173,7 +173,7 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-2" v-for="serve in serveDistribution" :key="'serve-' + serve.name">
                 <span class="text-muted">{{ serve.name }}</span>
-                <span class="badge" :style="{ backgroundColor: serve.color, color: '#fff' }">{{ serve.count }}</span>
+                <span class="badge" :style="{ backgroundColor: serve.color, color: '#000' }">{{ serve.count }}</span>
               </div>
               <div v-if="serveDistribution.length === 0" class="text-muted text-center py-3">No service data yet.</div>
             </div>

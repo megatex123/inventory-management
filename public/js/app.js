@@ -41447,7 +41447,7 @@ var render = function render() {
       staticClass: "badge",
       style: {
         backgroundColor: serve.color,
-        color: "#fff"
+        color: "#000"
       }
     }, [_vm._v(_vm._s(serve.count))])]);
   }), _vm._v(" "), _vm.serveDistribution.length === 0 ? _c("div", {
