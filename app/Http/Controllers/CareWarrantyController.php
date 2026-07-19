@@ -14,7 +14,14 @@ class CareWarrantyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CareWarranty::with(['careData', 'category', 'spareCategory' , 'product']);
+        $query = CareWarranty::with([
+            'careData.customer' => function ($q) {
+                $q->select('id', 'full_name as name', 'email', 'customer_id');
+            },
+            'category',
+            'spareCategory',
+            'product',
+        ]);
 
         if ($request->has('care_warranty_id') && !empty($request->care_warranty_id)) {
             $query->where('care_warranty_id', 'like', '%' . $request->care_warranty_id . '%');
@@ -355,11 +362,13 @@ class CareWarrantyController extends Controller
 
         // Add care data info if loaded
         if ($CareWarranty->relationLoaded('careData') && $CareWarranty->careData) {
+            $customer = $CareWarranty->careData->customer;
             $item['care_data'] = [
-                'id' => $CareWarranty->careData->id,
+                'id'              => $CareWarranty->careData->id,
                 'care_invoice_id' => $CareWarranty->careData->care_invoice_id ?? null,
-                // Add other relevant fields from care_data as needed
             ];
+            $item['customer_id']   = $customer ? $customer->customer_id : null;
+            $item['customer_name'] = $customer ? $customer->name : null;
         }
 
         // Add category info if loaded
