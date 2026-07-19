@@ -171,7 +171,7 @@ CREATE TABLE `care_warranty` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_care_data` (`care_data_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +187,8 @@ INSERT INTO `care_warranty` VALUES
 (3,'QV-CLA-0003',7,'QVT-INV-2607-3',18,3,1,1,'IC-0003',NULL,NULL,'2026-07-09',NULL,1,'2026-07-12 17:56:57','2026-07-12 18:18:49',NULL),
 (4,'QV-CLA-0004',9,'QVT-INV-2607-4',16,3,1,0,'QVCA-0004',NULL,NULL,'2026-07-09',NULL,0,'2026-07-12 17:56:57','2026-07-12 17:56:57',NULL),
 (5,'QV-CLA-0005',8,'QVT-INV-2607-5',2,1,0,0,NULL,NULL,NULL,'2026-07-09',NULL,0,'2026-07-12 17:56:57','2026-07-12 17:56:57',NULL),
-(6,'QV-CLA-0006',10,'QVT-INV-2607-6',18,3,1,1,'IC-0006','Loaner GPU - MSI Trio X White RTX 5080 16GB',3,'2026-07-09','2026-07-23',0,'2026-07-12 17:56:58','2026-07-12 18:18:49',NULL);
+(6,'QV-CLA-0006',10,'QVT-INV-2607-6',1,1,1,1,'7','INTEL Core Ultra 5 245KF',1,'2026-07-09','2026-07-23',0,'2026-07-12 17:56:58','2026-07-16 14:03:50',NULL),
+(7,'QV-CLA-0007',1,'QVT-INV-2603-2',5,1,0,0,'7','INTEL Core Ultra 5 245KF',1,'2026-07-16','2026-07-16',0,'2026-07-16 14:59:21','2026-07-16 15:01:17',NULL);
 /*!40000 ALTER TABLE `care_warranty` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -381,7 +382,7 @@ CREATE TABLE `craft_inspections` (
   PRIMARY KEY (`id`),
   KEY `craft_inspections_order_id_foreign` (`order_id`),
   CONSTRAINT `craft_inspections_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -398,7 +399,9 @@ INSERT INTO `craft_inspections` VALUES
 (4,3,2,1,'completed','2026-07-09 14:23:47','2026-07-09 14:27:13',NULL),
 (5,3,2,2,'completed','2026-07-09 14:27:33','2026-07-09 14:29:39',NULL),
 (6,6,2,1,'completed','2026-07-09 15:45:14','2026-07-09 15:47:05',NULL),
-(7,6,2,2,'draft','2026-07-09 15:47:13','2026-07-09 15:47:13',NULL);
+(7,6,2,2,'draft','2026-07-09 15:47:13','2026-07-09 15:47:13',NULL),
+(8,11,2,1,'draft','2026-07-16 13:43:19','2026-07-16 13:43:19',NULL),
+(9,9,2,1,'draft','2026-07-16 13:43:26','2026-07-16 13:43:26',NULL);
 /*!40000 ALTER TABLE `craft_inspections` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -537,6 +540,41 @@ INSERT INTO `destination` VALUES
 (3,'I_QVMR',1,'2026-07-11 15:12:49','2026-07-11 15:12:49',NULL),
 (4,'IE_QVMR',1,'2026-07-11 15:12:49','2026-07-11 15:12:49',NULL);
 /*!40000 ALTER TABLE `destination` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `documents`
+--
+
+DROP TABLE IF EXISTS `documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `documents` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(191) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` varchar(191) DEFAULT NULL,
+  `file_path` varchar(191) NOT NULL,
+  `file_name` varchar(191) NOT NULL,
+  `file_type` varchar(20) DEFAULT NULL,
+  `file_size` bigint(20) unsigned DEFAULT NULL,
+  `uploaded_by` varchar(191) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `documents`
+--
+
+LOCK TABLES `documents` WRITE;
+/*!40000 ALTER TABLE `documents` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `documents` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -1139,7 +1177,7 @@ CREATE TABLE `meeting_details` (
   PRIMARY KEY (`id`),
   KEY `meeting_details_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `meeting_details_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1151,7 +1189,8 @@ LOCK TABLES `meeting_details` WRITE;
 set autocommit=0;
 INSERT INTO `meeting_details` VALUES
 (1,13,10000.00,2,2,1,'all',NULL,'wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-09 14:32:04','2026-07-09 14:32:04',NULL),
-(2,14,6000.00,2,2,NULL,NULL,NULL,'premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-09 17:05:55','2026-07-09 17:05:55',NULL);
+(2,14,6000.00,2,2,NULL,NULL,NULL,'premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-09 17:05:55','2026-07-09 17:05:55',NULL),
+(3,16,NULL,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-16 14:28:35','2026-07-16 14:28:35',NULL);
 /*!40000 ALTER TABLE `meeting_details` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1177,7 +1216,7 @@ CREATE TABLE `meetings` (
   PRIMARY KEY (`id`),
   KEY `meetings_customer_id_foreign` (`customer_id`),
   CONSTRAINT `meetings_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1189,7 +1228,9 @@ LOCK TABLES `meetings` WRITE;
 set autocommit=0;
 INSERT INTO `meetings` VALUES
 (13,'QV-MEET-0001',20,'custom gaming pc test','2026-07-09','9:00 pm',NULL,'2026-07-09 14:30:43','2026-07-09 14:30:43',NULL),
-(14,'QV-MEET-0014',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL);
+(14,'QV-MEET-0014',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL),
+(15,'QV-MEET-0015',21,'2nd meeting','2026-07-17',NULL,NULL,'2026-07-16 14:25:47','2026-07-16 14:25:47',NULL),
+(16,'QV-MEET-0016',20,'first meeting','2026-07-17',NULL,NULL,'2026-07-16 14:28:17','2026-07-16 14:28:17',NULL);
 /*!40000 ALTER TABLE `meetings` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2584,4 +2625,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-15 10:41:12
+-- Dump completed on 2026-07-19 16:27:05
