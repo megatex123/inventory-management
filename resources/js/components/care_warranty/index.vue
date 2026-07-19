@@ -173,7 +173,8 @@
               Invoice ID
               <i v-if="sortField === 'care_invoice_id'" :class="sortIcon"></i>
             </th>
-            <th @click="sort('product_id')" width="40%">
+            <th width="10%">Customer ID</th>
+            <th @click="sort('product_id')" width="30%">
               Item Name
               <i v-if="sortField === 'product_id'" :class="sortIcon"></i>
             </th>
@@ -190,6 +191,7 @@
                 </span>
             </td>
             <td><span class="badge badge-light">{{ item.care_invoice_id }}</span></td>
+            <td><span class="badge badge-secondary">{{ item.customer_id || '-' }}</span></td>
             <td>
                 {{ getProductName(item) }}
                 <span v-if="item.category" class="badge badge-info ml-1">
@@ -237,14 +239,14 @@
             </td>
           </tr>
           <tr v-if="loading">
-            <td colspan="8" class="text-center py-4">
+            <td colspan="7" class="text-center py-4">
               <div class="spinner-border text-primary" role="status">
                 <span class="sr-only">Loading...</span>
               </div>
             </td>
           </tr>
           <tr v-if="!loading && (!items || items.length === 0)">
-            <td colspan="8" class="text-center py-4">
+            <td colspan="7" class="text-center py-4">
               <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
               <p class="text-muted">No warranties found</p>
             </td>
