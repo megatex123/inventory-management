@@ -172,6 +172,28 @@
                   </small>
                 </div>
               </div>
+
+              <!-- Update Membership (manual override) -->
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-user-check text-primary mr-1"></i> Update Membership?
+                </label>
+                <div class="custom-control custom-switch">
+                  <input
+                    type="checkbox"
+                    v-model="form.update_membership"
+                    class="custom-control-input"
+                    id="update_membership"
+                    @change="onMembershipToggle"
+                  >
+                  <label class="custom-control-label" for="update_membership">
+                    {{ form.update_membership ? 'Membership Update Required' : 'No Membership Update' }}
+                  </label>
+                </div>
+                <small class="form-text text-muted">
+                  Check this box if customer membership information needs to be updated
+                </small>
+              </div>
             </div>
           </div>
 
@@ -325,6 +347,7 @@
                 <p><strong>Care Tier:</strong> {{ selectedCare ? selectedCare.name : 'N/A' }}</p>
                 <p><strong>Price:</strong> {{ formatCurrency(form.price) }}</p>
                 <p><strong>Membership:</strong> {{ careData.membership_active ? 'Active' : 'Expired' }} ({{ careData.membership_remaining || 'N/A' }})</p>
+                <p><strong>Membership Update:</strong> {{ form.update_membership ? 'Required' : 'Not Required' }}</p>
               </div>
             </div>
           </div>
@@ -359,7 +382,8 @@ export default {
         order_id: '',
         lkp_care_id: '',
         total_part: '',
-        price: ''
+        price: '',
+        update_membership: false
       },
       selectedCustomer: null,
       selectedOrder: null,
@@ -454,7 +478,8 @@ export default {
           order_id: this.careData.order_id,
           lkp_care_id: this.careData.lkp_care_id,
           total_part: this.careData.total_part || '',
-          price: this.careData.price || ''
+          price: this.careData.price || '',
+          update_membership: !!this.careData.update_membership
         };
 
         // Set selected references
@@ -545,6 +570,10 @@ export default {
       this.selectedCare = this.cares.find(c => c.id == this.form.lkp_care_id) || null;
     },
 
+    onMembershipToggle() {
+      // Manual override — persisted to care_data.update_membership on save.
+    },
+
     calculatePartsValue() {
       if (!this.selectedOrder) {
         Swal.fire('Info', 'Please select an order first', 'info');
@@ -570,7 +599,8 @@ export default {
         order_id: this.careData.order_id,
         lkp_care_id: this.careData.lkp_care_id,
         total_part: this.careData.total_part || '',
-        price: this.careData.price || ''
+        price: this.careData.price || '',
+        update_membership: !!this.careData.update_membership
       };
 
       if (this.careData.customer) {

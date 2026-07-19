@@ -3475,7 +3475,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         order_id: '',
         lkp_care_id: '',
         total_part: '',
-        price: ''
+        price: '',
+        update_membership: false
       },
       selectedCustomer: null,
       selectedOrder: null,
@@ -3579,7 +3580,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 order_id: _this3.careData.order_id,
                 lkp_care_id: _this3.careData.lkp_care_id,
                 total_part: _this3.careData.total_part || '',
-                price: _this3.careData.price || ''
+                price: _this3.careData.price || '',
+                update_membership: !!_this3.careData.update_membership
               };
 
               // Set selected references
@@ -3751,6 +3753,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return c.id == _this0.form.lkp_care_id;
       }) || null;
     },
+    onMembershipToggle: function onMembershipToggle() {
+      // Manual override — persisted to care_data.update_membership on save.
+    },
     calculatePartsValue: function calculatePartsValue() {
       if (!this.selectedOrder) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Info', 'Please select an order first', 'info');
@@ -3773,7 +3778,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         order_id: this.careData.order_id,
         lkp_care_id: this.careData.lkp_care_id,
         total_part: this.careData.total_part || '',
-        price: this.careData.price || ''
+        price: this.careData.price || '',
+        update_membership: !!this.careData.update_membership
       };
       if (this.careData.customer) {
         this.selectedCustomer = this.careData.customer;
@@ -32094,9 +32100,53 @@ var render = function render() {
     "class": _vm.careData && _vm.careData.membership_active ? "badge-success" : "badge-secondary"
   }, [_vm._v("\n                  " + _vm._s(_vm.careData && _vm.careData.membership_active ? "Active" : "Expired") + "\n                ")]), _vm._v(" "), _c("small", {
     staticClass: "form-text text-muted mb-0"
-  }, [_vm._v("\n                  " + _vm._s(_vm.careData ? _vm.careData.membership_remaining : "N/A") + "\n                ")])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.careData ? _vm.careData.membership_remaining : "N/A") + "\n                ")])])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_vm._m(10), _vm._v(" "), _c("div", {
+    staticClass: "custom-control custom-switch"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.update_membership,
+      expression: "form.update_membership"
+    }],
+    staticClass: "custom-control-input",
+    attrs: {
+      type: "checkbox",
+      id: "update_membership"
+    },
+    domProps: {
+      checked: Array.isArray(_vm.form.update_membership) ? _vm._i(_vm.form.update_membership, null) > -1 : _vm.form.update_membership
+    },
+    on: {
+      change: [function ($event) {
+        var $$a = _vm.form.update_membership,
+          $$el = $event.target,
+          $$c = $$el.checked ? true : false;
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$el.checked) {
+            $$i < 0 && _vm.$set(_vm.form, "update_membership", $$a.concat([$$v]));
+          } else {
+            $$i > -1 && _vm.$set(_vm.form, "update_membership", $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+          }
+        } else {
+          _vm.$set(_vm.form, "update_membership", $$c);
+        }
+      }, _vm.onMembershipToggle]
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "custom-control-label",
+    attrs: {
+      "for": "update_membership"
+    }
+  }, [_vm._v("\n                  " + _vm._s(_vm.form.update_membership ? "Membership Update Required" : "No Membership Update") + "\n                ")])]), _vm._v(" "), _c("small", {
+    staticClass: "form-text text-muted"
+  }, [_vm._v("\n                Check this box if customer membership information needs to be updated\n              ")])])])]), _vm._v(" "), _c("div", {
     staticClass: "mt-4 pt-3 border-top"
-  }, [_vm._m(10), _vm._v(" "), _vm.loadingParts ? _c("div", {
+  }, [_vm._m(11), _vm._v(" "), _vm.loadingParts ? _c("div", {
     staticClass: "text-muted"
   }, [_c("span", {
     staticClass: "spinner-border spinner-border-sm mr-2",
@@ -32110,7 +32160,7 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-sm align-middle"
-  }, [_vm._m(11), _vm._v(" "), _c("tbody", _vm._l(_vm.orderParts, function (part) {
+  }, [_vm._m(12), _vm._v(" "), _c("tbody", _vm._l(_vm.orderParts, function (part) {
     return _c("tr", {
       key: part.id
     }, [_c("td", [_vm._v(_vm._s(part.product_name))]), _vm._v(" "), _c("td", {
@@ -32134,7 +32184,7 @@ var render = function render() {
     staticClass: "text-right font-weight-bold"
   }, [_vm._v(_vm._s(_vm.formatCurrency(_vm.coveredPartsTotal)))]), _vm._v(" "), _c("td")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-4"
-  }, [_vm._m(12), _vm._v(" "), _c("ul", {
+  }, [_vm._m(13), _vm._v(" "), _c("ul", {
     staticClass: "mb-0 pl-3"
   }, _vm._l(_vm.errors, function (error) {
     return _c("li", {
@@ -32206,7 +32256,7 @@ var render = function render() {
         _vm.showDeleteModal = false;
       }
     }
-  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(13), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(14), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-secondary",
@@ -32240,7 +32290,7 @@ var render = function render() {
     staticClass: "modal-content"
   }, [_c("div", {
     staticClass: "modal-header bg-success text-white"
-  }, [_vm._m(14), _vm._v(" "), _c("button", {
+  }, [_vm._m(15), _vm._v(" "), _c("button", {
     staticClass: "close text-white",
     attrs: {
       type: "button"
@@ -32258,7 +32308,7 @@ var render = function render() {
     staticClass: "fas fa-check-circle fa-3x text-success mb-3"
   }), _vm._v(" "), _c("h5", [_vm._v("Care Data Updated Successfully!")]), _vm._v(" "), _c("div", {
     staticClass: "text-left mt-3"
-  }, [_c("p", [_c("strong", [_vm._v("QuickCare ID:")]), _vm._v(" " + _vm._s(_vm.careData.care_id))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Customer:")]), _vm._v(" " + _vm._s(_vm.careData.customer.full_name))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Care Tier:")]), _vm._v(" " + _vm._s(_vm.selectedCare ? _vm.selectedCare.name : "N/A"))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Price:")]), _vm._v(" " + _vm._s(_vm.formatCurrency(_vm.form.price)))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership:")]), _vm._v(" " + _vm._s(_vm.careData.membership_active ? "Active" : "Expired") + " (" + _vm._s(_vm.careData.membership_remaining || "N/A") + ")")])])])]), _vm._v(" "), _c("div", {
+  }, [_c("p", [_c("strong", [_vm._v("QuickCare ID:")]), _vm._v(" " + _vm._s(_vm.careData.care_id))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Customer:")]), _vm._v(" " + _vm._s(_vm.careData.customer.full_name))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Care Tier:")]), _vm._v(" " + _vm._s(_vm.selectedCare ? _vm.selectedCare.name : "N/A"))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Price:")]), _vm._v(" " + _vm._s(_vm.formatCurrency(_vm.form.price)))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership:")]), _vm._v(" " + _vm._s(_vm.careData.membership_active ? "Active" : "Expired") + " (" + _vm._s(_vm.careData.membership_remaining || "N/A") + ")")]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership Update:")]), _vm._v(" " + _vm._s(_vm.form.update_membership ? "Required" : "Not Required"))])])])]), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-success",
@@ -32385,6 +32435,14 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-user-check text-primary mr-1"
   }), _vm._v(" Membership\n              ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("label", {
+    staticClass: "form-label"
+  }, [_c("i", {
+    staticClass: "fas fa-user-check text-primary mr-1"
+  }), _vm._v(" Update Membership?\n              ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;

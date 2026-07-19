@@ -625,6 +625,7 @@ class CareDataController extends Controller
                 'lkp_care_id' => $request->lkp_care_id ?? $careData->lkp_care_id,
                 'total_part' => $request->total_part ?? $careData->total_part,
                 'price' => $request->price ?? $careData->price,
+                'update_membership' => $request->has('update_membership') ? $request->boolean('update_membership') : $careData->update_membership,
                 'status' => $request->status ?? $careData->status,
                 'appointment_date' => $request->appointment_date ?? $careData->appointment_date,
                 'appointment_time' => $request->appointment_time ?? $careData->appointment_time,
