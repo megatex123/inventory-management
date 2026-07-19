@@ -111,8 +111,8 @@
           <div id="Customer" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header text-primary font-weight-bold">Customer Management</h6>
-              <router-link class="collapse-item" to="/customer">Customer List</router-link>
               <router-link class="collapse-item" to="/customer/create">Pre Register Customer</router-link>
+              <router-link class="collapse-item" to="/customer">Customer List</router-link>
             </div>
           </div>
         </li>
@@ -130,9 +130,9 @@
 
               <hr class="sidebar-divider my-1">
 
-              <h6 class="collapse-header text-primary font-weight-bold">Meeting Details</h6>
-              <router-link class="collapse-item" to="/meeting-details">Meeting Detail List</router-link>
-              <router-link class="collapse-item" to="/meeting-details/create">Create Meeting Detail</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">Customer Requirement Meeting</h6>
+              <router-link class="collapse-item" to="/meeting-details">Customer Requirement Meeting List</router-link>
+              <router-link class="collapse-item" to="/meeting-details/create">Create Customer Requirement Meeting</router-link>
             </div>
           </div>
         </li>
@@ -186,7 +186,6 @@
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header text-primary font-weight-bold">QuiviServe Records</h6>
               <router-link class="collapse-item" to="/serve-data">All QuiviServe</router-link>
-              <router-link class="collapse-item" to="/serve-data/create">Add QuiviServe</router-link>
 
               <hr class="sidebar-divider my-1">
 
