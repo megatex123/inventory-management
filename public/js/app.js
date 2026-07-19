@@ -3480,8 +3480,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       selectedCustomer: null,
       selectedOrder: null,
       selectedCare: null,
+      orderParts: [],
       loading: false,
       loadingCustomers: false,
+      loadingParts: false,
       deleting: false,
       showDeleteModal: false,
       showSuccessModal: false,
@@ -3497,6 +3499,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.orders.filter(function (order) {
         return order.customer_id == _this.form.customer_id;
       });
+    },
+    coveredPartsTotal: function coveredPartsTotal() {
+      var _this2 = this;
+      return this.orderParts.filter(function (part) {
+        return _this2.isPartCovered(part);
+      }).reduce(function (sum, part) {
+        return sum + (parseFloat(part.sub_total) || 0);
+      }, 0);
     }
   },
   mounted: function mounted() {
@@ -3548,39 +3558,42 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return 'badge-secondary';
     },
     fetchCareData: function fetchCareData() {
-      var _this2 = this;
+      var _this3 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var id, response, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _this2.loading = true;
+              _this3.loading = true;
               _context.p = 1;
-              id = _this2.$route.params.id;
+              id = _this3.$route.params.id;
               _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/care-data/".concat(id));
             case 2:
               response = _context.v;
-              _this2.careData = response.data.data;
+              _this3.careData = response.data.data;
 
               // Populate form with existing data
-              _this2.form = {
-                customer_id: _this2.careData.customer_id,
-                order_id: _this2.careData.order_id,
-                lkp_care_id: _this2.careData.lkp_care_id,
-                total_part: _this2.careData.total_part || '',
-                price: _this2.careData.price || ''
+              _this3.form = {
+                customer_id: _this3.careData.customer_id,
+                order_id: _this3.careData.order_id,
+                lkp_care_id: _this3.careData.lkp_care_id,
+                total_part: _this3.careData.total_part || '',
+                price: _this3.careData.price || ''
               };
 
               // Set selected references
-              if (_this2.careData.customer) {
-                _this2.selectedCustomer = _this2.careData.customer;
+              if (_this3.careData.customer) {
+                _this3.selectedCustomer = _this3.careData.customer;
               }
-              if (_this2.careData.order) {
-                _this2.selectedOrder = _this2.careData.order;
+              if (_this3.careData.order) {
+                _this3.selectedOrder = _this3.careData.order;
               }
-              if (_this2.careData.care) {
-                _this2.selectedCare = _this2.careData.care;
+              if (_this3.careData.care) {
+                _this3.selectedCare = _this3.careData.care;
+              }
+              if (_this3.careData.order_id) {
+                _this3.fetchOrderParts(_this3.careData.order_id);
               }
               _context.n = 4;
               break;
@@ -3593,10 +3606,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load care data', 'error');
               }
-              _this2.$router.push('/care-data');
+              _this3.$router.push('/care-data');
             case 4:
               _context.p = 4;
-              _this2.loading = false;
+              _this3.loading = false;
               return _context.f(4);
             case 5:
               return _context.a(2);
@@ -3604,29 +3617,30 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }, _callee, null, [[1, 3, 4, 5]]);
       }))();
     },
-    fetchCustomers: function fetchCustomers() {
-      var _this3 = this;
+    fetchOrderParts: function fetchOrderParts(orderId) {
+      var _this4 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
         var response, _t2;
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
-              _this3.loadingCustomers = true;
+              _this4.loadingParts = true;
               _context2.p = 1;
               _context2.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/order/get/".concat(orderId));
             case 2:
               response = _context2.v;
-              _this3.customers = response.data.data || response.data;
+              _this4.orderParts = response.data.details || [];
               _context2.n = 4;
               break;
             case 3:
               _context2.p = 3;
               _t2 = _context2.v;
-              console.error('Error fetching customers:', _t2);
+              console.error('Error fetching order parts:', _t2);
+              _this4.orderParts = [];
             case 4:
               _context2.p = 4;
-              _this3.loadingCustomers = false;
+              _this4.loadingParts = false;
               return _context2.f(4);
             case 5:
               return _context2.a(2);
@@ -3634,33 +3648,41 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }, _callee2, null, [[1, 3, 4, 5]]);
       }))();
     },
-    fetchOrders: function fetchOrders() {
-      var _this4 = this;
+    isPartCovered: function isPartCovered(part) {
+      return part.is_care === 1 || part.is_care === true || part.is_care === '1';
+    },
+    fetchCustomers: function fetchCustomers() {
+      var _this5 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
         var response, _t3;
         return _regenerator().w(function (_context3) {
           while (1) switch (_context3.p = _context3.n) {
             case 0:
-              _context3.p = 0;
-              _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/orders');
-            case 1:
-              response = _context3.v;
-              _this4.orders = response.data.data || response.data;
-              _context3.n = 3;
-              break;
+              _this5.loadingCustomers = true;
+              _context3.p = 1;
+              _context3.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
             case 2:
-              _context3.p = 2;
-              _t3 = _context3.v;
-              console.error('Error fetching orders:', _t3);
+              response = _context3.v;
+              _this5.customers = response.data.data || response.data;
+              _context3.n = 4;
+              break;
             case 3:
+              _context3.p = 3;
+              _t3 = _context3.v;
+              console.error('Error fetching customers:', _t3);
+            case 4:
+              _context3.p = 4;
+              _this5.loadingCustomers = false;
+              return _context3.f(4);
+            case 5:
               return _context3.a(2);
           }
-        }, _callee3, null, [[0, 2]]);
+        }, _callee3, null, [[1, 3, 4, 5]]);
       }))();
     },
-    fetchCares: function fetchCares() {
-      var _this5 = this;
+    fetchOrders: function fetchOrders() {
+      var _this6 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
         var response, _t4;
         return _regenerator().w(function (_context4) {
@@ -3668,40 +3690,65 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context4.p = 0;
               _context4.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/orders');
             case 1:
               response = _context4.v;
-              _this5.cares = response.data.data || response.data;
+              _this6.orders = response.data.data || response.data;
               _context4.n = 3;
               break;
             case 2:
               _context4.p = 2;
               _t4 = _context4.v;
-              console.error('Error fetching cares:', _t4);
+              console.error('Error fetching orders:', _t4);
             case 3:
               return _context4.a(2);
           }
         }, _callee4, null, [[0, 2]]);
       }))();
     },
+    fetchCares: function fetchCares() {
+      var _this7 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+        var response, _t5;
+        return _regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
+            case 0:
+              _context5.p = 0;
+              _context5.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
+            case 1:
+              response = _context5.v;
+              _this7.cares = response.data.data || response.data;
+              _context5.n = 3;
+              break;
+            case 2:
+              _context5.p = 2;
+              _t5 = _context5.v;
+              console.error('Error fetching cares:', _t5);
+            case 3:
+              return _context5.a(2);
+          }
+        }, _callee5, null, [[0, 2]]);
+      }))();
+    },
     onCustomerChange: function onCustomerChange() {
-      var _this6 = this;
+      var _this8 = this;
       this.selectedCustomer = this.customers.find(function (c) {
-        return c.id == _this6.form.customer_id;
+        return c.id == _this8.form.customer_id;
       }) || null;
       this.form.order_id = '';
       this.selectedOrder = null;
     },
     onOrderChange: function onOrderChange() {
-      var _this7 = this;
+      var _this9 = this;
       this.selectedOrder = this.orders.find(function (o) {
-        return o.id == _this7.form.order_id;
+        return o.id == _this9.form.order_id;
       }) || null;
     },
     onCareChange: function onCareChange() {
-      var _this8 = this;
+      var _this0 = this;
       this.selectedCare = this.cares.find(function (c) {
-        return c.id == _this8.form.lkp_care_id;
+        return c.id == _this0.form.lkp_care_id;
       }) || null;
     },
     calculatePartsValue: function calculatePartsValue() {
@@ -3773,89 +3820,89 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.errors.length === 0;
     },
     updateCareData: function updateCareData() {
-      var _this9 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        var id, response, validationErrors, field, _t5;
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.p = _context5.n) {
+      var _this1 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+        var id, response, validationErrors, field, _t6;
+        return _regenerator().w(function (_context6) {
+          while (1) switch (_context6.p = _context6.n) {
             case 0:
-              if (_this9.validateForm()) {
-                _context5.n = 1;
+              if (_this1.validateForm()) {
+                _context6.n = 1;
                 break;
               }
-              return _context5.a(2);
+              return _context6.a(2);
             case 1:
-              _this9.loading = true;
-              _this9.errors = [];
-              _context5.p = 2;
-              id = _this9.$route.params.id;
-              _context5.n = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/care-data/".concat(id), _this9.form);
+              _this1.loading = true;
+              _this1.errors = [];
+              _context6.p = 2;
+              id = _this1.$route.params.id;
+              _context6.n = 3;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/care-data/".concat(id), _this1.form);
             case 3:
-              response = _context5.v;
-              _this9.careData = response.data.data;
-              _context5.n = 4;
-              return _this9.fetchCareData();
+              response = _context6.v;
+              _this1.careData = response.data.data;
+              _context6.n = 4;
+              return _this1.fetchCareData();
             case 4:
-              _this9.showSuccessModal = true;
-              _context5.n = 6;
+              _this1.showSuccessModal = true;
+              _context6.n = 6;
               break;
             case 5:
-              _context5.p = 5;
-              _t5 = _context5.v;
-              console.error('Error updating care data:', _t5);
-              if (_t5.response) {
-                if (_t5.response.status === 422) {
-                  validationErrors = _t5.response.data.errors;
+              _context6.p = 5;
+              _t6 = _context6.v;
+              console.error('Error updating care data:', _t6);
+              if (_t6.response) {
+                if (_t6.response.status === 422) {
+                  validationErrors = _t6.response.data.errors;
                   if (validationErrors) {
                     for (field in validationErrors) {
-                      _this9.errors.push("".concat(field, ": ").concat(validationErrors[field].join(', ')));
+                      _this1.errors.push("".concat(field, ": ").concat(validationErrors[field].join(', ')));
                     }
                   } else {
-                    _this9.errors.push(_t5.response.data.message || 'Validation failed');
+                    _this1.errors.push(_t6.response.data.message || 'Validation failed');
                   }
-                } else if (_t5.response.status === 404) {
-                  _this9.errors.push('Care data not found');
-                } else if (_t5.response.status === 500) {
-                  _this9.errors.push('Server error. Please try again later.');
+                } else if (_t6.response.status === 404) {
+                  _this1.errors.push('Care data not found');
+                } else if (_t6.response.status === 500) {
+                  _this1.errors.push('Server error. Please try again later.');
                 } else {
-                  _this9.errors.push(_t5.response.data.message || "Error ".concat(_t5.response.status));
+                  _this1.errors.push(_t6.response.data.message || "Error ".concat(_t6.response.status));
                 }
-              } else if (_t5.request) {
-                _this9.errors.push('No response from server. Check network connection.');
+              } else if (_t6.request) {
+                _this1.errors.push('No response from server. Check network connection.');
               } else {
-                _this9.errors.push(_t5.message || 'Failed to update care data.');
+                _this1.errors.push(_t6.message || 'Failed to update care data.');
               }
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Error!',
-                html: "<div class=\"text-left\">\n            <p>Failed to update care data.</p>\n            ".concat(_this9.errors.length > 0 ? "<ul class=\"mb-0 pl-3\"><li>".concat(_this9.errors.join('</li><li>'), "</li></ul>") : '', "\n          </div>"),
+                html: "<div class=\"text-left\">\n            <p>Failed to update care data.</p>\n            ".concat(_this1.errors.length > 0 ? "<ul class=\"mb-0 pl-3\"><li>".concat(_this1.errors.join('</li><li>'), "</li></ul>") : '', "\n          </div>"),
                 icon: 'error',
                 confirmButtonText: 'OK'
               });
             case 6:
-              _context5.p = 6;
-              _this9.loading = false;
-              return _context5.f(6);
+              _context6.p = 6;
+              _this1.loading = false;
+              return _context6.f(6);
             case 7:
-              return _context5.a(2);
+              return _context6.a(2);
           }
-        }, _callee5, null, [[2, 5, 6, 7]]);
+        }, _callee6, null, [[2, 5, 6, 7]]);
       }))();
     },
     confirmDelete: function confirmDelete() {
       this.showDeleteModal = true;
     },
     deleteCareData: function deleteCareData() {
-      var _this0 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var id, _t6;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.p = _context6.n) {
+      var _this10 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+        var id, _t7;
+        return _regenerator().w(function (_context7) {
+          while (1) switch (_context7.p = _context7.n) {
             case 0:
-              _this0.deleting = true;
-              _context6.p = 1;
-              id = _this0.$route.params.id;
-              _context6.n = 2;
+              _this10.deleting = true;
+              _context7.p = 1;
+              id = _this10.$route.params.id;
+              _context7.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/care-data/".concat(id));
             case 2:
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
@@ -3864,24 +3911,24 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 icon: 'success',
                 confirmButtonText: 'OK'
               }).then(function () {
-                _this0.$router.push('/care-data');
+                _this10.$router.push('/care-data');
               });
-              _context6.n = 4;
+              _context7.n = 4;
               break;
             case 3:
-              _context6.p = 3;
-              _t6 = _context6.v;
-              console.error('Error deleting care data:', _t6);
+              _context7.p = 3;
+              _t7 = _context7.v;
+              console.error('Error deleting care data:', _t7);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete care data', 'error');
             case 4:
-              _context6.p = 4;
-              _this0.deleting = false;
-              _this0.showDeleteModal = false;
-              return _context6.f(4);
+              _context7.p = 4;
+              _this10.deleting = false;
+              _this10.showDeleteModal = false;
+              return _context7.f(4);
             case 5:
-              return _context6.a(2);
+              return _context7.a(2);
           }
-        }, _callee6, null, [[1, 3, 4, 5]]);
+        }, _callee7, null, [[1, 3, 4, 5]]);
       }))();
     },
     goBackToList: function goBackToList() {
@@ -32047,9 +32094,47 @@ var render = function render() {
     "class": _vm.careData && _vm.careData.membership_active ? "badge-success" : "badge-secondary"
   }, [_vm._v("\n                  " + _vm._s(_vm.careData && _vm.careData.membership_active ? "Active" : "Expired") + "\n                ")]), _vm._v(" "), _c("small", {
     staticClass: "form-text text-muted mb-0"
-  }, [_vm._v("\n                  " + _vm._s(_vm.careData ? _vm.careData.membership_remaining : "N/A") + "\n                ")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.careData ? _vm.careData.membership_remaining : "N/A") + "\n                ")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "mt-4 pt-3 border-top"
+  }, [_vm._m(10), _vm._v(" "), _vm.loadingParts ? _c("div", {
+    staticClass: "text-muted"
+  }, [_c("span", {
+    staticClass: "spinner-border spinner-border-sm mr-2",
+    attrs: {
+      role: "status",
+      "aria-hidden": "true"
+    }
+  }), _vm._v("\n            Loading parts...\n          ")]) : _vm.orderParts.length === 0 ? _c("div", {
+    staticClass: "text-muted"
+  }, [_vm._v("\n            No parts found for this order.\n          ")]) : _c("div", {
+    staticClass: "table-responsive"
+  }, [_c("table", {
+    staticClass: "table table-sm align-middle"
+  }, [_vm._m(11), _vm._v(" "), _c("tbody", _vm._l(_vm.orderParts, function (part) {
+    return _c("tr", {
+      key: part.id
+    }, [_c("td", [_vm._v(_vm._s(part.product_name))]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v(_vm._s(part.pro_qty))]), _vm._v(" "), _c("td", {
+      staticClass: "text-right"
+    }, [_vm._v(_vm._s(_vm.formatCurrency(part.pro_price)))]), _vm._v(" "), _c("td", {
+      staticClass: "text-right"
+    }, [_vm._v(_vm._s(_vm.formatCurrency(part.sub_total)))]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_c("span", {
+      staticClass: "badge",
+      "class": _vm.isPartCovered(part) ? "badge-success" : "badge-secondary"
+    }, [_vm._v("\n                      " + _vm._s(_vm.isPartCovered(part) ? "Covered" : "Not Covered") + "\n                    ")])])]);
+  }), 0), _vm._v(" "), _c("tfoot", [_c("tr", [_c("td", {
+    staticClass: "text-right font-weight-bold",
+    attrs: {
+      colspan: "3"
+    }
+  }, [_vm._v("Covered by QuiviCare")]), _vm._v(" "), _c("td", {
+    staticClass: "text-right font-weight-bold"
+  }, [_vm._v(_vm._s(_vm.formatCurrency(_vm.coveredPartsTotal)))]), _vm._v(" "), _c("td")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-4"
-  }, [_vm._m(10), _vm._v(" "), _c("ul", {
+  }, [_vm._m(12), _vm._v(" "), _c("ul", {
     staticClass: "mb-0 pl-3"
   }, _vm._l(_vm.errors, function (error) {
     return _c("li", {
@@ -32121,7 +32206,7 @@ var render = function render() {
         _vm.showDeleteModal = false;
       }
     }
-  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(11), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(13), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-secondary",
@@ -32155,7 +32240,7 @@ var render = function render() {
     staticClass: "modal-content"
   }, [_c("div", {
     staticClass: "modal-header bg-success text-white"
-  }, [_vm._m(12), _vm._v(" "), _c("button", {
+  }, [_vm._m(14), _vm._v(" "), _c("button", {
     staticClass: "close text-white",
     attrs: {
       type: "button"
@@ -32300,6 +32385,28 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-user-check text-primary mr-1"
   }), _vm._v(" Membership\n              ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("h6", {
+    staticClass: "mb-3"
+  }, [_c("i", {
+    staticClass: "fas fa-list text-primary mr-1"
+  }), _vm._v(" Order Parts & QuiviCare Coverage\n          ")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("Part")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Qty")]), _vm._v(" "), _c("th", {
+    staticClass: "text-right"
+  }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
+    staticClass: "text-right"
+  }, [_vm._v("Subtotal")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("QuiviCare")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -35404,7 +35511,11 @@ var render = function render() {
     "class": _vm.sortIcon
   }) : _vm._e()]), _vm._v(" "), _c("th", {
     attrs: {
-      width: "40%"
+      width: "10%"
+    }
+  }, [_vm._v("Customer ID")]), _vm._v(" "), _c("th", {
+    attrs: {
+      width: "30%"
     },
     on: {
       click: function click($event) {
@@ -35432,7 +35543,9 @@ var render = function render() {
       staticClass: "badge badge-light"
     }, [_c("strong", [_vm._v(_vm._s(item.care_warranty_id))])])]), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge badge-light"
-    }, [_vm._v(_vm._s(item.care_invoice_id))])]), _vm._v(" "), _c("td", [_vm._v("\n              " + _vm._s(_vm.getProductName(item)) + "\n              "), item.category ? _c("span", {
+    }, [_vm._v(_vm._s(item.care_invoice_id))])]), _vm._v(" "), _c("td", [_c("span", {
+      staticClass: "badge badge-secondary"
+    }, [_vm._v(_vm._s(item.customer_id || "-"))])]), _vm._v(" "), _c("td", [_vm._v("\n              " + _vm._s(_vm.getProductName(item)) + "\n              "), item.category ? _c("span", {
       staticClass: "badge badge-info ml-1"
     }, [_vm._v("\n                  " + _vm._s(_vm.getCategoryName(item.category)) + "\n              ")]) : _vm._e(), _vm._v(" "), _c("br"), _vm._v(" "), _c("small", [_vm._v("Spare: " + _vm._s(item.spare_item_name || "-"))]), _vm._v(" "), item.spare_category ? _c("span", {
       staticClass: "badge badge-info ml-1"
@@ -35652,7 +35765,7 @@ var staticRenderFns = [function () {
   return _c("td", {
     staticClass: "text-center py-4",
     attrs: {
-      colspan: "8"
+      colspan: "7"
     }
   }, [_c("div", {
     staticClass: "spinner-border text-primary",
@@ -35668,7 +35781,7 @@ var staticRenderFns = [function () {
   return _c("td", {
     staticClass: "text-center py-4",
     attrs: {
-      colspan: "8"
+      colspan: "7"
     }
   }, [_c("i", {
     staticClass: "fas fa-box-open fa-3x text-muted mb-3"

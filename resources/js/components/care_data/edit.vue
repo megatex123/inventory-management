@@ -175,6 +175,55 @@
             </div>
           </div>
 
+          <div class="mt-4 pt-3 border-top">
+            <h6 class="mb-3">
+              <i class="fas fa-list text-primary mr-1"></i> Order Parts &amp; QuiviCare Coverage
+            </h6>
+
+            <div v-if="loadingParts" class="text-muted">
+              <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+              Loading parts...
+            </div>
+
+            <div v-else-if="orderParts.length === 0" class="text-muted">
+              No parts found for this order.
+            </div>
+
+            <div v-else class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Part</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-right">Subtotal</th>
+                    <th class="text-center">QuiviCare</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="part in orderParts" :key="part.id">
+                    <td>{{ part.product_name }}</td>
+                    <td class="text-center">{{ part.pro_qty }}</td>
+                    <td class="text-right">{{ formatCurrency(part.pro_price) }}</td>
+                    <td class="text-right">{{ formatCurrency(part.sub_total) }}</td>
+                    <td class="text-center">
+                      <span class="badge" :class="isPartCovered(part) ? 'badge-success' : 'badge-secondary'">
+                        {{ isPartCovered(part) ? 'Covered' : 'Not Covered' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" class="text-right font-weight-bold">Covered by QuiviCare</td>
+                    <td class="text-right font-weight-bold">{{ formatCurrency(coveredPartsTotal) }}</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
           <div v-if="errors.length > 0" class="alert alert-danger mt-4">
             <h6 class="alert-heading">
               <i class="fas fa-exclamation-triangle mr-1"></i> Please fix the following errors:
@@ -315,8 +364,10 @@ export default {
       selectedCustomer: null,
       selectedOrder: null,
       selectedCare: null,
+      orderParts: [],
       loading: false,
       loadingCustomers: false,
+      loadingParts: false,
       deleting: false,
       showDeleteModal: false,
       showSuccessModal: false,
@@ -329,6 +380,11 @@ export default {
         return this.orders;
       }
       return this.orders.filter(order => order.customer_id == this.form.customer_id);
+    },
+    coveredPartsTotal() {
+      return this.orderParts
+        .filter(part => this.isPartCovered(part))
+        .reduce((sum, part) => sum + (parseFloat(part.sub_total) || 0), 0);
     }
   },
   mounted() {
@@ -411,6 +467,10 @@ export default {
         if (this.careData.care) {
           this.selectedCare = this.careData.care;
         }
+
+        if (this.careData.order_id) {
+          this.fetchOrderParts(this.careData.order_id);
+        }
       } catch (error) {
         console.error('Error fetching care data:', error);
         if (error.response && error.response.status === 404) {
@@ -422,6 +482,23 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    async fetchOrderParts(orderId) {
+      this.loadingParts = true;
+      try {
+        const response = await axios.get(`/api/order/get/${orderId}`);
+        this.orderParts = response.data.details || [];
+      } catch (error) {
+        console.error('Error fetching order parts:', error);
+        this.orderParts = [];
+      } finally {
+        this.loadingParts = false;
+      }
+    },
+
+    isPartCovered(part) {
+      return part.is_care === 1 || part.is_care === true || part.is_care === '1';
     },
 
     async fetchCustomers() {
