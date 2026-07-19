@@ -158,21 +158,6 @@
                 </small>
               </div>
 
-              <!-- Membership (auto-computed from order date + care tier period) -->
-              <div class="form-group">
-                <label class="form-label">
-                  <i class="fas fa-user-check text-primary mr-1"></i> Membership
-                </label>
-                <div>
-                  <span class="badge" :class="careData && careData.membership_active ? 'badge-success' : 'badge-secondary'">
-                    {{ careData && careData.membership_active ? 'Active' : 'Expired' }}
-                  </span>
-                  <small class="form-text text-muted mb-0">
-                    {{ careData ? careData.membership_remaining : 'N/A' }}
-                  </small>
-                </div>
-              </div>
-
               <!-- Update Membership (manual override) -->
               <div class="form-group">
                 <label class="form-label">
@@ -346,7 +331,6 @@
                 <p><strong>Customer:</strong> {{ careData.customer.full_name }}</p>
                 <p><strong>Care Tier:</strong> {{ selectedCare ? selectedCare.name : 'N/A' }}</p>
                 <p><strong>Price:</strong> {{ formatCurrency(form.price) }}</p>
-                <p><strong>Membership:</strong> {{ careData.membership_active ? 'Active' : 'Expired' }} ({{ careData.membership_remaining || 'N/A' }})</p>
                 <p><strong>Membership Update:</strong> {{ form.update_membership ? 'Required' : 'Not Required' }}</p>
               </div>
             </div>

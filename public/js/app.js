@@ -32095,14 +32095,7 @@ var render = function render() {
     staticClass: "form-text text-muted"
   }, [_vm._v("\n                Price for the care service\n              ")])]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
-  }, [_vm._m(9), _vm._v(" "), _c("div", [_c("span", {
-    staticClass: "badge",
-    "class": _vm.careData && _vm.careData.membership_active ? "badge-success" : "badge-secondary"
-  }, [_vm._v("\n                  " + _vm._s(_vm.careData && _vm.careData.membership_active ? "Active" : "Expired") + "\n                ")]), _vm._v(" "), _c("small", {
-    staticClass: "form-text text-muted mb-0"
-  }, [_vm._v("\n                  " + _vm._s(_vm.careData ? _vm.careData.membership_remaining : "N/A") + "\n                ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "form-group"
-  }, [_vm._m(10), _vm._v(" "), _c("div", {
+  }, [_vm._m(9), _vm._v(" "), _c("div", {
     staticClass: "custom-control custom-switch"
   }, [_c("input", {
     directives: [{
@@ -32146,7 +32139,7 @@ var render = function render() {
     staticClass: "form-text text-muted"
   }, [_vm._v("\n                Check this box if customer membership information needs to be updated\n              ")])])])]), _vm._v(" "), _c("div", {
     staticClass: "mt-4 pt-3 border-top"
-  }, [_vm._m(11), _vm._v(" "), _vm.loadingParts ? _c("div", {
+  }, [_vm._m(10), _vm._v(" "), _vm.loadingParts ? _c("div", {
     staticClass: "text-muted"
   }, [_c("span", {
     staticClass: "spinner-border spinner-border-sm mr-2",
@@ -32160,7 +32153,7 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-sm align-middle"
-  }, [_vm._m(12), _vm._v(" "), _c("tbody", _vm._l(_vm.orderParts, function (part) {
+  }, [_vm._m(11), _vm._v(" "), _c("tbody", _vm._l(_vm.orderParts, function (part) {
     return _c("tr", {
       key: part.id
     }, [_c("td", [_vm._v(_vm._s(part.product_name))]), _vm._v(" "), _c("td", {
@@ -32184,7 +32177,7 @@ var render = function render() {
     staticClass: "text-right font-weight-bold"
   }, [_vm._v(_vm._s(_vm.formatCurrency(_vm.coveredPartsTotal)))]), _vm._v(" "), _c("td")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-4"
-  }, [_vm._m(13), _vm._v(" "), _c("ul", {
+  }, [_vm._m(12), _vm._v(" "), _c("ul", {
     staticClass: "mb-0 pl-3"
   }, _vm._l(_vm.errors, function (error) {
     return _c("li", {
@@ -32256,7 +32249,7 @@ var render = function render() {
         _vm.showDeleteModal = false;
       }
     }
-  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(14), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(13), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-secondary",
@@ -32290,7 +32283,7 @@ var render = function render() {
     staticClass: "modal-content"
   }, [_c("div", {
     staticClass: "modal-header bg-success text-white"
-  }, [_vm._m(15), _vm._v(" "), _c("button", {
+  }, [_vm._m(14), _vm._v(" "), _c("button", {
     staticClass: "close text-white",
     attrs: {
       type: "button"
@@ -32308,7 +32301,7 @@ var render = function render() {
     staticClass: "fas fa-check-circle fa-3x text-success mb-3"
   }), _vm._v(" "), _c("h5", [_vm._v("Care Data Updated Successfully!")]), _vm._v(" "), _c("div", {
     staticClass: "text-left mt-3"
-  }, [_c("p", [_c("strong", [_vm._v("QuickCare ID:")]), _vm._v(" " + _vm._s(_vm.careData.care_id))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Customer:")]), _vm._v(" " + _vm._s(_vm.careData.customer.full_name))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Care Tier:")]), _vm._v(" " + _vm._s(_vm.selectedCare ? _vm.selectedCare.name : "N/A"))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Price:")]), _vm._v(" " + _vm._s(_vm.formatCurrency(_vm.form.price)))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership:")]), _vm._v(" " + _vm._s(_vm.careData.membership_active ? "Active" : "Expired") + " (" + _vm._s(_vm.careData.membership_remaining || "N/A") + ")")]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership Update:")]), _vm._v(" " + _vm._s(_vm.form.update_membership ? "Required" : "Not Required"))])])])]), _vm._v(" "), _c("div", {
+  }, [_c("p", [_c("strong", [_vm._v("QuickCare ID:")]), _vm._v(" " + _vm._s(_vm.careData.care_id))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Customer:")]), _vm._v(" " + _vm._s(_vm.careData.customer.full_name))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Care Tier:")]), _vm._v(" " + _vm._s(_vm.selectedCare ? _vm.selectedCare.name : "N/A"))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Price:")]), _vm._v(" " + _vm._s(_vm.formatCurrency(_vm.form.price)))]), _vm._v(" "), _c("p", [_c("strong", [_vm._v("Membership Update:")]), _vm._v(" " + _vm._s(_vm.form.update_membership ? "Required" : "Not Required"))])])])]), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-success",
@@ -32427,14 +32420,6 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "input-group-text"
   }, [_vm._v("RM")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("label", {
-    staticClass: "form-label"
-  }, [_c("i", {
-    staticClass: "fas fa-user-check text-primary mr-1"
-  }), _vm._v(" Membership\n              ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
