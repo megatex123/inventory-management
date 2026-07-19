@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="{{asset('backend')}}/img/logo/logo.png" rel="icon">
   <title>Quivitech - Dashboard</title>
-  <link href="{{asset('css/app.css')}}" rel="stylesheet">
+  <link href="{{mix('css/app.css')}}" rel="stylesheet">
   <link href="{{asset('backend')}}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="{{asset('backend')}}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="{{asset('backend')}}/css/ruang-admin.min.css" rel="stylesheet">
@@ -428,7 +428,7 @@
   <script src="{{asset('backend')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="{{asset('backend')}}/vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="{{asset('backend')}}/js/ruang-admin.min.js"></script>
-  <script src="{{asset('js/app.js')}}"></script>
+  <script src="{{mix('js/app.js')}}"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
