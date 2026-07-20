@@ -173,7 +173,8 @@
                                         </tr>
 
                                         <tr class="table-active font-weight-bold">
-                                            <td colspan="5" class="text-left">Total</td>
+                                            <td colspan="4" class="text-left">Total</td>
+                                            <td class="text-center">{{ totalCareQty }} Covered</td>
                                             <td class="text-center">{{ totalQty }}</td>
                                             <td class="text-right"></td>
                                             <td class="text-right text-primary">RM {{ formatNumber(grandTotalPrice) }}</td>
@@ -327,6 +328,11 @@ export default {
   computed: {
     totalQty() {
       return this.details.reduce((sum, item) => sum + Number(item.pro_qty || 0), 0);
+    },
+    totalCareQty() {
+      return this.details
+        .filter(item => item.is_care == 1)
+        .reduce((sum, item) => sum + Number(item.pro_qty || 0), 0);
     },
     grandTotalPrice() {
       return this.details.reduce((sum, item) => sum + Number(item.sub_total || 0), 0);

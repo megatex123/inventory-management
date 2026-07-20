@@ -17049,6 +17049,13 @@ __webpack_require__.r(__webpack_exports__);
         return sum + Number(item.pro_qty || 0);
       }, 0);
     },
+    totalCareQty: function totalCareQty() {
+      return this.details.filter(function (item) {
+        return item.is_care == 1;
+      }).reduce(function (sum, item) {
+        return sum + Number(item.pro_qty || 0);
+      }, 0);
+    },
     grandTotalPrice: function grandTotalPrice() {
       return this.details.reduce(function (sum, item) {
         return sum + Number(item.sub_total || 0);
@@ -54985,9 +54992,11 @@ var render = function render() {
   }, [_c("td", {
     staticClass: "text-left",
     attrs: {
-      colspan: "5"
+      colspan: "4"
     }
   }, [_vm._v("Total")]), _vm._v(" "), _c("td", {
+    staticClass: "text-center"
+  }, [_vm._v(_vm._s(_vm.totalCareQty) + " Covered")]), _vm._v(" "), _c("td", {
     staticClass: "text-center"
   }, [_vm._v(_vm._s(_vm.totalQty))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
