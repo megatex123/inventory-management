@@ -307,6 +307,12 @@
           </a>
           <div id="Product" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Master SKU <br> Management</h6>
+              <router-link class="collapse-item" to="/master-sku">All Master SKUs</router-link>
+              <router-link class="collapse-item" to="/master-sku/create">Add Master SKU</router-link>
+
+              <hr class="sidebar-divider my-1">
+
               <h6 class="collapse-header text-primary font-weight-bold">PC Parts Management</h6>
               <router-link class="collapse-item" to="/product">All PC Parts</router-link>
               <router-link class="collapse-item" to="/product/create">Add PC Part</router-link>
@@ -327,10 +333,6 @@
               <router-link class="collapse-item" to="/brand/create">Add Product Brand</router-link>
 
               <hr class="sidebar-divider my-1">
-
-              <h6 class="collapse-header text-primary font-weight-bold">Master SKU <br> Management</h6>
-              <router-link class="collapse-item" to="/master-sku">All Master SKUs</router-link>
-              <router-link class="collapse-item" to="/master-sku/create">Add Master SKU</router-link>
 
               <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Inventory</h6>
               <router-link class="collapse-item" to="/inv-care">All QuiviCare Inventory</router-link>
