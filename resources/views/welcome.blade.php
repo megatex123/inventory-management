@@ -319,12 +319,6 @@
 
               <hr class="sidebar-divider my-1">
 
-              <h6 class="collapse-header text-primary font-weight-bold">Product Warranty <br> Management</h6>
-              <router-link class="collapse-item" to="/product-warranty">All Products Warranty</router-link>
-              <router-link class="collapse-item" to="/product-warranty/create">Add Product Warranty</router-link>
-
-              <hr class="sidebar-divider my-1">
-
               <h6 class="collapse-header text-primary font-weight-bold">Stock Management</h6>
               <router-link class="collapse-item" to="/product/stock">All Stock</router-link>
 

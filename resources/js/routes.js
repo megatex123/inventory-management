@@ -124,10 +124,6 @@ let carewarranty = require ('./components/care_warranty/index.vue').default;
 let carewarrantycreate = require ('./components/care_warranty/create.vue').default;
 let carewarrantyedit = require ('./components/care_warranty/edit.vue').default;
 
-let productwarranty = require ('./components/product_warranty/index.vue').default;
-let productwarrantycreate = require ('./components/product_warranty/create.vue').default;
-let productwarrantyedit = require ('./components/product_warranty/edit.vue').default;
-
 //master sku
 let mastersku = require('./components/master_sku/index.vue').default;
 let masterskucreate = require('./components/master_sku/create.vue').default;
@@ -325,10 +321,6 @@ export const routes=[
       { path: '/care-warranty', component: carewarranty, name: 'carewarranty', meta: { layout: 'app' } },
       { path: '/care-warranty/create', component: carewarrantycreate, name: 'carewarrantycreate',meta: { layout: 'app' } },
       { path: '/care-warranty/edit/:id', component: carewarrantyedit, name: 'carewarrantyedit', meta: { layout: 'app' } },
-
-      { path: '/product-warranty', component: productwarranty, name: 'productwarranty', meta: { layout: 'app' } },
-      { path: '/product-warranty/create', component: productwarrantycreate, name: 'productwarrantycreate', meta: { layout: 'app' } },
-      { path: '/product-warranty/edit/:id', component: productwarrantyedit, name: 'productwarrantyedit', meta: { layout: 'app' } },
 
       // master-sku
       { path: '/master-sku', component: mastersku, name: 'mastersku', meta: { layout: 'app' } },
