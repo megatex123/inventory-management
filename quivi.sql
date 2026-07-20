@@ -383,7 +383,7 @@ CREATE TABLE `craft_inspections` (
   PRIMARY KEY (`id`),
   KEY `craft_inspections_order_id_foreign` (`order_id`),
   CONSTRAINT `craft_inspections_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1237,6 +1237,156 @@ UNLOCK TABLES;
 commit;
 
 --
+-- Table structure for table `menu_items`
+--
+
+DROP TABLE IF EXISTS `menu_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `menu_items` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint(20) unsigned DEFAULT NULL,
+  `type` enum('link','group','header') NOT NULL,
+  `label` varchar(191) NOT NULL,
+  `icon` varchar(191) DEFAULT NULL,
+  `route` varchar(191) DEFAULT NULL,
+  `sort_order` int(10) unsigned NOT NULL DEFAULT 0,
+  `divider_before` tinyint(1) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `menu_items_parent_id_foreign` (`parent_id`),
+  CONSTRAINT `menu_items_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `menu_items` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `menu_items`
+--
+
+LOCK TABLES `menu_items` WRITE;
+/*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `menu_items` VALUES
+(1,NULL,'link','Dashboard','fas fa-fw fa-tachometer-alt','/dashboard',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(2,NULL,'group','Customer','fas fa-users',NULL,1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(3,2,'header','Customer Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(4,3,'link','Pre Register Customer',NULL,'/customer/create',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(5,3,'link','Customer List',NULL,'/customer',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(6,NULL,'group','Meeting','fas fa-calendar-alt',NULL,2,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(7,6,'header','Meeting Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(8,7,'link','Meeting List',NULL,'/meeting',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(9,7,'link','Create Meeting',NULL,'/meeting/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(10,6,'header','Requirement Meeting',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(11,10,'link','Requirement Meeting List',NULL,'/meeting-details',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(12,10,'link','Create Requirement Meeting',NULL,'/meeting-details/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(13,6,'header','UAT Meeting',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(14,13,'link','UAT Meeting List',NULL,'/uat-meeting',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(15,13,'link','Create UAT Meeting',NULL,'/uat-meeting/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(16,NULL,'group','Customer Progress','fas fa-fw fa-tasks',NULL,3,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(17,16,'header','Customer Progress Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(18,17,'link','All Progress Entries',NULL,'/customer-progress',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(19,17,'link','Add Progress Entry',NULL,'/customer-progress/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(20,NULL,'group','QuiviCraft','fas fa-fw fa-tools',NULL,4,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(21,20,'header','QuiviCraft Operations',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(22,21,'link','Create QuiviCraft',NULL,'/pos',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(23,21,'link','Today\'s QuiviCraft',NULL,'/orders',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(24,21,'link','Order QuiviCraft',NULL,'/orders/all',2,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(25,20,'header','Lookup Tables',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(26,25,'link','QuiviCraft Lookup',NULL,'/craft',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(27,25,'link','Add QuiviCraft Lookup',NULL,'/craft/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(28,NULL,'group','QuiviServe','fas fa-fw fa-hammer',NULL,5,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(29,28,'header','QuiviServe Records',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(30,29,'link','All QuiviServe',NULL,'/serve-data',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(31,28,'header','QuiviServe BEK',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(32,31,'link','All QuiviServe BEK',NULL,'/serve-bek',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(33,31,'link','Add QuiviServe BEK',NULL,'/serve-bek/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(34,28,'header','QuiviServe MPS',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(35,34,'link','All QuiviServe MPS',NULL,'/serve-mps',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(36,34,'link','Add QuiviServe MPS',NULL,'/serve-mps/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(37,28,'header','QuiviServe PCE',NULL,NULL,3,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(38,37,'link','All QuiviServe PCE',NULL,'/serve-pce',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(39,37,'link','Add QuiviServe PCE',NULL,'/serve-pce/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(40,28,'header','Lookup Tables',NULL,NULL,4,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(41,40,'link','QuiviServe Lookup',NULL,'/serve',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(42,40,'link','Add QuiviServe Lookup',NULL,'/serve/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(43,NULL,'group','QuiviCare','fas fa-fw fa-stethoscope',NULL,6,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(44,43,'header','QuiviCare Records',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(45,44,'link','All QuiviCare',NULL,'/care-data',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(46,44,'link','Add QuiviCare',NULL,'/care-data/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(47,43,'header','QuiviCare Warranties',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(48,47,'link','All QuiviCare Warranties',NULL,'/care-warranty',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(49,47,'link','Add QuiviCare Warranties',NULL,'/care-warranty/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(50,43,'header','Lookup Tables',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(51,50,'link','QuiviCare Lookup',NULL,'/care',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(52,50,'link','Add QuiviCare Lookup',NULL,'/care/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(53,NULL,'group','QuiviPlus','fas fa-fw fa-tools',NULL,7,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(54,53,'header','Service Catalog',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(55,54,'link','All Services',NULL,'/plus-services',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(56,54,'link','Add Service',NULL,'/plus-services/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(57,53,'header','Plus Orders',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(58,57,'link','All Plus Orders',NULL,'/plus-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(59,57,'link','Add Plus Order',NULL,'/plus-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(60,NULL,'group','QuiviThread','fas fa-fw fa-plug',NULL,8,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(61,60,'header','Bill of Materials',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(62,61,'link','All BOMs',NULL,'/thread-bom',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(63,61,'link','Add BOM',NULL,'/thread-bom/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(64,60,'header','Thread Inventory',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(65,64,'link','All Thread Inventory',NULL,'/inv-thread',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(66,64,'link','Add Thread Inventory',NULL,'/inv-thread/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(67,60,'header','Thread Orders',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(68,67,'link','All Thread Orders',NULL,'/thread-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(69,67,'link','Add Thread Order',NULL,'/thread-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(70,NULL,'group','QuiviMerch','fas fa-fw fa-tshirt',NULL,9,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(71,70,'header','Merch Catalog',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(72,71,'link','All Merch Items',NULL,'/merch-items',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(73,71,'link','Add Merch Item',NULL,'/merch-items/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(74,70,'header','Merch Orders',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(75,74,'link','All Merch Orders',NULL,'/merch-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(76,74,'link','Add Merch Order',NULL,'/merch-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(77,NULL,'group','Inventory','fas fa-fw fa-truck',NULL,10,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(78,77,'header','Master SKU <br> Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(79,78,'link','All Master SKUs',NULL,'/master-sku',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(80,78,'link','Add Master SKU',NULL,'/master-sku/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(81,77,'header','PC Parts Management',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(82,81,'link','All PC Parts',NULL,'/product',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(83,81,'link','Add PC Part',NULL,'/product/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(84,77,'header','Stock Management',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(85,84,'link','All Stock',NULL,'/product/stock',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(86,77,'header','Product Brand <br> Management',NULL,NULL,3,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(87,86,'link','All Products Brand',NULL,'/brand',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(88,86,'link','Add Product Brand',NULL,'/brand/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(89,77,'header','Category Product',NULL,NULL,4,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(90,89,'link','Code Lookup',NULL,'/category',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(91,89,'link','Add Code Lookup',NULL,'/category/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(92,77,'header','Sub Category Management',NULL,NULL,5,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(93,92,'link','Sub Code Lookup',NULL,'/sub-category',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(94,92,'link','Add Sub Code Lookup',NULL,'/sub-category/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(95,77,'header','QuiviCare Inventory',NULL,NULL,6,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(96,95,'link','All QuiviCare Inventory',NULL,'/inv-care',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(97,95,'link','Add QuiviCare Inventory',NULL,'/inv-care/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(98,77,'header','QS Excl. Inventory',NULL,NULL,7,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(99,98,'link','All QS Excl. Inventory',NULL,'/inv-excl-serve',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(100,98,'link','Add QS Excl. Inventory',NULL,'/inv-excl-serve/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(101,77,'header','QM Inventory',NULL,NULL,8,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(102,101,'link','All QM Inventory',NULL,'/inv-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(103,101,'link','Add QM Inventory',NULL,'/inv-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(104,77,'header','QM Excl. Inventory',NULL,NULL,9,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(105,104,'link','All QM Excl. Inventory',NULL,'/inv-excl-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(106,104,'link','Add QM Excl. Inventory',NULL,'/inv-excl-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(107,77,'header','Inventory Movement',NULL,NULL,10,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(108,107,'link','All Movements',NULL,'/inventory-movements',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(109,107,'link','Add Movement',NULL,'/inventory-movements/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(110,NULL,'group','Suppliers','fas fa-fw fa-truck-loading',NULL,11,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(111,110,'header','Supplier Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(112,111,'link','All Suppliers',NULL,'/suppliers',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(113,111,'link','Add Supplier',NULL,'/supplier/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08');
+/*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
 -- Table structure for table `merch_items`
 --
 
@@ -1368,7 +1518,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1421,7 +1571,9 @@ INSERT INTO `migrations` VALUES
 (63,'2026_07_14_120002_create_inv_thread_table',26),
 (64,'2026_07_14_120003_create_thread_orders_table',27),
 (65,'2026_07_14_120004_create_thread_order_items_table',28),
-(66,'2026_07_20_090000_add_skip_quivicare_to_order_table',29);
+(66,'2026_07_20_090000_add_skip_quivicare_to_order_table',29),
+(67,'2026_07_20_130000_create_uat_meeting_table',30),
+(68,'2026_07_20_150000_create_menu_items_table',31);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2620,6 +2772,57 @@ UNLOCK TABLES;
 commit;
 
 --
+-- Table structure for table `uat_meeting`
+--
+
+DROP TABLE IF EXISTS `uat_meeting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `uat_meeting` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `meeting_id` bigint(20) unsigned NOT NULL,
+  `initial_budget` decimal(10,2) DEFAULT NULL,
+  `reason` tinyint(4) NOT NULL COMMENT '1: Work, 2: Gaming',
+  `play_mode` tinyint(4) DEFAULT NULL COMMENT '1: Multiplayer, 2: Singleplayer',
+  `include_monitor` tinyint(1) DEFAULT NULL,
+  `include_notes` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `theme_style` varchar(191) DEFAULT NULL,
+  `preference` varchar(191) DEFAULT NULL,
+  `exemption` varchar(191) DEFAULT NULL,
+  `future_proof` tinyint(1) DEFAULT 0,
+  `case_size` tinyint(1) DEFAULT NULL,
+  `okay_with_aio` tinyint(1) DEFAULT 0,
+  `gpu_sag` tinyint(1) DEFAULT NULL,
+  `need_rgb` tinyint(1) DEFAULT 0,
+  `qvcrf_tag` tinyint(1) DEFAULT 0,
+  `qvse` tinyint(1) DEFAULT 0,
+  `qvca` tinyint(1) DEFAULT 0,
+  `qvtd` tinyint(1) DEFAULT 0,
+  `qvtd_notes` text DEFAULT NULL,
+  `target_build_date` datetime DEFAULT NULL,
+  `target_location` varchar(191) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uat_meeting_meeting_id_foreign` (`meeting_id`),
+  CONSTRAINT `uat_meeting_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `uat_meeting`
+--
+
+LOCK TABLES `uat_meeting` WRITE;
+/*!40000 ALTER TABLE `uat_meeting` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `uat_meeting` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
 -- Table structure for table `users`
 --
 
@@ -2666,4 +2869,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-20 11:40:35
+-- Dump completed on 2026-07-20 20:06:12
