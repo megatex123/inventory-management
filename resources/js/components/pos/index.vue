@@ -259,6 +259,23 @@
                       </div>
                       <small class="text-muted">Select the purpose of this build (optional)</small>
                   </div>
+
+                  <!-- QuiviCare Opt-Out -->
+                  <div class="mt-3">
+                      <div class="custom-control custom-switch">
+                          <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          id="skipQuiviCare"
+                          v-model="skip_quivicare"
+                          >
+                          <label class="custom-control-label" for="skipQuiviCare">
+                          Customer doesn't want QuiviCare
+                          </label>
+                      </div>
+                      <small class="text-muted">When checked, QuiviCare won't be created when this order is confirmed</small>
+                  </div>
+
                   <button class="btn btn-primary mt-3" type="submit" :disabled="carts.length === 0 || cartValidationErrors.length > 0">Submit Order</button>
                 </form>
               </div>
@@ -285,6 +302,7 @@ export default {
       selectedCategoryId: null,
       selectedSubCategoryId: null,
       build_type: null,
+      skip_quivicare: false,
       // Category rules configuration based on requirements
       categoryRules: {
         'CPU': { min: 1, max: 1, description: 'Exactly 1 required' },
@@ -868,7 +886,8 @@ export default {
         total_amount: this.totalSub,
         total_qty: this.totalCart,
         cart_items: this.carts,
-        is_reason: this.build_type
+        is_reason: this.build_type,
+        skip_quivicare: this.skip_quivicare
       };
 
       axios.post('/api/orderdone', data)
@@ -877,6 +896,7 @@ export default {
           this.carts = [];
           this.customer_id = '';
           this.build_type = null;
+          this.skip_quivicare = false;
           this.getCarts();
         })
         .catch(err => {

@@ -35,7 +35,8 @@ class Order extends Model
         'care_id',
         'approve',
         'approved_at',
-        'is_reason'
+        'is_reason',
+        'skip_quivicare'
     ];
 
     protected $dates = ['deleted_at'];

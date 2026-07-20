@@ -35,6 +35,7 @@ public function orderdone(Request $request)
         'total_qty' => 'required|integer',
         'total_amount' => 'required|numeric',
         'is_reason' => 'required|integer',
+        'skip_quivicare' => 'nullable|boolean',
     ]);
 
     $cartProducts = DB::table('pos')->get();
@@ -121,6 +122,7 @@ public function orderdone(Request $request)
         'serve_id' => $serveTierId,
         'care_id' => $careTierId,
         'is_reason' => $request->is_reason,
+        'skip_quivicare' => $request->boolean('skip_quivicare'),
     ];
 
     $order_id = DB::table('order')->insertGetId($data);

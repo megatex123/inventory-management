@@ -18069,6 +18069,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       selectedCategoryId: null,
       selectedSubCategoryId: null,
       build_type: null,
+      skip_quivicare: false,
       // Category rules configuration based on requirements
       categoryRules: {
         'CPU': {
@@ -18813,13 +18814,15 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         total_amount: this.totalSub,
         total_qty: this.totalCart,
         cart_items: this.carts,
-        is_reason: this.build_type
+        is_reason: this.build_type,
+        skip_quivicare: this.skip_quivicare
       };
       axios.post('/api/orderdone', data).then(function (res) {
         notification.customNoti(res.data.message || 'Order placed successfully!');
         _this15.carts = [];
         _this15.customer_id = '';
         _this15.build_type = null;
+        _this15.skip_quivicare = false;
         _this15.getCarts();
       })["catch"](function (err) {
         console.error('Error placing order:', err);
@@ -57468,7 +57471,51 @@ var render = function render() {
     }
   }, [_vm._v("\n                        Gaming\n                        ")])])]), _vm._v(" "), _c("small", {
     staticClass: "text-muted"
-  }, [_vm._v("Select the purpose of this build (optional)")])]), _vm._v(" "), _c("button", {
+  }, [_vm._v("Select the purpose of this build (optional)")])]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_c("div", {
+    staticClass: "custom-control custom-switch"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.skip_quivicare,
+      expression: "skip_quivicare"
+    }],
+    staticClass: "custom-control-input",
+    attrs: {
+      type: "checkbox",
+      id: "skipQuiviCare"
+    },
+    domProps: {
+      checked: Array.isArray(_vm.skip_quivicare) ? _vm._i(_vm.skip_quivicare, null) > -1 : _vm.skip_quivicare
+    },
+    on: {
+      change: function change($event) {
+        var $$a = _vm.skip_quivicare,
+          $$el = $event.target,
+          $$c = $$el.checked ? true : false;
+        if (Array.isArray($$a)) {
+          var $$v = null,
+            $$i = _vm._i($$a, $$v);
+          if ($$el.checked) {
+            $$i < 0 && (_vm.skip_quivicare = $$a.concat([$$v]));
+          } else {
+            $$i > -1 && (_vm.skip_quivicare = $$a.slice(0, $$i).concat($$a.slice($$i + 1)));
+          }
+        } else {
+          _vm.skip_quivicare = $$c;
+        }
+      }
+    }
+  }), _vm._v(" "), _c("label", {
+    staticClass: "custom-control-label",
+    attrs: {
+      "for": "skipQuiviCare"
+    }
+  }, [_vm._v("\n                        Customer doesn't want QuiviCare\n                        ")])]), _vm._v(" "), _c("small", {
+    staticClass: "text-muted"
+  }, [_vm._v("When checked, QuiviCare won't be created when this order is confirmed")])]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-primary mt-3",
     attrs: {
       type: "submit",

@@ -614,23 +614,33 @@ class OrderController extends Controller
 
                 // Only create/update serve when approving
                 $serveResponse = $this->updateserve($request, $order, $id);
-                $careResponse = $this->updatecare($request, $order, $id);
                 // dd($request->all());
 
                 // Check if responses are valid
-                if (!$serveResponse || !$careResponse) {
-                    throw new \Exception('Failed to get response from serve or care functions');
+                if (!$serveResponse) {
+                    throw new \Exception('Failed to get response from serve function');
                 }
 
                 // Decode responses
                 $serveData = json_decode($serveResponse->getContent(), true);
-                $careData = json_decode($careResponse->getContent(), true);
 
                 if (!$serveData['success']) {
                     throw new \Exception('Failed to update serve data: ' . ($serveData['error'] ?? $serveData['message'] ?? 'Unknown error'));
                 }
-                if (!$careData['success']) {
-                    throw new \Exception('Failed to update care data: ' . ($careData['error'] ?? $careData['message'] ?? 'Unknown error'));
+
+                // Customer opted out of QuiviCare at checkout — skip creating/updating it.
+                if (!$order->skip_quivicare) {
+                    $careResponse = $this->updatecare($request, $order, $id);
+
+                    if (!$careResponse) {
+                        throw new \Exception('Failed to get response from care function');
+                    }
+
+                    $careData = json_decode($careResponse->getContent(), true);
+
+                    if (!$careData['success']) {
+                        throw new \Exception('Failed to update care data: ' . ($careData['error'] ?? $careData['message'] ?? 'Unknown error'));
+                    }
                 }
             } else {
                 $order->approved_at = null;
