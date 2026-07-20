@@ -307,9 +307,9 @@
           </a>
           <div id="Product" class="collapse" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Product Management</h6>
-              <router-link class="collapse-item" to="/product">All Products</router-link>
-              <router-link class="collapse-item" to="/product/create">Add Product</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">PC Parts Management</h6>
+              <router-link class="collapse-item" to="/product">All PC Parts</router-link>
+              <router-link class="collapse-item" to="/product/create">Add PC Part</router-link>
 
               <hr class="sidebar-divider my-1">
 
