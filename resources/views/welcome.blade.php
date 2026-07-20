@@ -89,21 +89,6 @@
         <div class="sidebar-heading">Features</div>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Orders" aria-expanded="true" aria-controls="Orders">
-            <i class="fa fa-check-circle"></i>
-            <span>Orders</span>
-          </a>
-          <div id="Orders" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Order Management</h6>
-              <router-link class="collapse-item" to="/pos">Create Orders</router-link>
-              <router-link class="collapse-item" to="/orders">Today's Orders</router-link>
-              <router-link class="collapse-item" to="/orders/all">Order List</router-link>
-            </div>
-          </div>
-        </li>
-
-        <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Customer" aria-expanded="true" aria-controls="Customer">
             <i class="fas fa-users"></i>
             <span>Customer</span>
@@ -138,6 +123,35 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CustomerProgress" aria-expanded="true" aria-controls="CustomerProgress">
+            <i class="fas fa-fw fa-tasks"></i>
+            <span>Customer Progress</span>
+          </a>
+          <div id="CustomerProgress" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Customer Progress Management</h6>
+              <router-link class="collapse-item" to="/customer-progress">All Progress Entries</router-link>
+              <router-link class="collapse-item" to="/customer-progress/create">Add Progress Entry</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Orders" aria-expanded="true" aria-controls="Orders">
+            <i class="fa fa-check-circle"></i>
+            <span>Orders</span>
+          </a>
+          <div id="Orders" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Order Management</h6>
+              <router-link class="collapse-item" to="/pos">Create Orders</router-link>
+              <router-link class="collapse-item" to="/orders">Today's Orders</router-link>
+              <router-link class="collapse-item" to="/orders/all">Order List</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#craft" aria-expanded="true" aria-controls="craft">
             <i class="fas fa-fw fa-tools"></i>
             <span>QuiviCraft</span>
@@ -153,26 +167,6 @@
               <h6 class="collapse-header text-primary font-weight-bold">Lookup Tables</h6>
               <router-link class="collapse-item" to="/craft">QuiviCraft Lookup</router-link>
               <router-link class="collapse-item" to="/craft/create">Add QuiviCraft Lookup</router-link>
-            </div>
-          </div>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category" aria-expanded="true" aria-controls="category">
-            <i class="fas fa-fw fa-boxes"></i>
-            <span>Category</span>
-          </a>
-          <div id="category" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Category Management</h6>
-              <router-link class="collapse-item" to="/category">Code Lookup</router-link>
-              <router-link class="collapse-item" to="/category/create">Add Code Lookup</router-link>
-
-              <hr class="sidebar-divider my-1">
-
-              <h6 class="collapse-header text-primary font-weight-bold">Sub Category Management</h6>
-              <router-link class="collapse-item" to="/sub-category">Sub Code Lookup</router-link>
-              <router-link class="collapse-item" to="/sub-category/create">Add Sub Code Lookup</router-link>
             </div>
           </div>
         </li>
@@ -362,6 +356,26 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category" aria-expanded="true" aria-controls="category">
+            <i class="fas fa-fw fa-boxes"></i>
+            <span>Category</span>
+          </a>
+          <div id="category" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header text-primary font-weight-bold">Category Management</h6>
+              <router-link class="collapse-item" to="/category">Code Lookup</router-link>
+              <router-link class="collapse-item" to="/category/create">Add Code Lookup</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">Sub Category Management</h6>
+              <router-link class="collapse-item" to="/sub-category">Sub Code Lookup</router-link>
+              <router-link class="collapse-item" to="/sub-category/create">Add Sub Code Lookup</router-link>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Suppliers" aria-expanded="true" aria-controls="Suppliers">
             <i class="fas fa-fw fa-truck-loading"></i>
             <span>Suppliers</span>
@@ -375,19 +389,6 @@
           </div>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CustomerProgress" aria-expanded="true" aria-controls="CustomerProgress">
-            <i class="fas fa-fw fa-tasks"></i>
-            <span>Customer Progress</span>
-          </a>
-          <div id="CustomerProgress" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Customer Progress Management</h6>
-              <router-link class="collapse-item" to="/customer-progress">All Progress Entries</router-link>
-              <router-link class="collapse-item" to="/customer-progress/create">Add Progress Entry</router-link>
-            </div>
-          </div>
-        </li>
 
         <hr class="sidebar-divider">
         <div class="version" style="padding:10px; font-size: 10px;">Version {{ env('SOFTWAREVERSION')}} <br>By Enigma Code Solution</div>
