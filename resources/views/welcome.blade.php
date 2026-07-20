@@ -160,10 +160,20 @@
               'Content-Type': 'application/json'
             }
           }).finally(() => {
-            // Clear local storage and redirect regardless of server response
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = "/";
+            // Clear all client-side state regardless of server response, so
+            // no stale session data or cached page content survives a logout.
+            localStorage.clear();
+            sessionStorage.clear();
+
+            if (window.caches && caches.keys) {
+              caches.keys().then(function(names) {
+                names.forEach(function(name) { caches.delete(name); });
+              });
+            }
+
+            // location.replace (not href) so logout doesn't leave a
+            // back-button entry pointing at the now-logged-out page.
+            window.location.replace("/");
           });
         });
       }
