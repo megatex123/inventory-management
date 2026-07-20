@@ -199,7 +199,7 @@
                                 <table class="table table-bordered table-sm mb-0">
                                     <tbody>
                                     <tr>
-                                        <td colspan="5" class="font-weight-bold">Total Product Payment</td>
+                                        <td colspan="6" class="font-weight-bold">Total Product Payment</td>
                                         <td class="text-right">RM {{ formatNumber(grandTotalPrice) }}</td>
                                     </tr>
 
@@ -207,12 +207,13 @@
                                         <td colspan="3" class="font-weight-bold">QuiviCraft</td>
                                         <td class="text-left">{{ order.craft.name }}</td>
                                         <td class="text-right">{{ order.craft.code }}</td>
+                                        <td class="text-left">Building Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(order.craft.fee ? order.craft.fee : 0) }}
                                         </td>
                                     </tr>
                                     <tr class="table-active" v-if="order.approve != 1">
-                                        <td colspan="5" class="font-weight-bold text-uppercase">Total Deposit Amount</td>
+                                        <td colspan="6" class="font-weight-bold text-uppercase">Total Deposit Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                         RM {{ formatNumber(totalPayAmount) }}
                                         </td>
@@ -222,6 +223,7 @@
                                         <td colspan="3" class="font-weight-bold">QuiviServe</td>
                                         <td class="text-left">{{ serve.name }}</td>
                                         <td class="text-right">{{ serve.code }}</td>
+                                        <td class="text-left">Service Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(serve.fee) }}
                                         </td>
@@ -230,19 +232,21 @@
                                         <td class="font-weight-bold">QuiviServe</td>
                                         <td class="text-left">{{ order.serve_data[0].serve.name }}</td>
                                         <td class="text-right">{{ order.serve_data[0].serve.code }}</td>
+                                        <td class="text-left">Service Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(order.serve_data[0].serve.fee) }}
                                         </td>
                                     </tr>
                                     <tr v-else>
                                         <td class="font-weight-bold">QuiviServe</td>
-                                        <td colspan="4" class="text-center">-</td>
+                                        <td colspan="5" class="text-center">-</td>
                                     </tr>
 
                                     <tr v-if="care">
                                         <td colspan="3" class="font-weight-bold">QuiviCare</td>
                                         <td class="text-left">{{ care.name }}</td>
                                         <td class="text-right">{{ care.code }}</td>
+                                        <td class="text-left">Warranty Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(care.care_charge) }}
                                         </td>
@@ -251,22 +255,23 @@
                                         <td class="font-weight-bold">QuiviCare</td>
                                         <td class="text-left">{{ order.care_data[0].care.name }}</td>
                                         <td class="text-right">{{ order.care_data[0].care.code }}</td>
+                                        <td class="text-left">Warranty Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(order.care_data[0].price) }}
                                         </td>
                                     </tr>
                                     <tr v-else>
                                         <td class="font-weight-bold">QuiviCare</td>
-                                        <td colspan="4" class="text-center">-</td>
+                                        <td colspan="5" class="text-center">-</td>
                                     </tr>
                                     <tr class="table-active" v-if="order.approve != 1">
-                                        <td colspan="5" class="font-weight-bold text-uppercase">Grand Total Amount</td>
+                                        <td colspan="6" class="font-weight-bold text-uppercase">Grand Total Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                          RM {{ formatNumber(grandTotalAmount) }}
                                         </td>
                                     </tr>
                                     <tr class="table-active" v-else>
-                                        <td colspan="5" class="font-weight-bold text-uppercase">Grand Total Amount</td>
+                                        <td colspan="6" class="font-weight-bold text-uppercase">Grand Total Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                         RM {{ formatNumber(totalPayAmount) }}
                                         </td>

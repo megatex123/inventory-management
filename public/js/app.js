@@ -55021,7 +55021,7 @@ var render = function render() {
   }, [_c("tbody", [_c("tr", [_c("td", {
     staticClass: "font-weight-bold",
     attrs: {
-      colspan: "5"
+      colspan: "6"
     }
   }, [_vm._v("Total Product Payment")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
@@ -55035,13 +55035,15 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.order.craft.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.order.craft.code))]), _vm._v(" "), _c("td", {
+    staticClass: "text-left"
+  }, [_vm._v("Building Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.order.craft.fee ? _vm.order.craft.fee : 0)) + "\n                                    ")])]) : _vm._e(), _vm._v(" "), _vm.order.approve != 1 ? _c("tr", {
     staticClass: "table-active"
   }, [_c("td", {
     staticClass: "font-weight-bold text-uppercase",
     attrs: {
-      colspan: "5"
+      colspan: "6"
     }
   }, [_vm._v("Total Deposit Amount")]), _vm._v(" "), _c("td", {
     staticClass: "text-right font-weight-bold text-primary"
@@ -55055,6 +55057,8 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.serve.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.serve.code))]), _vm._v(" "), _c("td", {
+    staticClass: "text-left"
+  }, [_vm._v("Service Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.serve.fee)) + "\n                                    ")])]) : _vm.order.serve_data && _vm.order.serve_data[0] && _vm.order.serve_data[0].serve ? _c("tr", [_c("td", {
     staticClass: "font-weight-bold"
@@ -55063,13 +55067,15 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.order.serve_data[0].serve.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.order.serve_data[0].serve.code))]), _vm._v(" "), _c("td", {
+    staticClass: "text-left"
+  }, [_vm._v("Service Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.order.serve_data[0].serve.fee)) + "\n                                    ")])]) : _c("tr", [_c("td", {
     staticClass: "font-weight-bold"
   }, [_vm._v("QuiviServe")]), _vm._v(" "), _c("td", {
     staticClass: "text-center",
     attrs: {
-      colspan: "4"
+      colspan: "5"
     }
   }, [_vm._v("-")])]), _vm._v(" "), _vm.care ? _c("tr", [_c("td", {
     staticClass: "font-weight-bold",
@@ -55081,6 +55087,8 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.care.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.care.code))]), _vm._v(" "), _c("td", {
+    staticClass: "text-left"
+  }, [_vm._v("Warranty Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.care.care_charge)) + "\n                                    ")])]) : _vm.order.care_data && _vm.order.care_data[0] && _vm.order.care_data[0].care ? _c("tr", [_c("td", {
     staticClass: "font-weight-bold"
@@ -55089,20 +55097,22 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.order.care_data[0].care.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.order.care_data[0].care.code))]), _vm._v(" "), _c("td", {
+    staticClass: "text-left"
+  }, [_vm._v("Warranty Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v("\n                                        RM " + _vm._s(_vm.formatNumber(_vm.order.care_data[0].price)) + "\n                                    ")])]) : _c("tr", [_c("td", {
     staticClass: "font-weight-bold"
   }, [_vm._v("QuiviCare")]), _vm._v(" "), _c("td", {
     staticClass: "text-center",
     attrs: {
-      colspan: "4"
+      colspan: "5"
     }
   }, [_vm._v("-")])]), _vm._v(" "), _vm.order.approve != 1 ? _c("tr", {
     staticClass: "table-active"
   }, [_c("td", {
     staticClass: "font-weight-bold text-uppercase",
     attrs: {
-      colspan: "5"
+      colspan: "6"
     }
   }, [_vm._v("Grand Total Amount")]), _vm._v(" "), _c("td", {
     staticClass: "text-right font-weight-bold text-primary"
@@ -55111,7 +55121,7 @@ var render = function render() {
   }, [_c("td", {
     staticClass: "font-weight-bold text-uppercase",
     attrs: {
-      colspan: "5"
+      colspan: "6"
     }
   }, [_vm._v("Grand Total Amount")]), _vm._v(" "), _c("td", {
     staticClass: "text-right font-weight-bold text-primary"
