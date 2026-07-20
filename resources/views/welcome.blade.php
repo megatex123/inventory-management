@@ -137,21 +137,6 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Orders" aria-expanded="true" aria-controls="Orders">
-            <i class="fa fa-check-circle"></i>
-            <span>Orders</span>
-          </a>
-          <div id="Orders" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Order Management</h6>
-              <router-link class="collapse-item" to="/pos">Create Orders</router-link>
-              <router-link class="collapse-item" to="/orders">Today's Orders</router-link>
-              <router-link class="collapse-item" to="/orders/all">Order List</router-link>
-            </div>
-          </div>
-        </li>
-
-        <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#craft" aria-expanded="true" aria-controls="craft">
             <i class="fas fa-fw fa-tools"></i>
             <span>QuiviCraft</span>
@@ -160,6 +145,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header text-primary font-weight-bold">QuiviCraft Operations</h6>
               <router-link class="collapse-item" to="/pos">Create QuiviCraft</router-link>
+              <router-link class="collapse-item" to="/orders">Today's QuiviCraft</router-link>
               <router-link class="collapse-item" to="/orders/all">Order QuiviCraft</router-link>
 
               <hr class="sidebar-divider my-1">
