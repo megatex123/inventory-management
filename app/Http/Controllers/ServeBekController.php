@@ -542,7 +542,7 @@ class ServeBekController extends Controller
     {
         return [
             'id' => $item->id,
-            'serve_data_id' => $item->serveData->serve_id,
+            'serve_data_id' => $item->serveData ? $item->serveData->serve_id : null,
             'qvse_cid' => $item->qvse_cid,
             'date_start' => $item->date_start ? $item->date_start->format('Y-m-d') : null,
             'warranty' => [
