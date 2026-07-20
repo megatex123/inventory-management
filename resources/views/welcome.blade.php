@@ -115,9 +115,9 @@
 
               <hr class="sidebar-divider my-1">
 
-              <h6 class="collapse-header text-primary font-weight-bold">Customer Requirement Meeting</h6>
-              <router-link class="collapse-item" to="/meeting-details">Customer Requirement Meeting List</router-link>
-              <router-link class="collapse-item" to="/meeting-details/create">Create Customer Requirement Meeting</router-link>
+              <h6 class="collapse-header text-primary font-weight-bold">Requirement Meeting</h6>
+              <router-link class="collapse-item" to="/meeting-details">Requirement Meeting List</router-link>
+              <router-link class="collapse-item" to="/meeting-details/create">Create Requirement Meeting</router-link>
             </div>
           </div>
         </li>
