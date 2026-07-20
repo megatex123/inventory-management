@@ -31800,13 +31800,24 @@ var render = function render() {
       staticClass: "fas fa-phone text-muted mr-1"
     }), _vm._v(_vm._s(care.customer.phone) + "\n                    ")]) : _vm._e(), _vm._v("\n                    " + _vm._s(care.orderItems) + "\n                    " + _vm._s(care.directOrderDetails) + "\n                  ")])])]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
-    }, [_c("div", [_c("span", {
+    }, [_c("div", [care.order_id ? _c("router-link", {
+      staticClass: "badge badge-light",
+      attrs: {
+        to: {
+          name: "vieworder",
+          params: {
+            id: care.order_id
+          }
+        },
+        title: "View in QuiviCraft"
+      }
+    }, [_vm._v("\n                    " + _vm._s(_vm.getOrderCode(care.order)) + "\n                  ")]) : _c("span", {
       staticClass: "badge badge-light"
     }, [_vm._v(_vm._s(_vm.getOrderCode(care.order)))]), _vm._v(" "), _c("div", {
       staticClass: "small text-success mt-1"
     }, [_c("i", {
       staticClass: "fas fa-shopping-cart"
-    }), _vm._v(_vm._s(_vm.formatCurrency(care.order ? care.order.total : 0)) + "\n                  ")])])]), _vm._v(" "), _c("td", {
+    }), _vm._v(_vm._s(_vm.formatCurrency(care.order ? care.order.total : 0)) + "\n                  ")])], 1)]), _vm._v(" "), _c("td", {
       staticClass: "text-center align-middle"
     }, [_c("span", {
       staticClass: "badge",

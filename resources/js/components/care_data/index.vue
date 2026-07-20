@@ -354,7 +354,15 @@
                 </td>
                 <td class="align-middle">
                   <div>
-                    <span class="badge badge-light">{{ getOrderCode(care.order) }}</span>
+                    <router-link
+                      v-if="care.order_id"
+                      :to="{ name: 'vieworder', params: { id: care.order_id } }"
+                      class="badge badge-light"
+                      title="View in QuiviCraft"
+                    >
+                      {{ getOrderCode(care.order) }}
+                    </router-link>
+                    <span v-else class="badge badge-light">{{ getOrderCode(care.order) }}</span>
                     <div class="small text-success mt-1">
                       <i class="fas fa-shopping-cart"></i>{{ formatCurrency(care.order ? care.order.total : 0) }}
                     </div>
