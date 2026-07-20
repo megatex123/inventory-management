@@ -36,9 +36,9 @@ Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`up
 - `prefix: serve-mps` → `ServeMpsController`: index/store/statistics + `{id}` CRUD + search + restore
 - `prefix: serve-beks` → `ServeBekController`: CRUD + restore + `getByServeDataId` + `makeClaim`
 
-## Craft inspection (pre-build QC, "Phase 2")
+## Craft inspection (build QC, 3 phases sharing one checklist)
 - `GET /craft-inspections/statistics` — `CraftInspectionController@statistics`
-- `prefix: order/{orderId}/inspection/{round}` → `CraftInspectionController`: `show` (GET `/`), `storeItem`/`updateItem`/`destroyItem` (per-component checklist items), `complete` (POST `/complete`)
+- `prefix: order/{orderId}/inspection/{phase}/{round}` → `CraftInspectionController`: `show` (GET `/`), `storeItem`/`updateItem`/`destroyItem` (per-component checklist items), `complete` (POST `/complete`). `phase` is `2` (Pre Build), `3` (Build), or `4` (Post Build) — see [[QuiviCraft]].
 
 ## Customer progress management (2026-07-11 — replaced "Document management")
 - `prefix: customer-progress` → `CustomerProgressController`: `index`, `store`, `statistics`, then `{id}` sub-group: `show`, `update` (POST, not PUT — multipart optional file re-upload), `destroy`, `download`

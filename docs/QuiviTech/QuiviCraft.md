@@ -11,7 +11,7 @@ The build-order program — **the `Order` itself basically *is* QuiviCraft**. Un
 - **`Order`** + **`OrderDetails`** — the order and its line items (`pro_id` → [[Product-Catalog]]'s `Products`). `Order.craft_id` is the QuiviCraft tier itself.
 - **`pos`** (staging table, no dedicated Eloquent model beyond raw `DB::table` access) — where line items are staged before checkout.
 - **`Cart`** / `carts` table — appears vestigial. `CartController`'s `addcart`/`cartInc`/`cartDec` methods write to the `pos` table, **not** `carts`, despite the controller/model naming. Don't assume `carts` is live-wired without checking the controller first.
-- **`CraftInspection`** — the QC sub-record for a QuiviCraft order ("Phase 2"). One per order, but can have multiple `round`s (re-inspection after a failure).
+- **`CraftInspection`** — the QC sub-record for a QuiviCraft order. Three phases share the identical per-component checklist: `phase=2` Pre Build Inspection, `phase=3` Build Inspection, `phase=4` Post Build Inspection (added 2026-07-20 — `CraftInspectionController::PHASES`). One record per `(order_id, phase, round)`; `round` can increment within a phase for re-inspection after a failure.
 - **`CraftInspectionItem`** — one per component (cpu/mbd/gpu/ram/ssd/aio/psu/...) within an inspection, tracking inspection/packaging/condition status + photos independently. Can optionally link back to a specific `OrderDetails` row (`order_detail_id`) to tie the inspection to the exact line item sold.
 
 ## 1. Building an order (POS)
@@ -64,11 +64,12 @@ This logic is duplicated in `OrderController::updateOrderDetails()` / `updateApp
   - QuiviServe: `ServeBek`/`ServeMps` via `GET /api/{serve-bek|serve-mps}/order/{orderId}` (find-or-create). PCE isn't part of this shortcut — it has its own richer create/edit flow.
   - QuiviCare: `CareData` via `GET /api/care-data/order/{orderId}` (`CareDataController@byOrder`).
 
-## 4. Pre-build QC (Craft Inspection)
+## 4. Build QC (Craft Inspection)
 
 Created after order approval, running in parallel with [[QuiviServe]]/[[QuiviCare]] rather than sequentially before or after them — this is QuiviCraft's own build-quality track, distinct from the tier assignment above.
 
-- **`CraftInspection`** — one per `(order_id, round)`. `phase` is hardcoded to `2` everywhere in `CraftInspectionController` (no `phase=1` exists in code — likely reserved for a pre-order QC step that hasn't been built). `status` is `draft` until `CraftInspectionController`'s completion action sets it to `completed`; `round` increments for re-inspection after a failed round.
+- **`CraftInspection`** — one per `(order_id, phase, round)`. Three phases share the identical checklist (`CraftInspectionController::PHASES`, added 2026-07-20): `phase=2` Pre Build Inspection, `phase=3` Build Inspection, `phase=4` Post Build Inspection. The QuiviCraft list's Actions column shows one button per phase (all at `round=1` by default). `status` is `draft` until `CraftInspectionController`'s completion action sets it to `completed`; `round` can still increment within a phase for re-inspection after a failed round, though the list's quick-action buttons only ever link to round 1 — a later round requires navigating manually via `/order/:id/inspection/:phase/:round`.
+- Route/API shape is `order/{orderId}/inspection/{phase}/{round}` — `updateItem`/`destroyItem` filter by phase **and** round (fixed 2026-07-20; previously only filtered by round, so two phases sharing round 1 could cross-match each other's items).
 - **`CraftInspectionItem`** — one per component within an inspection. `component_type` is one of a fixed set (`CraftInspectionController::COMPONENT_TYPES`): `cpu`, `mbd`, `gpu`, `ram`, `ssd`, `hdd`, `aio`, `hsf`, `psu`, `cse` (case), `fan`, `acc` (accessory). Optionally links to the exact `OrderDetails` row sold (`order_detail_id`).
 - Each item is checked across **three independently-gated dimensions**, each with a status + note + photos:
 
