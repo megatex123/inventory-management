@@ -16029,6 +16029,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       if (order.months_remaining < 1) return 'badge-warning';
       return 'badge-success';
     },
+    careMembershipUpdateOn: function careMembershipUpdateOn(order) {
+      var careData = order.care_data && order.care_data[0];
+      return !!(careData && careData.update_membership);
+    },
+    careMembershipRemaining: function careMembershipRemaining(order) {
+      var careData = order.care_data && order.care_data[0];
+      return careData ? careData.membership_remaining : 'N/A';
+    },
     showQuickInfo: function showQuickInfo(order) {
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: "Order #".concat(order.order_id),
@@ -53889,7 +53897,11 @@ var render = function render() {
     }, [_vm._v("\n                                                    " + _vm._s(_vm.getStatusText(order)) + "\n                                                ")]), _vm._v(" "), order.invoice_id ? _c("span", {
       staticClass: "badge",
       "class": _vm.getStatusBadgeClass(order)
-    }, [_vm._v("\n                                                    " + _vm._s(order.invoice_id) + "\n                                                ")]) : _vm._e()]), _vm._v(" "), _c("td", [order.approve == 1 && order.approved_at ? _c("div", [_c("span", {
+    }, [_vm._v("\n                                                    " + _vm._s(order.invoice_id) + "\n                                                ")]) : _vm._e()]), _vm._v(" "), _c("td", [_vm.careMembershipUpdateOn(order) ? _c("div", [_c("span", {
+      staticClass: "badge badge-info"
+    }, [_c("i", {
+      staticClass: "fa fa-shield-alt mr-1"
+    }), _vm._v("\n                                                        " + _vm._s(_vm.careMembershipRemaining(order)) + "\n                                                    ")])]) : order.approve == 1 && order.approved_at ? _c("div", [_c("span", {
       staticClass: "badge",
       "class": _vm.getRemainingClass(order)
     }, [_c("i", {

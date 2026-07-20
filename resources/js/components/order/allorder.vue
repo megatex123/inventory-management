@@ -234,7 +234,13 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div v-if="order.approve == 1 && order.approved_at">
+                                                    <div v-if="careMembershipUpdateOn(order)">
+                                                        <span class="badge badge-info">
+                                                            <i class="fa fa-shield-alt mr-1"></i>
+                                                            {{ careMembershipRemaining(order) }}
+                                                        </span>
+                                                    </div>
+                                                    <div v-else-if="order.approve == 1 && order.approved_at">
                                                         <span :class="getRemainingClass(order)" class="badge">
                                                             <i class="fa fa-clock mr-1"></i>
                                                             {{ order.time_remaining }}
@@ -738,6 +744,14 @@ export default {
             if (order.time_remaining === 'Expired') return 'badge-danger';
             if (order.months_remaining < 1) return 'badge-warning';
             return 'badge-success';
+        },
+        careMembershipUpdateOn(order) {
+            const careData = order.care_data && order.care_data[0];
+            return !!(careData && careData.update_membership);
+        },
+        careMembershipRemaining(order) {
+            const careData = order.care_data && order.care_data[0];
+            return careData ? careData.membership_remaining : 'N/A';
         },
         showQuickInfo(order) {
             Swal.fire({
