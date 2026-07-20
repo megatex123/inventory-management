@@ -314,6 +314,16 @@
 
               <hr class="sidebar-divider my-1">
 
+              <h6 class="collapse-header text-primary font-weight-bold">Category Product</h6>
+              <router-link class="collapse-item" to="/category">Code Lookup</router-link>
+              <router-link class="collapse-item" to="/category/create">Add Code Lookup</router-link>
+
+              <h6 class="collapse-header text-primary font-weight-bold">Sub Category Management</h6>
+              <router-link class="collapse-item" to="/sub-category">Sub Code Lookup</router-link>
+              <router-link class="collapse-item" to="/sub-category/create">Add Sub Code Lookup</router-link>
+
+              <hr class="sidebar-divider my-1">
+
               <h6 class="collapse-header text-primary font-weight-bold">QuiviCare Inventory</h6>
               <router-link class="collapse-item" to="/inv-care">All QuiviCare Inventory</router-link>
               <router-link class="collapse-item" to="/inv-care/create">Add QuiviCare Inventory</router-link>
@@ -333,26 +343,6 @@
               <h6 class="collapse-header text-primary font-weight-bold">Inventory Movement</h6>
               <router-link class="collapse-item" to="/inventory-movements">All Movements</router-link>
               <router-link class="collapse-item" to="/inventory-movements/create">Add Movement</router-link>
-            </div>
-          </div>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category" aria-expanded="true" aria-controls="category">
-            <i class="fas fa-fw fa-boxes"></i>
-            <span>Category</span>
-          </a>
-          <div id="category" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header text-primary font-weight-bold">Category Management</h6>
-              <router-link class="collapse-item" to="/category">Code Lookup</router-link>
-              <router-link class="collapse-item" to="/category/create">Add Code Lookup</router-link>
-
-              <hr class="sidebar-divider my-1">
-
-              <h6 class="collapse-header text-primary font-weight-bold">Sub Category Management</h6>
-              <router-link class="collapse-item" to="/sub-category">Sub Code Lookup</router-link>
-              <router-link class="collapse-item" to="/sub-category/create">Add Sub Code Lookup</router-link>
             </div>
           </div>
         </li>
