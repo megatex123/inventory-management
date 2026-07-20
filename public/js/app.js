@@ -34112,16 +34112,12 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-start"
     }, [_c("strong", {
       staticClass: "warranty-id"
-    }, [_vm._v(_vm._s(warranty.warranty_id || warranty.id))]), _vm._v(" "), _c("span", {
+    }, [_vm._v(_vm._s(warranty.product_name || "Warranty #" + warranty.id))]), _vm._v(" "), _c("span", {
       staticClass: "badge",
       "class": _vm.selectedWarrantyId === warranty.id ? "badge-success" : "badge-primary"
     }, [_vm._v("\n                        ID: " + _vm._s(warranty.id) + "\n                      ")])]), _vm._v(" "), _c("div", {
       staticClass: "warranty-details mt-2"
-    }, [_c("div", {
-      staticClass: "small"
-    }, [_c("i", {
-      staticClass: "fas fa-barcode mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Product:")]), _vm._v(" " + _vm._s(warranty.product_name) + "\n                      ")]), _vm._v(" "), warranty.product_code ? _c("div", {
+    }, [warranty.product_code ? _c("div", {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-qrcode mr-1"
@@ -34882,16 +34878,12 @@ var render = function render() {
       staticClass: "d-flex justify-content-between align-items-start"
     }, [_c("strong", {
       staticClass: "warranty-id"
-    }, [_vm._v("Inventory QVCA ID : " + _vm._s(warranty.warranty_id || warranty.id))]), _vm._v(" "), _c("span", {
+    }, [_vm._v(_vm._s(warranty.product_name || "Warranty #" + warranty.id))]), _vm._v(" "), _c("span", {
       staticClass: "badge",
       "class": _vm.selectedWarrantyId === warranty.id ? "badge-success" : "badge-primary"
     }, [_vm._v("\n                        ID: " + _vm._s(warranty.id) + "\n                      ")])]), _vm._v(" "), _c("div", {
       staticClass: "warranty-details mt-2"
-    }, [_c("div", {
-      staticClass: "small"
-    }, [_c("i", {
-      staticClass: "fas fa-barcode mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Product:")]), _vm._v(" " + _vm._s(warranty.product_name) + "\n                      ")]), _vm._v(" "), warranty.product_code ? _c("div", {
+    }, [warranty.product_code ? _c("div", {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-qrcode mr-1"

@@ -338,7 +338,7 @@
                     <div class="warranty-card-body">
                       <!-- Warranty Header -->
                       <div class="d-flex justify-content-between align-items-start">
-                        <strong class="warranty-id">Inventory QVCA ID : {{ warranty.warranty_id || warranty.id }}</strong>
+                        <strong class="warranty-id">{{ warranty.product_name || ('Warranty #' + warranty.id) }}</strong>
                         <span class="badge" :class="selectedWarrantyId === warranty.id ? 'badge-success' : 'badge-primary'">
                           ID: {{ warranty.id }}
                         </span>
@@ -346,10 +346,6 @@
 
                       <!-- Warranty Details -->
                       <div class="warranty-details mt-2">
-                        <div class="small">
-                          <i class="fas fa-barcode mr-1"></i>
-                          <strong>Product:</strong> {{ warranty.product_name }}
-                        </div>
                         <div v-if="warranty.product_code" class="small">
                           <i class="fas fa-qrcode mr-1"></i>
                           <strong>Code:</strong> {{ warranty.product_code }}
