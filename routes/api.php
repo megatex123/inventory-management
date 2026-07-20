@@ -97,7 +97,7 @@ Route::get('/orders/statistics', 'OrderController@getStatistics');
 */
 Route::get('/craft-inspections/statistics', 'CraftInspectionController@statistics');
 
-Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
+Route::prefix('order/{orderId}/inspection/{phase}/{round}')->group(function () {
     Route::get('/', 'CraftInspectionController@show');
     Route::post('/items', 'CraftInspectionController@storeItem');
     Route::post('/items/{itemId}', 'CraftInspectionController@updateItem');

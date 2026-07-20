@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="mb-1"><i class="fas fa-clipboard-check text-primary mr-2"></i>QuiviCraft Build Report</h2>
-        <p class="text-muted mb-0">Phase 2: Pre-Build Inspection — Round {{ round }}</p>
+        <p class="text-muted mb-0">{{ phaseLabel }} — Round {{ round }}</p>
       </div>
       <div>
         <router-link to="/orders/all" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Back to Orders</router-link>
@@ -324,8 +324,15 @@ export default {
     round() {
       return this.$route.params.round || 1;
     },
+    phase() {
+      return this.$route.params.phase || 2;
+    },
+    phaseLabel() {
+      const labels = { 2: 'Pre Build Inspection', 3: 'Build Inspection', 4: 'Post Build Inspection' };
+      return labels[this.phase] || labels[Number(this.phase)] || 'Pre Build Inspection';
+    },
     apiBase() {
-      return `/api/order/${this.$route.params.id}/inspection/${this.round}`;
+      return `/api/order/${this.$route.params.id}/inspection/${this.phase}/${this.round}`;
     },
     // Order parts whose category maps to a known inspection type
     mappedOrderParts() {

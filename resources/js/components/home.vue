@@ -92,6 +92,7 @@
                   <tr>
                     <th>Order</th>
                     <th>Customer</th>
+                    <th>Phase</th>
                     <th class="text-center">Round</th>
                     <th>Last Updated</th>
                     <th></th>
@@ -101,10 +102,11 @@
                   <tr v-for="row in inspectionStats.pending" :key="'insp-' + row.id">
                     <td>{{ row.order_code || ('#' + row.order_pk) }}</td>
                     <td>{{ row.customer || 'N/A' }}</td>
+                    <td>{{ row.phase_label || 'Pre Build Inspection' }}</td>
                     <td class="text-center"><span class="badge badge-secondary">{{ row.round }}</span></td>
                     <td>{{ formatDate(row.updated_at) }}</td>
                     <td class="text-right">
-                      <router-link :to="{ name: 'craftinspection', params: { id: row.order_pk, round: row.round } }" class="btn btn-sm btn-outline-primary">
+                      <router-link :to="{ name: 'craftinspection', params: { id: row.order_pk, phase: row.phase || 2, round: row.round } }" class="btn btn-sm btn-outline-primary">
                         Open
                       </router-link>
                     </td>

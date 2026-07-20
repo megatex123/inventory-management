@@ -12,8 +12,15 @@ use Illuminate\Support\Facades\Validator;
 
 class CraftInspectionController extends Controller
 {
-    // Component types matching the QuiviCraft Build Report Phase 2 checklist
+    // Component types matching the QuiviCraft Build Report checklist (reused across all phases)
     const COMPONENT_TYPES = ['cpu', 'mbd', 'gpu', 'ram', 'ssd', 'hdd', 'aio', 'hsf', 'psu', 'cse', 'fan', 'acc'];
+
+    // Inspection phases — same checklist reused for all three stages of the build.
+    const PHASES = [
+        2 => 'Pre Build Inspection',
+        3 => 'Build Inspection',
+        4 => 'Post Build Inspection',
+    ];
 
     // "Good" value per gated group — anything else requires a note instead of photos
     const GOOD_VALUES = [
@@ -22,8 +29,12 @@ class CraftInspectionController extends Controller
         'condition' => 'sound_pristine',
     ];
 
-    public function show($orderId, $round = 1)
+    public function show($orderId, $phase = 2, $round = 1)
     {
+        if (!array_key_exists((int) $phase, self::PHASES)) {
+            return response()->json(['success' => false, 'message' => 'Invalid inspection phase'], 422);
+        }
+
         $order = Order::with(['customer', 'craft'])->find($orderId);
 
         if (!$order) {
@@ -31,7 +42,7 @@ class CraftInspectionController extends Controller
         }
 
         $inspection = CraftInspection::firstOrCreate(
-            ['order_id' => $orderId, 'phase' => 2, 'round' => $round],
+            ['order_id' => $orderId, 'phase' => $phase, 'round' => $round],
             ['status' => 'draft']
         );
 
@@ -45,12 +56,17 @@ class CraftInspectionController extends Controller
                 'order' => $order,
                 'inspection' => $inspection,
                 'component_types' => self::COMPONENT_TYPES,
+                'phase_label' => self::PHASES[(int) $phase],
             ],
         ]);
     }
 
-    public function storeItem(Request $request, $orderId, $round = 1)
+    public function storeItem(Request $request, $orderId, $phase = 2, $round = 1)
     {
+        if (!array_key_exists((int) $phase, self::PHASES)) {
+            return response()->json(['success' => false, 'message' => 'Invalid inspection phase'], 422);
+        }
+
         $order = Order::find($orderId);
         if (!$order) {
             return response()->json(['success' => false, 'message' => 'Order not found'], 404);
@@ -87,7 +103,7 @@ class CraftInspectionController extends Controller
         DB::beginTransaction();
         try {
             $inspection = CraftInspection::firstOrCreate(
-                ['order_id' => $orderId, 'phase' => 2, 'round' => $round],
+                ['order_id' => $orderId, 'phase' => $phase, 'round' => $round],
                 ['status' => 'draft']
             );
 
@@ -124,10 +140,10 @@ class CraftInspectionController extends Controller
         }
     }
 
-    public function updateItem(Request $request, $orderId, $round, $itemId)
+    public function updateItem(Request $request, $orderId, $phase, $round, $itemId)
     {
-        $item = CraftInspectionItem::whereHas('craftInspection', function ($q) use ($orderId, $round) {
-            $q->where('order_id', $orderId)->where('round', $round);
+        $item = CraftInspectionItem::whereHas('craftInspection', function ($q) use ($orderId, $phase, $round) {
+            $q->where('order_id', $orderId)->where('phase', $phase)->where('round', $round);
         })->find($itemId);
 
         if (!$item) {
@@ -194,10 +210,10 @@ class CraftInspectionController extends Controller
         }
     }
 
-    public function destroyItem($orderId, $round, $itemId)
+    public function destroyItem($orderId, $phase, $round, $itemId)
     {
-        $item = CraftInspectionItem::whereHas('craftInspection', function ($q) use ($orderId, $round) {
-            $q->where('order_id', $orderId)->where('round', $round);
+        $item = CraftInspectionItem::whereHas('craftInspection', function ($q) use ($orderId, $phase, $round) {
+            $q->where('order_id', $orderId)->where('phase', $phase)->where('round', $round);
         })->find($itemId);
 
         if (!$item) {
@@ -212,9 +228,9 @@ class CraftInspectionController extends Controller
         }
     }
 
-    public function complete($orderId, $round = 1)
+    public function complete($orderId, $phase = 2, $round = 1)
     {
-        $inspection = CraftInspection::where('order_id', $orderId)->where('phase', 2)->where('round', $round)->first();
+        $inspection = CraftInspection::where('order_id', $orderId)->where('phase', $phase)->where('round', $round)->first();
 
         if (!$inspection) {
             return response()->json(['success' => false, 'message' => 'Inspection not found'], 404);
@@ -247,6 +263,8 @@ class CraftInspectionController extends Controller
                     'order_pk' => $inspection->order_id,
                     'order_code' => optional($inspection->order)->order_id,
                     'customer' => optional(optional($inspection->order)->customer)->full_name,
+                    'phase' => $inspection->phase,
+                    'phase_label' => self::PHASES[$inspection->phase] ?? null,
                     'round' => $inspection->round,
                     'status' => $inspection->status,
                     'updated_at' => $inspection->updated_at,

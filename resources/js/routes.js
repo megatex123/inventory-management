@@ -398,7 +398,7 @@ export const routes=[
       { path: '/inventory-movements/edit/:id', component: inventorymovementedit, name: 'inventorymovementedit', meta: { layout: 'app' } },
 
       // craft inspection
-      { path: '/order/:id/inspection/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
+      { path: '/order/:id/inspection/:phase/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
 
       // customer progress management
       { path: '/customer-progress', component: customer_progress_index, name: 'customerprogress', meta: { layout: 'app' } },
