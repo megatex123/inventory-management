@@ -94,6 +94,11 @@ let meetingdetails = require('./components/meeting_details/index').default;
 let createmeetingdetails = require('./components/meeting_details/create.vue').default;
 let meetingdetailsedit = require('./components/meeting_details/edit.vue').default;
 
+//uatmeeting
+let uatmeeting = require('./components/uat_meeting/index').default;
+let createuatmeeting = require('./components/uat_meeting/create.vue').default;
+let uatmeetingedit = require('./components/uat_meeting/edit.vue').default;
+
 //servedata
 let servedata = require('./components/serve_data/index').default;
 let createservedata = require('./components/serve_data/create.vue').default;
@@ -291,6 +296,11 @@ export const routes=[
       { path: '/meeting-details', component: meetingdetails, name: 'meetingdetails', meta: { layout: 'app' } },
       { path: '/meeting-details/create', component: createmeetingdetails, name: 'createmeetingdetails', meta: { layout: 'app' } },
       { path: '/meeting-details/edit/:id', component: meetingdetailsedit, name: 'meetingdetailsedit', meta: { layout: 'app' } },
+
+      // uat meeting:
+      { path: '/uat-meeting', component: uatmeeting, name: 'uatmeeting', meta: { layout: 'app' } },
+      { path: '/uat-meeting/create', component: createuatmeeting, name: 'createuatmeeting', meta: { layout: 'app' } },
+      { path: '/uat-meeting/edit/:id', component: uatmeetingedit, name: 'uatmeetingedit', meta: { layout: 'app' } },
 
       // serve-data:
       { path: '/serve-data', component: servedata, name: 'servedata', meta: { layout: 'app' } },

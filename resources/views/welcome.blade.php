@@ -118,6 +118,12 @@
               <h6 class="collapse-header text-primary font-weight-bold">Requirement Meeting</h6>
               <router-link class="collapse-item" to="/meeting-details">Requirement Meeting List</router-link>
               <router-link class="collapse-item" to="/meeting-details/create">Create Requirement Meeting</router-link>
+
+              <hr class="sidebar-divider my-1">
+
+              <h6 class="collapse-header text-primary font-weight-bold">UAT Meeting</h6>
+              <router-link class="collapse-item" to="/uat-meeting">UAT Meeting List</router-link>
+              <router-link class="collapse-item" to="/uat-meeting/create">Create UAT Meeting</router-link>
             </div>
           </div>
         </li>

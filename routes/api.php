@@ -158,6 +158,17 @@ Route::delete('/meeting-details/{id}', 'MeetingDetailsController@destroy');
 
 /*
 |--------------------------------------------------------------------------
+| UAT MEETING
+|--------------------------------------------------------------------------
+*/
+Route::get('/uat-meeting', 'UatMeetingController@index');
+Route::get('/uat-meeting/{id}', 'UatMeetingController@show');
+Route::post('/uat-meeting', 'UatMeetingController@store');
+Route::put('/uat-meeting/{id}', 'UatMeetingController@update');
+Route::delete('/uat-meeting/{id}', 'UatMeetingController@destroy');
+
+/*
+|--------------------------------------------------------------------------
 | SERVE DATA ROUTES
 |--------------------------------------------------------------------------
 */
