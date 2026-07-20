@@ -32,5 +32,8 @@ class DatabaseSeeder extends Seeder
         // QuiviThread reference data.
         $this->call(ThreadBomTableSeeder::class);
         $this->call(InvThreadTableSeeder::class);
+
+        // Sidebar menu structure (DB-driven as of 2026-07-20 — see welcome.blade.php).
+        $this->call(MenuItemsTableSeeder::class);
     }
 }
