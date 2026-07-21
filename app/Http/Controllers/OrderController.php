@@ -904,9 +904,13 @@ class OrderController extends Controller
                 ];
             });
 
-        $careDistribution = Order::with('care')
-            ->select('care_id', DB::raw('COUNT(*) as count'))
-            ->groupBy('care_id')
+        // Grouped from CareData.lkp_care_id (the actual assigned tier) rather
+        // than Order.care_id, which is only set provisionally at order-creation
+        // time and can drift out of sync — CareData's tier is recalculated from
+        // eligible-parts total at approval and is what the QuiviCare list shows.
+        $careDistribution = CareData::with('care')
+            ->select('lkp_care_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('lkp_care_id')
             ->get()
             ->map(function($item) {
                 return [
