@@ -55768,7 +55768,9 @@ var render = function render() {
       }
     }
   })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group form-check mt-4"
+    staticClass: "form-group mt-4"
+  }, [_c("div", {
+    staticClass: "custom-control custom-switch"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -55776,7 +55778,7 @@ var render = function render() {
       value: _vm.form.is_active,
       expression: "form.is_active"
     }],
-    staticClass: "form-check-input",
+    staticClass: "custom-control-input",
     attrs: {
       type: "checkbox",
       id: "isActive"
@@ -55803,11 +55805,11 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _c("label", {
-    staticClass: "form-check-label",
+    staticClass: "custom-control-label",
     attrs: {
       "for": "isActive"
     }
-  }, [_vm._v("Active")])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, [_vm._v("Active")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
   }, [_c("ul", {
     staticClass: "mb-0 pl-3"
@@ -56003,7 +56005,9 @@ var render = function render() {
       }
     }
   })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group form-check mt-4"
+    staticClass: "form-group mt-4"
+  }, [_c("div", {
+    staticClass: "custom-control custom-switch"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -56011,7 +56015,7 @@ var render = function render() {
       value: _vm.form.is_active,
       expression: "form.is_active"
     }],
-    staticClass: "form-check-input",
+    staticClass: "custom-control-input",
     attrs: {
       type: "checkbox",
       id: "isActive"
@@ -56038,11 +56042,11 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _c("label", {
-    staticClass: "form-check-label",
+    staticClass: "custom-control-label",
     attrs: {
       "for": "isActive"
     }
-  }, [_vm._v("Active")])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, [_vm._v("Active")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
   }, [_c("ul", {
     staticClass: "mb-0 pl-3"

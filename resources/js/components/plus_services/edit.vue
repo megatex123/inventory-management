@@ -29,9 +29,11 @@
                 <label class="form-label">Price (RM) <span class="text-danger">*</span></label>
                 <input type="number" step="0.01" min="0" v-model="form.price" class="form-control" required>
               </div>
-              <div class="form-group form-check mt-4">
-                <input type="checkbox" v-model="form.is_active" class="form-check-input" id="isActive">
-                <label class="form-check-label" for="isActive">Active</label>
+              <div class="form-group mt-4">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" v-model="form.is_active" class="custom-control-input" id="isActive">
+                  <label class="custom-control-label" for="isActive">Active</label>
+                </div>
               </div>
             </div>
           </div>
