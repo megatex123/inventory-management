@@ -435,7 +435,7 @@ CREATE TABLE `customer_progress` (
   KEY `customer_progress_customer_id_index` (`customer_id`),
   KEY `customer_progress_order_id_index` (`order_id`),
   KEY `customer_progress_status_index` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +447,18 @@ LOCK TABLES `customer_progress` WRITE;
 set autocommit=0;
 INSERT INTO `customer_progress` VALUES
 (1,4,7,'Cable Management','Routing PSU and GPU cables','in_progress',40,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-11 14:20:44','2026-07-11 14:20:53','2026-07-11 14:20:53'),
-(2,4,NULL,'Cable Management',NULL,'completed',100,NULL,NULL,NULL,NULL,NULL,'2026-07-11 14:24:29','2026-07-11 14:24:29','2026-07-11 14:24:29','2026-07-11 14:24:29');
+(2,4,NULL,'Cable Management',NULL,'completed',100,NULL,NULL,NULL,NULL,NULL,'2026-07-11 14:24:29','2026-07-11 14:24:29','2026-07-11 14:24:29','2026-07-11 14:24:29'),
+(3,4,1,'Build Assembly','PC build fully assembled and cable-managed.','completed',100,NULL,NULL,NULL,NULL,'Test Staff','2026-07-11 10:00:00','2026-07-10 09:00:00','2026-07-11 10:00:00',NULL),
+(4,19,2,'Cable Management','Routing and sleeving completed.','completed',100,NULL,NULL,NULL,NULL,'Test Staff','2026-07-12 14:30:00','2026-07-11 11:00:00','2026-07-12 14:30:00',NULL),
+(5,20,3,'Final QC Testing','Running stress test and boot verification.','in_progress',75,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-13 09:15:00','2026-07-15 16:20:00',NULL),
+(6,20,4,'Parts Received','All components received and inspected.','completed',100,NULL,NULL,NULL,NULL,'Test Staff','2026-07-10 08:00:00','2026-07-09 15:00:00','2026-07-10 08:00:00',NULL),
+(7,20,5,'Build Assembly','Motherboard and CPU installed, working on cooling.','in_progress',50,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-14 10:00:00','2026-07-16 12:00:00',NULL),
+(8,21,6,'Packaging','Build boxed and ready for delivery.','completed',100,NULL,NULL,NULL,NULL,'Test Staff','2026-07-11 17:00:00','2026-07-11 09:00:00','2026-07-11 17:00:00',NULL),
+(9,20,8,'Parts Received','Awaiting parts delivery from supplier.','pending',0,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-13 09:00:00','2026-07-13 09:00:00',NULL),
+(10,20,9,'Build Assembly','Case wiring in progress.','in_progress',40,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-14 11:00:00','2026-07-17 13:00:00',NULL),
+(11,20,10,'Cable Management','Sleeving custom cables for PSU.','in_progress',60,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-15 10:00:00','2026-07-18 15:00:00',NULL),
+(12,20,11,'Final QC Testing','On hold pending customer confirmation on RGB color.','on_hold',30,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-16 09:00:00','2026-07-19 10:00:00',NULL),
+(13,4,7,'Build Assembly','ULTRA-tier build assembly in progress, awaiting GPU delivery.','in_progress',65,NULL,NULL,NULL,NULL,'Test Staff',NULL,'2026-07-18 10:00:00','2026-07-20 14:00:00',NULL);
 /*!40000 ALTER TABLE `customer_progress` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1279,13 +1290,13 @@ INSERT INTO `menu_items` VALUES
 (8,7,'link','Meeting List',NULL,'/meeting',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (9,7,'link','Create Meeting',NULL,'/meeting/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (10,6,'header','Requirement Meeting',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(11,10,'link','Requirement Meeting List',NULL,'/meeting-details',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(12,10,'link','Create Requirement Meeting',NULL,'/meeting-details/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(11,10,'link','Require Meeting List',NULL,'/meeting-details',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(12,10,'link','Create Require Meeting',NULL,'/meeting-details/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (13,6,'header','UAT Meeting',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (14,13,'link','UAT Meeting List',NULL,'/uat-meeting',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (15,13,'link','Create UAT Meeting',NULL,'/uat-meeting/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (16,NULL,'group','Customer Progress','fas fa-fw fa-tasks',NULL,3,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(17,16,'header','Customer Progress Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(17,16,'header','Progress Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (18,17,'link','All Progress Entries',NULL,'/customer-progress',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (19,17,'link','Add Progress Entry',NULL,'/customer-progress/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (20,NULL,'group','QuiviCraft','fas fa-fw fa-tools',NULL,4,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -1419,7 +1430,7 @@ LOCK TABLES `merch_items` WRITE;
 /*!40000 ALTER TABLE `merch_items` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `merch_items` VALUES
-(1,'MI-QVMR-0001','QVSKU 0005','Quivitech White Embroidery Keychain',19.90,10.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(1,'MI-QVMR-0001','QVSKU 0005','Quivitech White Embroidery Keychain',19.90,10.90,1,1,'2026-07-14 16:03:44','2026-07-21 08:19:00',NULL),
 (2,'MI-QVMR-0002','QVSKU 0006','Quivitech Red Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
 (3,'MI-QVMR-0003','QVSKU 0007','Quivitech Yellow Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
 (4,'MI-QVMR-0004','QVSKU 0008','Quivitech Blue Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
@@ -1894,7 +1905,7 @@ set autocommit=0;
 INSERT INTO `plus_services` VALUES
 (1,'PS-QVPL-0001','Fan Installation','installation',18.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
 (2,'PS-QVPL-0002','Component Upgrade Service','upgrade',45.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
-(3,'PS-QVPL-0003','Onsite Troubleshooting','onsite',50.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
+(3,'PS-QVPL-0003','Onsite Troubleshooting','onsite',50.00,1,'2026-07-14 16:22:09','2026-07-21 06:44:29',NULL),
 (4,'PS-QVPL-0004','Cable Management','cable_mgmt',40.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
 (5,'PS-QVPL-0005','Entry Cleaning','cleaning',30.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
 (6,'PS-QVPL-0006','Deep Cleaning','cleaning',60.00,1,'2026-07-14 16:22:09','2026-07-14 16:22:09',NULL),
@@ -2869,4 +2880,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-20 20:06:12
+-- Dump completed on 2026-07-21  9:57:26
