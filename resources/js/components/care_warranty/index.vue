@@ -190,7 +190,17 @@
                     <strong>{{ item.care_warranty_id }}</strong>
                 </span>
             </td>
-            <td><span class="badge badge-light">{{ item.care_invoice_id }}</span></td>
+            <td>
+                <router-link
+                  v-if="item.care_data && item.care_data.order_id"
+                  :to="{ name: 'vieworder', params: { id: item.care_data.order_id } }"
+                  class="badge badge-light"
+                  title="View in QuiviCraft"
+                >
+                  {{ item.care_invoice_id }}
+                </router-link>
+                <span v-else class="badge badge-light">{{ item.care_invoice_id }}</span>
+            </td>
             <td><span class="badge badge-secondary">{{ item.customer_id || '-' }}</span></td>
             <td>
                 {{ getProductName(item) }}

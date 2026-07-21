@@ -366,6 +366,7 @@ class CareWarrantyController extends Controller
             $item['care_data'] = [
                 'id'              => $CareWarranty->careData->id,
                 'care_invoice_id' => $CareWarranty->careData->care_invoice_id ?? null,
+                'order_id'        => $CareWarranty->careData->order_id,
             ];
             $item['customer_id']   = $customer ? $customer->customer_id : null;
             $item['customer_name'] = $customer ? $customer->name : null;

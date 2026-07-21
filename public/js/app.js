@@ -34957,9 +34957,20 @@ var render = function render() {
       key: item.id
     }, [_c("td", [_c("span", {
       staticClass: "badge badge-light"
-    }, [_c("strong", [_vm._v(_vm._s(item.care_warranty_id))])])]), _vm._v(" "), _c("td", [_c("span", {
+    }, [_c("strong", [_vm._v(_vm._s(item.care_warranty_id))])])]), _vm._v(" "), _c("td", [item.care_data && item.care_data.order_id ? _c("router-link", {
+      staticClass: "badge badge-light",
+      attrs: {
+        to: {
+          name: "vieworder",
+          params: {
+            id: item.care_data.order_id
+          }
+        },
+        title: "View in QuiviCraft"
+      }
+    }, [_vm._v("\n                " + _vm._s(item.care_invoice_id) + "\n              ")]) : _c("span", {
       staticClass: "badge badge-light"
-    }, [_vm._v(_vm._s(item.care_invoice_id))])]), _vm._v(" "), _c("td", [_c("span", {
+    }, [_vm._v(_vm._s(item.care_invoice_id))])], 1), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge badge-secondary"
     }, [_vm._v(_vm._s(item.customer_id || "-"))])]), _vm._v(" "), _c("td", [_vm._v("\n              " + _vm._s(_vm.getProductName(item)) + "\n              "), item.category ? _c("span", {
       staticClass: "badge badge-info ml-1"
