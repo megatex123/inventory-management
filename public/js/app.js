@@ -51130,7 +51130,9 @@ var render = function render() {
       }
     }
   })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group form-check mt-4"
+    staticClass: "form-group mt-4"
+  }, [_c("div", {
+    staticClass: "custom-control custom-switch"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -51138,7 +51140,7 @@ var render = function render() {
       value: _vm.form.is_exclusive,
       expression: "form.is_exclusive"
     }],
-    staticClass: "form-check-input",
+    staticClass: "custom-control-input",
     attrs: {
       type: "checkbox",
       id: "isExclusive"
@@ -51165,11 +51167,11 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _c("label", {
-    staticClass: "form-check-label",
+    staticClass: "custom-control-label",
     attrs: {
       "for": "isExclusive"
     }
-  }, [_vm._v("Exclusive item (Collector's Edition only)")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Exclusive item (Collector's Edition only)")])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
@@ -51423,7 +51425,9 @@ var render = function render() {
       }
     }
   })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group form-check mt-4"
+    staticClass: "form-group mt-4"
+  }, [_c("div", {
+    staticClass: "custom-control custom-switch"
   }, [_c("input", {
     directives: [{
       name: "model",
@@ -51431,7 +51435,7 @@ var render = function render() {
       value: _vm.form.is_exclusive,
       expression: "form.is_exclusive"
     }],
-    staticClass: "form-check-input",
+    staticClass: "custom-control-input",
     attrs: {
       type: "checkbox",
       id: "isExclusive"
@@ -51458,11 +51462,11 @@ var render = function render() {
       }
     }
   }), _vm._v(" "), _c("label", {
-    staticClass: "form-check-label",
+    staticClass: "custom-control-label",
     attrs: {
       "for": "isExclusive"
     }
-  }, [_vm._v("Exclusive item (Collector's Edition only)")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Exclusive item (Collector's Edition only)")])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"

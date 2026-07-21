@@ -23,9 +23,11 @@
                 <label class="form-label">Name <span class="text-danger">*</span></label>
                 <input type="text" v-model="form.name" class="form-control" required maxlength="191">
               </div>
-              <div class="form-group form-check mt-4">
-                <input type="checkbox" v-model="form.is_exclusive" class="form-check-input" id="isExclusive">
-                <label class="form-check-label" for="isExclusive">Exclusive item (Collector's Edition only)</label>
+              <div class="form-group mt-4">
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" v-model="form.is_exclusive" class="custom-control-input" id="isExclusive">
+                  <label class="custom-control-label" for="isExclusive">Exclusive item (Collector's Edition only)</label>
+                </div>
               </div>
             </div>
             <div class="col-md-6">
