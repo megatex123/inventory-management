@@ -224,7 +224,7 @@
                   <tr>
                     <td colspan="3" class="text-right font-weight-bold">Covered by QuiviCare</td>
                     <td class="text-right font-weight-bold">{{ formatCurrency(coveredPartsTotal) }}</td>
-                    <td></td>
+                    <td class="text-center font-weight-bold">{{ coveredPartsCount }} Covered</td>
                   </tr>
                 </tfoot>
               </table>
@@ -393,6 +393,9 @@ export default {
       return this.orderParts
         .filter(part => this.isPartCovered(part))
         .reduce((sum, part) => sum + (parseFloat(part.sub_total) || 0), 0);
+    },
+    coveredPartsCount() {
+      return this.orderParts.filter(part => this.isPartCovered(part)).length;
     }
   },
   mounted() {

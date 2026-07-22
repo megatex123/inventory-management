@@ -3508,6 +3508,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }).reduce(function (sum, part) {
         return sum + (parseFloat(part.sub_total) || 0);
       }, 0);
+    },
+    coveredPartsCount: function coveredPartsCount() {
+      var _this3 = this;
+      return this.orderParts.filter(function (part) {
+        return _this3.isPartCovered(part);
+      }).length;
     }
   },
   mounted: function mounted() {
@@ -3559,43 +3565,43 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return 'badge-secondary';
     },
     fetchCareData: function fetchCareData() {
-      var _this3 = this;
+      var _this4 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var id, response, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _this3.loading = true;
+              _this4.loading = true;
               _context.p = 1;
-              id = _this3.$route.params.id;
+              id = _this4.$route.params.id;
               _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/care-data/".concat(id));
             case 2:
               response = _context.v;
-              _this3.careData = response.data.data;
+              _this4.careData = response.data.data;
 
               // Populate form with existing data
-              _this3.form = {
-                customer_id: _this3.careData.customer_id,
-                order_id: _this3.careData.order_id,
-                lkp_care_id: _this3.careData.lkp_care_id,
-                total_part: _this3.careData.total_part || '',
-                price: _this3.careData.price || '',
-                update_membership: !!_this3.careData.update_membership
+              _this4.form = {
+                customer_id: _this4.careData.customer_id,
+                order_id: _this4.careData.order_id,
+                lkp_care_id: _this4.careData.lkp_care_id,
+                total_part: _this4.careData.total_part || '',
+                price: _this4.careData.price || '',
+                update_membership: !!_this4.careData.update_membership
               };
 
               // Set selected references
-              if (_this3.careData.customer) {
-                _this3.selectedCustomer = _this3.careData.customer;
+              if (_this4.careData.customer) {
+                _this4.selectedCustomer = _this4.careData.customer;
               }
-              if (_this3.careData.order) {
-                _this3.selectedOrder = _this3.careData.order;
+              if (_this4.careData.order) {
+                _this4.selectedOrder = _this4.careData.order;
               }
-              if (_this3.careData.care) {
-                _this3.selectedCare = _this3.careData.care;
+              if (_this4.careData.care) {
+                _this4.selectedCare = _this4.careData.care;
               }
-              if (_this3.careData.order_id) {
-                _this3.fetchOrderParts(_this3.careData.order_id);
+              if (_this4.careData.order_id) {
+                _this4.fetchOrderParts(_this4.careData.order_id);
               }
               _context.n = 4;
               break;
@@ -3608,10 +3614,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               } else {
                 sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load care data', 'error');
               }
-              _this3.$router.push('/care-data');
+              _this4.$router.push('/care-data');
             case 4:
               _context.p = 4;
-              _this3.loading = false;
+              _this4.loading = false;
               return _context.f(4);
             case 5:
               return _context.a(2);
@@ -3620,29 +3626,29 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     fetchOrderParts: function fetchOrderParts(orderId) {
-      var _this4 = this;
+      var _this5 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
         var response, _t2;
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
-              _this4.loadingParts = true;
+              _this5.loadingParts = true;
               _context2.p = 1;
               _context2.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/order/get/".concat(orderId));
             case 2:
               response = _context2.v;
-              _this4.orderParts = response.data.details || [];
+              _this5.orderParts = response.data.details || [];
               _context2.n = 4;
               break;
             case 3:
               _context2.p = 3;
               _t2 = _context2.v;
               console.error('Error fetching order parts:', _t2);
-              _this4.orderParts = [];
+              _this5.orderParts = [];
             case 4:
               _context2.p = 4;
-              _this4.loadingParts = false;
+              _this5.loadingParts = false;
               return _context2.f(4);
             case 5:
               return _context2.a(2);
@@ -3654,19 +3660,19 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return part.is_care === 1 || part.is_care === true || part.is_care === '1';
     },
     fetchCustomers: function fetchCustomers() {
-      var _this5 = this;
+      var _this6 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
         var response, _t3;
         return _regenerator().w(function (_context3) {
           while (1) switch (_context3.p = _context3.n) {
             case 0:
-              _this5.loadingCustomers = true;
+              _this6.loadingCustomers = true;
               _context3.p = 1;
               _context3.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
             case 2:
               response = _context3.v;
-              _this5.customers = response.data.data || response.data;
+              _this6.customers = response.data.data || response.data;
               _context3.n = 4;
               break;
             case 3:
@@ -3675,7 +3681,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               console.error('Error fetching customers:', _t3);
             case 4:
               _context3.p = 4;
-              _this5.loadingCustomers = false;
+              _this6.loadingCustomers = false;
               return _context3.f(4);
             case 5:
               return _context3.a(2);
@@ -3684,7 +3690,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     fetchOrders: function fetchOrders() {
-      var _this6 = this;
+      var _this7 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
         var response, _t4;
         return _regenerator().w(function (_context4) {
@@ -3695,7 +3701,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/orders');
             case 1:
               response = _context4.v;
-              _this6.orders = response.data.data || response.data;
+              _this7.orders = response.data.data || response.data;
               _context4.n = 3;
               break;
             case 2:
@@ -3709,7 +3715,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     fetchCares: function fetchCares() {
-      var _this7 = this;
+      var _this8 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
         var response, _t5;
         return _regenerator().w(function (_context5) {
@@ -3720,7 +3726,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
             case 1:
               response = _context5.v;
-              _this7.cares = response.data.data || response.data;
+              _this8.cares = response.data.data || response.data;
               _context5.n = 3;
               break;
             case 2:
@@ -3734,23 +3740,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     onCustomerChange: function onCustomerChange() {
-      var _this8 = this;
+      var _this9 = this;
       this.selectedCustomer = this.customers.find(function (c) {
-        return c.id == _this8.form.customer_id;
+        return c.id == _this9.form.customer_id;
       }) || null;
       this.form.order_id = '';
       this.selectedOrder = null;
     },
     onOrderChange: function onOrderChange() {
-      var _this9 = this;
+      var _this0 = this;
       this.selectedOrder = this.orders.find(function (o) {
-        return o.id == _this9.form.order_id;
+        return o.id == _this0.form.order_id;
       }) || null;
     },
     onCareChange: function onCareChange() {
-      var _this0 = this;
+      var _this1 = this;
       this.selectedCare = this.cares.find(function (c) {
-        return c.id == _this0.form.lkp_care_id;
+        return c.id == _this1.form.lkp_care_id;
       }) || null;
     },
     onMembershipToggle: function onMembershipToggle() {
@@ -3826,31 +3832,31 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return this.errors.length === 0;
     },
     updateCareData: function updateCareData() {
-      var _this1 = this;
+      var _this10 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
         var id, response, validationErrors, field, _t6;
         return _regenerator().w(function (_context6) {
           while (1) switch (_context6.p = _context6.n) {
             case 0:
-              if (_this1.validateForm()) {
+              if (_this10.validateForm()) {
                 _context6.n = 1;
                 break;
               }
               return _context6.a(2);
             case 1:
-              _this1.loading = true;
-              _this1.errors = [];
+              _this10.loading = true;
+              _this10.errors = [];
               _context6.p = 2;
-              id = _this1.$route.params.id;
+              id = _this10.$route.params.id;
               _context6.n = 3;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/care-data/".concat(id), _this1.form);
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/care-data/".concat(id), _this10.form);
             case 3:
               response = _context6.v;
-              _this1.careData = response.data.data;
+              _this10.careData = response.data.data;
               _context6.n = 4;
-              return _this1.fetchCareData();
+              return _this10.fetchCareData();
             case 4:
-              _this1.showSuccessModal = true;
+              _this10.showSuccessModal = true;
               _context6.n = 6;
               break;
             case 5:
@@ -3862,32 +3868,32 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   validationErrors = _t6.response.data.errors;
                   if (validationErrors) {
                     for (field in validationErrors) {
-                      _this1.errors.push("".concat(field, ": ").concat(validationErrors[field].join(', ')));
+                      _this10.errors.push("".concat(field, ": ").concat(validationErrors[field].join(', ')));
                     }
                   } else {
-                    _this1.errors.push(_t6.response.data.message || 'Validation failed');
+                    _this10.errors.push(_t6.response.data.message || 'Validation failed');
                   }
                 } else if (_t6.response.status === 404) {
-                  _this1.errors.push('Care data not found');
+                  _this10.errors.push('Care data not found');
                 } else if (_t6.response.status === 500) {
-                  _this1.errors.push('Server error. Please try again later.');
+                  _this10.errors.push('Server error. Please try again later.');
                 } else {
-                  _this1.errors.push(_t6.response.data.message || "Error ".concat(_t6.response.status));
+                  _this10.errors.push(_t6.response.data.message || "Error ".concat(_t6.response.status));
                 }
               } else if (_t6.request) {
-                _this1.errors.push('No response from server. Check network connection.');
+                _this10.errors.push('No response from server. Check network connection.');
               } else {
-                _this1.errors.push(_t6.message || 'Failed to update care data.');
+                _this10.errors.push(_t6.message || 'Failed to update care data.');
               }
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Error!',
-                html: "<div class=\"text-left\">\n            <p>Failed to update care data.</p>\n            ".concat(_this1.errors.length > 0 ? "<ul class=\"mb-0 pl-3\"><li>".concat(_this1.errors.join('</li><li>'), "</li></ul>") : '', "\n          </div>"),
+                html: "<div class=\"text-left\">\n            <p>Failed to update care data.</p>\n            ".concat(_this10.errors.length > 0 ? "<ul class=\"mb-0 pl-3\"><li>".concat(_this10.errors.join('</li><li>'), "</li></ul>") : '', "\n          </div>"),
                 icon: 'error',
                 confirmButtonText: 'OK'
               });
             case 6:
               _context6.p = 6;
-              _this1.loading = false;
+              _this10.loading = false;
               return _context6.f(6);
             case 7:
               return _context6.a(2);
@@ -3899,15 +3905,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.showDeleteModal = true;
     },
     deleteCareData: function deleteCareData() {
-      var _this10 = this;
+      var _this11 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
         var id, _t7;
         return _regenerator().w(function (_context7) {
           while (1) switch (_context7.p = _context7.n) {
             case 0:
-              _this10.deleting = true;
+              _this11.deleting = true;
               _context7.p = 1;
-              id = _this10.$route.params.id;
+              id = _this11.$route.params.id;
               _context7.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/care-data/".concat(id));
             case 2:
@@ -3917,7 +3923,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 icon: 'success',
                 confirmButtonText: 'OK'
               }).then(function () {
-                _this10.$router.push('/care-data');
+                _this11.$router.push('/care-data');
               });
               _context7.n = 4;
               break;
@@ -3928,8 +3934,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete care data', 'error');
             case 4:
               _context7.p = 4;
-              _this10.deleting = false;
-              _this10.showDeleteModal = false;
+              _this11.deleting = false;
+              _this11.showDeleteModal = false;
               return _context7.f(4);
             case 5:
               return _context7.a(2);
@@ -31545,7 +31551,9 @@ var render = function render() {
     }
   }, [_vm._v("Covered by QuiviCare")]), _vm._v(" "), _c("td", {
     staticClass: "text-right font-weight-bold"
-  }, [_vm._v(_vm._s(_vm.formatCurrency(_vm.coveredPartsTotal)))]), _vm._v(" "), _c("td")])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, [_vm._v(_vm._s(_vm.formatCurrency(_vm.coveredPartsTotal)))]), _vm._v(" "), _c("td", {
+    staticClass: "text-center font-weight-bold"
+  }, [_vm._v(_vm._s(_vm.coveredPartsCount) + " Covered")])])])])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-4"
   }, [_vm._m(12), _vm._v(" "), _c("ul", {
     staticClass: "mb-0 pl-3"
