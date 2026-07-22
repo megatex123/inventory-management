@@ -2559,12 +2559,12 @@ INSERT INTO `suppliers` VALUES
 (4,'QV-SUPP-0004','Popov Leather','custom@popovleather.com','018-3341524','Canada','/backend/suppliers/1767057503.png','Popov Leather','2026-03-18 06:46:16','2026-03-17 22:46:16',NULL),
 (5,'QV-SUPP-0005','AEIOU Studio','enquiry@uylprinter.com','016-2632273','Malaysia','/backend/suppliers/1767057503.png','AEIOU Studio','2026-03-17 15:04:12','2026-03-17 05:31:30',NULL),
 (6,'QV-SUPP-0006','2S Packaging','info@2Spackaging.com','012-2223202','Malaysia','/backend/suppliers/1767057503.png','2S Packaging','2026-03-17 15:04:12','2026-03-04 15:31:31',NULL),
-(7,'QV-SUPP-0007','HookandLoop','traceyt@hookandloop.com',NULL,'USA','/backend/suppliers/1767057503.png','HookandLoop','2026-03-17 15:04:12','2026-02-11 18:47:06',NULL),
-(8,'QV-SUPP-0008','BoardGameGeek Store','contact@boardgamegeekstore.com',NULL,'USA','/backend/suppliers/1767057503.png','BoardGameGeek Store','2026-03-17 15:04:12','2026-02-11 18:47:06',NULL),
+(7,'QV-SUPP-0007','HookandLoop','traceyt@hookandloop.com','+1-800-940-6934','USA','/backend/suppliers/1767057503.png','HookandLoop','2026-07-21 13:55:14','2026-02-11 18:47:06',NULL),
+(8,'QV-SUPP-0008','BoardGameGeek Store','contact@boardgamegeekstore.com','+1-214-321-7737','USA','/backend/suppliers/1767057503.png','BoardGameGeek Store','2026-07-21 13:55:14','2026-02-11 18:47:06',NULL),
 (9,'QV-SUPP-0009','BS Gift','contact@bsgifts.com.my','017-8798548','Malaysia','/backend/suppliers/1767057503.png','BS Gift','2026-03-18 06:45:27','2026-03-17 22:45:27',NULL),
 (10,'QV-SUPP-0010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1767057503.png','Gift Market','2026-03-18 06:47:28','2026-03-17 22:47:28',NULL),
-(11,'QV-SUPP-0011','Digikey','orders@t.digikey.com',NULL,'USA','/backend/suppliers/1767057503.png','Digikey','2026-03-17 15:04:12','2026-02-11 18:49:25',NULL),
-(12,'QV-SUPP-0012','MDPC-X','contact@Cable-Sleeving.com',NULL,'Germany','/backend/suppliers/1767057503.png','MDPC-X','2026-03-17 15:04:12','2026-02-11 18:49:25',NULL);
+(11,'QV-SUPP-0011','Digikey','orders@t.digikey.com','+1-800-344-4539','USA','/backend/suppliers/1767057503.png','Digikey','2026-07-21 13:55:14','2026-02-11 18:49:25',NULL),
+(12,'QV-SUPP-0012','MDPC-X','contact@Cable-Sleeving.com','+49-176-97416364','Germany','/backend/suppliers/1767057503.png','MDPC-X','2026-07-21 13:55:14','2026-02-11 18:49:25',NULL);
 /*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2819,7 +2819,7 @@ CREATE TABLE `uat_meeting` (
   PRIMARY KEY (`id`),
   KEY `uat_meeting_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `uat_meeting_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2829,6 +2829,11 @@ CREATE TABLE `uat_meeting` (
 LOCK TABLES `uat_meeting` WRITE;
 /*!40000 ALTER TABLE `uat_meeting` DISABLE KEYS */;
 set autocommit=0;
+INSERT INTO `uat_meeting` VALUES
+(2,13,10000.00,2,2,1,'Customer confirmed monitor and peripheral bundle at UAT walkthrough','Customer approved final build spec, signed off on wood panel finish','wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-20 10:00:00','2026-07-20 10:00:00',NULL),
+(3,14,6000.00,2,2,NULL,NULL,'Customer reviewed cable colour sample, approved dual-colour sleeving','premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour - confirmed at UAT','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-20 11:30:00','2026-07-20 11:30:00',NULL),
+(4,15,6500.00,1,NULL,0,NULL,'Follow-up UAT for workstation reconfirmation, budget revised up',NULL,'quiet cooling preferred',NULL,1,3,1,0,0,0,1,0,0,NULL,'2026-08-05 14:00:00','kota damansara seksyen 7','2026-07-21 09:00:00','2026-07-21 09:00:00',NULL),
+(5,16,4500.00,2,1,0,NULL,'Initial UAT check-in, spec still being finalised',NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-22 15:00:00','2026-07-22 15:00:00',NULL);
 /*!40000 ALTER TABLE `uat_meeting` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2880,4 +2885,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-21  9:57:26
+-- Dump completed on 2026-07-22 17:21:35
