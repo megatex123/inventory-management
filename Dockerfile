@@ -46,10 +46,17 @@ RUN composer dump-autoload --optimize
 FROM php:7.4-apache AS production
 
 # Install system dependencies & PHP extensions in one layer
+# gd is required by Intervention\Image (SuppliersController/ProductsController
+# photo upload resize) — without it, uploading a supplier/product photo 500s
+# with "GD Library extension not available".
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     zip \
-    && docker-php-ext-install pdo_mysql zip \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql zip gd \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

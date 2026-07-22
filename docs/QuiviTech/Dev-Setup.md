@@ -10,13 +10,17 @@ Set up 2026-07-10. This machine's Claude Code session runs inside a **Flatpak-sa
 
 Host has `php74` (`/usr/bin/php74`, from a manually-built `php74-cli` package — not in any synced pacman repo, so no sibling extension packages to install) but it's missing **pdo_mysql, ctype, tokenizer, xml, fileinfo, bcmath, gd, zip** — only curl/iconv/json/mbstring/openssl/phar are compiled in. Fixing it needs root (sudo requires a password not available here) and possibly a source rebuild.
 
-The repo's own `Dockerfile` (`php:7.4-apache`, installs `pdo_mysql` + `zip`) already has what's needed and requires no host changes. **Use it for all composer/artisan work.**
+The repo's own `Dockerfile` (`php:7.4-apache`, installs `pdo_mysql`, `zip`, `gd`) already has what's needed and requires no host changes. **Use it for all composer/artisan work.**
+
+`gd` was added 2026-07-22 (previously missing — any supplier/product photo upload 500'd with "GD Library extension not available", since `SuppliersController`/`ProductsController` resize uploads via `Intervention\Image`). If your running container predates that change, `docker-php-ext-install gd` inside it live, or just rebuild.
 
 ## Build the image
 
+The Dockerfile is multi-stage (`frontend` → `composer` → `production`); there's no `web` target anymore (that was the old pre-2026-07-15 structure — don't use `--target web`, the build will fail with "target stage not found"). Build the default (last) stage:
+
 ```bash
 cd /home/penyahpepijat/claude/inventory-management
-docker build -t quivitech-im:local --target web .
+docker build -t quivitech-im:local .
 ```
 
 ## Database
@@ -69,6 +73,11 @@ docker run -d --name quivitech-im-dev --network host -v "$(pwd):/var/www/html" q
 chmod -R 777 storage bootstrap/cache
 ```
 A few files created by the container as `root` (e.g. `bootstrap/cache/services.php`, `storage/logs/laravel.log`) can't be chmod'd by a non-root host user afterwards — harmless, they're already world-readable (644/755), Laravel just can't write new log lines until the container recreates them with looser perms.
+
+**Same issue hits `public/backend/{suppliers,products}/`** (host-owned from the bind mount, `www-data` can't write) — any photo upload there 500s with `NotWritableException` even after `gd` is installed. Fix once the same way:
+```bash
+chmod -R 775 public/backend/suppliers public/backend/products && chgrp -R www-data public/backend/suppliers public/backend/products
+```
 
 Restart later: `docker start quivitech-im-dev`. Rebuild after a `Dockerfile`/`composer.json` change: re-run the `docker build` above (container needs recreating to pick up a new image — `docker rm -f quivitech-im-dev` then re-run `docker run -d ...`).
 
