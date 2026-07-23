@@ -59,7 +59,8 @@ This logic is duplicated in `OrderController::updateOrderDetails()` / `updateApp
 - `OrderController::updateApprove()` (`approve=1`) is the trigger point. On approval it:
   1. Locks in the tier IDs (including `craft_id`, QuiviCraft's own tier).
   2. Calls `updateserve()` → creates the `ServeData` row and matching tier sub-record — see [[QuiviServe]].
-  3. Calls `updatecare()` → if the order is a repair/Care job, creates the matching `CareData` row — see [[QuiviCare]].
+  3. Calls `updatecare()` → **unless `order.skip_quivicare` is set** (the "Customer doesn't want QuiviCare" switch on the POS checkout form, added 2026-07-20) → creates the matching `CareData` row — see [[QuiviCare]].
+- **`skip_quivicare` ripples into every total-calculation spot, not just approval.** No `CareData` ever exists for a skipped order, so `allorder.vue`/`order.vue` (list + Today's Orders, including their PDF/CSV export) and `order/view.vue`'s Payment Summary all explicitly zero out/hide the QuiviCare line when the flag is set — they don't just fall through to "no CareData found" handling, since that used to (incorrectly) fall back to the flat `care.fee` lookup rate instead of RM0. Fixed 2026-07-23 alongside a related crash: `OrderController::getorders()`/`today()` did `$order->care_data->first()->price` with no null guard, which throws for *any* approved order with no CareData — i.e. every skipped order — breaking `/api/orders` entirely for everyone until the first skip_quivicare order got approved. Now wrapped in `optional()`.
 - Quick-launch buttons on the order list (`allorder.vue`) resolve/create the relevant record on demand so staff don't need to search for a business code first:
   - QuiviServe: `ServeBek`/`ServeMps` via `GET /api/{serve-bek|serve-mps}/order/{orderId}` (find-or-create). PCE isn't part of this shortcut — it has its own richer create/edit flow.
   - QuiviCare: `CareData` via `GET /api/care-data/order/{orderId}` (`CareDataController@byOrder`).
