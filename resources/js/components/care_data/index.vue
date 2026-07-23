@@ -299,7 +299,7 @@
                 <th class="text-center align-top">Care Tier</th>
                 <th class="text-center align-top">Parts Value</th>
                 <th class="text-center align-top">Price</th>
-                <th class="text-center align-top">Membership</th>
+                <th class="text-center align-top">Update Membership?</th>
                 <th class="text-center align-top">Date</th>
                 <th class="text-center align-top">Actions</th>
               </tr>
@@ -384,13 +384,12 @@
                   </div>
                 </td>
                 <td class="text-center align-middle">
-                  <span v-if="care.membership_active" class="badge badge-success">
+                  <span v-if="care.update_membership" class="badge badge-success">
                     <i class="fas fa-check-circle mr-1"></i> Yes
                   </span>
                   <span v-else class="badge badge-secondary">
                     <i class="fas fa-times-circle mr-1"></i> No
                   </span>
-                  <div class="small text-muted mt-1">{{ care.membership_remaining }}</div>
                 </td>
                 <td class="text-center align-middle">
                   <div>

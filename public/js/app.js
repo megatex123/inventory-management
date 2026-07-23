@@ -32498,7 +32498,7 @@ var render = function render() {
       staticClass: "font-weight-bold text-success"
     }, [_vm._v("\n                  " + _vm._s(_vm.formatCurrency(care.price)) + "\n                ")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center align-middle"
-    }, [care.membership_active ? _c("span", {
+    }, [care.update_membership ? _c("span", {
       staticClass: "badge badge-success"
     }, [_c("i", {
       staticClass: "fas fa-check-circle mr-1"
@@ -32506,9 +32506,7 @@ var render = function render() {
       staticClass: "badge badge-secondary"
     }, [_c("i", {
       staticClass: "fas fa-times-circle mr-1"
-    }), _vm._v(" No\n                ")]), _vm._v(" "), _c("div", {
-      staticClass: "small text-muted mt-1"
-    }, [_vm._v(_vm._s(care.membership_remaining))])]), _vm._v(" "), _c("td", {
+    }), _vm._v(" No\n                ")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center align-middle"
     }, [_c("div", [_c("small", {
       staticClass: "badge badge-light"
@@ -32897,7 +32895,7 @@ var staticRenderFns = [function () {
     staticClass: "text-center align-top"
   }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
     staticClass: "text-center align-top"
-  }, [_vm._v("Membership")]), _vm._v(" "), _c("th", {
+  }, [_vm._v("Update Membership?")]), _vm._v(" "), _c("th", {
     staticClass: "text-center align-top"
   }, [_vm._v("Date")]), _vm._v(" "), _c("th", {
     staticClass: "text-center align-top"
