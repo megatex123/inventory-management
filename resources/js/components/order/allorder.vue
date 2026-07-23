@@ -176,7 +176,7 @@
                                                         formatNumber(
                                                             (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
                                                             (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
-                                                            (order && order.care_price ? Number(order.care_price) : 0)
+                                                            careFeeContribution(order)
                                                         )
                                                     }}</small><br>
                                                     <strong>
@@ -184,7 +184,7 @@
                                                                 (order && order.total ? Number(order.total) : 0) +
                                                                 (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
                                                                 (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
-                                                                (order && order.care_price ? Number(order.care_price) : 0)
+                                                                careFeeContribution(order)
                                                             ) }}
                                                     </strong>
                                                 </td>
@@ -756,6 +756,13 @@ export default {
             const careData = order.care_data && order.care_data[0];
             return !!(careData && careData.update_membership);
         },
+        // Customer opted out of QuiviCare at checkout (skip_quivicare) -- no
+        // CareData was/will be created for this order, so its charge must
+        // not appear in the Fees/Grand Total breakdown at all.
+        careFeeContribution(order) {
+            if (order && order.skip_quivicare) return 0;
+            return (order && order.care_price) ? Number(order.care_price) : 0;
+        },
         careMembershipRemaining(order) {
             const careData = order.care_data && order.care_data[0];
             return careData ? careData.membership_remaining : 'N/A';
@@ -870,7 +877,7 @@ export default {
                     return sum + (
                         (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
                         (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
-                        (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                        this.careFeeContribution(order)
                     );
                 }, 0);
                 const approvedOrders = dataToExport.filter(order => order.approve == 1).length;
@@ -1253,7 +1260,7 @@ export default {
                     const fees = (
                         (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) +
                         (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) +
-                        (order.care && order.care.fee ? Number(order.care.fee) : 0)
+                        this.careFeeContribution(order)
                     );
 
                     const status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' :

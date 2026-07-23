@@ -141,7 +141,7 @@
                                                         Number(data.craft && data.craft.fee ? data.craft.fee : 0) +
                                                         Number(data.total || 0) +
                                                         Number(data.serve && data.serve.fee ? data.serve.fee : 0) +
-                                                        getCareCharge(data)
+                                                        careFeeContribution(data)
                                                     ) }}</strong><br>
                                                     <small class="text-muted d-block">Total Pay:</small>
                                                     <strong class="text-success">RM{{ formatNumber(data.total) }}</strong>
@@ -339,16 +339,12 @@ export default {
                 maximumFractionDigits: 2
             });
         },
-        // The `care` relation is the flat tier lookup (care.fee is a fixed
-        // per-tier rate, e.g. COR3=1479) -- not what's actually charged.
-        // The real charge is CareData.price, calculated from eligible-parts
-        // total at approval (see OrderController::resolveCareTier). Using
-        // care.fee here overstated every order's total by that difference.
-        getCareCharge(data) {
-            if (data.care_data && data.care_data.length && data.care_data[0].price != null) {
-                return Number(data.care_data[0].price);
-            }
-            return Number(data.care && data.care.fee ? data.care.fee : 0);
+        // Customer opted out of QuiviCare at checkout (skip_quivicare) -- no
+        // CareData was/will be created for this order, so its charge must
+        // not appear in the Total Amount at all.
+        careFeeContribution(data) {
+            if (data && data.skip_quivicare) return 0;
+            return (data && data.care_price) ? Number(data.care_price) : 0;
         },
         formatDate(date) {
             // UTC-based, matching allorder.vue's formatDate — avoids re-interpreting

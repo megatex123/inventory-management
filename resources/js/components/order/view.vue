@@ -243,6 +243,7 @@
                                         <td colspan="5" class="text-center">-</td>
                                     </tr>
 
+                                    <template v-if="!order.skip_quivicare">
                                     <tr v-if="care">
                                         <td colspan="3" class="font-weight-bold">QuiviCare</td>
                                         <td class="text-left">{{ care.name }}</td>
@@ -265,6 +266,7 @@
                                         <td class="font-weight-bold">QuiviCare</td>
                                         <td colspan="5" class="text-center">-</td>
                                     </tr>
+                                    </template>
                                     <tr class="table-active" v-if="order.approve != 1">
                                         <td colspan="6" class="font-weight-bold text-uppercase">Grand Total Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
@@ -344,9 +346,9 @@ export default {
       const serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
           ? Number(this.order.serve_data[0].serve.fee)
           : 0;
-      const carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
+      const carePrice = this.order.skip_quivicare ? 0 : (this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
           ? Number(this.order.care_data[0].price)
-          : 0);
+          : 0));
 
       return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     },
@@ -366,7 +368,9 @@ export default {
         }
 
       let carePrice = 0;
-        if (this.care) {
+        if (this.order.skip_quivicare) {
+            carePrice = 0;
+        } else if (this.care) {
             carePrice = this.care && this.care.care_charge ? Number(this.care.care_charge) : 0;
         } else {
             carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price

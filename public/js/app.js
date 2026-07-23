@@ -16050,6 +16050,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var careData = order.care_data && order.care_data[0];
       return !!(careData && careData.update_membership);
     },
+    // Customer opted out of QuiviCare at checkout (skip_quivicare) -- no
+    // CareData was/will be created for this order, so its charge must
+    // not appear in the Fees/Grand Total breakdown at all.
+    careFeeContribution: function careFeeContribution(order) {
+      if (order && order.skip_quivicare) return 0;
+      return order && order.care_price ? Number(order.care_price) : 0;
+    },
     careMembershipRemaining: function careMembershipRemaining(order) {
       var careData = order.care_data && order.care_data[0];
       return careData ? careData.membership_remaining : 'N/A';
@@ -16146,7 +16153,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 return sum + (parseFloat(order.total) || 0);
               }, 0);
               totalFees = dataToExport.reduce(function (sum, order) {
-                return sum + ((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + (order.care && order.care.fee ? Number(order.care.fee) : 0));
+                return sum + ((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this9.careFeeContribution(order));
               }, 0);
               approvedOrders = dataToExport.filter(function (order) {
                 return order.approve == 1;
@@ -16307,7 +16314,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         var headers = ['No.', 'Order ID', 'Customer Name', 'Customer Email', 'Order Date', 'Total Amount (RM)', 'Fees (RM)', 'QuiviServe', 'QuiviCare', 'Status', 'Invoice ID', 'Time Remaining', 'Approved At', 'Created At'];
         var rows = dataToExport.map(function (order, index) {
           var _order$customer3, _order$customer4, _order$serve2, _order$care2;
-          var fees = (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + (order.care && order.care.fee ? Number(order.care.fee) : 0);
+          var fees = (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this1.careFeeContribution(order);
           var status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
           return [index + 1, order.order_id || '', ((_order$customer3 = order.customer) === null || _order$customer3 === void 0 ? void 0 : _order$customer3.full_name) || '', ((_order$customer4 = order.customer) === null || _order$customer4 === void 0 ? void 0 : _order$customer4.email) || '', _this1.formatDate(order.order_date), order.total || '0', fees.toFixed(2), ((_order$serve2 = order.serve) === null || _order$serve2 === void 0 ? void 0 : _order$serve2.name) || 'N/A', ((_order$care2 = order.care) === null || _order$care2 === void 0 ? void 0 : _order$care2.name) || 'N/A', status, order.invoice_id || '', order.time_remaining || 'N/A', order.approved_at ? _this1.formatDate(order.approved_at) : '', order.created_at ? _this1.formatDate(order.created_at) : ''].map(function (cell) {
             return "\"".concat(cell, "\"");
@@ -16912,16 +16919,12 @@ __webpack_require__.r(__webpack_exports__);
         maximumFractionDigits: 2
       });
     },
-    // The `care` relation is the flat tier lookup (care.fee is a fixed
-    // per-tier rate, e.g. COR3=1479) -- not what's actually charged.
-    // The real charge is CareData.price, calculated from eligible-parts
-    // total at approval (see OrderController::resolveCareTier). Using
-    // care.fee here overstated every order's total by that difference.
-    getCareCharge: function getCareCharge(data) {
-      if (data.care_data && data.care_data.length && data.care_data[0].price != null) {
-        return Number(data.care_data[0].price);
-      }
-      return Number(data.care && data.care.fee ? data.care.fee : 0);
+    // Customer opted out of QuiviCare at checkout (skip_quivicare) -- no
+    // CareData was/will be created for this order, so its charge must
+    // not appear in the Total Amount at all.
+    careFeeContribution: function careFeeContribution(data) {
+      if (data && data.skip_quivicare) return 0;
+      return data && data.care_price ? Number(data.care_price) : 0;
     },
     formatDate: function formatDate(date) {
       // UTC-based, matching allorder.vue's formatDate — avoids re-interpreting
@@ -17101,7 +17104,7 @@ __webpack_require__.r(__webpack_exports__);
       if (!this.order) return 0;
       var craftFee = this.order.craft && this.order.craft.fee ? Number(this.order.craft.fee) : 0;
       var serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee ? Number(this.order.serve_data[0].serve.fee) : 0;
-      var carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price ? Number(this.order.care_data[0].price) : 0);
+      var carePrice = this.order.skip_quivicare ? 0 : this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price ? Number(this.order.care_data[0].price) : 0);
       return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     },
     grandTotalAmount: function grandTotalAmount() {
@@ -17114,7 +17117,9 @@ __webpack_require__.r(__webpack_exports__);
         serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee ? Number(this.order.serve_data[0].serve.fee) : 0;
       }
       var carePrice = 0;
-      if (this.care) {
+      if (this.order.skip_quivicare) {
+        carePrice = 0;
+      } else if (this.care) {
         carePrice = this.care && this.care.care_charge ? Number(this.care.care_charge) : 0;
       } else {
         carePrice = this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price ? Number(this.order.care_data[0].price) : 0);
@@ -53248,7 +53253,7 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v("Total Part:")]), _c("br"), _vm._v(" "), _c("strong", [_vm._v("RM" + _vm._s(_vm.formatNumber(order.total || 0)))]), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
-    }, [_vm._v("Fees: RM" + _vm._s(_vm.formatNumber((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + (order && order.care_price ? Number(order.care_price) : 0))))]), _c("br"), _vm._v(" "), _c("strong", [_vm._v("\n                                                    Grand Total "), _c("br"), _vm._v(" RM " + _vm._s(_vm.formatNumber((order && order.total ? Number(order.total) : 0) + (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + (order && order.care_price ? Number(order.care_price) : 0))) + "\n                                                ")])]), _vm._v(" "), _c("td", [_vm._v("\n                                                " + _vm._s(_vm.formatDate(order.order_date)) + "\n                                            ")]), _vm._v(" "), _c("td", [order.serve ? _c("span", {
+    }, [_vm._v("Fees: RM" + _vm._s(_vm.formatNumber((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _vm.careFeeContribution(order))))]), _c("br"), _vm._v(" "), _c("strong", [_vm._v("\n                                                    Grand Total "), _c("br"), _vm._v(" RM " + _vm._s(_vm.formatNumber((order && order.total ? Number(order.total) : 0) + (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _vm.careFeeContribution(order))) + "\n                                                ")])]), _vm._v(" "), _c("td", [_vm._v("\n                                                " + _vm._s(_vm.formatDate(order.order_date)) + "\n                                            ")]), _vm._v(" "), _c("td", [order.serve ? _c("span", {
       staticClass: "badge serve-badge",
       "class": {
         "serve-badge-clickable": _vm.canOpenServeRecord(order)
@@ -54091,7 +54096,7 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(data.customer && data.customer.email ? data.customer.email : ""))])]), _vm._v(" "), _c("td", [_c("small", {
       staticClass: "text-muted d-block"
-    }, [_vm._v("Total Amount:")]), _vm._v(" "), _c("strong", [_vm._v("RM" + _vm._s(_vm.formatNumber(Number(data.craft && data.craft.fee ? data.craft.fee : 0) + Number(data.total || 0) + Number(data.serve && data.serve.fee ? data.serve.fee : 0) + _vm.getCareCharge(data))))]), _c("br"), _vm._v(" "), _c("small", {
+    }, [_vm._v("Total Amount:")]), _vm._v(" "), _c("strong", [_vm._v("RM" + _vm._s(_vm.formatNumber(Number(data.craft && data.craft.fee ? data.craft.fee : 0) + Number(data.total || 0) + Number(data.serve && data.serve.fee ? data.serve.fee : 0) + _vm.careFeeContribution(data))))]), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted d-block"
     }, [_vm._v("Total Pay:")]), _vm._v(" "), _c("strong", {
       staticClass: "text-success"
@@ -54514,7 +54519,7 @@ var render = function render() {
     attrs: {
       colspan: "5"
     }
-  }, [_vm._v("-")])]), _vm._v(" "), _vm.care ? _c("tr", [_c("td", {
+  }, [_vm._v("-")])]), _vm._v(" "), !_vm.order.skip_quivicare ? [_vm.care ? _c("tr", [_c("td", {
     staticClass: "font-weight-bold",
     attrs: {
       colspan: "3"
@@ -54544,7 +54549,7 @@ var render = function render() {
     attrs: {
       colspan: "5"
     }
-  }, [_vm._v("-")])]), _vm._v(" "), _vm.order.approve != 1 ? _c("tr", {
+  }, [_vm._v("-")])])] : _vm._e(), _vm._v(" "), _vm.order.approve != 1 ? _c("tr", {
     staticClass: "table-active"
   }, [_c("td", {
     staticClass: "font-weight-bold text-uppercase",
@@ -54562,7 +54567,7 @@ var render = function render() {
     }
   }, [_vm._v("Grand Total Amount")]), _vm._v(" "), _c("td", {
     staticClass: "text-right font-weight-bold text-primary"
-  }, [_vm._v("\n                                    RM " + _vm._s(_vm.formatNumber(_vm.totalPayAmount)) + "\n                                    ")])])])])])])])]) : _vm._e(), _vm._v(" "), _vm.order ? _c("div", {
+  }, [_vm._v("\n                                    RM " + _vm._s(_vm.formatNumber(_vm.totalPayAmount)) + "\n                                    ")])])], 2)])])])])]) : _vm._e(), _vm._v(" "), _vm.order ? _c("div", {
     staticClass: "row pt-4"
   }, [_vm._m(3)]) : _vm._e()])])])])])])]);
 };

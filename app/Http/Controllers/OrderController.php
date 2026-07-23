@@ -102,7 +102,9 @@ class OrderController extends Controller
                     $approvedAt = Carbon::parse($order->approved_at);
                     $expiryDate = $approvedAt->copy()->addMonths(6);
 
-                    $order->care_price = $order->care_data->first()->price;
+                    // No CareData exists when the customer opted out
+                    // (skip_quivicare) at checkout -- guard against the null.
+                    $order->care_price = optional($order->care_data->first())->price;
                     // dd($order->price);
 
                     if ($today->gt($expiryDate)) {
@@ -156,7 +158,9 @@ class OrderController extends Controller
                     $approvedAt = Carbon::parse($order->approved_at);
                     $expiryDate = $approvedAt->copy()->addMonths(6);
 
-                    $order->care_price = $order->care_data->first()->price;
+                    // No CareData exists when the customer opted out
+                    // (skip_quivicare) at checkout -- guard against the null.
+                    $order->care_price = optional($order->care_data->first())->price;
 
                     if ($today->gt($expiryDate)) {
                         $order->time_remaining = "Expired";
