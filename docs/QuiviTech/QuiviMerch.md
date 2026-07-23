@@ -12,9 +12,11 @@ Confirmed from the source data: **`I_` = Inventory** (general/shared stock pool)
 
 ## Models
 
-- **`MerchItem`** — the sellable catalog: `item_code`, `sku_code` (→ `MasterSku`, string match not FK), `retail_price`, `member_discount_price` (nullable — not every item has one), `is_exclusive` (drives which inventory pool it's expected to draw from).
-- **`InvMerch`** / **`InvExclMerch`** — general vs. exclusive stock pools, same column shape as `inv_excl_serve` minus the tier FK (merch isn't tied to a specific `ServeData` row the way `inv_excl_serve` is).
-- **`MerchOrder`** + **`MerchOrderItem`** — header/line-item purchase record: `customer_id` required, `order_id` nullable (a merch purchase can be bundled with a build or stand alone, per `Deposit.csv`'s example bundling a `QVMOP` line into the same deposit as `QVCR`/`QVSE`/`QVCA`).
+- **`MerchItem`** — the sellable catalog: `item_code` (`MI-QVMR-XXXX`), `sku_code` (→ `MasterSku`, string match not FK), `name`, `retail_price`, `member_discount_price` (nullable — not every item has one), `is_exclusive` (drives which inventory pool it's expected to draw from — a Bootstrap switch in the create/edit UI, not a checkbox), `status`.
+- **`InvMerch`** (`I-QVMR-XXXX`) / **`InvExclMerch`** (`IE-QVMR-XXXX`) — general vs. exclusive stock pools, same column shape as `inv_excl_serve` minus the tier FK (merch isn't tied to a specific `ServeData` row the way `inv_excl_serve` is).
+- **`MerchOrder`** (`QVMOP-XXXX`) + **`MerchOrderItem`** — header/line-item purchase record: `customer_id` required, `order_id` nullable (a merch purchase can be bundled with a build or stand alone, per `Deposit.csv`'s example bundling a `QVMOP` line into the same deposit as `QVCR`/`QVSE`/`QVCA`).
+
+All four business codes are `Model::count() + 1`, zero-padded to 4 digits — see [[API-Routes]] for the full pattern shared across QuiviMerch/Plus/Thread.
 
 ## Pricing
 

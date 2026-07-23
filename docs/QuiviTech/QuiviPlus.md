@@ -8,8 +8,10 @@ Paid add-on services (fan installation, upgrades, onsite troubleshooting, cable 
 
 ## Models
 
-- **`PlusService`** — the service catalog: `service_code`, `name`, `category` (fixed set: `installation`/`upgrade`/`onsite`/`cable_mgmt`/`cleaning`/`thermal_paste`/`combo`/`distance_fee`), flat `price`, `is_active`.
-- **`PlusOrder`** + **`PlusOrderItem`** — a booking/job: `customer_id` required, `order_id` nullable, `status` (`pending`/`scheduled`/`completed`), `scheduled_at`/`completed_at`, `notes`. One order can bundle multiple services — matches `Copy_of_Invoice.csv`'s real example (`QVPL 0009` appearing twice for two separate fan installs on the same invoice).
+- **`PlusService`** — the service catalog: `service_code` (`PS-QVPL-XXXX`), `name`, `category` (fixed set: `installation`/`upgrade`/`onsite`/`cable_mgmt`/`cleaning`/`thermal_paste`/`combo`/`distance_fee` — `PlusServiceController::CATEGORIES`), flat `price`, `is_active` (a Bootstrap switch in the create/edit UI, not a checkbox — see [[Frontend-Components]]).
+- **`PlusOrder`** (`plus_order_id` = `QVPL-XXXX`) + **`PlusOrderItem`** — a booking/job: `customer_id` required, `order_id` nullable, `status` (`pending`/`scheduled`/`completed`), `scheduled_at`/`completed_at`, `notes`. One order can bundle multiple services — matches `Copy_of_Invoice.csv`'s real example (`QVPL 0009` appearing twice for two separate fan installs on the same invoice).
+
+Both business codes are `Model::count() + 1`, zero-padded to 4 digits — see [[API-Routes]] for the full pattern shared across QuiviMerch/Plus/Thread.
 
 ## Pricing
 

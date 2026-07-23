@@ -10,8 +10,10 @@ Custom PSU-sleeved-cable configurator — the only one of the three new 2026-07-
 
 - **`ThreadBomHeader`** — one row per `(psu_brand, cable_type)`: `psu_brand` is a plain string (Asus/Corsair/SeaSonic), deliberately **not** a FK to the `brand` table — that table is scoped to PC-component brands, a different concern from PSU-cable-compatibility brands. `cable_type` is one of `24pin`/`8eps`/`8pcie`/`12v2x6pcie`.
 - **`ThreadBomLine`** — the components under a header: `sku_code` (→ `MasterSku`), `qty_per_cable`, `unit_cost`.
-- **`InvThread`** — connector/sleeve/terminal stock pool, same shape as `InvMerch`/`InvCare` (no exclusive split — the source CSVs only have one `I_QVTD` pool).
-- **`ThreadOrder`** + **`ThreadOrderItem`** — the customer order: `status` follows the Overview spec's workflow (`pending → cutting → sleeving → qc → complete`), `warranty_ends_at` is set to `completed_at + 90 days` when status hits `complete` (matches the spec's 90-day QuiviThread warranty). Each item snapshots `resolved_components` as JSON at order time — same pattern as `CraftInspectionItem.fields` — so a later edit to `ThreadBomLine` doesn't retroactively change historical orders' cost basis.
+- **`InvThread`** (`I-QVTD-XXXX`) — connector/sleeve/terminal stock pool, same shape as `InvMerch`/`InvCare` (no exclusive split — the source CSVs only have one `I_QVTD` pool).
+- **`ThreadOrder`** (`QVTD-XXXX`) + **`ThreadOrderItem`** — the customer order: `status` follows the Overview spec's workflow (`pending → cutting → sleeving → qc → complete`), `warranty_ends_at` is set to `completed_at + 90 days` when status hits `complete` (matches the spec's 90-day QuiviThread warranty). Each item snapshots `resolved_components` as JSON at order time — same pattern as `CraftInspectionItem.fields` — so a later edit to `ThreadBomLine` doesn't retroactively change historical orders' cost basis.
+
+Business codes (`InvThread`, `ThreadOrder`) are `Model::count() + 1`, zero-padded to 4 digits — see [[API-Routes]] for the full pattern shared across QuiviMerch/Plus/Thread. `ThreadBomHeader`/`ThreadBomLine` have no business code of their own — they're only ever addressed by numeric `id` or by their `(psu_brand, cable_type, colour_variant)` combination via the resolve endpoint below.
 
 ## BOM resolution
 

@@ -11,7 +11,7 @@ The spare-parts/stock-tracking side of the app — a separate catalog and ledger
 - **`MasterSku`** — the inventory/spare-parts SKU catalog (not customer-facing sellable products — that's `Products`, see [[Product-Catalog]]). This is what `InvMove`, `InvCare`, and `InvExclServe` all key off.
 - **`InvMove`** — a general ledger of stock movement (in/out, by `master_sku_id` + `destination_id`), optionally linked to an `order_id`. Not auto-populated by the order/approval flow — entered separately (supplier receipts, physical stock counts, or a CSV import).
 - **`Destination`** — simple lookup codes (e.g. `IE_QVSE`, `I_QVTD`, `I_QVMR`, `IE_QVMR`) rather than physical locations.
-- **`InvCare`** (spare/RMA parts) and **`InvExclServe`** (service-exclusive consumables) — narrower, purpose-specific stock pools consumed by [[QuiviCare]] and [[QuiviServe]] respectively. Both key off `master_sku.sku_code`, but **neither is drawn from or reconciled against `InvMove`** — they're independent stock counters, not derived from the general ledger.
+- **`InvCare`** (spare/RMA parts) and **`InvExclServe`** (service-exclusive consumables) — narrower, purpose-specific stock pools consumed by [[QuiviCare]] and [[QuiviServe]] respectively. **`InvMerch`/`InvExclMerch`** ([[QuiviMerch]]) and **`InvThread`** ([[QuiviThread]]) follow the exact same pattern, added 2026-07-15. All five key off `master_sku.sku_code`, but **none are drawn from or reconciled against `InvMove`** — each is an independent stock counter, not derived from the general ledger, and none auto-decrement when an order/claim consumes stock — every one is only ever adjusted via its own CRUD `update()`.
 
 ## Schema history
 

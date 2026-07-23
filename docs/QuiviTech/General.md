@@ -21,11 +21,12 @@ Map of content for the Quivitech project notes. Open this folder (`docs/QuiviTec
 One note per connected module in [[Workflow]], in flow order:
 - [[Product-Catalog]] — sellable products, categories, brands, suppliers
 - [[Customer-Onboarding]] — customer registration, pre-order meetings
-- [[QuiviCraft]] — the `Order` itself: POS/cart, checkout, tier assignment, approval, pre-build QC
+- [[UAT-Meeting]] — second consultation-log table, a deliberate schema clone of Customer-Onboarding's Requirement Meeting (2026-07-20)
+- [[QuiviCraft]] — the `Order` itself: POS/cart, checkout, tier assignment, approval, build QC (3 phases as of 2026-07-20)
 - [[QuiviServe]] — post-build service perks (BEK/MPS/PCE)
 - [[QuiviCare]] — repair/RMA and warranty program
 - [[Customer-Progress]] — staff status updates
-- [[Product-Warranty]] — standalone per-serial warranty registry
+- [[Product-Warranty]] — per-serial warranty registry; standalone CRUD page removed 2026-07-20, backend retained as a QuiviCare dependency
 - [[Inventory-Movement]] — spare-parts catalog and stock ledger
 - [[QuiviMerch]] — merch store (2026-07-15)
 - [[QuiviPlus]] — paid add-on services (2026-07-15)
@@ -40,4 +41,4 @@ One note per connected module in [[Workflow]], in flow order:
 - Deploys as a Docker image to Kubernetes (see [[Deployment]]); locally, run via the same `Dockerfile` — see [[Dev-Setup]]
 
 ## Maintenance
-Refreshed 2026-07-10 (previous snapshot: 2026-07-02). Re-run a study pass when the schema or module list drifts — check git log and `app/Models` / `resources/js/components` diffs first. Also see the [[../../CLAUDE.md|project CLAUDE.md]] "Standing Orders" section for the update-as-you-go policy.
+Refreshed 2026-07-23 (previous snapshots: 2026-07-10, 2026-07-02). Re-run a study pass when the schema or module list drifts — check git log and `app/Models` / `resources/js/components` diffs first. Also see the [[../../CLAUDE.md|project CLAUDE.md]] "Standing Orders" section for the update-as-you-go policy.

@@ -25,7 +25,7 @@ Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`up
 - `ExtraController@vats`
 
 ## Meetings
-`MeetingController` (index/show/store/update/destroy), `MeetingDetailsController` (same pattern).
+`MeetingController` (index/show/store/update/destroy) generates `meeting_id` as `QV-MEET-XXXX`. `MeetingDetailsController` (prefix `meeting-details`) and `UatMeetingController` (prefix `uat-meeting`, added 2026-07-20) are **identical CRUD shapes over identical schemas** — index/store/show/update/destroy, `meeting_id` FK to `meetings`, no business-code generation of their own (both just use the DB auto-increment `id`). See [[Customer-Onboarding]] for why there are two of these.
 
 ## Serve/Care data — richer REST pattern (search, statistics, export, restore)
 - `prefix: serve-data` → `ServeDataController`: index, store, statistics, search, byCustomer, byOrder, exportToCSV, plus `{id}` show/update/destroy/restore
@@ -53,6 +53,20 @@ Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`up
 - `prefix: inventory-movements` → `InventoryMovementController`: `index`, `store`, `statistics`, then `{id}` sub-group: `show`, `update` (PUT/PATCH), `destroy`
 - `store`/`update` accept `sku_code`/`destination` as plain strings, not IDs — the controller resolves or auto-creates the matching `MasterSku`/`Destination` row (`findOrCreateMasterSku`/`findOrCreateDestination`)
 - `prefix: destinations` → `DestinationController`: `index`, `store`, `update`, `destroy` — no dedicated UI page, only consumed by the movement form's datalist and by the auto-create path above
+
+## QuiviMerch / QuiviPlus / QuiviThread (built 2026-07-15, see [[QuiviMerch]] / [[QuiviPlus]] / [[QuiviThread]])
+All nine controllers below share one identical shape: `index`/`store`/`statistics`/`search` at the prefix root, then `{id}` sub-group `show`/`edit`/`update` (PUT+PATCH)/`destroy` — statics registered before the `{id}` wildcard group in every case (the `serve-mps` unreachable-`/search` bug is not repeated here).
+- `prefix: merch-items` → `MerchItemController` (`item_code` = `MI-QVMR-XXXX`)
+- `prefix: inv-merch` → `InvMerchController` (`inv_merch_id` = `I-QVMR-XXXX`)
+- `prefix: inv-excl-merch` → `InvExclMerchController` (`inv_excl_merch_id` = `IE-QVMR-XXXX`)
+- `prefix: merch-orders` → `MerchOrderController` (`merch_order_id` = `QVMOP-XXXX`)
+- `prefix: plus-services` → `PlusServiceController` (`service_code` = `PS-QVPL-XXXX`)
+- `prefix: plus-orders` → `PlusOrderController` (`plus_order_id` = `QVPL-XXXX`)
+- `prefix: thread-bom` → `ThreadBomController` — same CRUD shape **plus** `GET /thread-bom/resolve` (also registered before `{id}`), the BOM-resolution endpoint described in [[QuiviThread]]
+- `prefix: inv-thread` → `InvThreadController` (`inv_thread_id` = `I-QVTD-XXXX`)
+- `prefix: thread-orders` → `ThreadOrderController` (`thread_order_id` = `QVTD-XXXX`)
+
+All business codes above are generated the same way: `Model::count() + 1`, zero-padded to 4 digits, checked for uniqueness in a loop — not a DB sequence. All nine models use `SoftDeletes`, so `Model::count()` (unscoped, excludes soft-deleted rows by default) stays consistent with what's actually visible; a code only risks reuse if a row is force-deleted.
 
 ## Diagnostics
 - `GET /test-connection` — health check, returns timestamp/version
