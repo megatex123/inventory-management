@@ -16912,6 +16912,17 @@ __webpack_require__.r(__webpack_exports__);
         maximumFractionDigits: 2
       });
     },
+    // The `care` relation is the flat tier lookup (care.fee is a fixed
+    // per-tier rate, e.g. COR3=1479) -- not what's actually charged.
+    // The real charge is CareData.price, calculated from eligible-parts
+    // total at approval (see OrderController::resolveCareTier). Using
+    // care.fee here overstated every order's total by that difference.
+    getCareCharge: function getCareCharge(data) {
+      if (data.care_data && data.care_data.length && data.care_data[0].price != null) {
+        return Number(data.care_data[0].price);
+      }
+      return Number(data.care && data.care.fee ? data.care.fee : 0);
+    },
     formatDate: function formatDate(date) {
       // UTC-based, matching allorder.vue's formatDate — avoids re-interpreting
       // the server's naive datetime string in the browser's local timezone.
@@ -54080,7 +54091,7 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(data.customer && data.customer.email ? data.customer.email : ""))])]), _vm._v(" "), _c("td", [_c("small", {
       staticClass: "text-muted d-block"
-    }, [_vm._v("Total Amount:")]), _vm._v(" "), _c("strong", [_vm._v("RM" + _vm._s(_vm.formatNumber(Number(data.craft && data.craft.fee ? data.craft.fee : 0) + Number(data.total || 0) + Number(data.serve && data.serve.fee ? data.serve.fee : 0) + Number(data.care && data.care.fee ? data.care.fee : 0))))]), _c("br"), _vm._v(" "), _c("small", {
+    }, [_vm._v("Total Amount:")]), _vm._v(" "), _c("strong", [_vm._v("RM" + _vm._s(_vm.formatNumber(Number(data.craft && data.craft.fee ? data.craft.fee : 0) + Number(data.total || 0) + Number(data.serve && data.serve.fee ? data.serve.fee : 0) + _vm.getCareCharge(data))))]), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted d-block"
     }, [_vm._v("Total Pay:")]), _vm._v(" "), _c("strong", {
       staticClass: "text-success"
