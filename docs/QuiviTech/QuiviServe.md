@@ -54,6 +54,8 @@ Every perk column follows the same pattern: a boolean "eligible/active" flag (mo
 
 Created by `OrderController::updateserve()` on approval — see [[QuiviCraft]]. Order-list quick-launch buttons (`allorder.vue`) find-or-create the `ServeBek`/`ServeMps` record via `GET /api/{serve-bek|serve-mps}/order/{orderId}`; PCE has its own richer create/edit flow instead.
 
+**`ServeData.start_serve_date`** (with its `start_serve_enabled` toggle — the "Start QuiviServe?" switch on the `serve_data` create/edit form) is the actual "QuiviServe started on" date. It is *not* the same field as each tier sub-record's own `date_start` (`ServeMps`/`ServeBek`/`ServePce`), which is a separately-entered date used for that tier's own perk-window math (e.g. `ServeMps`'s claim-eligibility windows). For MPS, `date_start` is now connected to it (fixed 2026-07-24): `ServeMpsController::getByOrder()` seeds `date_start` from `serve_data.start_serve_date` at quick-launch creation time, and `serve_mps/create.vue`/`edit.vue` backfill `form.date_start` from the selected `ServeData`'s start date (never overwriting an already-set value) — it stays a plain editable field afterward, not a live-synced one. `ServeBek`/`ServePce` still have the same disconnect and haven't been fixed the same way.
+
 `ServeData`/`ServeBek` also feed [[Inventory-Movement]]'s `InvExclServe` (service-exclusive consumable stock) — a separate, narrower stock pool not reconciled against the general `InvMove` ledger.
 
 ## Related

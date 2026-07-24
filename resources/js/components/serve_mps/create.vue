@@ -166,6 +166,12 @@
                 <div v-if="errors.date_start" class="invalid-feedback">
                   {{ errors.date_start[0] }}
                 </div>
+                <small v-if="selectedServeData && selectedServeData.start_serve_enabled" class="form-text text-muted">
+                  Prefilled from QuiviServe's start date ({{ selectedServeData.start_serve_date.slice(0, 10) }}) — adjust if needed.
+                </small>
+                <small v-else-if="selectedServeData" class="form-text text-warning">
+                  QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.
+                </small>
               </div>
             </div>
           </div>
@@ -636,6 +642,11 @@ export default {
       this.selectedCustomer = item.customer || null
       this.showDropdown = false
       this.qvseValidationError = ''
+
+      // Connect to the QuiviServe start date rather than leaving it blank/manual.
+      if (item.start_serve_enabled && item.start_serve_date) {
+        this.form.date_start = item.start_serve_date.slice(0, 10)
+      }
     },
 
     onSearchBlur() {

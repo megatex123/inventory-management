@@ -347,6 +347,10 @@ class ServeMpsController extends Controller
                 $serveMps = ServeMps::create([
                     'serve_mps_id' => "{$serveTypeCode}-{$serveMpsNumber}",
                     'serve_data_id' => $serveData->id,
+                    // Connect to QuiviServe's own start date rather than leaving it blank.
+                    'date_start' => $serveData->start_serve_enabled && $serveData->start_serve_date
+                        ? $serveData->start_serve_date->format('Y-m-d')
+                        : null,
                 ]);
             }
 

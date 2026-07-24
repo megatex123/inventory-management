@@ -17,26 +17,27 @@
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th>Photo</th>
-                                                    <th>Code</th>
-                                                    <th>Product Type</th>
                                                     <th>Name</th>
+                                                    <th>Code</th>
+                                                    <th>Category</th>
                                                     <th>Price (RM)</th>
-                                                    <!-- <th>Available</th>
-                                                    <th>Available Local</th>
-                                                    <th>Buying Date</th> -->
+                                                    <th>Status</th>
+                                                    <th>Product Quantity</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for='data in filterSearch' :key="data.id" >
                                                     <td><img :src="data.image" class="img-fluid" width='40px' height='40px' /></td>
+                                                    <td>{{data.product_name}}</td>
                                                     <td>{{data.product_code}}</td>
                                                     <td>{{data.cat_name}}</td>
-                                                    <td>{{data.product_name}}</td>
                                                     <td>{{data.price}}</td>
-                                                    <!-- <td>{{data.available}}</td>
-                                                    <td>{{data.available_local}}</td>
-                                                    <td>{{data.buying_date}}</td> -->
+                                                    <td>
+                                                        <span v-if='data.product_qty>=1' class="badge badge-pill badge-success">Stock Available</span>
+                                                        <span v-else='' class="badge badge-pill badge-danger">Stock Out</span>
+                                                    </td>
+                                                    <td>{{data.product_qty}}</td>
                                                     <td>
                                                         <router-link :to="{name:'Productedit', params:{id:data.id}}" class="btn btn-sm   btn-primary">Edit </router-link>
                                                         <a href='javascript:void(0)' @click='deletePro(data.id)' class="btn btn-sm   btn-danger">Delete </a>

@@ -173,6 +173,12 @@
                 <div v-if="errors.date_start" class="invalid-feedback">
                   {{ errors.date_start[0] }}
                 </div>
+                <small v-if="selectedServeData && selectedServeData.start_serve_enabled" class="form-text text-muted">
+                  QuiviServe's start date is {{ selectedServeData.start_serve_date.slice(0, 10) }}.
+                </small>
+                <small v-else-if="selectedServeData" class="form-text text-warning">
+                  QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.
+                </small>
               </div>
             </div>
           </div>
@@ -866,6 +872,13 @@ export default {
             this.selectedServeData = foundItem
           }
         }
+
+        // Records created via the order's quick-launch button never got a
+        // date_start set -- backfill from QuiviServe's start date once we know it.
+        if (!this.form.date_start && this.selectedServeData &&
+            this.selectedServeData.start_serve_enabled && this.selectedServeData.start_serve_date) {
+          this.form.date_start = this.selectedServeData.start_serve_date.slice(0, 10)
+        }
       } catch (error) {
         console.error('Error fetching customer data:', error)
         // Fallback: try to find in already loaded data
@@ -913,6 +926,12 @@ export default {
       this.selectedCustomer = item.customer || null
       this.showDropdown = false
       this.qvseValidationError = ''
+
+      // Only backfill from QuiviServe's start date -- don't clobber a date the
+      // record already has (e.g. re-picking the same QuiviServe entry while editing).
+      if (!this.form.date_start && item.start_serve_enabled && item.start_serve_date) {
+        this.form.date_start = item.start_serve_date.slice(0, 10)
+      }
     },
 
     onSearchBlur() {

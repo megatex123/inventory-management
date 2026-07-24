@@ -22766,6 +22766,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.selectedCustomer = item.customer || null;
       this.showDropdown = false;
       this.qvseValidationError = '';
+
+      // Connect to the QuiviServe start date rather than leaving it blank/manual.
+      if (item.start_serve_enabled && item.start_serve_date) {
+        this.form.date_start = item.start_serve_date.slice(0, 10);
+      }
     },
     onSearchBlur: function onSearchBlur() {
       var _this3 = this;
@@ -23190,6 +23195,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   _this4.selectedServeData = foundItem;
                 }
               }
+
+              // Records created via the order's quick-launch button never got a
+              // date_start set -- backfill from QuiviServe's start date once we know it.
+              if (!_this4.form.date_start && _this4.selectedServeData && _this4.selectedServeData.start_serve_enabled && _this4.selectedServeData.start_serve_date) {
+                _this4.form.date_start = _this4.selectedServeData.start_serve_date.slice(0, 10);
+              }
               _context3.n = 3;
               break;
             case 2:
@@ -23242,6 +23253,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.selectedCustomer = item.customer || null;
       this.showDropdown = false;
       this.qvseValidationError = '';
+
+      // Only backfill from QuiviServe's start date -- don't clobber a date the
+      // record already has (e.g. re-picking the same QuiviServe entry while editing).
+      if (!this.form.date_start && item.start_serve_enabled && item.start_serve_date) {
+        this.form.date_start = item.start_serve_date.slice(0, 10);
+      }
     },
     onSearchBlur: function onSearchBlur() {
       var _this6 = this;
@@ -57643,7 +57660,11 @@ var render = function render() {
         width: "40px",
         height: "40px"
       }
-    })]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_code))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.cat_name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.price))]), _vm._v(" "), _c("td", [_c("router-link", {
+    })]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_code))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.cat_name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.price))]), _vm._v(" "), _c("td", [data.product_qty >= 1 ? _c("span", {
+      staticClass: "badge badge-pill badge-success"
+    }, [_vm._v("Stock Available")]) : _c("span", {
+      staticClass: "badge badge-pill badge-danger"
+    }, [_vm._v("Stock Out")])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_qty))]), _vm._v(" "), _c("td", [_c("router-link", {
       staticClass: "btn btn-sm btn-primary",
       attrs: {
         to: {
@@ -57676,7 +57697,7 @@ var staticRenderFns = [function () {
     _c = _vm._self._c;
   return _c("thead", {
     staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Photo")]), _vm._v(" "), _c("th", [_vm._v("Code")]), _vm._v(" "), _c("th", [_vm._v("Product Type")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Price (RM)")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
+  }, [_c("tr", [_c("th", [_vm._v("Photo")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Code")]), _vm._v(" "), _c("th", [_vm._v("Category")]), _vm._v(" "), _c("th", [_vm._v("Price (RM)")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Product Quantity")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
 }];
 render._withStripped = true;
 
@@ -62922,7 +62943,11 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.errors.date_start ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                " + _vm._s(_vm.errors.date_start[0]) + "\n              ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                " + _vm._s(_vm.errors.date_start[0]) + "\n              ")]) : _vm._e(), _vm._v(" "), _vm.selectedServeData && _vm.selectedServeData.start_serve_enabled ? _c("small", {
+    staticClass: "form-text text-muted"
+  }, [_vm._v("\n                Prefilled from QuiviServe's start date (" + _vm._s(_vm.selectedServeData.start_serve_date.slice(0, 10)) + ") — adjust if needed.\n              ")]) : _vm.selectedServeData ? _c("small", {
+    staticClass: "form-text text-warning"
+  }, [_vm._v("\n                QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.\n              ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
   }, [_vm._m(5), _vm._v(" "), _c("div", {
     staticClass: "card-body"
@@ -64029,7 +64054,11 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.errors.date_start ? _c("div", {
     staticClass: "invalid-feedback"
-  }, [_vm._v("\n                " + _vm._s(_vm.errors.date_start[0]) + "\n              ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                " + _vm._s(_vm.errors.date_start[0]) + "\n              ")]) : _vm._e(), _vm._v(" "), _vm.selectedServeData && _vm.selectedServeData.start_serve_enabled ? _c("small", {
+    staticClass: "form-text text-muted"
+  }, [_vm._v("\n                QuiviServe's start date is " + _vm._s(_vm.selectedServeData.start_serve_date.slice(0, 10)) + ".\n              ")]) : _vm.selectedServeData ? _c("small", {
+    staticClass: "form-text text-warning"
+  }, [_vm._v("\n                QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.\n              ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
   }, [_vm._m(4), _vm._v(" "), _c("div", {
     staticClass: "card-body"
