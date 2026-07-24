@@ -38518,7 +38518,14 @@ var render = function render() {
       "class": _vm.getStatusClass(customer)
     }, [_c("i", {
       staticClass: "fa fa-clock mr-1"
-    }), _vm._v("\n                                          " + _vm._s(customer.time_remaining) + "\n                                      ")])]) : _vm._e()]) : _vm._e()], 2), _vm._v(" "), _c("td", [_c("div", {
+    }), _vm._v("\n                                          " + _vm._s(customer.time_remaining) + "\n                                      ")])]) : _vm._e()]) : _vm._e()], 2), _vm._v(" "), _c("td", [customer.care_membership_tier ? _c("span", {
+      staticClass: "badge",
+      "class": customer.care_membership_active ? "badge-success" : "badge-danger"
+    }, [_vm._v("\n                                  " + _vm._s(customer.care_membership_tier) + " · " + _vm._s(customer.care_membership_active ? "Active" : "Expired") + "\n                              ")]) : _c("span", {
+      staticClass: "badge badge-secondary"
+    }, [_vm._v("No QuiviCare")]), _vm._v(" "), customer.care_membership_tier ? _c("div", {
+      staticClass: "small text-muted mt-1"
+    }, [_vm._v("\n                                  " + _vm._s(customer.care_membership_active ? customer.care_membership_remaining + " left" : "Expired " + _vm.formatDate(customer.care_membership_expiry)) + "\n                              ")]) : _vm._e()]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "btn-group",
       attrs: {
         role: "group"
@@ -38566,7 +38573,7 @@ var staticRenderFns = [function () {
     _c = _vm._self._c;
   return _c("thead", {
     staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Customer ID")]), _vm._v(" "), _c("th", [_vm._v("Full Name")]), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
+  }, [_c("tr", [_c("th", [_vm._v("Customer ID")]), _vm._v(" "), _c("th", [_vm._v("Full Name")]), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare Membership")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }];
 render._withStripped = true;
 

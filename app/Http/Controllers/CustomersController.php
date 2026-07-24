@@ -16,32 +16,62 @@ class CustomersController extends Controller
      */
     public function index()
     {
-        $customers = Customers::latest()->get()->map(function($customer) {
-            if ($customer->approved_at) {
-                $today = Carbon::now();
-                $approvedAt = Carbon::parse($customer->approved_at);
-                $expiryDate = $approvedAt->copy()->addMonths(6);
+        $customers = Customers::with(['careData.care', 'careData.order'])
+            ->latest()
+            ->get()
+            ->map(function($customer) {
+                if ($customer->approved_at) {
+                    $today = Carbon::now();
+                    $approvedAt = Carbon::parse($customer->approved_at);
+                    $expiryDate = $approvedAt->copy()->addMonths(6);
 
-                if ($today->gt($expiryDate)) {
-                    $customer->time_remaining = "Expired";
-                    $customer->months_remaining = 0;
-                    $customer->days_remaining = 0;
-                } else {
-                    $diff = $today->diff($expiryDate);
+                    if ($today->gt($expiryDate)) {
+                        $customer->time_remaining = "Expired";
+                        $customer->months_remaining = 0;
+                        $customer->days_remaining = 0;
+                    } else {
+                        $diff = $today->diff($expiryDate);
 
-                    $customer->months_remaining = $diff->m;
-                    $customer->days_remaining = $diff->d;
+                        $customer->months_remaining = $diff->m;
+                        $customer->days_remaining = $diff->d;
 
-                    $customer->time_remaining = $diff->m . " Months " . $diff->d . " Days";
+                        $customer->time_remaining = $diff->m . " Months " . $diff->d . " Days";
+                    }
+
+                    $customer->range_start = $today->toDateTimeString();
+                    $customer->range_end = $expiryDate->toDateTimeString();
                 }
 
-                $customer->range_start = $today->toDateTimeString();
-                $customer->range_end = $expiryDate->toDateTimeString();
-            }
-            return $customer;
-        });
+                $this->attachLongestCareMembership($customer);
+
+                return $customer;
+            });
 
         return response()->json($customers);
+    }
+
+    /**
+     * A customer can have QuiviCare coverage from several orders at once
+     * (different tiers, different start dates). Reflect the *longest*
+     * running coverage -- i.e. the CareData record whose order date + tier
+     * period lands furthest in the future -- not just the latest order,
+     * since an earlier order on a longer tier (e.g. VIS10N/10yr) can easily
+     * outlast a more recent one on a shorter tier (e.g. COR3/3yr).
+     */
+    private function attachLongestCareMembership($customer)
+    {
+        $longest = $customer->careData
+            ->filter(fn($careData) => $careData->membership_expiry_date)
+            ->sortByDesc(fn($careData) => $careData->membership_expiry_date)
+            ->first();
+
+        $customer->care_membership_tier = optional(optional($longest)->care)->name;
+        $customer->care_membership_active = $longest ? $longest->membership_active : false;
+        $customer->care_membership_expiry = optional(optional($longest)->membership_expiry_date)->toDateString();
+        $customer->care_membership_remaining = $longest ? $longest->membership_remaining : 'N/A';
+        $customer->care_membership_order_id = optional($longest)->order_id;
+
+        $customer->unsetRelation('careData');
     }
 
     public function getActiveCustomers()

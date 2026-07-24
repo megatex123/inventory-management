@@ -38,6 +38,11 @@ class Customers extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function careData()
+    {
+        return $this->hasMany(CareData::class, 'customer_id');
+    }
+
     public function progressEntries()
     {
         return $this->hasMany(CustomerProgress::class, 'customer_id');

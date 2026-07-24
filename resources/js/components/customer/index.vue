@@ -38,6 +38,7 @@
                             <th>Contact Method/Hear About</th>
                             <th>Consent</th>
                             <th>Approve</th>
+                            <th>QuiviCare Membership</th>
                             <th>Actions</th>
                         </tr>
                       </thead>
@@ -91,6 +92,15 @@
                                             {{ customer.time_remaining }}
                                         </span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span v-if="customer.care_membership_tier" :class="customer.care_membership_active ? 'badge-success' : 'badge-danger'" class="badge">
+                                    {{ customer.care_membership_tier }} &middot; {{ customer.care_membership_active ? 'Active' : 'Expired' }}
+                                </span>
+                                <span v-else class="badge badge-secondary">No QuiviCare</span>
+                                <div v-if="customer.care_membership_tier" class="small text-muted mt-1">
+                                    {{ customer.care_membership_active ? customer.care_membership_remaining + ' left' : 'Expired ' + formatDate(customer.care_membership_expiry) }}
                                 </div>
                             </td>
                             <td>
