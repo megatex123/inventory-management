@@ -125,6 +125,7 @@ Remaining diffs between a fresh `migrate:fresh` and live `quivi` are cosmetic on
 `docker ps` → `quivitech-im-dev` up, `lokaldb` up. `curl http://127.0.0.1/` → 200, renders `<title>Quivitech - Dashboard</title>`. `php artisan migrate:status` → all migrations applied (after backfilling records for tables that existed live without migration history — see [[Domain-Models]]).
 
 ## Related
+- [[Command]] — plain command list distilled from this note (no rationale, just copy-paste)
 - [[Deployment]] — production Docker/Kubernetes (different image workflow than local dev)
 - [[Domain-Models]] — live-DB-as-ground-truth schema audit history
 - [[Project-Overview]]

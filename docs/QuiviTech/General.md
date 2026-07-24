@@ -15,6 +15,7 @@ Map of content for the Quivitech project notes. Open this folder (`docs/QuiviTec
 - [[Frontend-Components]] — Vue component modules under `resources/js/components`
 - [[Dev-Setup]] — local dev environment: Docker workaround for host PHP, DB creds, nvm, known Doctrine/DBAL gotcha
 - [[Deployment]] — Docker + Kubernetes production deployment setup
+- [[Command]] — cheatsheet of every operational command (build/run/DB/frontend/deploy) in one place
 - [[Work-In-Progress]] — in-flight / not-yet-wired-up work
 
 ## Workflow modules

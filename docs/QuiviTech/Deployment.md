@@ -23,4 +23,5 @@ tags: [deployment, docker, kubernetes]
 `SOFTWAREVERSION` env var tracks app version; recent git tags/commits show `v 0.0.4` as current.
 
 ## Related
+- [[Command]] — plain command list, includes the deploy script one-liner
 - [[Project-Overview]]
