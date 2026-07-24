@@ -1269,7 +1269,7 @@ CREATE TABLE `menu_items` (
   PRIMARY KEY (`id`),
   KEY `menu_items_parent_id_foreign` (`parent_id`),
   CONSTRAINT `menu_items_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `menu_items` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1340,13 +1340,13 @@ INSERT INTO `menu_items` VALUES
 (58,57,'link','All Plus Orders',NULL,'/plus-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (59,57,'link','Add Plus Order',NULL,'/plus-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (60,NULL,'group','QuiviThread','fas fa-fw fa-plug',NULL,8,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(61,60,'header','Bill of Materials',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(61,60,'header','Bill of Materials',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (62,61,'link','All BOMs',NULL,'/thread-bom',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (63,61,'link','Add BOM',NULL,'/thread-bom/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(64,60,'header','Thread Inventory',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(64,77,'header','Thread Inventory',NULL,NULL,6,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (65,64,'link','All Thread Inventory',NULL,'/inv-thread',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (66,64,'link','Add Thread Inventory',NULL,'/inv-thread/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(67,60,'header','Thread Orders',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(67,60,'header','Thread Orders',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (68,67,'link','All Thread Orders',NULL,'/thread-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (69,67,'link','Add Thread Order',NULL,'/thread-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (70,NULL,'group','QuiviMerch','fas fa-fw fa-tshirt',NULL,9,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -1357,42 +1357,43 @@ INSERT INTO `menu_items` VALUES
 (75,74,'link','All Merch Orders',NULL,'/merch-orders',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (76,74,'link','Add Merch Order',NULL,'/merch-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (77,NULL,'group','Inventory','fas fa-fw fa-truck',NULL,10,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(78,77,'header','Master SKU <br> Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(78,77,'header','Master SKU <br> Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (79,78,'link','All Master SKUs',NULL,'/master-sku',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (80,78,'link','Add Master SKU',NULL,'/master-sku/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(81,77,'header','PC Parts Management',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(81,77,'header','PC Parts Management',NULL,NULL,1,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (82,81,'link','All PC Parts',NULL,'/product',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (83,81,'link','Add PC Part',NULL,'/product/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(84,77,'header','Stock Management',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(84,114,'header','Stock Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (85,84,'link','All Stock',NULL,'/product/stock',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(86,77,'header','Product Brand <br> Management',NULL,NULL,3,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(86,114,'header','Product Brand <br> Management',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (87,86,'link','All Products Brand',NULL,'/brand',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (88,86,'link','Add Product Brand',NULL,'/brand/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(89,77,'header','Category Product',NULL,NULL,4,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(89,114,'header','Category Product',NULL,NULL,3,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (90,89,'link','Code Lookup',NULL,'/category',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (91,89,'link','Add Code Lookup',NULL,'/category/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(92,77,'header','Sub Category Management',NULL,NULL,5,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(92,114,'header','Sub Category Management',NULL,NULL,4,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (93,92,'link','Sub Code Lookup',NULL,'/sub-category',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (94,92,'link','Add Sub Code Lookup',NULL,'/sub-category/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(95,77,'header','QuiviCare Inventory',NULL,NULL,6,1,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(95,77,'header','QuiviCare Inventory',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (96,95,'link','All QuiviCare Inventory',NULL,'/inv-care',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (97,95,'link','Add QuiviCare Inventory',NULL,'/inv-care/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(98,77,'header','QS Excl. Inventory',NULL,NULL,7,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(98,77,'header','QS Excl. Inventory',NULL,NULL,3,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (99,98,'link','All QS Excl. Inventory',NULL,'/inv-excl-serve',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (100,98,'link','Add QS Excl. Inventory',NULL,'/inv-excl-serve/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(101,77,'header','QM Inventory',NULL,NULL,8,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(101,77,'header','QM Inventory',NULL,NULL,4,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (102,101,'link','All QM Inventory',NULL,'/inv-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (103,101,'link','Add QM Inventory',NULL,'/inv-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(104,77,'header','QM Excl. Inventory',NULL,NULL,9,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(104,77,'header','QM Excl. Inventory',NULL,NULL,5,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (105,104,'link','All QM Excl. Inventory',NULL,'/inv-excl-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (106,104,'link','Add QM Excl. Inventory',NULL,'/inv-excl-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(107,77,'header','Inventory Movement',NULL,NULL,10,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(107,77,'header','Inventory Movement',NULL,NULL,10,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (108,107,'link','All Movements',NULL,'/inventory-movements',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (109,107,'link','Add Movement',NULL,'/inventory-movements/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (110,NULL,'group','Suppliers','fas fa-fw fa-truck-loading',NULL,11,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (111,110,'header','Supplier Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (112,111,'link','All Suppliers',NULL,'/suppliers',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(113,111,'link','Add Supplier',NULL,'/supplier/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08');
+(113,111,'link','Add Supplier',NULL,'/supplier/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(114,NULL,'group','Stock','fas fa-fw fa-boxes',NULL,12,0,1,'2026-07-23 17:27:23','2026-07-23 18:40:59');
 /*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1622,7 +1623,7 @@ CREATE TABLE `order` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `is_reason` tinyint(1) NOT NULL COMMENT '1: Work, 2: Gaming',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1667,7 +1668,7 @@ CREATE TABLE `order_details` (
   `serial_no` varchar(191) DEFAULT NULL,
   `start_warranty_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1933,7 +1934,7 @@ CREATE TABLE `pos` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2185,7 +2186,7 @@ CREATE TABLE `serve_bek` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_serve_data` (`serve_data_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2198,7 +2199,8 @@ set autocommit=0;
 INSERT INTO `serve_bek` VALUES
 (1,'BEK-2304-0001','27','2026-06-15',1,1,1,'2026-07-05',1,1,'2026-07-10',1,0,NULL,'2026-07-12 11:56:01','2026-07-12 12:26:32',NULL),
 (2,'BEK-2304-0002','28','2026-06-20',1,1,1,'2026-07-12',1,1,'2026-07-12',1,0,NULL,'2026-07-12 12:24:24','2026-07-12 14:18:33',NULL),
-(3,'BEK-2304-0003','29','2026-07-01',1,1,0,NULL,1,0,NULL,1,1,'2026-07-12','2026-07-12 12:24:24','2026-07-12 14:42:41',NULL);
+(3,'BEK-2304-0003','29','2026-07-01',1,1,0,NULL,1,0,NULL,1,1,'2026-07-12','2026-07-12 12:24:24','2026-07-12 14:42:41',NULL),
+(5,'BEK-2304-0004','34',NULL,1,1,0,NULL,1,0,NULL,1,NULL,NULL,'2026-07-23 16:41:53','2026-07-23 16:41:53',NULL);
 /*!40000 ALTER TABLE `serve_bek` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2231,7 +2233,7 @@ CREATE TABLE `serve_data` (
   KEY `idx_start_serve_enabled` (`start_serve_enabled`),
   KEY `idx_upgrade_pce_enabled` (`upgrade_pce_enabled`),
   KEY `idx_start_serve_date` (`start_serve_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2246,7 +2248,7 @@ INSERT INTO `serve_data` VALUES
 (8,'QV-SRV-0002','PCE-2610-0002',4,1,3,0,NULL,NULL,0,NULL,'2026-03-21 05:12:20','2026-07-10 12:21:49',NULL),
 (13,'QV-SRV-0003','PCE-2610-0003',20,3,3,1,'2026-07-09 14:34:00',1783607692,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer shows high engagement potential. Recommend premium package upgrade with additional features.','2026-07-09 14:21:57','2026-07-10 12:21:49',NULL),
 (23,'QV-SRV-0004','PCE-2610-0004',21,6,3,1,'2026-07-09 15:47:00',1783612136,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer feedback positive. Recommend adding support for additional users/teams.','2026-07-09 15:44:53','2026-07-10 12:21:49',NULL),
-(24,'QV-SRV-0005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-07-12 11:40:41',NULL),
+(24,'QV-SRV-0005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-07-23 17:50:47',NULL),
 (27,'QV-SRV-0006','BEK-2304-0001',20,5,1,0,NULL,NULL,0,NULL,'2026-07-12 11:56:01','2026-07-12 11:56:01',NULL),
 (28,'QV-SRV-0007','BEK-2304-0002',20,8,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
 (29,'QV-SRV-0008','BEK-2304-0003',20,9,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
@@ -2297,7 +2299,7 @@ CREATE TABLE `serve_mps` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_qvse_cid` (`serve_data_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2553,18 +2555,18 @@ LOCK TABLES `suppliers` WRITE;
 /*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `suppliers` VALUES
-(1,'QV-SUPP-0001','Magic Print','sales@imagemagic.com.my','018-2388238','Malaysia','/backend/suppliers/1767057503.png','Magic Print','2026-03-18 06:45:39','2026-03-17 22:45:39',NULL),
-(2,'QV-SUPP-0002','RaffleStag','sales@rafflestag.com.my','017-8496166','Malaysia','/backend/suppliers/1767057503.png','RaffleStag','2026-03-18 06:46:27','2026-03-17 22:46:27',NULL),
-(3,'QV-SUPP-0003','CamiSasca','sales@camincusa.com','949-4520195','USA','/backend/suppliers/1767057503.png','CamiSasca','2026-03-18 06:46:05','2026-03-17 22:46:05',NULL),
-(4,'QV-SUPP-0004','Popov Leather','custom@popovleather.com','018-3341524','Canada','/backend/suppliers/1767057503.png','Popov Leather','2026-03-18 06:46:16','2026-03-17 22:46:16',NULL),
-(5,'QV-SUPP-0005','AEIOU Studio','enquiry@uylprinter.com','016-2632273','Malaysia','/backend/suppliers/1767057503.png','AEIOU Studio','2026-03-17 15:04:12','2026-03-17 05:31:30',NULL),
-(6,'QV-SUPP-0006','2S Packaging','info@2Spackaging.com','012-2223202','Malaysia','/backend/suppliers/1767057503.png','2S Packaging','2026-03-17 15:04:12','2026-03-04 15:31:31',NULL),
-(7,'QV-SUPP-0007','HookandLoop','traceyt@hookandloop.com','+1-800-940-6934','USA','/backend/suppliers/1767057503.png','HookandLoop','2026-07-21 13:55:14','2026-02-11 18:47:06',NULL),
-(8,'QV-SUPP-0008','BoardGameGeek Store','contact@boardgamegeekstore.com','+1-214-321-7737','USA','/backend/suppliers/1767057503.png','BoardGameGeek Store','2026-07-21 13:55:14','2026-02-11 18:47:06',NULL),
-(9,'QV-SUPP-0009','BS Gift','contact@bsgifts.com.my','017-8798548','Malaysia','/backend/suppliers/1767057503.png','BS Gift','2026-03-18 06:45:27','2026-03-17 22:45:27',NULL),
-(10,'QV-SUPP-0010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1767057503.png','Gift Market','2026-03-18 06:47:28','2026-03-17 22:47:28',NULL),
-(11,'QV-SUPP-0011','Digikey','orders@t.digikey.com','+1-800-344-4539','USA','/backend/suppliers/1767057503.png','Digikey','2026-07-21 13:55:14','2026-02-11 18:49:25',NULL),
-(12,'QV-SUPP-0012','MDPC-X','contact@Cable-Sleeving.com','+49-176-97416364','Germany','/backend/suppliers/1767057503.png','MDPC-X','2026-07-21 13:55:14','2026-02-11 18:49:25',NULL);
+(1,'QV-SUPP-0001','Magic Print','sales@imagemagic.com.my','018-2388238','Malaysia','/backend/suppliers/1784743462.jpeg','Magic Print','2026-07-22 18:04:22','2026-07-22 18:04:22',NULL),
+(2,'QV-SUPP-0002','RaffleStag','sales@rafflestag.com.my','017-8496166','Malaysia','/backend/suppliers/1784742955.png','RaffleStag','2026-07-22 17:55:55','2026-07-22 17:55:55',NULL),
+(3,'QV-SUPP-0003','CamiSasca','sales@camincusa.com','949-4520195','USA','/backend/suppliers/1784742769.jpeg','CamiSasca','2026-07-22 17:52:49','2026-07-22 17:52:49',NULL),
+(4,'QV-SUPP-0004','Popov Leather','custom@popovleather.com','018-3341524','Canada','/backend/suppliers/1784743008.png','Popov Leather','2026-07-22 17:56:48','2026-07-22 17:56:48',NULL),
+(5,'QV-SUPP-0005','AEIOU Studio','enquiry@uylprinter.com','016-2632273','Malaysia','/backend/suppliers/1784742223.jpeg','AEIOU Studio','2026-07-22 17:43:43','2026-07-22 17:43:43',NULL),
+(6,'QV-SUPP-0006','2S Packaging','info@2Spackaging.com','012-2223202','Malaysia','/backend/suppliers/1784742147.png','2S Packaging','2026-07-22 17:42:27','2026-07-22 17:42:27',NULL),
+(7,'QV-SUPP-0007','HookandLoop','traceyt@hookandloop.com','180-0940693','USA','/backend/suppliers/1784742912.png','HookandLoop','2026-07-22 17:55:12','2026-07-22 17:55:12',NULL),
+(8,'QV-SUPP-0008','BoardGameGeek Store','contact@boardgamegeekstore.com','121-4321773','USA','/backend/suppliers/1784742318.png','BoardGameGeek Store','2026-07-22 17:45:18','2026-07-22 17:45:18',NULL),
+(9,'QV-SUPP-0009','BS Gift','contact@bsgifts.com.my','017-8798548','Malaysia','/backend/suppliers/1784742422.jpeg','BS Gift','2026-07-22 17:47:02','2026-07-22 17:47:02',NULL),
+(10,'QV-SUPP-0010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1784743554.jpeg','Gift Market','2026-07-22 18:05:54','2026-07-22 18:05:54',NULL),
+(11,'QV-SUPP-0011','Digikey','orders@t.digikey.com','180-0344453','USA','/backend/suppliers/1784742835.png','Digikey','2026-07-22 17:53:55','2026-07-22 17:53:55',NULL),
+(12,'QV-SUPP-0012','MDPC-X','contact@Cable-Sleeving.com','491-7697416','Germany','/backend/suppliers/1784743105.png','MDPC-X','2026-07-22 17:58:25','2026-07-22 17:58:25',NULL);
 /*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2885,4 +2887,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-22 17:21:35
+-- Dump completed on 2026-07-24  1:05:02
