@@ -258,9 +258,6 @@
         <div class="d-flex align-items-center">
           <span class="text-muted mr-3">
             Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} records
-            <span v-if="filters.search" class="text-primary">
-              for "{{ filters.search }}"
-            </span>
           </span>
           <div class="btn-group">
             <button class="btn btn-outline-info btn-sm" @click="exportToCSV">
@@ -306,8 +303,7 @@
                 <td colspan="10" class="text-center py-5">
                   <i class="fas fa-database fa-3x text-muted mb-3"></i>
                   <h5 class="text-muted">No care data found</h5>
-                  <p class="text-muted" v-if="filters.search">No results for "{{ filters.search }}"</p>
-                  <p class="text-muted" v-else>Try adjusting your filters or create new care data</p>
+                  <p class="text-muted">Try adjusting your filters or create new care data</p>
                   <router-link to="/care-data/create" class="btn btn-primary mt-2">
                     <i class="fas fa-plus-circle mr-2"></i> Create First Care Data
                   </router-link>
