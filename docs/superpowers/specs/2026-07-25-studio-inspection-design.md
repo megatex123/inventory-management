@@ -32,6 +32,8 @@ The other 3 report types (OnSite Handover ×2, Performance Testing) are new, unr
     - `psu`: add a `cables` field ("Cables"), distinct from the existing `cables_inclusion` ("Cables Inclusion").
     - `fan`: add a `fan` field ("Fan"), additive alongside the existing `position` field (kept — removing it would cut working functionality nobody asked to cut).
 
+- `resources/js/components/home.vue`: the dashboard's "Pre-Build Inspections Awaiting Action" pending-inspections widget also reads `row.phase`/`row.phase_label` and passes `phase` in its `router-link` params — found while mapping exact file locations for the implementation plan, not in the original file list above. Rename the widget title, drop its "Phase" column, and drop `phase` from the route params.
+
 ### Docs
 - `docs/QuiviTech/QuiviCraft.md`: update the "Build QC (Craft Inspection)" section to describe the single Studio Inspection step instead of 3 phases; note the round mechanic is unchanged.
 
