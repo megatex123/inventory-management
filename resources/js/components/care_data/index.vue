@@ -97,34 +97,20 @@
 
     <!-- Filters Card -->
     <div class="card mb-4">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters & Search</h5>
+        <button class="btn btn-outline-secondary btn-sm" @click="showFilters = !showFilters">
+          <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
       </div>
-      <div class="card-body">
-        <!-- Search Bar -->
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text bg-light">
-                  <i class="fas fa-search text-muted"></i>
-                </span>
-              </div>
-              <input
-                type="text"
-                v-model="filters.search"
-                class="form-control"
-                placeholder="Search by Care ID, Customer Name, Order ID, Price, Parts..."
-                @input="applyFilters"
-              >
-              <div class="input-group-append" v-if="filters.search">
-                <button class="btn btn-outline-secondary" @click="filters.search = ''; applyFilters()">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <transition name="filter-panel">
+      <div class="card-body" v-if="showFilters">
+        <column-search-panel
+          :columns="filterColumns"
+          v-model="filters"
+          :visible="true"
+        />
 
         <div class="row">
           <!-- Membership Status Filter -->
@@ -262,6 +248,7 @@
           </div>
         </div>
       </div>
+      </transition>
     </div>
 
     <!-- Main Table -->
@@ -638,9 +625,11 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
   name: 'CareDataIndex',
+  components: { ColumnSearchPanel },
   data() {
     return {
       careData: [],
@@ -649,8 +638,18 @@ export default {
       stats: {},
       allStats: {},
       loading: true,
+      showFilters: false,
+      filterColumns: [
+        { key: 'care_customer', label: 'Care Details/Customer', type: 'text' },
+        { key: 'order', label: 'Order', type: 'text' },
+        { key: 'total_part', label: 'Parts Value', type: 'text' },
+        { key: 'price', label: 'Price', type: 'text' },
+      ],
       filters: {
-        search: '',
+        care_customer: '',
+        order: '',
+        total_part: '',
+        price: '',
         membership_status: '',
         customer_id: '',
         lkp_care_id: '',
@@ -728,20 +727,33 @@ export default {
     filteredCareData() {
       let filtered = this.careData;
 
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(care => {
-          return (
-            (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-            (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
-            (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
-            (care.price && care.price.toString().includes(keyword)) ||
-            (care.total_part && care.total_part.toString().includes(keyword))
-          );
-        });
+      // Care Details/Customer filter
+      if (this.filters.care_customer) {
+        const keyword = this.filters.care_customer.toLowerCase();
+        filtered = filtered.filter(care =>
+          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
+        );
+      }
+
+      // Order filter
+      if (this.filters.order) {
+        const keyword = this.filters.order.toLowerCase();
+        filtered = filtered.filter(care =>
+          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
+        );
+      }
+
+      // Parts Value filter
+      if (this.filters.total_part) {
+        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
+      }
+
+      // Price filter
+      if (this.filters.price) {
+        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
       }
 
       // Apply other filters
@@ -891,7 +903,6 @@ export default {
 
     getFilterLabel(key, value) {
       const labels = {
-        search: `Search: "${value}"`,
         membership_status: {
           active: 'Membership: Active',
           expired: 'Membership: Expired'
@@ -924,7 +935,10 @@ export default {
         }
       };
 
-      if (key === 'search') return labels.search;
+      if (key === 'care_customer') return `Care/Customer: "${value}"`;
+      if (key === 'order') return `Order: "${value}"`;
+      if (key === 'total_part') return `Parts Value: "${value}"`;
+      if (key === 'price') return `Price: "${value}"`;
       if (key === 'date_from') return labels.date_from;
       if (key === 'year') return labels.year;
 
@@ -1269,7 +1283,10 @@ export default {
 
     resetFilters() {
       this.filters = {
-        search: '',
+        care_customer: '',
+        order: '',
+        total_part: '',
+        price: '',
         membership_status: '',
         customer_id: '',
         lkp_care_id: '',
@@ -1808,20 +1825,33 @@ export default {
     applyClientSideFilters(data) {
       let filtered = [...data];
 
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(care => {
-          return (
-            (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-            (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
-            (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
-            (care.price && care.price.toString().includes(keyword)) ||
-            (care.total_part && care.total_part.toString().includes(keyword))
-          );
-        });
+      // Care Details/Customer filter
+      if (this.filters.care_customer) {
+        const keyword = this.filters.care_customer.toLowerCase();
+        filtered = filtered.filter(care =>
+          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
+        );
+      }
+
+      // Order filter
+      if (this.filters.order) {
+        const keyword = this.filters.order.toLowerCase();
+        filtered = filtered.filter(care =>
+          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
+        );
+      }
+
+      // Parts Value filter
+      if (this.filters.total_part) {
+        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
+      }
+
+      // Price filter
+      if (this.filters.price) {
+        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
       }
 
       // Apply other filters
@@ -1883,8 +1913,17 @@ export default {
     generateFilterInfo() {
       const filterParts = [];
 
-      if (this.filters.search) {
-        filterParts.push(`Search: "${this.filters.search}"`);
+      if (this.filters.care_customer) {
+        filterParts.push(`Care/Customer: "${this.filters.care_customer}"`);
+      }
+      if (this.filters.order) {
+        filterParts.push(`Order: "${this.filters.order}"`);
+      }
+      if (this.filters.total_part) {
+        filterParts.push(`Parts Value: "${this.filters.total_part}"`);
+      }
+      if (this.filters.price) {
+        filterParts.push(`Price: "${this.filters.price}"`);
       }
 
       if (this.filters.membership_status !== '') {
@@ -2042,20 +2081,33 @@ export default {
       // Fallback: apply filters manually
       filtered = [...this.careData];
 
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(care => {
-          return (
-            (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-            (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-            (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
-            (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
-            (care.price && care.price.toString().includes(keyword)) ||
-            (care.total_part && care.total_part.toString().includes(keyword))
-          );
-        });
+      // Care Details/Customer filter
+      if (this.filters.care_customer) {
+        const keyword = this.filters.care_customer.toLowerCase();
+        filtered = filtered.filter(care =>
+          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
+          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
+          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
+        );
+      }
+
+      // Order filter
+      if (this.filters.order) {
+        const keyword = this.filters.order.toLowerCase();
+        filtered = filtered.filter(care =>
+          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
+        );
+      }
+
+      // Parts Value filter
+      if (this.filters.total_part) {
+        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
+      }
+
+      // Price filter
+      if (this.filters.price) {
+        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
       }
 
       // Apply other filters
@@ -2106,19 +2158,38 @@ export default {
 
     // Helper method to check if a single care matches all filters
     matchesFilters(care) {
-      // Check text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        const matchesSearch = (
+      // Check Care Details/Customer filter
+      if (this.filters.care_customer) {
+        const keyword = this.filters.care_customer.toLowerCase();
+        const matches = (
           (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
           (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
           (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword)) ||
-          (care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)) ||
-          (care.price && care.price.toString().includes(keyword)) ||
-          (care.total_part && care.total_part.toString().includes(keyword))
+          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
         );
-        if (!matchesSearch) return false;
+        if (!matches) return false;
+      }
+
+      // Check Order filter
+      if (this.filters.order) {
+        const keyword = this.filters.order.toLowerCase();
+        if (!(care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword))) {
+          return false;
+        }
+      }
+
+      // Check Parts Value filter
+      if (this.filters.total_part) {
+        if (!(care.total_part && care.total_part.toString().includes(this.filters.total_part))) {
+          return false;
+        }
+      }
+
+      // Check Price filter
+      if (this.filters.price) {
+        if (!(care.price && care.price.toString().includes(this.filters.price))) {
+          return false;
+        }
       }
 
       // Check membership filter
@@ -2373,5 +2444,15 @@ select:disabled {
 .modal-body {
   max-height: 70vh;
   overflow-y: auto;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
