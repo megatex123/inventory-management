@@ -260,6 +260,8 @@ const PARENT_FIELD_KEYS = [
   'driver_lan', 'driver_audio', 'drivers_note', 'applications_installed', 'applications_note',
 ];
 
+const READONLY_OVERALL_KEYS = ['overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability'];
+
 let keySeq = 0;
 
 export default {
@@ -500,6 +502,7 @@ export default {
 
       const formData = new FormData();
       PARENT_FIELD_KEYS.forEach(key => {
+        if (READONLY_OVERALL_KEYS.includes(key)) return;
         const value = this.form[key];
         formData.append(key, typeof value === 'boolean' ? (value ? '1' : '0') : (value || ''));
       });
