@@ -107,6 +107,18 @@ Route::prefix('order/{orderId}/inspection/{round}')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| PERFORMANCE TESTING (Phase 1: Assembly & Boot)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('order/{orderId}/performance-test/{round}')->group(function () {
+    Route::get('/', 'PerformanceTestController@show');
+    Route::post('/', 'PerformanceTestController@update');
+    Route::post('/items/{itemId}', 'PerformanceTestController@updateItem');
+    Route::post('/complete', 'PerformanceTestController@complete');
+});
+
+/*
+|--------------------------------------------------------------------------
 | CUSTOMER PROGRESS MANAGEMENT
 |--------------------------------------------------------------------------
 */
