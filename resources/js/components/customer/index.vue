@@ -17,13 +17,23 @@
                       Customer List
                     </h5>
 
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="searchItem"
-                      id="searchItems"
-                      placeholder="Search Customer By Phone"
+                    <button class="btn btn-outline-secondary btn-sm" @click="showFilters = !showFilters">
+                      <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                      {{ showFilters ? 'Hide Search' : 'Show Search' }}
+                    </button>
+                  </div>
+
+                  <div class="px-3">
+                    <column-search-panel
+                      :columns="filterColumns"
+                      v-model="filters"
+                      :visible="showFilters"
                     />
+                    <div class="text-right mb-2" v-if="showFilters">
+                      <button class="btn btn-sm btn-outline-secondary" @click="resetFilters">
+                        <i class="fas fa-redo mr-1"></i> Reset
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Table -->
@@ -141,11 +151,41 @@
 </template>
 
 <script>
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       customers: [],
-      searchItem: '',
+      showFilters: false,
+      filters: {
+        customer_id: '',
+        full_name: '',
+        email_phone: '',
+        feedback: '',
+        contact_method: '',
+        consent: '',
+        approve: '',
+      },
+      filterColumns: [
+        { key: 'customer_id', label: 'Customer ID', type: 'text' },
+        { key: 'full_name', label: 'Full Name', type: 'text' },
+        { key: 'email_phone', label: 'Email/Phone', type: 'text' },
+        { key: 'feedback', label: 'Feedback', type: 'text' },
+        {
+          key: 'contact_method', label: 'Contact Method', type: 'select',
+          options: ['WhatsApp', 'TikTok', 'Facebook', 'Instagram', 'Discord', 'Phone / Message', 'Other'].map(v => ({ value: v, label: v })),
+        },
+        {
+          key: 'consent', label: 'Consent', type: 'select',
+          options: [{ value: '1', label: 'Yes' }, { value: '0', label: 'No' }],
+        },
+        {
+          key: 'approve', label: 'Approve', type: 'select',
+          options: [{ value: 'Approved', label: 'Approved' }, { value: 'Rejected', label: 'Rejected' }],
+        },
+      ],
       approveOptions: [
         "Approved",
         "Rejected",
@@ -160,12 +200,37 @@ export default {
 
   computed: {
     filteredCustomers() {
-        if (!this.searchItem) return this.customers;
-        const keyword = this.searchItem.toLowerCase();
-        return this.customers.filter(c =>
-            (c.phone && c.phone.toLowerCase().includes(keyword)) ||
-            (c.preferred_name && c.preferred_name.toLowerCase().includes(keyword))
+      let filtered = this.customers;
+      if (this.filters.customer_id) {
+        const kw = this.filters.customer_id.toLowerCase();
+        filtered = filtered.filter(c => c.customer_id && c.customer_id.toLowerCase().includes(kw));
+      }
+      if (this.filters.full_name) {
+        const kw = this.filters.full_name.toLowerCase();
+        filtered = filtered.filter(c => c.full_name && c.full_name.toLowerCase().includes(kw));
+      }
+      if (this.filters.email_phone) {
+        const kw = this.filters.email_phone.toLowerCase();
+        filtered = filtered.filter(c =>
+          (c.email && c.email.toLowerCase().includes(kw)) ||
+          (c.phone && c.phone.toLowerCase().includes(kw))
         );
+      }
+      if (this.filters.feedback) {
+        const kw = this.filters.feedback.toLowerCase();
+        filtered = filtered.filter(c => c.feedback && c.feedback.toLowerCase().includes(kw));
+      }
+      if (this.filters.contact_method) {
+        filtered = filtered.filter(c => c.contact_method === this.filters.contact_method);
+      }
+      if (this.filters.consent !== '') {
+        const wantConsent = this.filters.consent === '1';
+        filtered = filtered.filter(c => Boolean(c.consent) === wantConsent);
+      }
+      if (this.filters.approve) {
+        filtered = filtered.filter(c => c.approve === this.filters.approve);
+      }
+      return filtered;
     }
   },
 
@@ -178,6 +243,17 @@ export default {
             return 'badge-warning';
         }
         return 'badge-success';
+    },
+    resetFilters() {
+      this.filters = {
+        customer_id: '',
+        full_name: '',
+        email_phone: '',
+        feedback: '',
+        contact_method: '',
+        consent: '',
+        approve: '',
+      };
     },
     getCustomers() {
       axios.get('/api/customer')
@@ -270,9 +346,6 @@ export default {
 </script>
 
 <style scoped>
-    #searchItems {
-        width: 270px !important;
-    }
     img {
         object-fit: cover;
     }
