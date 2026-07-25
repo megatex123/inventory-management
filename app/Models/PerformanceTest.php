@@ -54,4 +54,19 @@ class PerformanceTest extends Model
     {
         return $this->hasMany(PerformanceTestChecklistItem::class, 'performance_test_id');
     }
+
+    public function cpuResults()
+    {
+        return $this->hasOne(PerformanceTestCpuResult::class, 'performance_test_id');
+    }
+
+    public function gpuResults()
+    {
+        return $this->hasOne(PerformanceTestGpuResult::class, 'performance_test_id');
+    }
+
+    public function systemStabilityResults()
+    {
+        return $this->hasOne(PerformanceTestSystemStabilityResult::class, 'performance_test_id');
+    }
 }
