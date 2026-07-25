@@ -18933,7 +18933,7 @@ var SECTION_LABELS = {
   bios_configuration: 'BIOS Configuration'
 };
 var PARENT_FIELD_KEYS = ['cooling_solution', 'overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability', 'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance', 'overall_cooling_system', 'overall_display_output', 'overall_network_wireless', 'overall_usb_ports', 'overall_notes', 'thermal_paste_brand', 'thermal_paste_batch', 'thermal_paste_application_method', 'ready_for_first_boot', 'ready_for_bios_configuration', 'ready_for_stability_testing', 'ready_for_performance_testing', 'ready_for_stress_testing', 'os_installed', 'windows_activation', 'windows_update', 'os_config_note', 'driver_chipset', 'driver_wifi', 'driver_gpu', 'driver_bluetooth', 'driver_lan', 'driver_audio', 'drivers_note', 'applications_installed', 'applications_note'];
-var READONLY_OVERALL_KEYS = ['overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability'];
+var READONLY_OVERALL_KEYS = ['overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability', 'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance', 'overall_cooling_system'];
 var keySeq = 0;
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
