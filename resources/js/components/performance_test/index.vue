@@ -50,7 +50,14 @@
           </div>
           <div class="row">
             <div class="col-md-4" v-for="f in overallResultFields" :key="f.key">
-              <div class="custom-control custom-checkbox mb-2">
+              <div v-if="f.readonly" class="mb-2">
+                <span class="badge" :class="form[f.key] ? 'badge-success' : 'badge-secondary'">
+                  <i class="fas fa-check-circle mr-1" v-if="form[f.key]"></i>
+                  {{ f.label }}
+                </span>
+                <small class="text-muted d-block">Set from the section below</small>
+              </div>
+              <div v-else class="custom-control custom-checkbox mb-2">
                 <input type="checkbox" class="custom-control-input" :id="'orf-' + f.key" v-model="form[f.key]">
                 <label class="custom-control-label" :for="'orf-' + f.key">{{ f.label }}</label>
               </div>
@@ -208,6 +215,22 @@
           </div>
         </div>
       </div>
+
+      <cpu-results-section
+        :api-base="apiBase"
+        :initial-data="performanceTest.cpu_results || {}"
+        @saved="onCpuResultsSaved"
+      />
+      <gpu-results-section
+        :api-base="apiBase"
+        :initial-data="performanceTest.gpu_results || {}"
+        @saved="onGpuResultsSaved"
+      />
+      <system-stability-results-section
+        :api-base="apiBase"
+        :initial-data="performanceTest.system_stability_results || {}"
+        @saved="onSystemStabilityResultsSaved"
+      />
     </template>
   </div>
 </template>
@@ -216,6 +239,9 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import InspectionGroup from '../craft_inspection/InspectionGroup.vue';
+import CpuResultsSection from './CpuResultsSection.vue';
+import GpuResultsSection from './GpuResultsSection.vue';
+import SystemStabilityResultsSection from './SystemStabilityResultsSection.vue';
 
 const SECTION_LABELS = {
   assembly: 'Studio PC Assembly Checklist',
@@ -239,6 +265,9 @@ let keySeq = 0;
 export default {
   components: {
     InspectionGroup,
+    CpuResultsSection,
+    GpuResultsSection,
+    SystemStabilityResultsSection,
     // Small local component (note + photo widget, no status toggle) for the
     // OS Configuration / Drivers Installation sections, which share one
     // note+photo pair across several tickboxes rather than one per item.
@@ -331,9 +360,9 @@ export default {
       formSaving: false,
       formErrors: [],
       overallResultFields: [
-        { key: 'overall_cpu_performance', label: 'CPU Performance' },
-        { key: 'overall_gpu_performance', label: 'GPU Performance' },
-        { key: 'overall_system_stability', label: 'System Stability' },
+        { key: 'overall_cpu_performance', label: 'CPU Performance', readonly: true },
+        { key: 'overall_gpu_performance', label: 'GPU Performance', readonly: true },
+        { key: 'overall_system_stability', label: 'System Stability', readonly: true },
         { key: 'overall_memory_validation', label: 'Memory Validation' },
         { key: 'overall_storage_validation', label: 'Storage Validation' },
         { key: 'overall_cpu_cooling_performance', label: 'CPU Cooling Performance' },
@@ -512,6 +541,18 @@ export default {
       } finally {
         this.formSaving = false;
       }
+    },
+    onCpuResultsSaved(data) {
+      this.performanceTest.cpu_results = data;
+      this.form.overall_cpu_performance = Boolean(data.overall_cpu_validation);
+    },
+    onGpuResultsSaved(data) {
+      this.performanceTest.gpu_results = data;
+      this.form.overall_gpu_performance = Boolean(data.overall_gpu_validation);
+    },
+    onSystemStabilityResultsSaved(data) {
+      this.performanceTest.system_stability_results = data;
+      this.form.overall_system_stability = Boolean(data.overall_system_stability);
     },
     markComplete() {
       axios.post(`${this.apiBase}/complete`)

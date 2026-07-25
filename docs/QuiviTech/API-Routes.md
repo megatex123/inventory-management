@@ -42,6 +42,7 @@ Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`up
 
 ## Performance testing (Phase 1 of 4 — Assembly & Boot — added 2026-07-25)
 - `prefix: order/{orderId}/performance-test/{round}` → `PerformanceTestController`: `show` (GET `/`), `update` (POST `/`, the report's own fields — cooling solution, Overall Result, Thermal Interface, Self QC, OS Config, Drivers, Applications), `updateItem` (POST `/items/{itemId}`, one of the 30 fixed checklist items), `complete` (POST `/complete`). No store/destroy item routes — the checklist is fixed/seeded, not user-managed. See [[QuiviCraft]].
+- **Phase 2 (Stress & Benchmark), added 2026-07-25** — same prefix, 3 more `PerformanceTestController` actions: `updateCpuResults` (POST `.../cpu-results`), `updateGpuResults` (POST `.../gpu-results`), `updateSystemStabilityResults` (POST `.../system-stability-results`). Each upserts that instrument's 1:1 child row and syncs the corresponding `overall_*` column on the parent `PerformanceTest`.
 
 ## Customer progress management (2026-07-11 — replaced "Document management")
 - `prefix: customer-progress` → `CustomerProgressController`: `index`, `store`, `statistics`, then `{id}` sub-group: `show`, `update` (POST, not PUT — multipart optional file re-upload), `destroy`, `download`
