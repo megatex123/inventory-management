@@ -10,7 +10,22 @@
                                     <div class="card-header py-3 d-flex   flex-row align-items-center justify-content-between">
                                         <router-link to="/product/create" class="btn btn-primary ml-3">Add Product</router-link>
                                         <h5 class="m-0 font-weight-bold text-primary">Product List</h5>
-                                        <input type="text" class="form-control" v-model='searchItem' id="searchItems" placeholder="Search Product By Name">
+                                        <button class="btn btn-outline-secondary btn-sm" @click="showFilters = !showFilters">
+                                            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                            {{ showFilters ? 'Hide Search' : 'Show Search' }}
+                                        </button>
+                                    </div>
+                                    <div class="px-3">
+                                        <column-search-panel
+                                            :columns="filterColumns"
+                                            v-model="filters"
+                                            :visible="showFilters"
+                                        />
+                                        <div class="text-right mb-2" v-if="showFilters">
+                                            <button class="btn btn-sm btn-outline-secondary" @click="resetFilters">
+                                                <i class="fas fa-redo mr-1"></i> Reset
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table align-items-center table-flush">
@@ -61,11 +76,22 @@
     </div>
 </template>
 <script>
+    import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
     export default {
+        components: { ColumnSearchPanel },
         data() {
             return {
                 suppliers: [],
-                searchItem:'',
+                showFilters: false,
+                filters: {
+                    name: '',
+                    code: '',
+                    category: '',
+                    price: '',
+                    status: '',
+                    product_qty: '',
+                },
             }
         },
         methods: {
@@ -77,6 +103,16 @@
                 .catch(err => {
                     notification.error();
                 })
+            },
+            resetFilters() {
+                this.filters = {
+                    name: '',
+                    code: '',
+                    category: '',
+                    price: '',
+                    status: '',
+                    product_qty: '',
+                };
             },
             deletePro(id){
                 Swal.fire({
@@ -108,10 +144,47 @@
             }
         },
         computed: {
+            categoryOptions() {
+                const names = [...new Set(this.suppliers.map(p => p.cat_name).filter(Boolean))];
+                return names.sort().map(n => ({ value: n, label: n }));
+            },
+            filterColumns() {
+                return [
+                    { key: 'name', label: 'Name', type: 'text' },
+                    { key: 'code', label: 'Code', type: 'text' },
+                    { key: 'category', label: 'Category', type: 'select', options: this.categoryOptions },
+                    { key: 'price', label: 'Price (RM)', type: 'text' },
+                    { key: 'status', label: 'Status', type: 'select', options: [
+                        { value: 'available', label: 'Stock Available' },
+                        { value: 'out', label: 'Stock Out' },
+                    ] },
+                    { key: 'product_qty', label: 'Product Quantity', type: 'text' },
+                ];
+            },
             filterSearch(){
-                return this.suppliers.filter(data=>{
-                    return data.product_name.match(this.searchItem)
-                })
+                let filtered = this.suppliers;
+                if (this.filters.name) {
+                    const kw = this.filters.name.toLowerCase();
+                    filtered = filtered.filter(d => d.product_name && d.product_name.toLowerCase().includes(kw));
+                }
+                if (this.filters.code) {
+                    const kw = this.filters.code.toLowerCase();
+                    filtered = filtered.filter(d => d.product_code && d.product_code.toLowerCase().includes(kw));
+                }
+                if (this.filters.category) {
+                    filtered = filtered.filter(d => d.cat_name === this.filters.category);
+                }
+                if (this.filters.price) {
+                    filtered = filtered.filter(d => d.price !== undefined && d.price !== null && d.price.toString().includes(this.filters.price));
+                }
+                if (this.filters.status) {
+                    const wantAvailable = this.filters.status === 'available';
+                    filtered = filtered.filter(d => (d.product_qty >= 1) === wantAvailable);
+                }
+                if (this.filters.product_qty) {
+                    filtered = filtered.filter(d => d.product_qty !== undefined && d.product_qty !== null && d.product_qty.toString().includes(this.filters.product_qty));
+                }
+                return filtered;
             }
         },
         created() {
@@ -126,7 +199,4 @@
 </script>
 
 <style scoped>
-    #searchItems {
-        width: 270px !important;
-    }
 </style>
