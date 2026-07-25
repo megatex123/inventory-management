@@ -9,8 +9,10 @@
       <strong class="print-only">{{ status === goodValue ? goodLabel : badLabel }}</strong>
     </div>
 
-    <div v-if="status === goodValue">
-      <label class="small text-muted mb-1">Photo evidence (1–2 required)</label>
+    <div>
+      <label class="small text-muted mb-1">
+        Photo evidence <span v-if="status === goodValue">(1–2 required)</span><span v-else>(optional, up to 2)</span>
+      </label>
       <div class="d-flex flex-wrap align-items-center">
         <div v-for="path in existingPhotos" :key="path" class="photo-thumb">
           <img :src="`/storage/${path}`" alt="photo">
@@ -25,8 +27,10 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <label class="small text-muted mb-1">Note (required)</label>
+    <div class="mt-2">
+      <label class="small text-muted mb-1">
+        Note <span v-if="status !== goodValue">(required)</span><span v-else>(optional)</span>
+      </label>
       <textarea class="form-control" rows="2" :value="note" @input="$emit('update:note', $event.target.value)" placeholder="Describe the issue..."></textarea>
     </div>
   </div>
