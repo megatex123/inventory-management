@@ -56,8 +56,8 @@ class CreatePerformanceTestSystemStabilityResultsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique('performance_test_id');
-            $table->foreign('performance_test_id')->references('id')->on('performance_tests')->onDelete('cascade');
+            $table->unique('performance_test_id', 'pt_system_stability_results_pt_id_unique');
+            $table->foreign('performance_test_id', 'pt_system_stability_results_pt_id_foreign')->references('id')->on('performance_tests')->onDelete('cascade');
         });
     }
 
