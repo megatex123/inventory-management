@@ -114,6 +114,9 @@ Route::prefix('order/{orderId}/performance-test/{round}')->group(function () {
     Route::get('/', 'PerformanceTestController@show');
     Route::post('/', 'PerformanceTestController@update');
     Route::post('/items/{itemId}', 'PerformanceTestController@updateItem');
+    Route::post('/cpu-results', 'PerformanceTestController@updateCpuResults');
+    Route::post('/gpu-results', 'PerformanceTestController@updateGpuResults');
+    Route::post('/system-stability-results', 'PerformanceTestController@updateSystemStabilityResults');
     Route::post('/complete', 'PerformanceTestController@complete');
 });
 

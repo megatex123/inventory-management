@@ -63,6 +63,41 @@ class PerformanceTestController extends Controller
         'os_installed', 'os_config_note', 'drivers_note', 'applications_installed', 'applications_note',
     ];
 
+    const CPU_RESULT_FIELDS = [
+        'duration', 'threads_mode',
+        'avg_temp_c', 'max_temp_c', 'avg_clock_mhz', 'peak_package_power_w',
+        'thermal_throttling', 'whea_errors', 'system_crash',
+        'no_thermal_throttling', 'no_whea_errors', 'no_application_crash', 'stable_clock_speed', 'temperature_within_range',
+        'single_core_score', 'multi_core_score', 'benchmark_temp_c', 'benchmark_peak_power_w',
+        'benchmark_completed', 'performance_within_range', 'no_thermal_throttling_benchmark',
+        'idle_temp_c', 'load_temp_c', 'ccd_temp_c', 'core_voltage_v', 'avg_effective_clock_mhz', 'peak_package_power_benchmark_w',
+        'stability_test_passed', 'benchmark_test_passed', 'thermal_performance_passed', 'clock_stability_passed', 'power_delivery_passed',
+        'overall_cpu_validation', 'technician_notes',
+    ];
+
+    const GPU_RESULT_FIELDS = [
+        'duration', 'vram_test',
+        'avg_temp_c', 'max_temp_c', 'max_hotspot_temp_c', 'avg_clock_mhz', 'peak_power_draw_w',
+        'thermal_throttling', 'visual_artifacts', 'driver_crash',
+        'no_visual_artifacts', 'no_driver_crash', 'stable_clock_speed', 'temperature_within_range',
+        'gpu_score', 'overall_score', 'benchmark_temp_c', 'benchmark_peak_power_w',
+        'benchmark_completed', 'performance_within_range', 'no_performance_anomalies',
+        'idle_temp_c', 'load_temp_c', 'hotspot_temp_c', 'core_clock_mhz', 'memory_clock_mhz', 'power_draw_w', 'fan_speed_rpm',
+        'stability_test_passed', 'benchmark_test_passed', 'thermal_performance_passed', 'clock_stability_passed', 'cooling_performance_passed',
+        'overall_gpu_validation', 'technician_notes',
+    ];
+
+    const SYSTEM_STABILITY_RESULT_FIELDS = [
+        'duration', 'ambient_temp_c', 'windows_power_plan',
+        'max_cpu_temp_c', 'max_gpu_temp_c', 'cpu_package_power_w', 'gpu_power_draw_w', 'total_system_power_w',
+        'cpu_clock_stability', 'gpu_clock_stability',
+        'unexpected_shutdown', 'bsod', 'application_crash', 'whea_errors', 'thermal_throttling',
+        'test_completed_successfully', 'no_shutdowns', 'no_bsod', 'no_whea_errors', 'no_thermal_throttling', 'stable_cpu_gpu_operation',
+        'cpu_temp_c', 'gpu_temp_c', 'motherboard_temp_c', 'vrm_temp_c', 'chipset_temp_c', 'cpu_fan_speed_rpm', 'pump_speed_rpm',
+        'combined_load_stability', 'thermal_performance', 'power_delivery', 'cooling_performance',
+        'overall_system_stability', 'technician_notes',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -80,9 +115,18 @@ class PerformanceTestController extends Controller
             $this->seedChecklistItems($performanceTest);
         }
 
-        $performanceTest->load(['checklistItems' => function ($q) {
-            $q->orderBy('id');
-        }]);
+        $performanceTest->cpuResults()->firstOrCreate([]);
+        $performanceTest->gpuResults()->firstOrCreate([]);
+        $performanceTest->systemStabilityResults()->firstOrCreate([]);
+
+        $performanceTest->load([
+            'checklistItems' => function ($q) {
+                $q->orderBy('id');
+            },
+            'cpuResults',
+            'gpuResults',
+            'systemStabilityResults',
+        ]);
 
         return response()->json([
             'success' => true,
@@ -186,6 +230,214 @@ class PerformanceTestController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update performance test', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateCpuResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'duration' => 'nullable|string|max:255',
+            'threads_mode' => 'nullable|in:auto,all',
+            'avg_temp_c' => 'nullable|numeric',
+            'max_temp_c' => 'nullable|numeric',
+            'avg_clock_mhz' => 'nullable|integer',
+            'peak_package_power_w' => 'nullable|numeric',
+            'thermal_throttling' => 'nullable|boolean',
+            'whea_errors' => 'nullable|boolean',
+            'system_crash' => 'nullable|boolean',
+            'no_thermal_throttling' => 'nullable|boolean',
+            'no_whea_errors' => 'nullable|boolean',
+            'no_application_crash' => 'nullable|boolean',
+            'stable_clock_speed' => 'nullable|boolean',
+            'temperature_within_range' => 'nullable|boolean',
+            'single_core_score' => 'nullable|integer',
+            'multi_core_score' => 'nullable|integer',
+            'benchmark_temp_c' => 'nullable|numeric',
+            'benchmark_peak_power_w' => 'nullable|numeric',
+            'benchmark_completed' => 'nullable|boolean',
+            'performance_within_range' => 'nullable|boolean',
+            'no_thermal_throttling_benchmark' => 'nullable|boolean',
+            'idle_temp_c' => 'nullable|numeric',
+            'load_temp_c' => 'nullable|numeric',
+            'ccd_temp_c' => 'nullable|numeric',
+            'core_voltage_v' => 'nullable|numeric',
+            'avg_effective_clock_mhz' => 'nullable|integer',
+            'peak_package_power_benchmark_w' => 'nullable|numeric',
+            'stability_test_passed' => 'nullable|boolean',
+            'benchmark_test_passed' => 'nullable|boolean',
+            'thermal_performance_passed' => 'nullable|boolean',
+            'clock_stability_passed' => 'nullable|boolean',
+            'power_delivery_passed' => 'nullable|boolean',
+            'overall_cpu_validation' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $cpuResults = $performanceTest->cpuResults()->firstOrCreate([]);
+            $cpuResults->fill($request->only(self::CPU_RESULT_FIELDS));
+            $cpuResults->save();
+
+            if ($request->has('overall_cpu_validation')) {
+                $performanceTest->overall_cpu_performance = $request->boolean('overall_cpu_validation');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'CPU results updated successfully',
+                'data' => $cpuResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update CPU results', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateGpuResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'duration' => 'nullable|string|max:255',
+            'vram_test' => 'nullable|boolean',
+            'avg_temp_c' => 'nullable|numeric',
+            'max_temp_c' => 'nullable|numeric',
+            'max_hotspot_temp_c' => 'nullable|numeric',
+            'avg_clock_mhz' => 'nullable|integer',
+            'peak_power_draw_w' => 'nullable|numeric',
+            'thermal_throttling' => 'nullable|boolean',
+            'visual_artifacts' => 'nullable|boolean',
+            'driver_crash' => 'nullable|boolean',
+            'no_visual_artifacts' => 'nullable|boolean',
+            'no_driver_crash' => 'nullable|boolean',
+            'stable_clock_speed' => 'nullable|boolean',
+            'temperature_within_range' => 'nullable|boolean',
+            'gpu_score' => 'nullable|integer',
+            'overall_score' => 'nullable|integer',
+            'benchmark_temp_c' => 'nullable|numeric',
+            'benchmark_peak_power_w' => 'nullable|numeric',
+            'benchmark_completed' => 'nullable|boolean',
+            'performance_within_range' => 'nullable|boolean',
+            'no_performance_anomalies' => 'nullable|boolean',
+            'idle_temp_c' => 'nullable|numeric',
+            'load_temp_c' => 'nullable|numeric',
+            'hotspot_temp_c' => 'nullable|numeric',
+            'core_clock_mhz' => 'nullable|integer',
+            'memory_clock_mhz' => 'nullable|integer',
+            'power_draw_w' => 'nullable|numeric',
+            'fan_speed_rpm' => 'nullable|integer',
+            'stability_test_passed' => 'nullable|boolean',
+            'benchmark_test_passed' => 'nullable|boolean',
+            'thermal_performance_passed' => 'nullable|boolean',
+            'clock_stability_passed' => 'nullable|boolean',
+            'cooling_performance_passed' => 'nullable|boolean',
+            'overall_gpu_validation' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $gpuResults = $performanceTest->gpuResults()->firstOrCreate([]);
+            $gpuResults->fill($request->only(self::GPU_RESULT_FIELDS));
+            $gpuResults->save();
+
+            if ($request->has('overall_gpu_validation')) {
+                $performanceTest->overall_gpu_performance = $request->boolean('overall_gpu_validation');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'GPU results updated successfully',
+                'data' => $gpuResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update GPU results', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateSystemStabilityResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'duration' => 'nullable|string|max:255',
+            'ambient_temp_c' => 'nullable|numeric',
+            'windows_power_plan' => 'nullable|in:high_performance,balanced',
+            'max_cpu_temp_c' => 'nullable|numeric',
+            'max_gpu_temp_c' => 'nullable|numeric',
+            'cpu_package_power_w' => 'nullable|numeric',
+            'gpu_power_draw_w' => 'nullable|numeric',
+            'total_system_power_w' => 'nullable|numeric',
+            'cpu_clock_stability' => 'nullable|in:stable,unstable',
+            'gpu_clock_stability' => 'nullable|in:stable,unstable',
+            'unexpected_shutdown' => 'nullable|boolean',
+            'bsod' => 'nullable|boolean',
+            'application_crash' => 'nullable|boolean',
+            'whea_errors' => 'nullable|boolean',
+            'thermal_throttling' => 'nullable|boolean',
+            'test_completed_successfully' => 'nullable|boolean',
+            'no_shutdowns' => 'nullable|boolean',
+            'no_bsod' => 'nullable|boolean',
+            'no_whea_errors' => 'nullable|boolean',
+            'no_thermal_throttling' => 'nullable|boolean',
+            'stable_cpu_gpu_operation' => 'nullable|boolean',
+            'cpu_temp_c' => 'nullable|numeric',
+            'gpu_temp_c' => 'nullable|numeric',
+            'motherboard_temp_c' => 'nullable|numeric',
+            'vrm_temp_c' => 'nullable|numeric',
+            'chipset_temp_c' => 'nullable|numeric',
+            'cpu_fan_speed_rpm' => 'nullable|integer',
+            'pump_speed_rpm' => 'nullable|integer',
+            'combined_load_stability' => 'nullable|boolean',
+            'thermal_performance' => 'nullable|boolean',
+            'power_delivery' => 'nullable|boolean',
+            'cooling_performance' => 'nullable|boolean',
+            'overall_system_stability' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $systemStabilityResults = $performanceTest->systemStabilityResults()->firstOrCreate([]);
+            $systemStabilityResults->fill($request->only(self::SYSTEM_STABILITY_RESULT_FIELDS));
+            $systemStabilityResults->save();
+
+            if ($request->has('overall_system_stability')) {
+                $performanceTest->overall_system_stability = $request->boolean('overall_system_stability');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'System stability results updated successfully',
+                'data' => $systemStabilityResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update system stability results', 'error' => $e->getMessage()], 500);
         }
     }
 
