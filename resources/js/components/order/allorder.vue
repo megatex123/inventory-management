@@ -267,25 +267,11 @@
                                                             <i class="fas fa-info-circle"></i>
                                                         </button>
                                                         <router-link
-                                                            :to="{name:'craftinspection', params:{id:order.id, phase:2, round:1}}"
+                                                            :to="{name:'craftinspection', params:{id:order.id, round:1}}"
                                                             class="btn btn-sm btn-dark ml-1"
-                                                            title="Pre Build Inspection"
+                                                            title="Studio Inspection"
                                                         >
-                                                            <i class="fas fa-clipboard-check"></i>1
-                                                        </router-link>
-                                                        <router-link
-                                                            :to="{name:'craftinspection', params:{id:order.id, phase:3, round:1}}"
-                                                            class="btn btn-sm btn-dark ml-1"
-                                                            title="Build Inspection"
-                                                        >
-                                                            <i class="fas fa-clipboard-check"></i>2
-                                                        </router-link>
-                                                        <router-link
-                                                            :to="{name:'craftinspection', params:{id:order.id, phase:4, round:1}}"
-                                                            class="btn btn-sm btn-dark ml-1"
-                                                            title="Post Build Inspection"
-                                                        >
-                                                            <i class="fas fa-clipboard-check"></i>3
+                                                            <i class="fas fa-clipboard-check"></i>
                                                         </router-link>
                                                         <!-- Approve Button -->
                                                         <button
