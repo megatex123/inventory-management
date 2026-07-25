@@ -231,6 +231,26 @@
         :initial-data="(performanceTest && performanceTest.system_stability_results) || {}"
         @saved="onSystemStabilityResultsSaved"
       />
+      <memory-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.memory_results) || {}"
+        @saved="onMemoryResultsSaved"
+      />
+      <storage-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.storage_results) || {}"
+        @saved="onStorageResultsSaved"
+      />
+      <cooling-performance-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.cooling_performance_results) || {}"
+        @saved="onCoolingPerformanceResultsSaved"
+      />
+      <cooling-system-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.cooling_system_results) || {}"
+        @saved="onCoolingSystemResultsSaved"
+      />
     </template>
   </div>
 </template>
@@ -242,6 +262,10 @@ import InspectionGroup from '../craft_inspection/InspectionGroup.vue';
 import CpuResultsSection from './CpuResultsSection.vue';
 import GpuResultsSection from './GpuResultsSection.vue';
 import SystemStabilityResultsSection from './SystemStabilityResultsSection.vue';
+import MemoryResultsSection from './MemoryResultsSection.vue';
+import StorageResultsSection from './StorageResultsSection.vue';
+import CoolingPerformanceResultsSection from './CoolingPerformanceResultsSection.vue';
+import CoolingSystemResultsSection from './CoolingSystemResultsSection.vue';
 
 const SECTION_LABELS = {
   assembly: 'Studio PC Assembly Checklist',
@@ -270,6 +294,10 @@ export default {
     CpuResultsSection,
     GpuResultsSection,
     SystemStabilityResultsSection,
+    MemoryResultsSection,
+    StorageResultsSection,
+    CoolingPerformanceResultsSection,
+    CoolingSystemResultsSection,
     // Small local component (note + photo widget, no status toggle) for the
     // OS Configuration / Drivers Installation sections, which share one
     // note+photo pair across several tickboxes rather than one per item.
@@ -365,10 +393,10 @@ export default {
         { key: 'overall_cpu_performance', label: 'CPU Performance', readonly: true },
         { key: 'overall_gpu_performance', label: 'GPU Performance', readonly: true },
         { key: 'overall_system_stability', label: 'System Stability', readonly: true },
-        { key: 'overall_memory_validation', label: 'Memory Validation' },
-        { key: 'overall_storage_validation', label: 'Storage Validation' },
-        { key: 'overall_cpu_cooling_performance', label: 'CPU Cooling Performance' },
-        { key: 'overall_cooling_system', label: 'Cooling System' },
+        { key: 'overall_memory_validation', label: 'Memory Validation', readonly: true },
+        { key: 'overall_storage_validation', label: 'Storage Validation', readonly: true },
+        { key: 'overall_cpu_cooling_performance', label: 'CPU Cooling Performance', readonly: true },
+        { key: 'overall_cooling_system', label: 'Cooling System', readonly: true },
         { key: 'overall_display_output', label: 'Display Output' },
         { key: 'overall_network_wireless', label: 'Network & Wireless' },
         { key: 'overall_usb_ports', label: 'USB Ports' },
@@ -556,6 +584,22 @@ export default {
     onSystemStabilityResultsSaved(data) {
       this.performanceTest.system_stability_results = data;
       this.form.overall_system_stability = Boolean(data.overall_system_stability);
+    },
+    onMemoryResultsSaved(data) {
+      this.performanceTest.memory_results = data;
+      this.form.overall_memory_validation = Boolean(data.overall_memory_validation);
+    },
+    onStorageResultsSaved(data) {
+      this.performanceTest.storage_results = data;
+      this.form.overall_storage_validation = Boolean(data.overall_storage_validation);
+    },
+    onCoolingPerformanceResultsSaved(data) {
+      this.performanceTest.cooling_performance_results = data;
+      this.form.overall_cpu_cooling_performance = Boolean(data.overall_cpu_cooling_performance);
+    },
+    onCoolingSystemResultsSaved(data) {
+      this.performanceTest.cooling_system_results = data;
+      this.form.overall_cooling_system = Boolean(data.overall_cooling_system);
     },
     markComplete() {
       axios.post(`${this.apiBase}/complete`)
