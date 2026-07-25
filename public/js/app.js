@@ -8372,7 +8372,7 @@ var FIELD_SCHEMAS = {
     label: 'CPU Socket'
   }, {
     key: 'dimm_slot',
-    label: 'DIMM Slot'
+    label: 'DIMM Slots'
   }, {
     key: 'pcie_slots',
     label: 'PCIe Slots'
@@ -8387,7 +8387,7 @@ var FIELD_SCHEMAS = {
     label: 'Rear I/O'
   }, {
     key: 'cmos_batt',
-    label: 'CMOS Batt'
+    label: 'CMOS Battery'
   }, {
     key: 'accessories',
     label: 'Accessories'
@@ -8558,6 +8558,9 @@ var FIELD_SCHEMAS = {
     key: 'cables_inclusion',
     label: 'Cables Inclusion'
   }, {
+    key: 'cables',
+    label: 'Cables'
+  }, {
     key: 'housing',
     label: 'Housing'
   }, {
@@ -8610,6 +8613,9 @@ var FIELD_SCHEMAS = {
   }, {
     key: 'cable',
     label: 'Cable'
+  }, {
+    key: 'fan',
+    label: 'Fan'
   }, {
     key: 'quantity',
     label: 'Quantity'
@@ -8687,19 +8693,8 @@ var keySeq = 0;
     round: function round() {
       return this.$route.params.round || 1;
     },
-    phase: function phase() {
-      return this.$route.params.phase || 2;
-    },
-    phaseLabel: function phaseLabel() {
-      var labels = {
-        2: 'Pre Build Inspection',
-        3: 'Build Inspection',
-        4: 'Post Build Inspection'
-      };
-      return labels[this.phase] || labels[Number(this.phase)] || 'Pre Build Inspection';
-    },
     apiBase: function apiBase() {
-      return "/api/order/".concat(this.$route.params.id, "/inspection/").concat(this.phase, "/").concat(this.round);
+      return "/api/order/".concat(this.$route.params.id, "/inspection/").concat(this.round);
     },
     // Order parts whose category maps to a known inspection type
     mappedOrderParts: function mappedOrderParts() {
@@ -37069,7 +37064,7 @@ var render = function render() {
     staticClass: "d-flex justify-content-between align-items-center mb-4"
   }, [_c("div", [_vm._m(0), _vm._v(" "), _c("p", {
     staticClass: "text-muted mb-0"
-  }, [_vm._v(_vm._s(_vm.phaseLabel) + " — Round " + _vm._s(_vm.round))])]), _vm._v(" "), _c("div", [_c("router-link", {
+  }, [_vm._v("Studio Inspection — Round " + _vm._s(_vm.round))])]), _vm._v(" "), _c("div", [_c("router-link", {
     staticClass: "btn btn-outline-secondary mr-2",
     attrs: {
       to: "/orders/all"
@@ -40953,7 +40948,7 @@ var render = function render() {
   }, [_vm._m(6), _vm._v(" "), _c("tbody", [_vm._l(_vm.inspectionStats.pending, function (row) {
     return _c("tr", {
       key: "insp-" + row.id
-    }, [_c("td", [_vm._v(_vm._s(row.order_code || "#" + row.order_pk))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(row.customer || "N/A"))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(row.phase_label || "Pre Build Inspection"))]), _vm._v(" "), _c("td", {
+    }, [_c("td", [_vm._v(_vm._s(row.order_code || "#" + row.order_pk))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(row.customer || "N/A"))]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_c("span", {
       staticClass: "badge badge-secondary"
@@ -40966,7 +40961,6 @@ var render = function render() {
           name: "craftinspection",
           params: {
             id: row.order_pk,
-            phase: row.phase || 2,
             round: row.round
           }
         }
@@ -41184,13 +41178,13 @@ var staticRenderFns = [function () {
     staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
   }, [_c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("Pre-Build Inspections Awaiting Action")])]);
+  }, [_vm._v("Studio Inspections Awaiting Action")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("thead", {
     staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Order")]), _vm._v(" "), _c("th", [_vm._v("Customer")]), _vm._v(" "), _c("th", [_vm._v("Phase")]), _vm._v(" "), _c("th", {
+  }, [_c("tr", [_c("th", [_vm._v("Order")]), _vm._v(" "), _c("th", [_vm._v("Customer")]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
   }, [_vm._v("Round")]), _vm._v(" "), _c("th", [_vm._v("Last Updated")]), _vm._v(" "), _c("th")])]);
 }, function () {
@@ -53370,45 +53364,14 @@ var render = function render() {
           name: "craftinspection",
           params: {
             id: order.id,
-            phase: 2,
             round: 1
           }
         },
-        title: "Pre Build Inspection"
+        title: "Studio Inspection"
       }
     }, [_c("i", {
       staticClass: "fas fa-clipboard-check"
-    }), _vm._v("1\n                                                    ")]), _vm._v(" "), _c("router-link", {
-      staticClass: "btn btn-sm btn-dark ml-1",
-      attrs: {
-        to: {
-          name: "craftinspection",
-          params: {
-            id: order.id,
-            phase: 3,
-            round: 1
-          }
-        },
-        title: "Build Inspection"
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-clipboard-check"
-    }), _vm._v("2\n                                                    ")]), _vm._v(" "), _c("router-link", {
-      staticClass: "btn btn-sm btn-dark ml-1",
-      attrs: {
-        to: {
-          name: "craftinspection",
-          params: {
-            id: order.id,
-            phase: 4,
-            round: 1
-          }
-        },
-        title: "Post Build Inspection"
-      }
-    }, [_c("i", {
-      staticClass: "fas fa-clipboard-check"
-    }), _vm._v("3\n                                                    ")]), _vm._v(" "), order.approve === null || order.approve === "" || order.approve === undefined ? _c("button", {
+    })]), _vm._v(" "), order.approve === null || order.approve === "" || order.approve === undefined ? _c("button", {
       staticClass: "btn btn-sm btn-success ml-1",
       attrs: {
         title: "Approve Order"
@@ -152530,7 +152493,7 @@ var routes = [{
 },
 // craft inspection
 {
-  path: '/order/:id/inspection/:phase/:round',
+  path: '/order/:id/inspection/:round',
   component: craftinspection,
   name: 'craftinspection',
   meta: {
