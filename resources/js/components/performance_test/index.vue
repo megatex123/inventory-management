@@ -182,11 +182,8 @@
         <div class="card-header"><h5 class="mb-0">{{ sectionLabel(section) }}</h5></div>
         <div class="card-body">
           <div class="border rounded p-3 mb-3" v-for="item in sections[section]" :key="item._key">
-            <div class="d-flex justify-content-between align-items-start">
-              <h6>{{ item.item_label }}</h6>
-            </div>
             <inspection-group
-              label=""
+              :label="item.item_label"
               good-value="pass"
               good-label="Pass"
               bad-value="fail"
@@ -469,6 +466,9 @@ export default {
       this.formSaving = true;
       this.formErrors = [];
 
+      const coolingChanged = this.form.cooling_solution &&
+        this.form.cooling_solution !== this.performanceTest.cooling_solution;
+
       const formData = new FormData();
       PARENT_FIELD_KEYS.forEach(key => {
         const value = this.form[key];
@@ -480,17 +480,25 @@ export default {
       this.removeDriversPhotos.forEach(p => formData.append('remove_drivers_photos[]', p));
 
       try {
-        await axios.post(this.apiBase, formData, {
+        const res = await axios.post(this.apiBase, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
+        this.performanceTest = res.data.data;
         this.newOsConfigPhotos = [];
         this.removeOsConfigPhotos = [];
         this.newDriversPhotos = [];
         this.removeDriversPhotos = [];
 
-        // Re-fetch: the cooler-installation checklist item's label may have
-        // changed server-side if cooling_solution changed.
-        await this.fetchData();
+        // Patch the cooler-installation item's label locally instead of a full
+        // fetchData(), which would discard any unsaved checklist-item edits
+        // (the three checklist sections render below this form).
+        if (coolingChanged) {
+          const label = this.form.cooling_solution === 'water_cooler' ? 'Water Cooler Installation' : 'Air Cooler Installation';
+          const coolerItem = this.items.find(item => item.item_key === 'cooler_installation');
+          if (coolerItem) {
+            coolerItem.item_label = label;
+          }
+        }
 
         Swal.fire({ title: 'Saved!', text: 'Report details updated', icon: 'success', timer: 1200, showConfirmButton: false });
       } catch (error) {
