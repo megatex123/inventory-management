@@ -80,9 +80,19 @@ Created after order approval, running in parallel with [[QuiviServe]]/[[QuiviCar
   | `packaging_status` | `intact` | `damaged` |
   | `condition_status` | `sound_pristine` | `issue` |
 
-  The "good" value per dimension is `CraftInspectionController::GOOD_VALUES` — when a dimension isn't the good value, `*_note` is expected instead of/alongside `*_photos` (photos are the happy-path evidence; a problem gets a written note).
+  The "good" value per dimension is `CraftInspectionController::GOOD_VALUES` — when a dimension is the good value, 1-2 `*_photos` are required and `*_note` is optional; when it isn't, `*_note` is required and `*_photos` are optional (capped at 2 either way). Photos and notes are no longer mutually exclusive by status (fixed 2026-07-25 — staff wanted to attach photos of damage/issues too, and add a note on the happy path too, not have each status locked to only one of the two).
 - Four boolean flags per item, independent of the three status dimensions above: `model_verified`, `serial_recorded`, `factory_seal`, `qc_pass`.
 - `fields` is a free-form JSON column (`json_valid` check constraint) for component-specific data that doesn't fit a fixed column — check current frontend usage before assuming its shape.
+
+## 5. Performance Testing (Phase 1 of 4: Assembly & Boot)
+
+A second, separate QC report type from Studio Inspection — created 2026-07-25, first of 4 planned phases (Assembly & Boot done; Stress/Benchmark testing, Memory/Storage/Cooling validation, and Connectivity & I/O are future phases, each its own spec/plan).
+
+- **`PerformanceTest`** — one per `(order_id, round)`, mirrors `CraftInspection`'s shape (same `round` redo-after-failure mechanic). A single wide table holding everything that occurs once per report: the Overall Performance Testing Result summary tickboxes (filled in progressively as later phases are built — this phase only produces the assembly/boot-relevant ones), `cooling_solution`, Thermal Interface, Technician Self QC, OS Configuration, Drivers Installation, and Application Installation.
+- **`PerformanceTestChecklistItem`** — the repeated tickbox+photo+note pattern, same shape as `CraftInspectionItem`, covering three sections via a `section` column: `assembly` (12 items, cooling-solution-dependent label on one item), `boot_verification` (10 items), `bios_configuration` (8 items). Unlike Craft Inspection's items, these are a **fixed seeded set** (auto-created on first `show()`, not user-added/removable) since Performance Testing's checklist doesn't vary by order contents.
+- The photo/note validation rule (good status needs 1-2 photos, bad status needs a note, both optionally available either way) is shared with Craft Inspection via `App\Http\Controllers\Concerns\ValidatesPhotoEvidence` (extracted 2026-07-25) rather than being reimplemented.
+- Route/API shape is `order/{orderId}/performance-test/{round}` — quick-launch button on the QuiviCraft list sits next to Studio Inspection's.
+- Frontend reuses `craft_inspection/InspectionGroup.vue` directly for the 30 checklist items.
 
 ## Known gaps
 
@@ -93,6 +103,6 @@ Created after order approval, running in parallel with [[QuiviServe]]/[[QuiviCar
 - [[Product-Catalog]]
 - [[QuiviServe]]
 - [[QuiviCare]]
-- [[Domain-Models]] — schema detail ("Orders / POS" and "Craft inspection" sections)
-- [[API-Routes]] — endpoints ("POS / Cart / Orders" and "Craft inspection" sections)
+- [[Domain-Models]] — schema detail ("Orders / POS" and "Craft inspection" / "Performance Testing" sections)
+- [[API-Routes]] — endpoints ("POS / Cart / Orders" and "Craft inspection" / "Performance Testing" sections)
 - [[Frontend-Components]]
