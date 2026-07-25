@@ -110,7 +110,7 @@
                     </td>
                   </tr>
                   <tr v-if="!inspectionStats.pending || inspectionStats.pending.length === 0">
-                    <td colspan="4" class="text-center text-muted py-3">No pending inspections — all caught up.</td>
+                    <td colspan="5" class="text-center text-muted py-3">No pending inspections — all caught up.</td>
                   </tr>
                 </tbody>
               </table>
