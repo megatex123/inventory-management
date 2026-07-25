@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ValidatesPhotoEvidence;
 use App\Models\CraftInspection;
 use App\Models\CraftInspectionItem;
 use App\Models\Order;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CraftInspectionController extends Controller
 {
+    use ValidatesPhotoEvidence;
     // Component types matching the QuiviCraft Build Report checklist
     const COMPONENT_TYPES = ['cpu', 'mbd', 'gpu', 'ram', 'ssd', 'hdd', 'aio', 'hsf', 'psu', 'cse', 'fan', 'acc'];
 
@@ -265,7 +267,8 @@ class CraftInspectionController extends Controller
         ]);
     }
 
-    // Enforce: "good" status requires 1-2 photos, otherwise a note is required.
+    // Enforce: "good" status requires 1-2 photos; the "bad" status always requires
+    // a note, and optionally allows up to 2 supporting photos too.
     private function validateGroups(Request $request, array $existingPhotos)
     {
         $errors = [];
@@ -276,18 +279,10 @@ class CraftInspectionController extends Controller
             $newPhotoCount = is_array($newPhotos) ? count($newPhotos) : ($newPhotos ? 1 : 0);
             $removePhotos = $request->input("remove_{$group}_photos", []);
             $existingCount = max(0, count($existingPhotos["{$group}_photos"] ?? []) - count($removePhotos));
-            $totalPhotos = $existingCount + $newPhotoCount;
 
-            if ($status === $goodValue) {
-                if ($totalPhotos < 1) {
-                    $errors["{$group}_photos"] = ["At least 1 photo is required when {$group} is marked as \"{$goodValue}\"."];
-                } elseif ($totalPhotos > 2) {
-                    $errors["{$group}_photos"] = ["A maximum of 2 photos is allowed for {$group}."];
-                }
-            } else {
-                if (!$request->filled("{$group}_note")) {
-                    $errors["{$group}_note"] = ["A note is required when {$group} is not marked as \"{$goodValue}\"."];
-                }
+            $groupErrors = $this->validatePhotoEvidence($status, $goodValue, $request->input("{$group}_note"), $existingCount, $newPhotoCount);
+            foreach ($groupErrors as $key => $messages) {
+                $errors["{$group}_{$key}"] = $messages;
             }
         }
 
