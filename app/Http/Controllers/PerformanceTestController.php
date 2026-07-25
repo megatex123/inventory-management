@@ -60,8 +60,7 @@ class PerformanceTestController extends Controller
         'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance',
         'overall_cooling_system', 'overall_display_output', 'overall_network_wireless', 'overall_usb_ports',
         'overall_notes', 'thermal_paste_brand', 'thermal_paste_batch', 'thermal_paste_application_method',
-        'os_installed', 'os_config_note', 'driver_chipset', 'driver_wifi', 'driver_gpu', 'driver_bluetooth',
-        'driver_lan', 'driver_audio', 'drivers_note', 'applications_installed', 'applications_note',
+        'os_installed', 'os_config_note', 'drivers_note', 'applications_installed', 'applications_note',
     ];
 
     public function show($orderId, $round = 1)
@@ -146,44 +145,48 @@ class PerformanceTestController extends Controller
             return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
-        $previousCoolingSolution = $performanceTest->cooling_solution;
+        try {
+            $previousCoolingSolution = $performanceTest->cooling_solution;
 
-        $performanceTest->fill($request->only(self::PARENT_FIELDS));
-        $performanceTest->ready_for_first_boot = $request->boolean('ready_for_first_boot');
-        $performanceTest->ready_for_bios_configuration = $request->boolean('ready_for_bios_configuration');
-        $performanceTest->ready_for_stability_testing = $request->boolean('ready_for_stability_testing');
-        $performanceTest->ready_for_performance_testing = $request->boolean('ready_for_performance_testing');
-        $performanceTest->ready_for_stress_testing = $request->boolean('ready_for_stress_testing');
-        $performanceTest->windows_activation = $request->boolean('windows_activation');
-        $performanceTest->windows_update = $request->boolean('windows_update');
-        $performanceTest->driver_chipset = $request->boolean('driver_chipset');
-        $performanceTest->driver_wifi = $request->boolean('driver_wifi');
-        $performanceTest->driver_gpu = $request->boolean('driver_gpu');
-        $performanceTest->driver_bluetooth = $request->boolean('driver_bluetooth');
-        $performanceTest->driver_lan = $request->boolean('driver_lan');
-        $performanceTest->driver_audio = $request->boolean('driver_audio');
+            $performanceTest->fill($request->only(self::PARENT_FIELDS));
+            $performanceTest->ready_for_first_boot = $request->boolean('ready_for_first_boot');
+            $performanceTest->ready_for_bios_configuration = $request->boolean('ready_for_bios_configuration');
+            $performanceTest->ready_for_stability_testing = $request->boolean('ready_for_stability_testing');
+            $performanceTest->ready_for_performance_testing = $request->boolean('ready_for_performance_testing');
+            $performanceTest->ready_for_stress_testing = $request->boolean('ready_for_stress_testing');
+            $performanceTest->windows_activation = $request->boolean('windows_activation');
+            $performanceTest->windows_update = $request->boolean('windows_update');
+            $performanceTest->driver_chipset = $request->boolean('driver_chipset');
+            $performanceTest->driver_wifi = $request->boolean('driver_wifi');
+            $performanceTest->driver_gpu = $request->boolean('driver_gpu');
+            $performanceTest->driver_bluetooth = $request->boolean('driver_bluetooth');
+            $performanceTest->driver_lan = $request->boolean('driver_lan');
+            $performanceTest->driver_audio = $request->boolean('driver_audio');
 
-        if ($request->hasFile('os_config_photos') || $request->filled('remove_os_config_photos')) {
-            $performanceTest->os_config_photos = $this->mergePhotos($performanceTest->os_config_photos, $request, 'os_config_photos', 'remove_os_config_photos');
+            if ($request->hasFile('os_config_photos') || $request->filled('remove_os_config_photos')) {
+                $performanceTest->os_config_photos = $this->mergePhotos($performanceTest->os_config_photos, $request, 'os_config_photos', 'remove_os_config_photos');
+            }
+            if ($request->hasFile('drivers_photos') || $request->filled('remove_drivers_photos')) {
+                $performanceTest->drivers_photos = $this->mergePhotos($performanceTest->drivers_photos, $request, 'drivers_photos', 'remove_drivers_photos');
+            }
+
+            $performanceTest->save();
+
+            if ($request->filled('cooling_solution') && $request->cooling_solution !== $previousCoolingSolution) {
+                $label = $request->cooling_solution === 'water_cooler' ? 'Water Cooler Installation' : 'Air Cooler Installation';
+                PerformanceTestChecklistItem::where('performance_test_id', $performanceTest->id)
+                    ->where('item_key', 'cooler_installation')
+                    ->update(['item_label' => $label]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Performance test updated successfully',
+                'data' => $performanceTest->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update performance test', 'error' => $e->getMessage()], 500);
         }
-        if ($request->hasFile('drivers_photos') || $request->filled('remove_drivers_photos')) {
-            $performanceTest->drivers_photos = $this->mergePhotos($performanceTest->drivers_photos, $request, 'drivers_photos', 'remove_drivers_photos');
-        }
-
-        $performanceTest->save();
-
-        if ($request->filled('cooling_solution') && $request->cooling_solution !== $previousCoolingSolution) {
-            $label = $request->cooling_solution === 'water_cooler' ? 'Water Cooler Installation' : 'Air Cooler Installation';
-            PerformanceTestChecklistItem::where('performance_test_id', $performanceTest->id)
-                ->where('item_key', 'cooler_installation')
-                ->update(['item_label' => $label]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Performance test updated successfully',
-            'data' => $performanceTest->fresh(),
-        ]);
     }
 
     public function updateItem(Request $request, $orderId, $round, $itemId)
@@ -217,16 +220,20 @@ class PerformanceTestController extends Controller
             return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $groupErrors], 422);
         }
 
-        $item->status = $request->status;
-        $item->note = $request->note;
-        $item->photos = $this->mergePhotos($item->photos, $request, 'photos', 'remove_photos');
-        $item->save();
+        try {
+            $item->status = $request->status;
+            $item->note = $request->note;
+            $item->photos = $this->mergePhotos($item->photos, $request, 'photos', 'remove_photos');
+            $item->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Checklist item updated successfully',
-            'data' => $item->fresh(),
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Checklist item updated successfully',
+                'data' => $item->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update checklist item', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function complete($orderId, $round = 1)
