@@ -56,29 +56,24 @@
 
                             <!-- Filter Section -->
                             <div class="card mb-4">
-                                <div class="card-header bg-light">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                     <h5 class="m-0 font-weight-bold text-primary">
                                         <i class="fas fa-filter mr-2"></i>Filter QuiviCraft
                                     </h5>
+                                    <button class="btn btn-outline-secondary btn-sm" @click="showFilters = !showFilters">
+                                        <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                                    </button>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3 mb-3">
-                                            <label class="form-label">Search</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
-                                                </div>
-                                                <input
-                                                    type="text"
-                                                    class="form-control"
-                                                    v-model="filters.search"
-                                                    placeholder="Search by Order ID or Customer Name"
-                                                    @keyup.enter="applyFilters"
-                                                >
-                                            </div>
-                                        </div>
+                                <transition name="filter-panel">
+                                <div class="card-body" v-if="showFilters">
+                                    <column-search-panel
+                                        :columns="filterColumns"
+                                        v-model="filters"
+                                        :visible="true"
+                                    />
 
+                                    <div class="row">
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">Status</label>
                                             <select class="form-control" v-model="filters.approve" @change="applyFilters">
@@ -124,6 +119,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </transition>
                             </div>
 
                             <!-- Orders Table -->
@@ -361,8 +357,10 @@
 
 <script>
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+    components: { ColumnSearchPanel },
     data() {
         return {
             orders: [],
@@ -371,8 +369,18 @@ export default {
                 today_orders: 0,
                 today_revenue: 0
             },
+            showFilters: false,
+            filterColumns: [
+                { key: 'order_id', label: 'Order ID', type: 'text' },
+                { key: 'customer_name', label: 'Customer Name', type: 'text' },
+                { key: 'customer_email', label: 'Customer Email', type: 'text' },
+                { key: 'total', label: 'Total (RM)', type: 'text' },
+            ],
             filters: {
-                search: '',
+                order_id: '',
+                customer_name: '',
+                customer_email: '',
+                total: '',
                 approve: '', // Changed from status to approve
                 date_from: '',
                 date_to: '',
@@ -388,14 +396,27 @@ export default {
         filteredOrders() {
             let filtered = this.orders;
 
-            // Search filter
-            if (this.filters.search) {
-                const search = this.filters.search.toLowerCase();
-                filtered = filtered.filter(order =>
-                    (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
-                    (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
-                    (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
-                );
+            // Order ID filter
+            if (this.filters.order_id) {
+                const kw = this.filters.order_id.toLowerCase();
+                filtered = filtered.filter(order => order.order_id && order.order_id.toString().toLowerCase().includes(kw));
+            }
+
+            // Customer Name filter
+            if (this.filters.customer_name) {
+                const kw = this.filters.customer_name.toLowerCase();
+                filtered = filtered.filter(order => order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(kw));
+            }
+
+            // Customer Email filter
+            if (this.filters.customer_email) {
+                const kw = this.filters.customer_email.toLowerCase();
+                filtered = filtered.filter(order => order.customer && order.customer.email && order.customer.email.toLowerCase().includes(kw));
+            }
+
+            // Total filter
+            if (this.filters.total) {
+                filtered = filtered.filter(order => order.total !== undefined && order.total !== null && order.total.toString().includes(this.filters.total));
             }
 
             // Approve status filter - fixed to use actual approve values
@@ -582,7 +603,10 @@ export default {
         },
         resetFilters() {
             this.filters = {
-                search: '',
+                order_id: '',
+                customer_name: '',
+                customer_email: '',
+                total: '',
                 approve: '',
                 date_from: '',
                 date_to: '',
@@ -887,7 +911,10 @@ export default {
 
                 // Generate filter summary
                 const filterSummary = [];
-                if (this.filters.search) filterSummary.push(`Search: "${this.filters.search}"`);
+                if (this.filters.order_id) filterSummary.push(`Order ID: "${this.filters.order_id}"`);
+                if (this.filters.customer_name) filterSummary.push(`Customer Name: "${this.filters.customer_name}"`);
+                if (this.filters.customer_email) filterSummary.push(`Customer Email: "${this.filters.customer_email}"`);
+                if (this.filters.total) filterSummary.push(`Total: "${this.filters.total}"`);
                 if (this.filters.approve) {
                     const statusMap = {
                         '1': 'Approved',
@@ -1176,13 +1203,20 @@ export default {
                 let filteredData = res.data || [];
 
                 // Apply any client-side filtering if needed
-                if (this.filters.search) {
-                    const search = this.filters.search.toLowerCase();
-                    filteredData = filteredData.filter(order =>
-                        (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
-                        (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
-                        (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
-                    );
+                if (this.filters.order_id) {
+                    const kw = this.filters.order_id.toLowerCase();
+                    filteredData = filteredData.filter(order => order.order_id && order.order_id.toString().toLowerCase().includes(kw));
+                }
+                if (this.filters.customer_name) {
+                    const kw = this.filters.customer_name.toLowerCase();
+                    filteredData = filteredData.filter(order => order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(kw));
+                }
+                if (this.filters.customer_email) {
+                    const kw = this.filters.customer_email.toLowerCase();
+                    filteredData = filteredData.filter(order => order.customer && order.customer.email && order.customer.email.toLowerCase().includes(kw));
+                }
+                if (this.filters.total) {
+                    filteredData = filteredData.filter(order => order.total !== undefined && order.total !== null && order.total.toString().includes(this.filters.total));
                 }
 
                 // Apply date filters again to ensure consistency
@@ -1323,14 +1357,27 @@ export default {
         getFilteredOrdersForExport() {
             let filtered = [...this.orders];
 
-            // Search filter
-            if (this.filters.search) {
-                const search = this.filters.search.toLowerCase();
-                filtered = filtered.filter(order =>
-                    (order.order_id && order.order_id.toString().toLowerCase().includes(search)) ||
-                    (order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(search)) ||
-                    (order.customer && order.customer.email && order.customer.email.toLowerCase().includes(search))
-                );
+            // Order ID filter
+            if (this.filters.order_id) {
+                const kw = this.filters.order_id.toLowerCase();
+                filtered = filtered.filter(order => order.order_id && order.order_id.toString().toLowerCase().includes(kw));
+            }
+
+            // Customer Name filter
+            if (this.filters.customer_name) {
+                const kw = this.filters.customer_name.toLowerCase();
+                filtered = filtered.filter(order => order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(kw));
+            }
+
+            // Customer Email filter
+            if (this.filters.customer_email) {
+                const kw = this.filters.customer_email.toLowerCase();
+                filtered = filtered.filter(order => order.customer && order.customer.email && order.customer.email.toLowerCase().includes(kw));
+            }
+
+            // Total filter
+            if (this.filters.total) {
+                filtered = filtered.filter(order => order.total !== undefined && order.total !== null && order.total.toString().includes(this.filters.total));
             }
 
             // Approve status filter
@@ -1481,5 +1528,15 @@ export default {
 
 .table tbody tr:hover {
     background-color: #f8f9fc;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
