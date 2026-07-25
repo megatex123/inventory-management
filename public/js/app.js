@@ -58013,7 +58013,7 @@ var render = function render() {
   }), _vm._v(" "), _c("cpu-results-section", {
     attrs: {
       "api-base": _vm.apiBase,
-      "initial-data": _vm.performanceTest.cpu_results || {}
+      "initial-data": _vm.performanceTest && _vm.performanceTest.cpu_results || {}
     },
     on: {
       saved: _vm.onCpuResultsSaved
@@ -58021,7 +58021,7 @@ var render = function render() {
   }), _vm._v(" "), _c("gpu-results-section", {
     attrs: {
       "api-base": _vm.apiBase,
-      "initial-data": _vm.performanceTest.gpu_results || {}
+      "initial-data": _vm.performanceTest && _vm.performanceTest.gpu_results || {}
     },
     on: {
       saved: _vm.onGpuResultsSaved
@@ -58029,7 +58029,7 @@ var render = function render() {
   }), _vm._v(" "), _c("system-stability-results-section", {
     attrs: {
       "api-base": _vm.apiBase,
-      "initial-data": _vm.performanceTest.system_stability_results || {}
+      "initial-data": _vm.performanceTest && _vm.performanceTest.system_stability_results || {}
     },
     on: {
       saved: _vm.onSystemStabilityResultsSaved

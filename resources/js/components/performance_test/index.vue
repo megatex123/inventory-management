@@ -218,17 +218,17 @@
 
       <cpu-results-section
         :api-base="apiBase"
-        :initial-data="performanceTest.cpu_results || {}"
+        :initial-data="(performanceTest && performanceTest.cpu_results) || {}"
         @saved="onCpuResultsSaved"
       />
       <gpu-results-section
         :api-base="apiBase"
-        :initial-data="performanceTest.gpu_results || {}"
+        :initial-data="(performanceTest && performanceTest.gpu_results) || {}"
         @saved="onGpuResultsSaved"
       />
       <system-stability-results-section
         :api-base="apiBase"
-        :initial-data="performanceTest.system_stability_results || {}"
+        :initial-data="(performanceTest && performanceTest.system_stability_results) || {}"
         @saved="onSystemStabilityResultsSaved"
       />
     </template>
