@@ -117,6 +117,10 @@ Route::prefix('order/{orderId}/performance-test/{round}')->group(function () {
     Route::post('/cpu-results', 'PerformanceTestController@updateCpuResults');
     Route::post('/gpu-results', 'PerformanceTestController@updateGpuResults');
     Route::post('/system-stability-results', 'PerformanceTestController@updateSystemStabilityResults');
+    Route::post('/memory-results', 'PerformanceTestController@updateMemoryResults');
+    Route::post('/storage-results', 'PerformanceTestController@updateStorageResults');
+    Route::post('/cooling-performance-results', 'PerformanceTestController@updateCoolingPerformanceResults');
+    Route::post('/cooling-system-results', 'PerformanceTestController@updateCoolingSystemResults');
     Route::post('/complete', 'PerformanceTestController@complete');
 });
 
