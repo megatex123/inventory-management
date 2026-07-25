@@ -284,7 +284,10 @@ const PARENT_FIELD_KEYS = [
   'driver_lan', 'driver_audio', 'drivers_note', 'applications_installed', 'applications_note',
 ];
 
-const READONLY_OVERALL_KEYS = ['overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability'];
+const READONLY_OVERALL_KEYS = [
+  'overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability',
+  'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance', 'overall_cooling_system',
+];
 
 let keySeq = 0;
 

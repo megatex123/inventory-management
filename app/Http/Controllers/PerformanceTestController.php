@@ -57,8 +57,7 @@ class PerformanceTestController extends Controller
 
     const PARENT_FIELDS = [
         'cooling_solution',
-        'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance',
-        'overall_cooling_system', 'overall_display_output', 'overall_network_wireless', 'overall_usb_ports',
+        'overall_display_output', 'overall_network_wireless', 'overall_usb_ports',
         'overall_notes', 'thermal_paste_brand', 'thermal_paste_batch', 'thermal_paste_application_method',
         'os_installed', 'os_config_note', 'drivers_note', 'applications_installed', 'applications_note',
     ];
