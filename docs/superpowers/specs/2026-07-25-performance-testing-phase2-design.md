@@ -16,6 +16,7 @@ Phase 1 left `performance_tests.overall_cpu_performance`, `overall_gpu_performan
 - "Software" (OCCT, Cinebench, FurMark, HWiNFO64) and "Test Type" labels from the format doc are static UI text, not stored columns — they don't vary per test run, they just describe which tool that section's fields come from.
 - Every "Slider (A // B)" field in the format doc becomes a `<select>` dropdown (or a plain boolean for two-option Yes/No sliders), matching how `cooling_solution` already works in Phase 1 — no literal slider UI control.
 - Frontend split into 3 new child components (`CpuResultsSection.vue`, `GpuResultsSection.vue`, `SystemStabilityResultsSection.vue`) rather than growing `performance_test/index.vue` (already 573+ lines) further.
+- The existing "Overall Performance Testing Result" card's CPU Performance / GPU Performance / System Stability checkboxes (3 of its 10 items) become read-only displays sourced from the CPU/GPU/System Stability sections' own "Overall X Validation" tickbox, instead of staying independently editable there — avoids two different UI locations both being able to write the same `performance_tests` column (the same class of bug the Phase 1 final review caught and fixed). The other 7 items (belonging to Phases 3-4, not yet built) stay manually editable in that card until their own phase claims them the same way.
 
 ## Changes (Phase 2 only)
 
