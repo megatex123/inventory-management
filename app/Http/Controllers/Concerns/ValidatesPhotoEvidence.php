@@ -21,7 +21,7 @@ trait ValidatesPhotoEvidence
                 $errors['photos'] = ["A maximum of 2 photos is allowed."];
             }
         } else {
-            if (!$note) {
+            if (trim((string) $note) === '') {
                 $errors['note'] = ["A note is required when not marked as \"{$goodValue}\"."];
             }
             if ($totalPhotos > 2) {
