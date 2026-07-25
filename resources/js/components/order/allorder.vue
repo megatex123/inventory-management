@@ -273,6 +273,13 @@
                                                         >
                                                             <i class="fas fa-clipboard-check"></i>
                                                         </router-link>
+                                                        <router-link
+                                                            :to="{name:'performancetest', params:{id:order.id, round:1}}"
+                                                            class="btn btn-sm btn-dark ml-1"
+                                                            title="Performance Testing"
+                                                        >
+                                                            <i class="fas fa-tachometer-alt"></i>
+                                                        </router-link>
                                                         <!-- Approve Button -->
                                                         <button
                                                             v-if="order.approve === null || order.approve === '' || order.approve === undefined"
