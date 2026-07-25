@@ -11,9 +11,9 @@ Each pilot page currently filters entirely client-side via a Vue `computed` prop
 ## Decisions confirmed with user
 
 - One filter input per column, spreadsheet-style — rendered as a row of inputs aligned under the table's own header, not a separate side panel.
-- The row is collapsible (toggle to show/hide), collapsed by default.
 - Pilot scope: `customer/index.vue`, `product/index.vue`, `care_data/index.vue`, `order/allorder.vue`.
 - Where a page currently has one blended free-text search box that fuzzy-matches several fields at once, that box is fully replaced by the new per-column row (not kept alongside it). Where a page already has a separate, purpose-built filter that already maps 1:1 to a single column or concept (a status dropdown, a date-range pair, a tier dropdown), that filter is left as-is — the new row only replaces the blended free-text search, it doesn't duplicate filters that already exist per-column.
+- **The entire search/filter area collapses as one unit, collapsed by default** — not just the new column-search row. For `customer`/`product`, the column-search row *is* the whole filter area, so this is already covered. For `care_data`/`order`, this is a bigger change than just the row: their existing "Filters & Search"/"Filter QuiviCraft" card currently renders its full body (Membership Status, Customer, Care Tier, Date Range, Year/Month, Sort By, Results-per-page, etc. for care_data; Status/Date From/Date To for order) always visible. That entire body — the retained existing filters plus the new column-search row together — now collapses/expands as one block, hidden by default on page load, with the card header staying visible as the toggle trigger.
 
 ## Architecture
 
@@ -23,12 +23,18 @@ Each pilot page currently filters entirely client-side via a Vue `computed` prop
 - Props:
   - `columns`: array of column definitions, one per `<th>` in the parent table, in the same left-to-right order — `{ key, type: 'text' | 'select' | 'none', options?: [{value, label}] }`. `type: 'none'` renders an empty `<th>` so non-filterable columns (Photo, Actions, a `#` row-index column) still keep the row aligned with the real header.
   - `modelValue`: object of `{ [key]: currentValue }` for the filterable columns (Vue 2 `.sync`-style prop, not Vue 3 `v-model` — this codebase is Vue 2).
-  - `visible`: boolean, whether the row is currently shown (controlled by the parent so each page's existing "Filters" card/toggle owns the collapse state).
+  - `visible`: boolean, whether the row is currently shown (controlled by the parent's single page-wide collapse state, described below — the component doesn't own any collapse logic itself).
 - Emits `update:modelValue` with the full values object on every keystroke/change (parent decides whether to filter live or wait for a submit action, matching what each page already does).
 - Renders a `<select>` for `type: 'select'` columns (the `options` list is passed straight through) and a plain debounced-by-nothing `<input type="text">` for `type: 'text'` columns — no internal debounce; pages that filter on every keystroke already do so today (customer, product, care_data's search box) so this preserves existing responsiveness. Pages that filter on submit/`Apply` keep doing that by not wiring live updates.
 - The component owns rendering only. It has no knowledge of what "Customer ID" or "Price" means — the parent page's existing `computed` filter function still does the actual matching, reading from the same `filters`/`searchItem` shape it already uses (each page maps `ColumnSearchRow`'s emitted object onto its own existing data field, rather than the pilot introducing a second parallel filter-state shape per page).
 
-**Collapse toggle:** each page adds one small button (e.g. "Column Search" with a chevron icon) near its existing filter/search area, toggling a new `showColumnSearch` boolean in that page's own `data()`. No new shared toggle component — a two-line `v-if`/`@click` in each page is simpler than a wrapper component for a single boolean.
+**Collapse toggle — whole filter area, one toggle per page, collapsed by default:**
+
+- Each page gets a single `showFilters` boolean in its own `data()` (not a shared component — a `v-if`/`@click` toggle is simpler than a wrapper for one boolean, consistent with this codebase's existing patterns elsewhere).
+- A toggle button (chevron + "Filters"/"Search" label) sits in the page's existing card header (`customer`'s/`product`'s card-header row that currently holds the search input; `care_data`'s "Filters & Search" card-header; `order`'s "Filter QuiviCraft" card-header) — the header itself always stays visible, only the body collapses.
+- **`customer`/`product`:** the collapsible body is just the `<table>`'s `<thead>` `ColumnSearchRow` — there's no other existing filter UI on these two pages to fold in.
+- **`care_data`/`order`:** the collapsible body wraps the *entire* existing filter card body — every retained filter (Membership Status, Customer, Care Tier, Date Range, Year/Month, Sort By, Results-per-page, Clear/Apply, Active-filters badges for care_data; Status, Date From, Date To, Reset for order) plus the new `ColumnSearchRow`, all shown/hidden together as one block. This is a behavior change from today (both cards currently always render their body) — collapsed by default per the confirmed decision, matching the other two pages.
+- All 4 pages default `showFilters: false` in `data()`.
 
 ## Per-page column mapping
 
@@ -63,7 +69,8 @@ Table columns (main list): No., Order ID, Customer Name, Customer Email, Order D
 
 No automated frontend test suite exists in this codebase (confirmed: `tests/` only has the Laravel default stub, and there's no JS test runner configured). Verification is manual, matching every other frontend change made this project:
 - `npm run watch` rebuild with no console errors.
-- For each of the 4 pilot pages: toggle the column-search row open, type into each filterable input, confirm the visible table rows match the expected filter (spot-check 2-3 inputs per page against known seed/live data), confirm clearing an input restores the unfiltered (or other-filters-still-applied) result set, confirm the row stays collapsed by default on page load.
+- For each of the 4 pilot pages: confirm the whole filter area (not just the column row) is hidden by default on page load, toggle it open via the header button, type into each filterable input, confirm the visible table rows match the expected filter (spot-check 2-3 inputs per page against known seed/live data), confirm clearing an input restores the unfiltered (or other-filters-still-applied) result set, toggle closed and confirm the whole area hides again.
+- For `care_data`/`order` specifically: confirm the pre-existing filters (Membership Status, Date Range, Sort By, Status, etc.) still work correctly now that they're inside the collapsible body — toggling the panel closed and reopening it must not reset any filter value already set.
 - Confirm no existing filter (status dropdowns, date ranges, sort, pagination) regressed — each of those computed functions is being extended, not rewritten, so a diff-level review plus one pass per page covers this.
 
 ## Out of scope (this spec)
