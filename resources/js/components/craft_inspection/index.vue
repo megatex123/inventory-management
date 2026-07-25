@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="mb-1"><i class="fas fa-clipboard-check text-primary mr-2"></i>QuiviCraft Build Report</h2>
-        <p class="text-muted mb-0">{{ phaseLabel }} — Round {{ round }}</p>
+        <p class="text-muted mb-0">Studio Inspection — Round {{ round }}</p>
       </div>
       <div>
         <router-link to="/orders/all" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Back to Orders</router-link>
@@ -229,9 +229,9 @@ const FIELD_SCHEMAS = {
   ],
   mbd: [
     { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'cpu_socket', label: 'CPU Socket' },
-    { key: 'dimm_slot', label: 'DIMM Slot' }, { key: 'pcie_slots', label: 'PCIe Slots' }, { key: 'm2_slots', label: 'M.2 Slots' },
+    { key: 'dimm_slot', label: 'DIMM Slots' }, { key: 'pcie_slots', label: 'PCIe Slots' }, { key: 'm2_slots', label: 'M.2 Slots' },
     { key: 'vrm_heatsinks', label: 'VRM Heatsinks' }, { key: 'rear_io', label: 'Rear I/O' },
-    { key: 'cmos_batt', label: 'CMOS Batt' }, { key: 'accessories', label: 'Accessories' }
+    { key: 'cmos_batt', label: 'CMOS Battery' }, { key: 'accessories', label: 'Accessories' }
   ],
   gpu: [
     { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'connector_pin', label: 'Connector Pin' },
@@ -267,7 +267,8 @@ const FIELD_SCHEMAS = {
   psu: [
     { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'wattage', label: 'Wattage' },
     { key: 'efficiency_rating', label: 'Efficiency Rating' }, { key: 'modularity', label: 'Modularity' },
-    { key: 'cables_inclusion', label: 'Cables Inclusion' }, { key: 'housing', label: 'Housing' }, { key: 'fan', label: 'Fan' }
+    { key: 'cables_inclusion', label: 'Cables Inclusion' }, { key: 'cables', label: 'Cables' },
+    { key: 'housing', label: 'Housing' }, { key: 'fan', label: 'Fan' }
   ],
   cse: [
     { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'case_size', label: 'Case Size' },
@@ -278,7 +279,7 @@ const FIELD_SCHEMAS = {
   fan: [
     { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' }, { key: 'size', label: 'Size' },
     { key: 'airflow_direction', label: 'Airflow Direction' }, { key: 'position', label: 'Position' },
-    { key: 'cable', label: 'Cable' }, { key: 'quantity', label: 'Quantity' }
+    { key: 'cable', label: 'Cable' }, { key: 'fan', label: 'Fan' }, { key: 'quantity', label: 'Quantity' }
   ],
   acc: [
     { key: 'type', label: 'Type' }, { key: 'model', label: 'Product Model' }, { key: 'serial', label: 'Serial' },
@@ -324,15 +325,8 @@ export default {
     round() {
       return this.$route.params.round || 1;
     },
-    phase() {
-      return this.$route.params.phase || 2;
-    },
-    phaseLabel() {
-      const labels = { 2: 'Pre Build Inspection', 3: 'Build Inspection', 4: 'Post Build Inspection' };
-      return labels[this.phase] || labels[Number(this.phase)] || 'Pre Build Inspection';
-    },
     apiBase() {
-      return `/api/order/${this.$route.params.id}/inspection/${this.phase}/${this.round}`;
+      return `/api/order/${this.$route.params.id}/inspection/${this.round}`;
     },
     // Order parts whose category maps to a known inspection type
     mappedOrderParts() {
