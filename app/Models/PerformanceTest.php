@@ -69,4 +69,24 @@ class PerformanceTest extends Model
     {
         return $this->hasOne(PerformanceTestSystemStabilityResult::class, 'performance_test_id');
     }
+
+    public function memoryResults()
+    {
+        return $this->hasOne(PerformanceTestMemoryResult::class, 'performance_test_id');
+    }
+
+    public function storageResults()
+    {
+        return $this->hasOne(PerformanceTestStorageResult::class, 'performance_test_id');
+    }
+
+    public function coolingPerformanceResults()
+    {
+        return $this->hasOne(PerformanceTestCoolingPerformanceResult::class, 'performance_test_id');
+    }
+
+    public function coolingSystemResults()
+    {
+        return $this->hasOne(PerformanceTestCoolingSystemResult::class, 'performance_test_id');
+    }
 }
