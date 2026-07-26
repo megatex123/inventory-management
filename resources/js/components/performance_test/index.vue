@@ -251,6 +251,23 @@
         :initial-data="(performanceTest && performanceTest.cooling_system_results) || {}"
         @saved="onCoolingSystemResultsSaved"
       />
+      <display-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.display_results) || {}"
+        @saved="onDisplayResultsSaved"
+      />
+      <network-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.network_results) || {}"
+        @saved="onNetworkResultsSaved"
+      />
+      <usb-results-section
+        :api-base="apiBase"
+        :initial-data="(performanceTest && performanceTest.usb_results) || {}"
+        :ports="(performanceTest && performanceTest.usb_ports) || []"
+        @saved="onUsbResultsSaved"
+        @ports-changed="onUsbPortsChanged"
+      />
     </template>
   </div>
 </template>
@@ -266,6 +283,9 @@ import MemoryResultsSection from './MemoryResultsSection.vue';
 import StorageResultsSection from './StorageResultsSection.vue';
 import CoolingPerformanceResultsSection from './CoolingPerformanceResultsSection.vue';
 import CoolingSystemResultsSection from './CoolingSystemResultsSection.vue';
+import DisplayResultsSection from './DisplayResultsSection.vue';
+import NetworkResultsSection from './NetworkResultsSection.vue';
+import UsbResultsSection from './UsbResultsSection.vue';
 
 const SECTION_LABELS = {
   assembly: 'Studio PC Assembly Checklist',
@@ -287,6 +307,7 @@ const PARENT_FIELD_KEYS = [
 const READONLY_OVERALL_KEYS = [
   'overall_cpu_performance', 'overall_gpu_performance', 'overall_system_stability',
   'overall_memory_validation', 'overall_storage_validation', 'overall_cpu_cooling_performance', 'overall_cooling_system',
+  'overall_display_output', 'overall_network_wireless', 'overall_usb_ports',
 ];
 
 let keySeq = 0;
@@ -301,6 +322,9 @@ export default {
     StorageResultsSection,
     CoolingPerformanceResultsSection,
     CoolingSystemResultsSection,
+    DisplayResultsSection,
+    NetworkResultsSection,
+    UsbResultsSection,
     // Small local component (note + photo widget, no status toggle) for the
     // OS Configuration / Drivers Installation sections, which share one
     // note+photo pair across several tickboxes rather than one per item.
@@ -400,9 +424,9 @@ export default {
         { key: 'overall_storage_validation', label: 'Storage Validation', readonly: true },
         { key: 'overall_cpu_cooling_performance', label: 'CPU Cooling Performance', readonly: true },
         { key: 'overall_cooling_system', label: 'Cooling System', readonly: true },
-        { key: 'overall_display_output', label: 'Display Output' },
-        { key: 'overall_network_wireless', label: 'Network & Wireless' },
-        { key: 'overall_usb_ports', label: 'USB Ports' },
+        { key: 'overall_display_output', label: 'Display Output', readonly: true },
+        { key: 'overall_network_wireless', label: 'Network & Wireless', readonly: true },
+        { key: 'overall_usb_ports', label: 'USB Ports', readonly: true },
       ],
       selfQcFields: [
         { key: 'ready_for_first_boot', label: 'Ready for First Boot' },
@@ -603,6 +627,21 @@ export default {
     onCoolingSystemResultsSaved(data) {
       this.performanceTest.cooling_system_results = data;
       this.form.overall_cooling_system = Boolean(data.overall_cooling_system);
+    },
+    onDisplayResultsSaved(data) {
+      this.performanceTest.display_results = data;
+      this.form.overall_display_output = Boolean(data.overall_display_output);
+    },
+    onNetworkResultsSaved(data) {
+      this.performanceTest.network_results = data;
+      this.form.overall_network_wireless = Boolean(data.overall_network_wireless);
+    },
+    onUsbResultsSaved(data) {
+      this.performanceTest.usb_results = data;
+      this.form.overall_usb_ports = Boolean(data.overall_usb_ports);
+    },
+    onUsbPortsChanged(ports) {
+      this.performanceTest.usb_ports = ports;
     },
     markComplete() {
       axios.post(`${this.apiBase}/complete`)
