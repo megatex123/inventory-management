@@ -17766,37 +17766,37 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     onReportInfoSaved: function onReportInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onCustomerInfoSaved: function onCustomerInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onBuildInfoSaved: function onBuildInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onStudioDocsSaved: function onStudioDocsSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onArrivalSaved: function onArrivalSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onTransportationSaved: function onTransportationSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onAssemblySaved: function onAssemblySaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onPostBuildHardwareSaved: function onPostBuildHardwareSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onPostBuildSoftwareSaved: function onPostBuildSoftwareSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onCustomerAcceptanceSaved: function onCustomerAcceptanceSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onAcknowledgementSaved: function onAcknowledgementSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     }
   }
 });
