@@ -89,4 +89,24 @@ class PerformanceTest extends Model
     {
         return $this->hasOne(PerformanceTestCoolingSystemResult::class, 'performance_test_id');
     }
+
+    public function displayResults()
+    {
+        return $this->hasOne(PerformanceTestDisplayResult::class, 'performance_test_id');
+    }
+
+    public function networkResults()
+    {
+        return $this->hasOne(PerformanceTestNetworkResult::class, 'performance_test_id');
+    }
+
+    public function usbResults()
+    {
+        return $this->hasOne(PerformanceTestUsbResult::class, 'performance_test_id');
+    }
+
+    public function usbPorts()
+    {
+        return $this->hasMany(PerformanceTestUsbPort::class, 'performance_test_id');
+    }
 }
