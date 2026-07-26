@@ -12,9 +12,23 @@
                 <div class="card-header py-3 d-flex   flex-row align-items-center justify-content-between">
 <router-link to="/product/create" class="btn btn-primary ml-3">Add Product</router-link>
                   <h5 class="m-0 font-weight-bold text-primary">Stock List</h5>
-              <input type="text" class="form-control" v-model='searchItem' id="searchItems"
-                                                    placeholder="Search Product By Name">
+                  <button
+                      @click="showFilters = !showFilters"
+                      class="btn btn-sm btn-outline-secondary"
+                  >
+                      <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                  </button>
                 </div>
+                <transition name="filter-panel">
+                <div class="card-body py-2" v-if="showFilters">
+                    <column-search-panel
+                        :columns="filterColumns"
+                        v-model="filters"
+                        :visible="true"
+                    />
+                </div>
+                </transition>
      <div class="table-responsive">
                   <table class="table align-items-center table-flush">
                     <thead class="thead-light">
@@ -64,12 +78,20 @@
     </div>
 </template>
 <script>
-    export default {
+    import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
+    export default {
+        components: { ColumnSearchPanel },
         data() {
             return {
 suppliers: [],
-searchItem:'',
+showFilters: false,
+filterColumns: [
+    { key: 'product_name', label: 'Name', type: 'text' },
+],
+filters: {
+    product_name: '',
+},
             }
         },
         methods: {
@@ -90,7 +112,7 @@ getEmp(){
         computed: {
 filterSearch(){
     return this.suppliers.filter(data=>{
-        return data.product_name.match(this.searchItem)
+        return data.product_name.match(this.filters.product_name)
     })
 }
         },
@@ -107,7 +129,13 @@ filterSearch(){
 </script>
 
 <style scoped>
-#searchItems {
-    width: 270px !important;
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
