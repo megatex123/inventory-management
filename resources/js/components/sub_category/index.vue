@@ -630,21 +630,6 @@ export default {
     margin-right: 0;
 }
 
-/* Search bar styling */
-.input-group-sm > .form-control {
-    height: calc(1.5em + 0.5rem + 2px);
-    font-size: 0.875rem;
-}
-
-.input-group-text {
-    background-color: #f8f9fa;
-    border: 1px solid #ced4da;
-}
-
-.input-group-append .btn {
-    border: 1px solid #ced4da;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .card-header {
@@ -710,20 +695,13 @@ select:disabled {
     opacity: 0.7;
 }
 
-/* Transition for filter panel collapse/expand */
-.filter-panel-enter-active, .filter-panel-leave-active {
-    transition: all 0.3s ease;
-    overflow: hidden;
-    max-height: 1000px;
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
-.filter-panel-enter, .filter-panel-leave-to {
-    opacity: 0;
-    max-height: 0;
-}
-
-.filter-panel-enter-to, .filter-panel-leave {
-    opacity: 1;
-    max-height: 1000px;
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
