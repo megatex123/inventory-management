@@ -166,37 +166,37 @@ export default {
         });
     },
     onReportInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onCustomerInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onBuildInfoSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onStudioDocsSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onArrivalSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onTransportationSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onAssemblySaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onPostBuildHardwareSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onPostBuildSoftwareSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onCustomerAcceptanceSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
     onAcknowledgementSaved(data) {
-      this.onsiteHandover = data;
+      Object.assign(this.onsiteHandover, data);
     },
   },
 };
