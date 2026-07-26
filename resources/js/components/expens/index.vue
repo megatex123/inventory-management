@@ -12,9 +12,23 @@
                 <div class="card-header py-3 d-flex   flex-row align-items-center justify-content-between">
 <router-link to="/expens/create" class="btn btn-primary ml-3">Add Expens</router-link>
                   <h5 class="m-0 font-weight-bold text-primary">Expens List</h5>
-              <input type="text" class="form-control" v-model='searchItem' id="searchItems"
-                                                    placeholder="Search Expens By Details">
+                  <button
+                      @click="showFilters = !showFilters"
+                      class="btn btn-sm btn-outline-secondary"
+                  >
+                      <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                  </button>
                 </div>
+                <transition name="filter-panel">
+                <div class="card-body py-2" v-if="showFilters">
+                    <column-search-panel
+                        :columns="filterColumns"
+                        v-model="filters"
+                        :visible="true"
+                    />
+                </div>
+                </transition>
      <div class="table-responsive">
                   <table class="table align-items-center table-flush">
                     <thead class="thead-light">
@@ -56,12 +70,20 @@
     </div>
 </template>
 <script>
-    export default {
+    import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
+    export default {
+        components: { ColumnSearchPanel },
         data() {
             return {
 categories: [],
-searchItem:'',
+showFilters: false,
+filterColumns: [
+    { key: 'details', label: 'Details', type: 'text' },
+],
+filters: {
+    details: '',
+},
             }
         },
         methods: {
@@ -112,7 +134,7 @@ axios.delete("/api/expens/"+id)
         computed: {
 filterSearch(){
     return this.categories.filter(data=>{
-        return data.details.match(this.searchItem)
+        return data.details.match(this.filters.details)
     })
 }
         },
@@ -129,7 +151,13 @@ filterSearch(){
 </script>
 
 <style scoped>
-#searchItems {
-    width: 270px !important;
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
