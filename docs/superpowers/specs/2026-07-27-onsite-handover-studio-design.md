@@ -12,6 +12,8 @@ Source format doc: `/home/penyahpepijat/Downloads/Onsite Handover (Studio).txt` 
 
 **Field-name doc-quirk, same class as QuiviCraft's `arrival_time` duplicate**: "Arrival Time" appears twice — once in the Report Information summary and once in the fuller On-Site Arrival Verification section. Same resolution as before: one `arrival_time` column, owned exclusively by the Arrival Verification section's endpoint.
 
+**Same "QuiviCraft Build ID = Order ID" quirk as the QuiviCraft version**: both fields map to `order.order_id` (there's no separate CraftData business code in this system — see `docs/QuiviTech/QuiviCraft.md`), displayed from the eager-loaded `order` relation, neither stored as its own column.
+
 ## Decisions confirmed with user
 
 - Build exactly what the doc specifies — no Customer Information section, no packaging-condition Transportation inspection, no Acknowledgement/signatures, no assembly checklist. This is deliberately a lighter report, not an oversight to correct.
@@ -20,7 +22,7 @@ Source format doc: `/home/penyahpepijat/Downloads/Onsite Handover (Studio).txt` 
 
 ## Section-by-section field mapping (deduplicated, 7 sections)
 
-**Report Information**: `service_date` (date), `arrival_time` (time, owned by Arrival section — see below), `handover_completion_time` (time — replaces QuiviCraft's separate work-start/work-completion pair since no assembly work happens here), `technician_name` (string), `assistant_technician` (string, nullable), `service_location` (string), `service_type` (string enum, same 3 values as QuiviCraft: `full_onsite_assembly`/`full_onsite_assembly_tag_along`/`studio_assembly`), `status` (string enum, same 4 values as QuiviCraft, see Decisions above).
+**Report Information**: `report_version` (string, nullable — present in this doc too, same as QuiviCraft's version), `service_date` (date), `arrival_time` (time, owned by Arrival section — see below), `handover_completion_time` (time — replaces QuiviCraft's separate work-start/work-completion pair since no assembly work happens here), `technician_name` (string), `assistant_technician` (string, nullable), `service_location` (string), `service_type` (string enum, same 3 values as QuiviCraft: `full_onsite_assembly`/`full_onsite_assembly_tag_along`/`studio_assembly`), `status` (string enum, same 4 values as QuiviCraft, see Decisions above).
 
 **Build Information**: `operating_system` (string, nullable), `operating_system_version` (string, nullable) — own columns. No `pc_purpose` field this time (the doc doesn't list one for Studio, unlike QuiviCraft's version). The rest (QuiviCraft/QuiviServe/QuiviCare ID+Plan) are derived/read-only, not stored — identical lookup approach to the QuiviCraft version.
 
