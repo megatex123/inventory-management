@@ -39,6 +39,10 @@ Introduced in Phase 1/2 (the `saveForm()`/`performanceTest = res.data.data` patt
 ## Known bug: `care_data`'s customer-name matching/sorting is silently broken (found 2026-07-26)
 `INV_QVTD`, `INV_QVPL`, `INV_QVMR`, `INV_EXCL_QVMR`, and the `BOM_*` entities (`BOM_QVSE`, `BOM_QVPL`, `BOM_QVMR`, `BOM_DIS_QVMR`, `BOM_QVTD`) — no models, no tables, nothing built. Don't assume these are wanted; confirm with the user before building.
 
+## Known bug: `suppliers/index.vue`'s "Shop Name (Z-A)" sort is a no-op (found 2026-07-27)
+
+`sortSuppliers()`'s `shop_desc` case compares `b.shopname` to itself (`(b.shopname || '').localeCompare(b.shopname || '')`), which always returns `0` — the sort silently does nothing. Should be `(b.shopname || '').localeCompare(a.shopname || '')`, matching the `name_desc`/`code_desc` pattern used elsewhere in this and sibling pages (`brand`/`category`/`craft`/`sub_category`). Confirmed pre-existing (identical before the [[Frontend-Components]] "Collapsible Per-Column Search" Batch 1 migration touched this file) — found during that migration's final review, carried forward faithfully rather than fixed, since the migration's own scope was preserving existing filtering/sorting logic verbatim. Not yet fixed.
+
 ## Related
 - [[Domain-Models]]
 - [[API-Routes]]
