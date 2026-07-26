@@ -43,6 +43,14 @@ Established by the pilot and confirmed by reading `brand/index.vue` in full as a
 
 Same as the pilot: no automated test suite exists for this feature area. Verification is manual — grep for any remaining dead references to the removed old search input, confirm the compiled bundle builds cleanly, and (per the pilot's own established limitation) no interactive browser testing is possible in this environment; static verification only.
 
+## New pattern discovered in Batch 2: server-side (API-driven) pages with a single blended backend search param
+
+`inv_excl_merch`, `inv_merch`, `inv_thread` (Batch 2) are architecturally different from every page in the pilot and Batch 1: their tables are paginated server-side, and `filters.search` is sent as an API query parameter rather than filtered client-side via a computed property. Checking each page's own controller (`InvExclMerchController`/`InvMerchController`/`InvThreadController`'s `index()` methods) confirms the backend only accepts a single `search` param and does its own OR-match across `item_name`/`sku_code`/the inventory ID column — there is no backend support for independent per-column search params.
+
+**Decision**: these 3 pages keep their search as ONE blended `ColumnSearchPanel` column (a 1:1 UI restructure, not a split into per-column filters), matching `brand`'s precedent from Batch 1 rather than `category`/`craft`'s split precedent. Splitting the UI into separate Item Name/SKU Code fields would either require backend changes (out of scope for a frontend-only rollout) or silently narrow what the existing search already correctly does. Check this for every future batch page before assuming a blended search can be split — a page's own backend controller, not just its frontend markup, determines whether a split is even possible.
+
+**Mechanical consequence**: since these pages don't call `applyFilters()` from an `@input` handler on the old plain `<input>` (that markup is being removed), triggering the API re-fetch when `ColumnSearchPanel`'s `v-model="filters"` changes needs an explicit `watch: { filters: { handler() { this.applyFilters(); }, deep: true } }` — the same idiom `care_data/index.vue` already uses for reacting to one of its own filter fields (see its `watch: { 'filters.year': ... }`), just applied to the whole `filters` object here since there's only one key.
+
 ## Out of scope
 
 - Batches 2-6's exact per-page field mappings — determined when each batch's plan is written, not upfront in this spec (matches how Batch 1's own mapping above only firmly nails down `brand`, leaving the other 5 to be confirmed at planning time).
