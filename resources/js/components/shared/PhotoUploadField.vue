@@ -41,32 +41,54 @@ export default {
 <style scoped>
 .photo-thumb {
   position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 8px 8px 0;
+  width: 70px;
+  height: 70px;
+  margin: 0 0.5rem 0.5rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #dee2e6;
 }
 .photo-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 4px;
 }
-.photo-thumb .remove-btn {
+.remove-btn {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #dc3545;
+  top: 0;
+  right: 0;
+  background: rgba(220, 53, 69, 0.85);
   color: #fff;
   border: none;
-  border-radius: 50%;
   width: 20px;
   height: 20px;
   line-height: 18px;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
-  padding: 0;
 }
-.photo-upload-btn input[type=file] {
-  width: 180px;
+.photo-upload-btn {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border: 1px dashed #adb5bd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.photo-upload-btn input[type="file"] {
+  font-size: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+}
+.photo-upload-btn::before {
+  content: '+';
+  font-size: 1.5rem;
+  color: #adb5bd;
+  pointer-events: none;
 }
 </style>

@@ -37,6 +37,8 @@ Full rollout to the remaining ~35 list pages is a follow-up initiative, not part
 
 Also used by `onsite_handover_studio/ArrivalSection.vue`, `PostTransportSection.vue`, `PostHandoverSection.vue` (added 2026-07-28) — same component, no changes needed for reuse.
 
+**Restyled 2026-07-27** to match `craft_inspection/InspectionGroup.vue`'s dashed-border "+" upload box (it originally rendered as a plain unstyled browser file input — "Browse... No files selected" — while every other multi-photo widget in this app used the dashed-box look). CSS is now a direct copy of `InspectionGroup.vue`'s `.photo-thumb`/`.remove-btn`/`.photo-upload-btn` rules; the uncapped-count behavior and prop/event contract are unchanged. `performance_test/index.vue`'s inline `PhotoNoteField` local component already matched the dashed-box look independently (own copy-pasted CSS, not delegating to either shared component) — still an un-consolidated third copy, not fixed by this restyle.
+
 Shared code: `resources/js/Helpers` (likely Axios instance / formatting utilities — check before adding new HTTP calls to avoid duplicating the client setup).
 
 ## Section Components
