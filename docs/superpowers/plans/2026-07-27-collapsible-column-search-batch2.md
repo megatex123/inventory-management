@@ -959,7 +959,28 @@ Replace with:
   methods: {
 ```
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Remove the now-redundant explicit `applyFilters()` call in `resetFilters()`**
+
+The new `watch` block (Step 3) already fires `applyFilters()` whenever `filters` is reassigned — including `resetFilters()`'s own `this.filters = { search: '' }` line. Without this step, `resetFilters()` would fetch twice on every click (once via the watcher, once via its own explicit call) — caught during Task 5's review, fix this proactively here instead of waiting for a second occurrence.
+
+Find:
+
+```js
+    resetFilters() {
+      this.filters = { search: '' };
+      this.applyFilters();
+    },
+```
+
+Replace with:
+
+```js
+    resetFilters() {
+      this.filters = { search: '' };
+    },
+```
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add resources/js/components/inv_merch/index.vue
@@ -1138,7 +1159,28 @@ Replace with:
   methods: {
 ```
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Remove the now-redundant explicit `applyFilters()` call in `resetFilters()`**
+
+Same reasoning as Task 6's equivalent step — the new `watch` block already fires `applyFilters()` on reassignment.
+
+Find:
+
+```js
+    resetFilters() {
+      this.filters = { search: '' };
+      this.applyFilters();
+    },
+```
+
+Replace with:
+
+```js
+    resetFilters() {
+      this.filters = { search: '' };
+    },
+```
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add resources/js/components/inv_thread/index.vue

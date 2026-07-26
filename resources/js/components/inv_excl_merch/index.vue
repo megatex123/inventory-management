@@ -217,7 +217,6 @@ export default {
     },
     resetFilters() {
       this.filters = { search: '' };
-      this.applyFilters();
     },
     changePage(page) {
       if (page < 1 || page > this.lastPage) return;
