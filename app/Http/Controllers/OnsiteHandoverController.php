@@ -65,6 +65,16 @@ class OnsiteHandoverController extends Controller
         'post_build_software_notes',
     ];
 
+    const CUSTOMER_ACCEPTANCE_FIELDS = [
+        'physical_condition_accepted', 'system_boot_verified', 'display_verified', 'peripherals_verified',
+        'accessories_received', 'documentation_received', 'customer_demonstration_completed',
+        'customer_acceptance_notes',
+    ];
+
+    const ACKNOWLEDGEMENT_FIELDS = [
+        'customer_ack_name', 'customer_acknowledged', 'technician_ack_name', 'technician_acknowledged',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -485,6 +495,81 @@ class OnsiteHandoverController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update post-build software verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateCustomerAcceptance(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'physical_condition_accepted' => 'nullable|boolean',
+            'system_boot_verified' => 'nullable|boolean',
+            'display_verified' => 'nullable|boolean',
+            'peripherals_verified' => 'nullable|boolean',
+            'accessories_received' => 'nullable|boolean',
+            'documentation_received' => 'nullable|boolean',
+            'customer_demonstration_completed' => 'nullable|boolean',
+            'customer_acceptance_notes' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::CUSTOMER_ACCEPTANCE_FIELDS));
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer acceptance updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update customer acceptance', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateAcknowledgement(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'customer_ack_name' => 'nullable|string|max:255',
+            'customer_acknowledged' => 'nullable|boolean',
+            'technician_ack_name' => 'nullable|string|max:255',
+            'technician_acknowledged' => 'nullable|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::ACKNOWLEDGEMENT_FIELDS));
+
+            if ($handover->customer_acknowledged && $handover->technician_acknowledged && !$handover->acknowledged_at) {
+                $handover->acknowledged_at = now();
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Acknowledgement updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update acknowledgement', 'error' => $e->getMessage()], 500);
         }
     }
 
