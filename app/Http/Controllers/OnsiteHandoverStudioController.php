@@ -33,6 +33,22 @@ class OnsiteHandoverStudioController extends Controller
         'customer_acceptance_notes',
     ];
 
+    const ARRIVAL_FIELDS = [
+        'arrival_time', 'workspace_available', 'power_outlet_available', 'display_available',
+        'keyboard_available', 'mouse_available', 'internet_available', 'arrival_notes',
+    ];
+
+    const POST_TRANSPORT_FIELDS = [
+        'gpu_securely_installed', 'memory_fully_seated', 'cpu_cooler_secure', 'power_connections_secure',
+        'storage_secure', 'no_loose_cables', 'no_loose_screws', 'post_transport_notes',
+    ];
+
+    const POST_HANDOVER_FIELDS = [
+        'system_powered_on', 'post_successful', 'windows_boot_successful', 'display_output_verified',
+        'network_connected', 'internet_accessible', 'audio_verified', 'usb_ports_verified',
+        'rgb_lighting_verified', 'post_handover_notes',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -218,5 +234,171 @@ class OnsiteHandoverStudioController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update customer acceptance', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function updateArrival(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandoverStudio::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'arrival_time' => 'nullable|string|max:255',
+            'workspace_available' => 'nullable|boolean',
+            'power_outlet_available' => 'nullable|boolean',
+            'display_available' => 'nullable|boolean',
+            'keyboard_available' => 'nullable|boolean',
+            'mouse_available' => 'nullable|boolean',
+            'internet_available' => 'nullable|boolean',
+            'arrival_notes' => 'nullable|string|max:1000',
+            'arrival_photos.*' => 'nullable|image|max:5120',
+            'remove_arrival_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::ARRIVAL_FIELDS));
+
+            if ($request->hasFile('arrival_photos') || $request->filled('remove_arrival_photos')) {
+                $handover->arrival_photos = $this->mergePhotos($handover->arrival_photos, $request, 'arrival_photos', 'remove_arrival_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Arrival verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update arrival verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePostTransport(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandoverStudio::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'gpu_securely_installed' => 'nullable|boolean',
+            'memory_fully_seated' => 'nullable|boolean',
+            'cpu_cooler_secure' => 'nullable|boolean',
+            'power_connections_secure' => 'nullable|boolean',
+            'storage_secure' => 'nullable|boolean',
+            'no_loose_cables' => 'nullable|boolean',
+            'no_loose_screws' => 'nullable|boolean',
+            'post_transport_notes' => 'nullable|string|max:1000',
+            'post_transport_photos.*' => 'nullable|image|max:5120',
+            'remove_post_transport_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::POST_TRANSPORT_FIELDS));
+
+            if ($request->hasFile('post_transport_photos') || $request->filled('remove_post_transport_photos')) {
+                $handover->post_transport_photos = $this->mergePhotos($handover->post_transport_photos, $request, 'post_transport_photos', 'remove_post_transport_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Post-transport hardware verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update post-transport hardware verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePostHandover(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandoverStudio::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'system_powered_on' => 'nullable|boolean',
+            'post_successful' => 'nullable|boolean',
+            'windows_boot_successful' => 'nullable|boolean',
+            'display_output_verified' => 'nullable|boolean',
+            'network_connected' => 'nullable|boolean',
+            'internet_accessible' => 'nullable|boolean',
+            'audio_verified' => 'nullable|boolean',
+            'usb_ports_verified' => 'nullable|boolean',
+            'rgb_lighting_verified' => 'nullable|boolean',
+            'post_handover_notes' => 'nullable|string|max:1000',
+            'post_handover_photos.*' => 'nullable|image|max:5120',
+            'remove_post_handover_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::POST_HANDOVER_FIELDS));
+
+            if ($request->hasFile('post_handover_photos') || $request->filled('remove_post_handover_photos')) {
+                $handover->post_handover_photos = $this->mergePhotos($handover->post_handover_photos, $request, 'post_handover_photos', 'remove_post_handover_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Post-handover system verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update post-handover system verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    private function storePhotos(Request $request, $field)
+    {
+        if (!$request->hasFile($field)) {
+            return [];
+        }
+
+        $paths = [];
+        foreach ($request->file($field) as $file) {
+            $paths[] = $file->store('onsite-handovers-studio', 'public');
+        }
+
+        return $paths;
+    }
+
+    private function mergePhotos($existing, Request $request, $field, $removeField)
+    {
+        $existing = $existing ?? [];
+        $toRemove = $request->input($removeField, []);
+
+        foreach ($toRemove as $path) {
+            if (($key = array_search($path, $existing)) !== false) {
+                Storage::disk('public')->delete($path);
+                unset($existing[$key]);
+            }
+        }
+
+        $existing = array_values($existing);
+        $newPhotos = $this->storePhotos($request, $field);
+
+        return array_merge($existing, $newPhotos);
     }
 }
