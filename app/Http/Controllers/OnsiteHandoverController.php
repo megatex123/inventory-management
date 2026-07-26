@@ -47,6 +47,24 @@ class OnsiteHandoverController extends Controller
         'transportation_notes', 'transportation_verdict',
     ];
 
+    const ASSEMBLY_FIELDS = [
+        'cpu_installed', 'memory_installed', 'storage_installed', 'cpu_cooler_installed', 'motherboard_installed',
+        'power_supply_installed', 'case_fans_installed', 'graphics_card_installed', 'cable_management_completed',
+        'assembly_notes',
+    ];
+
+    const POST_BUILD_HARDWARE_FIELDS = [
+        'system_powered_on', 'post_successful', 'bios_accessible', 'cpu_detected', 'memory_detected',
+        'storage_detected', 'graphics_card_detected', 'cpu_cooler_operating', 'case_fans_operating', 'no_abnormal_noise',
+        'post_build_hardware_notes',
+    ];
+
+    const POST_BUILD_SOFTWARE_FIELDS = [
+        'windows_boot_successful', 'windows_activation_verified', 'display_output_verified', 'network_connected',
+        'internet_accessible', 'audio_output_verified', 'usb_ports_verified', 'rgb_lighting_verified',
+        'post_build_software_notes',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -329,6 +347,144 @@ class OnsiteHandoverController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update transportation inspection', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateAssembly(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'cpu_installed' => 'nullable|boolean',
+            'memory_installed' => 'nullable|boolean',
+            'storage_installed' => 'nullable|boolean',
+            'cpu_cooler_installed' => 'nullable|boolean',
+            'motherboard_installed' => 'nullable|boolean',
+            'power_supply_installed' => 'nullable|boolean',
+            'case_fans_installed' => 'nullable|boolean',
+            'graphics_card_installed' => 'nullable|boolean',
+            'cable_management_completed' => 'nullable|boolean',
+            'assembly_notes' => 'nullable|string|max:1000',
+            'assembly_photos.*' => 'nullable|image|max:5120',
+            'remove_assembly_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::ASSEMBLY_FIELDS));
+
+            if ($request->hasFile('assembly_photos') || $request->filled('remove_assembly_photos')) {
+                $handover->assembly_photos = $this->mergePhotos($handover->assembly_photos, $request, 'assembly_photos', 'remove_assembly_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Assembly updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update assembly', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePostBuildHardware(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'system_powered_on' => 'nullable|boolean',
+            'post_successful' => 'nullable|boolean',
+            'bios_accessible' => 'nullable|boolean',
+            'cpu_detected' => 'nullable|boolean',
+            'memory_detected' => 'nullable|boolean',
+            'storage_detected' => 'nullable|boolean',
+            'graphics_card_detected' => 'nullable|boolean',
+            'cpu_cooler_operating' => 'nullable|boolean',
+            'case_fans_operating' => 'nullable|boolean',
+            'no_abnormal_noise' => 'nullable|boolean',
+            'post_build_hardware_notes' => 'nullable|string|max:1000',
+            'post_build_hardware_photos.*' => 'nullable|image|max:5120',
+            'remove_post_build_hardware_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::POST_BUILD_HARDWARE_FIELDS));
+
+            if ($request->hasFile('post_build_hardware_photos') || $request->filled('remove_post_build_hardware_photos')) {
+                $handover->post_build_hardware_photos = $this->mergePhotos($handover->post_build_hardware_photos, $request, 'post_build_hardware_photos', 'remove_post_build_hardware_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Post-build hardware verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update post-build hardware verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePostBuildSoftware(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'windows_boot_successful' => 'nullable|boolean',
+            'windows_activation_verified' => 'nullable|boolean',
+            'display_output_verified' => 'nullable|boolean',
+            'network_connected' => 'nullable|boolean',
+            'internet_accessible' => 'nullable|boolean',
+            'audio_output_verified' => 'nullable|boolean',
+            'usb_ports_verified' => 'nullable|boolean',
+            'rgb_lighting_verified' => 'nullable|boolean',
+            'post_build_software_notes' => 'nullable|string|max:1000',
+            'post_build_software_photos.*' => 'nullable|image|max:5120',
+            'remove_post_build_software_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::POST_BUILD_SOFTWARE_FIELDS));
+
+            if ($request->hasFile('post_build_software_photos') || $request->filled('remove_post_build_software_photos')) {
+                $handover->post_build_software_photos = $this->mergePhotos($handover->post_build_software_photos, $request, 'post_build_software_photos', 'remove_post_build_software_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Post-build software verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update post-build software verification', 'error' => $e->getMessage()], 500);
         }
     }
 
