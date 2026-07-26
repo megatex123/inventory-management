@@ -152,6 +152,22 @@ Route::prefix('order/{orderId}/onsite-handover/{round}')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| ONSITE HANDOVER (Studio)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('order/{orderId}/onsite-handover-studio/{round}')->group(function () {
+    Route::get('/', 'OnsiteHandoverStudioController@show');
+    Route::post('/report-info', 'OnsiteHandoverStudioController@updateReportInfo');
+    Route::post('/build-info', 'OnsiteHandoverStudioController@updateBuildInfo');
+    Route::post('/studio-docs', 'OnsiteHandoverStudioController@updateStudioDocs');
+    Route::post('/arrival', 'OnsiteHandoverStudioController@updateArrival');
+    Route::post('/post-transport', 'OnsiteHandoverStudioController@updatePostTransport');
+    Route::post('/post-handover', 'OnsiteHandoverStudioController@updatePostHandover');
+    Route::post('/customer-acceptance', 'OnsiteHandoverStudioController@updateCustomerAcceptance');
+});
+
+/*
+|--------------------------------------------------------------------------
 | CUSTOMER PROGRESS MANAGEMENT
 |--------------------------------------------------------------------------
 */

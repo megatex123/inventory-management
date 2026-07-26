@@ -198,6 +198,7 @@ let inventorymovementedit = require('./components/inventory_movement/edit.vue').
 let craftinspection = require('./components/craft_inspection/index.vue').default;
 let performancetest = require('./components/performance_test/index.vue').default;
 let onsitehandover = require('./components/onsite_handover/index.vue').default;
+let onsitehandoverstudio = require('./components/onsite_handover_studio/index.vue').default;
 
 //customer progress management
 let customer_progress_index = require('./components/customer_progress/index.vue').default;
@@ -403,6 +404,7 @@ export const routes=[
       { path: '/order/:id/inspection/:round', component: craftinspection, name: 'craftinspection', meta: { layout: 'app' } },
       { path: '/order/:id/performance-test/:round', component: performancetest, name: 'performancetest', meta: { layout: 'app' } },
       { path: '/order/:id/onsite-handover/:round', component: onsitehandover, name: 'onsitehandover', meta: { layout: 'app' } },
+      { path: '/order/:id/onsite-handover-studio/:round', component: onsitehandoverstudio, name: 'onsitehandoverstudio', meta: { layout: 'app' } },
 
       // customer progress management
       { path: '/customer-progress', component: customer_progress_index, name: 'customerprogress', meta: { layout: 'app' } },
