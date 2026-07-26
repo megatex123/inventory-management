@@ -2337,12 +2337,23 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       categories: [],
+      showFilters: false,
+      filterColumns: [{
+        key: 'name',
+        label: 'Brand',
+        type: 'text'
+      }],
       filters: {
-        search: '',
+        name: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         year: '',
@@ -2425,7 +2436,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
-        search: '',
+        name: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         year: '',
@@ -2433,8 +2444,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'search') {
-        this.filters.search = '';
+      if (filterKey === 'name') {
+        this.filters.name = '';
       } else if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
         // If year is removed, also clear month
@@ -2466,8 +2477,8 @@ __webpack_require__.r(__webpack_exports__);
           12: 'December'
         }
       };
-      if (key === 'search') {
-        return "Search: \"".concat(value, "\"");
+      if (key === 'name') {
+        return "Brand: \"".concat(value, "\"");
       }
       if (key === 'nameStartsWith') {
         return "Name: ".concat(value);
@@ -2521,8 +2532,8 @@ __webpack_require__.r(__webpack_exports__);
     filteredCategories: function filteredCategories() {
       var _this3 = this;
       var filtered = this.categories;
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
+      if (this.filters.name) {
+        var keyword = this.filters.name.toLowerCase();
         filtered = filtered.filter(function (category) {
           return category.name && category.name.toLowerCase().includes(keyword);
         });
@@ -7622,12 +7633,28 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       categories: [],
+      showFilters: false,
+      filterColumns: [{
+        key: 'name',
+        label: 'PC Parts',
+        type: 'text'
+      }, {
+        key: 'code',
+        label: 'Code',
+        type: 'text'
+      }],
       filters: {
-        search: '',
+        name: '',
+        code: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         codeStartsWith: '',
@@ -7721,7 +7748,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
-        search: '',
+        name: '',
+        code: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         codeStartsWith: '',
@@ -7730,8 +7758,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'search') {
-        this.filters.search = '';
+      if (filterKey === 'name' || filterKey === 'code') {
+        this.filters[filterKey] = '';
       } else if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
         // If year is removed, also clear month
@@ -7765,8 +7793,11 @@ __webpack_require__.r(__webpack_exports__);
           12: 'December'
         }
       };
-      if (key === 'search') {
-        return "Search: \"".concat(value, "\"");
+      if (key === 'name') {
+        return "PC Parts: \"".concat(value, "\"");
+      }
+      if (key === 'code') {
+        return "Code: \"".concat(value, "\"");
       }
       if (key === 'nameStartsWith') {
         return "Name: ".concat(value);
@@ -7831,12 +7862,16 @@ __webpack_require__.r(__webpack_exports__);
     filteredCategories: function filteredCategories() {
       var _this3 = this;
       var filtered = this.categories;
-
-      // Apply text search (searches in name and code)
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
+      if (this.filters.name) {
+        var keyword = this.filters.name.toLowerCase();
         filtered = filtered.filter(function (category) {
-          return category.name && category.name.toLowerCase().includes(keyword) || category.code && category.code.toLowerCase().includes(keyword);
+          return category.name && category.name.toLowerCase().includes(keyword);
+        });
+      }
+      if (this.filters.code) {
+        var _keyword = this.filters.code.toLowerCase();
+        filtered = filtered.filter(function (category) {
+          return category.code && category.code.toLowerCase().includes(_keyword);
         });
       }
 
@@ -8052,12 +8087,33 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       crafts: [],
+      showFilters: false,
+      filterColumns: [{
+        key: 'name',
+        label: 'Name',
+        type: 'text'
+      }, {
+        key: 'code',
+        label: 'Code',
+        type: 'text'
+      }, {
+        key: 'fee',
+        label: 'Fee',
+        type: 'text'
+      }],
       filters: {
-        search: '',
+        name: '',
+        code: '',
+        fee: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         codeStartsWith: '',
@@ -8153,7 +8209,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
-        search: '',
+        name: '',
+        code: '',
+        fee: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         codeStartsWith: '',
@@ -8164,8 +8222,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'search') {
-        this.filters.search = '';
+      if (filterKey === 'name' || filterKey === 'code' || filterKey === 'fee') {
+        this.filters[filterKey] = '';
       } else if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
         // If year is removed, also clear month
@@ -8201,8 +8259,14 @@ __webpack_require__.r(__webpack_exports__);
           12: 'December'
         }
       };
-      if (key === 'search') {
-        return "Search: \"".concat(value, "\"");
+      if (key === 'name') {
+        return "Name: \"".concat(value, "\"");
+      }
+      if (key === 'code') {
+        return "Code: \"".concat(value, "\"");
+      }
+      if (key === 'fee') {
+        return "Fee: \"".concat(value, "\"");
       }
       if (key === 'nameStartsWith') {
         return "Name: ".concat(value);
@@ -8281,12 +8345,22 @@ __webpack_require__.r(__webpack_exports__);
     filteredCrafts: function filteredCrafts() {
       var _this3 = this;
       var filtered = this.crafts;
-
-      // Apply text search (searches in name, code, fee)
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
+      if (this.filters.name) {
+        var keyword = this.filters.name.toLowerCase();
         filtered = filtered.filter(function (craft) {
-          return craft.name && craft.name.toLowerCase().includes(keyword) || craft.code && craft.code.toLowerCase().includes(keyword) || craft.fee && craft.fee.toString().includes(keyword);
+          return craft.name && craft.name.toLowerCase().includes(keyword);
+        });
+      }
+      if (this.filters.code) {
+        var _keyword = this.filters.code.toLowerCase();
+        filtered = filtered.filter(function (craft) {
+          return craft.code && craft.code.toLowerCase().includes(_keyword);
+        });
+      }
+      if (this.filters.fee) {
+        var _keyword2 = this.filters.fee.toLowerCase();
+        filtered = filtered.filter(function (craft) {
+          return craft.fee && craft.fee.toString().toLowerCase().includes(_keyword2);
         });
       }
 
@@ -25373,11 +25447,24 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       employees: [],
-      searchItem: ''
+      showFilters: false,
+      filterColumns: [{
+        key: 'salary_month',
+        label: 'Salary Month',
+        type: 'text'
+      }],
+      filters: {
+        salary_month: ''
+      }
     };
   },
   methods: {
@@ -25396,7 +25483,7 @@ __webpack_require__.r(__webpack_exports__);
     filterSearch: function filterSearch() {
       var _this2 = this;
       return this.employees.filter(function (data) {
-        return data.salary_month.match(_this2.searchItem);
+        return data.salary_month.match(_this2.filters.salary_month);
       });
     }
   },
@@ -32189,13 +32276,29 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       subCategories: [],
       allCategories: [],
+      showFilters: false,
+      filterColumns: [{
+        key: 'name',
+        label: 'Name',
+        type: 'text'
+      }, {
+        key: 'code',
+        label: 'Code',
+        type: 'text'
+      }],
       filters: {
-        search: '',
+        name: '',
+        code: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         categoryId: '',
@@ -32288,7 +32391,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
-        search: '',
+        name: '',
+        code: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         categoryId: '',
@@ -32297,8 +32401,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'search') {
-        this.filters.search = '';
+      if (filterKey === 'name' || filterKey === 'code') {
+        this.filters[filterKey] = '';
       } else if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
         // If year is removed, also clear month
@@ -32334,8 +32438,11 @@ __webpack_require__.r(__webpack_exports__);
           12: 'December'
         }
       };
-      if (key === 'search') {
-        return "Search: \"".concat(value, "\"");
+      if (key === 'name') {
+        return "Name: \"".concat(value, "\"");
+      }
+      if (key === 'code') {
+        return "Code: \"".concat(value, "\"");
       }
       if (key === 'nameStartsWith') {
         return "Name: ".concat(value);
@@ -32415,12 +32522,16 @@ __webpack_require__.r(__webpack_exports__);
     filteredSubCategories: function filteredSubCategories() {
       var _this4 = this;
       var filtered = this.subCategories;
-
-      // Apply text search (searches in name, code, category name)
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
+      if (this.filters.name) {
+        var keyword = this.filters.name.toLowerCase();
         filtered = filtered.filter(function (subCat) {
-          return subCat.name && subCat.name.toLowerCase().includes(keyword) || subCat.code && subCat.code.toLowerCase().includes(keyword) || subCat.category && subCat.category.name && subCat.category.name.toLowerCase().includes(keyword);
+          return subCat.name && subCat.name.toLowerCase().includes(keyword);
+        });
+      }
+      if (this.filters.code) {
+        var _keyword = this.filters.code.toLowerCase();
+        filtered = filtered.filter(function (subCat) {
+          return subCat.code && subCat.code.toLowerCase().includes(_keyword);
         });
       }
 
@@ -32800,12 +32911,33 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       suppliers: [],
+      showFilters: false,
+      filterColumns: [{
+        key: 'name',
+        label: 'Name',
+        type: 'text'
+      }, {
+        key: 'shopname',
+        label: 'Shop Name',
+        type: 'text'
+      }, {
+        key: 'phone',
+        label: 'Phone',
+        type: 'text'
+      }],
       filters: {
-        search: '',
+        name: '',
+        shopname: '',
+        phone: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         shopStartsWith: '',
@@ -32900,7 +33032,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
-        search: '',
+        name: '',
+        shopname: '',
+        phone: '',
         sortBy: 'name_asc',
         nameStartsWith: '',
         shopStartsWith: '',
@@ -32909,8 +33043,8 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'search') {
-        this.filters.search = '';
+      if (filterKey === 'name' || filterKey === 'shopname' || filterKey === 'phone') {
+        this.filters[filterKey] = '';
       } else if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
         // If year is removed, also clear month
@@ -32944,8 +33078,14 @@ __webpack_require__.r(__webpack_exports__);
           12: 'December'
         }
       };
-      if (key === 'search') {
-        return "Search: \"".concat(value, "\"");
+      if (key === 'name') {
+        return "Name: \"".concat(value, "\"");
+      }
+      if (key === 'shopname') {
+        return "Shop Name: \"".concat(value, "\"");
+      }
+      if (key === 'phone') {
+        return "Phone: \"".concat(value, "\"");
       }
       if (key === 'nameStartsWith') {
         return "Name: ".concat(value);
@@ -33010,12 +33150,22 @@ __webpack_require__.r(__webpack_exports__);
     filteredSuppliers: function filteredSuppliers() {
       var _this3 = this;
       var filtered = this.suppliers;
-
-      // Apply text search (searches in phone, name, shopname, email)
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
+      if (this.filters.name) {
+        var keyword = this.filters.name.toLowerCase();
         filtered = filtered.filter(function (supplier) {
-          return supplier.phone && supplier.phone.toLowerCase().includes(keyword) || supplier.name && supplier.name.toLowerCase().includes(keyword) || supplier.shopname && supplier.shopname.toLowerCase().includes(keyword) || supplier.email && supplier.email.toLowerCase().includes(keyword);
+          return supplier.name && supplier.name.toLowerCase().includes(keyword);
+        });
+      }
+      if (this.filters.shopname) {
+        var _keyword = this.filters.shopname.toLowerCase();
+        filtered = filtered.filter(function (supplier) {
+          return supplier.shopname && supplier.shopname.toLowerCase().includes(_keyword);
+        });
+      }
+      if (this.filters.phone) {
+        var _keyword2 = this.filters.phone.toLowerCase();
+        filtered = filtered.filter(function (supplier) {
+          return supplier.phone && supplier.phone.toLowerCase().includes(_keyword2);
         });
       }
 
@@ -36172,6 +36322,16 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary mr-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -36181,51 +36341,23 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "row mt-2"
-  }, [_c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Search Brand")]), _vm._v(" "), _c("div", {
-    staticClass: "input-group input-group-sm"
-  }, [_vm._m(1), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Brand"
-    },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+      name: "filter-panel"
     }
-  }), _vm._v(" "), _vm.filters.search ? _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("button", {
-    staticClass: "btn btn-outline-secondary",
+  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
     attrs: {
-      type: "button"
+      columns: _vm.filterColumns,
+      visible: true
     },
-    on: {
-      click: function click($event) {
-        _vm.filters.search = "";
-        _vm.applyFilters();
-      }
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_c("i", {
-    staticClass: "fas fa-times"
-  })])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3 mb-2"
@@ -36299,7 +36431,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -36333,7 +36465,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                            " + _vm._s(year) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -36370,7 +36502,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                            " + _vm._s(monthName) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -36381,7 +36513,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                            " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                            "), _c("button", {
+    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -36394,11 +36526,11 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()], 1) : _vm._e()])], 1)])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(2), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCategories, function (data, index) {
+  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCategories, function (data, index) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.name))]), _vm._v(" "), _c("td", [_c("small", {
@@ -36434,7 +36566,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredCategories.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredCategories.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -36446,16 +36578,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                    ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -41856,6 +41978,16 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary mr-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -41865,51 +41997,23 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "row mt-2"
-  }, [_c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Search Category")]), _vm._v(" "), _c("div", {
-    staticClass: "input-group input-group-sm"
-  }, [_vm._m(1), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
-      type: "text",
-      placeholder: "Search by PC Parts or Code..."
-    },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+      name: "filter-panel"
     }
-  }), _vm._v(" "), _vm.filters.search ? _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("button", {
-    staticClass: "btn btn-outline-secondary",
+  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
     attrs: {
-      type: "button"
+      columns: _vm.filterColumns,
+      visible: true
     },
-    on: {
-      click: function click($event) {
-        _vm.filters.search = "";
-        _vm.applyFilters();
-      }
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_c("i", {
-    staticClass: "fas fa-times"
-  })])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3 mb-2"
@@ -41991,7 +42095,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -42025,7 +42129,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -42059,7 +42163,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                            " + _vm._s(year) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -42096,7 +42200,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                            " + _vm._s(monthName) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -42107,7 +42211,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                            " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                            "), _c("button", {
+    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -42120,11 +42224,11 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()], 1) : _vm._e()])], 1)])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(2), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCategories, function (data, index) {
+  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCategories, function (data, index) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.name))]), _vm._v(" "), _c("td", [_c("span", {
@@ -42162,7 +42266,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredCategories.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredCategories.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -42174,16 +42278,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                    ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -42675,6 +42769,16 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary mr-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -42684,51 +42788,23 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "row mt-2"
-  }, [_c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Search QuiviCraft")]), _vm._v(" "), _c("div", {
-    staticClass: "input-group input-group-sm"
-  }, [_vm._m(1), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Name, Code, or Fee..."
-    },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+      name: "filter-panel"
     }
-  }), _vm._v(" "), _vm.filters.search ? _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("button", {
-    staticClass: "btn btn-outline-secondary",
+  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
     attrs: {
-      type: "button"
+      columns: _vm.filterColumns,
+      visible: true
     },
-    on: {
-      click: function click($event) {
-        _vm.filters.search = "";
-        _vm.applyFilters();
-      }
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_c("i", {
-    staticClass: "fas fa-times"
-  })])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3 mb-2"
@@ -42818,7 +42894,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -42852,7 +42928,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -42886,7 +42962,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                            " + _vm._s(year) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -42923,7 +42999,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                            " + _vm._s(monthName) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
   })], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -42990,7 +43066,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                            " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                            "), _c("button", {
+    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -43003,11 +43079,11 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()], 1) : _vm._e()])], 1)])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(2), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCrafts, function (data, index) {
+  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCrafts, function (data, index) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.name))]), _vm._v(" "), _c("td", [_c("span", {
@@ -43047,7 +43123,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredCrafts.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredCrafts.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -43059,16 +43135,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                    ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -73443,29 +73509,35 @@ var render = function render() {
     }
   }, [_vm._v("Salary")]), _vm._v(" "), _c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("Employee List")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.searchItem,
-      expression: "searchItem"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "searchItems",
-      placeholder: "Search Employee By Phone"
-    },
-    domProps: {
-      value: _vm.searchItem
-    },
+  }, [_vm._v("Employee List")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.searchItem = $event.target.value;
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
       }
     }
-  })], 1), _vm._v(" "), _c("div", {
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                      " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                  ")])], 1), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", {
+    staticClass: "card-body py-2"
+  }, [_c("column-search-panel", {
+    attrs: {
+      columns: _vm.filterColumns,
+      visible: true
+    },
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
+    }
+  })], 1) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
@@ -73483,7 +73555,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("View Salary ")])], 1)]);
-  }), 0)])])]), _vm._v(" "), _c("div", {
+  }), 0)])])], 1), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])])]);
 };
@@ -85410,6 +85482,16 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary mr-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -85419,51 +85501,23 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "row mt-2"
-  }, [_c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Search Sub Category")]), _vm._v(" "), _c("div", {
-    staticClass: "input-group input-group-sm"
-  }, [_vm._m(1), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Name, Code, or Category..."
-    },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+      name: "filter-panel"
     }
-  }), _vm._v(" "), _vm.filters.search ? _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("button", {
-    staticClass: "btn btn-outline-secondary",
+  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
     attrs: {
-      type: "button"
+      columns: _vm.filterColumns,
+      visible: true
     },
-    on: {
-      click: function click($event) {
-        _vm.filters.search = "";
-        _vm.applyFilters();
-      }
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_c("i", {
-    staticClass: "fas fa-times"
-  })])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3 mb-2"
@@ -85553,7 +85607,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                            " + _vm._s(letter) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -85587,7 +85641,7 @@ var render = function render() {
       domProps: {
         value: category.id
       }
-    }, [_vm._v("\n                                                            " + _vm._s(category.name) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(category.name) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -85621,7 +85675,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                            " + _vm._s(year) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -85658,7 +85712,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                            " + _vm._s(monthName) + "\n                                                        ")]);
+    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -85669,7 +85723,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                            " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                            "), _c("button", {
+    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -85682,11 +85736,11 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()], 1) : _vm._e()])], 1)])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(2), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSubCategories, function (data, index) {
+  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSubCategories, function (data, index) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [data.category ? _c("span", {
@@ -85728,7 +85782,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredSubCategories.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredSubCategories.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -85740,16 +85794,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                    ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -86403,6 +86447,16 @@ var render = function render() {
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary mr-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                                                            " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                        ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -86412,51 +86466,23 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                        ")])])]), _vm._v(" "), _c("div", {
-    staticClass: "row mt-2"
-  }, [_c("div", {
-    staticClass: "col-md-12 mb-3"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Search Supplier")]), _vm._v(" "), _c("div", {
-    staticClass: "input-group input-group-sm"
-  }, [_vm._m(1), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }), _vm._v("Clear Filters\n                                                        ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Phone, Name, Shop, or Email..."
-    },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+      name: "filter-panel"
     }
-  }), _vm._v(" "), _vm.filters.search ? _c("div", {
-    staticClass: "input-group-append"
-  }, [_c("button", {
-    staticClass: "btn btn-outline-secondary",
+  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
     attrs: {
-      type: "button"
+      columns: _vm.filterColumns,
+      visible: true
     },
-    on: {
-      click: function click($event) {
-        _vm.filters.search = "";
-        _vm.applyFilters();
-      }
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_c("i", {
-    staticClass: "fas fa-times"
-  })])]) : _vm._e()])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-3 mb-2"
@@ -86538,7 +86564,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
+    }, [_vm._v("\n                                                                    " + _vm._s(letter) + "\n                                                                ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -86572,7 +86598,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
+    }, [_vm._v("\n                                                                    " + _vm._s(letter) + "\n                                                                ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -86606,7 +86632,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
+    }, [_vm._v("\n                                                                    " + _vm._s(year) + "\n                                                                ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-1.5 mb-2"
   }, [_c("label", {
@@ -86643,7 +86669,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
+    }, [_vm._v("\n                                                                    " + _vm._s(monthName) + "\n                                                                ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -86654,7 +86680,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
+    }, [_vm._v("\n                                                                    " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                    "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -86667,11 +86693,11 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()], 1) : _vm._e()])], 1)])])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(2), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSuppliers, function (supplier) {
+  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSuppliers, function (supplier) {
     return _c("tr", {
       key: supplier.id
     }, [_c("td", [_c("img", {
@@ -86735,7 +86761,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredSuppliers.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredSuppliers.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -86747,16 +86773,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                        ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -95879,7 +95895,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-bd157362], .table td[data-v-bd157362] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-bd157362] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-bd157362] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-bd157362]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-bd157362] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-bd157362] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-bd157362] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-bd157362] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-bd157362] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-bd157362] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-bd157362] {\n        display: none;\n}\n.table-responsive[data-v-bd157362] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-bd157362], .col-md-1.5[data-v-bd157362] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-bd157362] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-bd157362] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-bd157362]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-bd157362] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-bd157362] {\n    flex-grow: 1 !important;\n}\n.badge-secondary[data-v-bd157362] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Disabled month select styling */\nselect[data-v-bd157362]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-bd157362], .table td[data-v-bd157362] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-bd157362] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-bd157362] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-bd157362]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-bd157362] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-bd157362] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-bd157362] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-bd157362] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-bd157362] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-bd157362] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-bd157362] {\n        display: none;\n}\n.table-responsive[data-v-bd157362] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-bd157362], .col-md-1.5[data-v-bd157362] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-bd157362] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-bd157362] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-bd157362]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-bd157362] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-bd157362] {\n    flex-grow: 1 !important;\n}\n.badge-secondary[data-v-bd157362] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Disabled month select styling */\nselect[data-v-bd157362]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n.filter-panel-enter-active[data-v-bd157362],\n.filter-panel-leave-active[data-v-bd157362] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-bd157362],\n.filter-panel-leave-to[data-v-bd157362] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -96069,7 +96085,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-8e3009e8], .table td[data-v-8e3009e8] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-8e3009e8] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-8e3009e8] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-8e3009e8]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-8e3009e8] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-8e3009e8] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-8e3009e8] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-8e3009e8] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-8e3009e8] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-8e3009e8] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-8e3009e8] {\n        display: none;\n}\n.table-responsive[data-v-8e3009e8] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-8e3009e8], .col-md-1.5[data-v-8e3009e8] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-8e3009e8] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-8e3009e8] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-8e3009e8]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-8e3009e8] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-8e3009e8] {\n    flex-grow: 1 !important;\n}\n\n/* Code badge styling */\n.badge-secondary[data-v-8e3009e8] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Disabled month select styling */\nselect[data-v-8e3009e8]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-8e3009e8], .table td[data-v-8e3009e8] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-8e3009e8] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-8e3009e8] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-8e3009e8]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-8e3009e8] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-8e3009e8] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-8e3009e8] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-8e3009e8] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-8e3009e8] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-8e3009e8] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-8e3009e8] {\n        display: none;\n}\n.table-responsive[data-v-8e3009e8] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-8e3009e8], .col-md-1.5[data-v-8e3009e8] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-8e3009e8] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-8e3009e8] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-8e3009e8]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-8e3009e8] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-8e3009e8] {\n    flex-grow: 1 !important;\n}\n\n/* Code badge styling */\n.badge-secondary[data-v-8e3009e8] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Disabled month select styling */\nselect[data-v-8e3009e8]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n\n/* Filter panel transition */\n.filter-panel-enter-active[data-v-8e3009e8], .filter-panel-leave-active[data-v-8e3009e8] {\n    transition: all 0.3s ease;\n}\n.filter-panel-enter[data-v-8e3009e8], .filter-panel-leave-to[data-v-8e3009e8] {\n    opacity: 0;\n    max-height: 0;\n    overflow: hidden;\n}\n.filter-panel-enter-to[data-v-8e3009e8], .filter-panel-leave[data-v-8e3009e8] {\n    opacity: 1;\n    max-height: 500px;\n}\n", ""]);
 
 // exports
 
@@ -96126,7 +96142,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-0c0eb1a8], .table td[data-v-0c0eb1a8] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-0c0eb1a8] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-0c0eb1a8] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-0c0eb1a8]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-0c0eb1a8] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-0c0eb1a8] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-0c0eb1a8] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-0c0eb1a8] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-0c0eb1a8] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-0c0eb1a8] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-0c0eb1a8] {\n        display: none;\n}\n.table-responsive[data-v-0c0eb1a8] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-0c0eb1a8], .col-md-1.5[data-v-0c0eb1a8], .col-md-6[data-v-0c0eb1a8] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-0c0eb1a8] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Fee input styling */\ninput[type=\"number\"][data-v-0c0eb1a8]::-webkit-inner-spin-button,\ninput[type=\"number\"][data-v-0c0eb1a8]::-webkit-outer-spin-button {\n    opacity: 1;\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-0c0eb1a8] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-0c0eb1a8]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-0c0eb1a8] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-0c0eb1a8] {\n    flex-grow: 1 !important;\n}\n\n/* Code badge styling */\n.badge-secondary[data-v-0c0eb1a8] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Fee styling */\n.text-success[data-v-0c0eb1a8] {\n    color: #28a745 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-0c0eb1a8]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-0c0eb1a8], .table td[data-v-0c0eb1a8] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-0c0eb1a8] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-0c0eb1a8] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-0c0eb1a8]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-0c0eb1a8] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-0c0eb1a8] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-0c0eb1a8] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-0c0eb1a8] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-0c0eb1a8] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-0c0eb1a8] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-0c0eb1a8] {\n        display: none;\n}\n.table-responsive[data-v-0c0eb1a8] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-0c0eb1a8], .col-md-1.5[data-v-0c0eb1a8], .col-md-6[data-v-0c0eb1a8] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-0c0eb1a8] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Fee input styling */\ninput[type=\"number\"][data-v-0c0eb1a8]::-webkit-inner-spin-button,\ninput[type=\"number\"][data-v-0c0eb1a8]::-webkit-outer-spin-button {\n    opacity: 1;\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-0c0eb1a8] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-0c0eb1a8]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-0c0eb1a8] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-0c0eb1a8] {\n    flex-grow: 1 !important;\n}\n\n/* Code badge styling */\n.badge-secondary[data-v-0c0eb1a8] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Fee styling */\n.text-success[data-v-0c0eb1a8] {\n    color: #28a745 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-0c0eb1a8]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n\n/* Filter panel transition */\n.filter-panel-enter-active[data-v-0c0eb1a8],\n.filter-panel-leave-active[data-v-0c0eb1a8] {\n    transition: all 0.3s ease;\n    max-height: 1000px;\n    opacity: 1;\n    overflow: hidden;\n}\n.filter-panel-enter[data-v-0c0eb1a8],\n.filter-panel-leave-to[data-v-0c0eb1a8] {\n    max-height: 0;\n    opacity: 0;\n    overflow: hidden;\n}\n", ""]);
 
 // exports
 
@@ -97722,7 +97738,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n#searchItems[data-v-1d75f998] {\n    width: 270px !important;\n}\n", ""]);
+exports.push([module.i, "\n.filter-panel-enter-active[data-v-1d75f998],\n.filter-panel-leave-active[data-v-1d75f998] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-1d75f998],\n.filter-panel-leave-to[data-v-1d75f998] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -98102,7 +98118,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-e3f02c2a], .table td[data-v-e3f02c2a] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-e3f02c2a] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n.badge-primary[data-v-e3f02c2a] {\n    background-color: #4e73df !important;\n}\n.badge-secondary[data-v-e3f02c2a] {\n    background-color: #6c757d !important;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-e3f02c2a] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-e3f02c2a] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-e3f02c2a] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-e3f02c2a] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-e3f02c2a] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-e3f02c2a] {\n        display: none;\n}\n.table-responsive[data-v-e3f02c2a] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-e3f02c2a], .col-md-1.5[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-e3f02c2a] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-e3f02c2a] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-e3f02c2a]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-e3f02c2a] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-e3f02c2a] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-e3f02c2a]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-e3f02c2a], .table td[data-v-e3f02c2a] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-e3f02c2a] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n.badge-primary[data-v-e3f02c2a] {\n    background-color: #4e73df !important;\n}\n.badge-secondary[data-v-e3f02c2a] {\n    background-color: #6c757d !important;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-e3f02c2a] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-e3f02c2a] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-e3f02c2a] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-e3f02c2a] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-e3f02c2a] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-e3f02c2a] {\n        display: none;\n}\n.table-responsive[data-v-e3f02c2a] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-e3f02c2a], .col-md-1.5[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-e3f02c2a] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-e3f02c2a] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-e3f02c2a]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-e3f02c2a] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-e3f02c2a] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-e3f02c2a]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n\n/* Transition for filter panel collapse/expand */\n.filter-panel-enter-active[data-v-e3f02c2a], .filter-panel-leave-active[data-v-e3f02c2a] {\n    transition: all 0.3s ease;\n    overflow: hidden;\n    max-height: 1000px;\n}\n.filter-panel-enter[data-v-e3f02c2a], .filter-panel-leave-to[data-v-e3f02c2a] {\n    opacity: 0;\n    max-height: 0;\n}\n.filter-panel-enter-to[data-v-e3f02c2a], .filter-panel-leave[data-v-e3f02c2a] {\n    opacity: 1;\n    max-height: 1000px;\n}\n", ""]);
 
 // exports
 
@@ -98159,7 +98175,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-3884f46f], .table td[data-v-3884f46f] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-3884f46f] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-3884f46f] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-3884f46f] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-3884f46f] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-3884f46f] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-3884f46f] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-3884f46f] {\n        display: none;\n}\n.table-responsive[data-v-3884f46f] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-3884f46f], .col-md-1.5[data-v-3884f46f] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-3884f46f] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\nimg[data-v-3884f46f] {\n        width: 40px !important;\n        height: 40px !important;\n}\n}\n\n/* Make phone number clickable */\na[href^=\"tel:\"][data-v-3884f46f] {\n    text-decoration: none;\n}\na[href^=\"tel:\"][data-v-3884f46f]:hover {\n    text-decoration: underline;\n}\n\n/* Default avatar image styling */\nimg[src*=\"default-avatar\"][data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #dee2e6;\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-3884f46f] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-3884f46f]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-3884f46f] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-3884f46f] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-3884f46f]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-3884f46f], .table td[data-v-3884f46f] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-3884f46f] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f]:last-child {\n    margin-right: 0;\n}\n\n/* Search bar styling */\n.input-group-sm > .form-control[data-v-3884f46f] {\n    height: calc(1.5em + 0.5rem + 2px);\n    font-size: 0.875rem;\n}\n.input-group-text[data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #ced4da;\n}\n.input-group-append .btn[data-v-3884f46f] {\n    border: 1px solid #ced4da;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-3884f46f] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-3884f46f] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-3884f46f] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-3884f46f] {\n        display: none;\n}\n.table-responsive[data-v-3884f46f] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-3884f46f], .col-md-1.5[data-v-3884f46f] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-3884f46f] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\nimg[data-v-3884f46f] {\n        width: 40px !important;\n        height: 40px !important;\n}\n}\n\n/* Make phone number clickable */\na[href^=\"tel:\"][data-v-3884f46f] {\n    text-decoration: none;\n}\na[href^=\"tel:\"][data-v-3884f46f]:hover {\n    text-decoration: underline;\n}\n\n/* Default avatar image styling */\nimg[src*=\"default-avatar\"][data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #dee2e6;\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-3884f46f] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-3884f46f]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-3884f46f] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-3884f46f] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-3884f46f]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n\n/* Filter panel transition */\n.filter-panel-enter-active[data-v-3884f46f], .filter-panel-leave-active[data-v-3884f46f] {\n    transition: all 0.3s ease;\n}\n.filter-panel-enter[data-v-3884f46f] {\n    opacity: 0;\n    transform: translateY(-10px);\n}\n.filter-panel-leave-to[data-v-3884f46f] {\n    opacity: 0;\n    transform: translateY(-10px);\n}\n", ""]);
 
 // exports
 
