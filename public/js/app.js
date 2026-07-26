@@ -23193,8 +23193,7 @@ var keySeq = 0;
     },
     addFormPhotos: function addFormPhotos(existingKey, newKey, files) {
       var _this3 = this;
-      var room = Math.max(0, 2 - (this[existingKey].length + this[newKey].length));
-      Array.from(files).slice(0, room).forEach(function (f) {
+      Array.from(files).forEach(function (f) {
         return _this3[newKey].push(f);
       });
     },

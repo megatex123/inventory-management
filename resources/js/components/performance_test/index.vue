@@ -525,8 +525,7 @@ export default {
       }
     },
     addFormPhotos(existingKey, newKey, files) {
-      const room = Math.max(0, 2 - (this[existingKey].length + this[newKey].length));
-      Array.from(files).slice(0, room).forEach(f => this[newKey].push(f));
+      Array.from(files).forEach(f => this[newKey].push(f));
     },
     removeFormPhoto(existingKey, removeKey, path) {
       this[removeKey].push(path);
