@@ -57,7 +57,6 @@ class PerformanceTestController extends Controller
 
     const PARENT_FIELDS = [
         'cooling_solution',
-        'overall_display_output', 'overall_network_wireless', 'overall_usb_ports',
         'overall_notes', 'thermal_paste_brand', 'thermal_paste_batch', 'thermal_paste_application_method',
         'os_installed', 'os_config_note', 'drivers_note', 'applications_installed', 'applications_note',
     ];
@@ -143,6 +142,25 @@ class PerformanceTestController extends Controller
         'overall_cooling_system', 'technician_notes',
     ];
 
+    const DISPLAY_RESULT_FIELDS = [
+        'connection_type', 'graphic_driver_version', 'benchmark_display',
+        'display_detected', 'resolution', 'refresh_rate_hz', 'hdr_status', 'output_port_tested',
+        'display_detected_successfully', 'correct_resolution_applied', 'correct_refresh_rate_applied',
+        'hdr_functions_correctly', 'stable_video_output',
+        'display_detection', 'resolution_verification', 'refresh_rate_verification', 'video_output_verification',
+        'overall_display_output', 'technician_notes',
+    ];
+
+    const NETWORK_RESULT_FIELDS = [
+        'wired_network', 'wireless_network', 'internet_access_available', 'bluetooth_device_tested',
+        'lan_detected', 'lan_connected', 'wifi_adapter_detected', 'wifi_connected', 'internet_access',
+        'bluetooth_adapter_detected', 'bluetooth_pairing_successful',
+        'lan_operating_normally', 'wifi_operating_normally', 'internet_connection_verified',
+        'bluetooth_pairing_confirmed', 'wifi_antenna_installed_correctly',
+        'lan_verification', 'wifi_verification', 'internet_connectivity', 'bluetooth_verification',
+        'overall_network_wireless', 'technician_notes',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -167,6 +185,8 @@ class PerformanceTestController extends Controller
         $performanceTest->storageResults()->firstOrCreate([]);
         $performanceTest->coolingPerformanceResults()->firstOrCreate([]);
         $performanceTest->coolingSystemResults()->firstOrCreate([]);
+        $performanceTest->displayResults()->firstOrCreate([]);
+        $performanceTest->networkResults()->firstOrCreate([]);
 
         $performanceTest->load([
             'checklistItems' => function ($q) {
@@ -179,6 +199,8 @@ class PerformanceTestController extends Controller
             'storageResults',
             'coolingPerformanceResults',
             'coolingSystemResults',
+            'displayResults',
+            'networkResults',
         ]);
 
         return response()->json([
@@ -741,6 +763,117 @@ class PerformanceTestController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update cooling system results', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateDisplayResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'connection_type' => 'nullable|in:hdmi,display_port',
+            'graphic_driver_version' => 'nullable|string|max:255',
+            'benchmark_display' => 'nullable|string|max:255',
+            'display_detected' => 'nullable|boolean',
+            'resolution' => 'nullable|string|max:255',
+            'refresh_rate_hz' => 'nullable|integer',
+            'hdr_status' => 'nullable|in:enabled,disabled,not_supported',
+            'output_port_tested' => 'nullable|in:hdmi,display_port',
+            'display_detected_successfully' => 'nullable|boolean',
+            'correct_resolution_applied' => 'nullable|boolean',
+            'correct_refresh_rate_applied' => 'nullable|boolean',
+            'hdr_functions_correctly' => 'nullable|boolean',
+            'stable_video_output' => 'nullable|boolean',
+            'display_detection' => 'nullable|boolean',
+            'resolution_verification' => 'nullable|boolean',
+            'refresh_rate_verification' => 'nullable|boolean',
+            'video_output_verification' => 'nullable|boolean',
+            'overall_display_output' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $displayResults = $performanceTest->displayResults()->firstOrCreate([]);
+            $displayResults->fill($request->only(self::DISPLAY_RESULT_FIELDS));
+            $displayResults->save();
+
+            if ($request->has('overall_display_output')) {
+                $performanceTest->overall_display_output = $request->boolean('overall_display_output');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Display results updated successfully',
+                'data' => $displayResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update display results', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateNetworkResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'wired_network' => 'nullable|boolean',
+            'wireless_network' => 'nullable|string|max:255',
+            'internet_access_available' => 'nullable|string|max:255',
+            'bluetooth_device_tested' => 'nullable|string|max:255',
+            'lan_detected' => 'nullable|boolean',
+            'lan_connected' => 'nullable|boolean',
+            'wifi_adapter_detected' => 'nullable|boolean',
+            'wifi_connected' => 'nullable|boolean',
+            'internet_access' => 'nullable|boolean',
+            'bluetooth_adapter_detected' => 'nullable|boolean',
+            'bluetooth_pairing_successful' => 'nullable|boolean',
+            'lan_operating_normally' => 'nullable|boolean',
+            'wifi_operating_normally' => 'nullable|boolean',
+            'internet_connection_verified' => 'nullable|boolean',
+            'bluetooth_pairing_confirmed' => 'nullable|boolean',
+            'wifi_antenna_installed_correctly' => 'nullable|boolean',
+            'lan_verification' => 'nullable|boolean',
+            'wifi_verification' => 'nullable|boolean',
+            'internet_connectivity' => 'nullable|boolean',
+            'bluetooth_verification' => 'nullable|boolean',
+            'overall_network_wireless' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $networkResults = $performanceTest->networkResults()->firstOrCreate([]);
+            $networkResults->fill($request->only(self::NETWORK_RESULT_FIELDS));
+            $networkResults->save();
+
+            if ($request->has('overall_network_wireless')) {
+                $performanceTest->overall_network_wireless = $request->boolean('overall_network_wireless');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Network results updated successfully',
+                'data' => $networkResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update network results', 'error' => $e->getMessage()], 500);
         }
     }
 
