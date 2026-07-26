@@ -276,6 +276,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import InspectionGroup from '../craft_inspection/InspectionGroup.vue';
+import PhotoUploadField from '../shared/PhotoUploadField.vue';
 import CpuResultsSection from './CpuResultsSection.vue';
 import GpuResultsSection from './GpuResultsSection.vue';
 import SystemStabilityResultsSection from './SystemStabilityResultsSection.vue';
@@ -329,40 +330,23 @@ export default {
     // OS Configuration / Drivers Installation sections, which share one
     // note+photo pair across several tickboxes rather than one per item.
     PhotoNoteField: {
+      components: { PhotoUploadField },
       props: {
         note: String,
         existingPhotos: { type: Array, default: () => [] },
         newPhotos: { type: Array, default: () => [] },
       },
-      methods: {
-        fileUrl(file) {
-          return URL.createObjectURL(file);
-        },
-        onFileChange(event) {
-          if (event.target.files && event.target.files.length) {
-            this.$emit('add-photos', event.target.files);
-          }
-          event.target.value = '';
-        },
-      },
       template: `
         <div class="mt-2">
           <label class="small text-muted mb-1">Notes</label>
           <textarea class="form-control mb-2" rows="2" :value="note" @input="$emit('update:note', $event.target.value)"></textarea>
-          <label class="small text-muted mb-1">Photos (optional, up to 2)</label>
-          <div class="d-flex flex-wrap align-items-center">
-            <div v-for="path in existingPhotos" :key="path" class="photo-thumb">
-              <img :src="'/storage/' + path" alt="photo">
-              <button type="button" class="remove-btn" @click="$emit('remove-existing', path)">&times;</button>
-            </div>
-            <div v-for="(file, idx) in newPhotos" :key="'new-' + idx" class="photo-thumb">
-              <img :src="fileUrl(file)" alt="new photo">
-              <button type="button" class="remove-btn" @click="$emit('remove-new', idx)">&times;</button>
-            </div>
-            <div v-if="(existingPhotos.length + newPhotos.length) < 2" class="photo-upload-btn">
-              <input type="file" accept="image/*" multiple @change="onFileChange">
-            </div>
-          </div>
+          <photo-upload-field
+            :existing-photos="existingPhotos"
+            :new-photos="newPhotos"
+            @add-photos="$emit('add-photos', $event)"
+            @remove-existing="$emit('remove-existing', $event)"
+            @remove-new="$emit('remove-new', $event)"
+          />
         </div>
       `,
     },
@@ -660,52 +644,4 @@ export default {
 
 <style scoped>
 .form-label { font-weight: 600; color: #495057; font-size: 0.85rem; }
-.photo-thumb {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  margin: 0 0.5rem 0.5rem 0;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid #dee2e6;
-}
-.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.remove-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: rgba(220, 53, 69, 0.85);
-  color: #fff;
-  border: none;
-  width: 20px;
-  height: 20px;
-  line-height: 18px;
-  font-size: 14px;
-  cursor: pointer;
-}
-.photo-upload-btn {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  border: 1px dashed #adb5bd;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-}
-.photo-upload-btn input[type="file"] {
-  font-size: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  position: absolute;
-}
-.photo-upload-btn::before {
-  content: '+';
-  font-size: 1.5rem;
-  color: #adb5bd;
-  pointer-events: none;
-}
 </style>
