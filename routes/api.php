@@ -132,6 +132,26 @@ Route::prefix('order/{orderId}/performance-test/{round}')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| ONSITE HANDOVER (QuiviCraft)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('order/{orderId}/onsite-handover/{round}')->group(function () {
+    Route::get('/', 'OnsiteHandoverController@show');
+    Route::post('/report-info', 'OnsiteHandoverController@updateReportInfo');
+    Route::post('/customer-info', 'OnsiteHandoverController@updateCustomerInfo');
+    Route::post('/build-info', 'OnsiteHandoverController@updateBuildInfo');
+    Route::post('/studio-docs', 'OnsiteHandoverController@updateStudioDocs');
+    Route::post('/arrival', 'OnsiteHandoverController@updateArrival');
+    Route::post('/transportation', 'OnsiteHandoverController@updateTransportation');
+    Route::post('/assembly', 'OnsiteHandoverController@updateAssembly');
+    Route::post('/post-build-hardware', 'OnsiteHandoverController@updatePostBuildHardware');
+    Route::post('/post-build-software', 'OnsiteHandoverController@updatePostBuildSoftware');
+    Route::post('/customer-acceptance', 'OnsiteHandoverController@updateCustomerAcceptance');
+    Route::post('/acknowledgement', 'OnsiteHandoverController@updateAcknowledgement');
+});
+
+/*
+|--------------------------------------------------------------------------
 | CUSTOMER PROGRESS MANAGEMENT
 |--------------------------------------------------------------------------
 */
