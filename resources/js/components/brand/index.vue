@@ -16,7 +16,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Filter Section with integrated Search Bar -->
+                                <!-- Filter Section -->
                                 <div class="row px-3 mt-3">
                                     <div class="col-12">
                                         <div class="card shadow-sm">
@@ -29,6 +29,13 @@
                                                     </div>
                                                     <div class="col-md-6 text-right">
                                                         <button
+                                                            @click="showFilters = !showFilters"
+                                                            class="btn btn-sm btn-outline-secondary mr-1"
+                                                        >
+                                                            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                                            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                                                        </button>
+                                                        <button
                                                             @click="clearFilters"
                                                             class="btn btn-sm btn-outline-secondary"
                                                             :disabled="!hasActiveFilters"
@@ -38,132 +45,112 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Search Bar integrated into filters -->
-                                                <div class="row mt-2">
-                                                    <div class="col-md-12 mb-3">
-                                                        <label class="small font-weight-bold text-muted">Search Brand</label>
-                                                        <div class="input-group input-group-sm">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text bg-light">
-                                                                    <i class="fas fa-search text-muted"></i>
+                                                <transition name="filter-panel">
+                                                <div v-if="showFilters">
+                                                    <column-search-panel
+                                                        :columns="filterColumns"
+                                                        v-model="filters"
+                                                        :visible="true"
+                                                    />
+
+                                                    <div class="row">
+                                                        <!-- Sort By Filter -->
+                                                        <div class="col-md-3 mb-2">
+                                                            <label class="small font-weight-bold text-muted">Sort By</label>
+                                                            <select
+                                                                v-model="filters.sortBy"
+                                                                class="form-control form-control-sm"
+                                                                @change="applyFilters"
+                                                            >
+                                                                <option value="name_asc">PC Parts (A-Z)</option>
+                                                                <option value="name_desc">PC Parts (Z-A)</option>
+                                                                <option value="date_asc">Date Created (Oldest)</option>
+                                                                <option value="date_desc">Date Created (Newest)</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Name Starts With Filter -->
+                                                        <div class="col-md-3 mb-2">
+                                                            <label class="small font-weight-bold text-muted">Brand Starts With</label>
+                                                            <select
+                                                                v-model="filters.nameStartsWith"
+                                                                class="form-control form-control-sm"
+                                                                @change="applyFilters"
+                                                            >
+                                                                <option value="">All</option>
+                                                                <option
+                                                                    v-for="letter in nameStartingLetters"
+                                                                    :key="letter"
+                                                                    :value="letter"
+                                                                >
+                                                                    {{ letter }}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Year Filter -->
+                                                        <div class="col-md-1.5 mb-2">
+                                                            <label class="small font-weight-bold text-muted">Year</label>
+                                                            <select
+                                                                v-model="filters.year"
+                                                                class="form-control form-control-sm"
+                                                                @change="applyFilters"
+                                                            >
+                                                                <option value="">All</option>
+                                                                <option
+                                                                    v-for="year in availableYears"
+                                                                    :key="year"
+                                                                    :value="year"
+                                                                >
+                                                                    {{ year }}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Month Filter -->
+                                                        <div class="col-md-1.5 mb-2">
+                                                            <label class="small font-weight-bold text-muted">Month</label>
+                                                            <select
+                                                                v-model="filters.month"
+                                                                class="form-control form-control-sm"
+                                                                @change="applyFilters"
+                                                                :disabled="!filters.year"
+                                                            >
+                                                                <option value="">All</option>
+                                                                <option
+                                                                    v-for="(monthName, index) in monthNames"
+                                                                    :key="index"
+                                                                    :value="index + 1"
+                                                                >
+                                                                    {{ monthName }}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Active Filters Badges -->
+                                                    <div class="row mt-2" v-if="hasActiveFilters">
+                                                        <div class="col-12">
+                                                            <div class="d-flex flex-wrap gap-2">
+                                                                <span
+                                                                    v-for="(value, key) in activeFilters"
+                                                                    :key="key"
+                                                                    class="badge badge-info"
+                                                                >
+                                                                    {{ getFilterLabel(key, value) }}
+                                                                    <button
+                                                                        @click="removeFilter(key)"
+                                                                        class="badge badge-light ml-1 p-0 border-0"
+                                                                        style="background: transparent;"
+                                                                    >
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
                                                                 </span>
                                                             </div>
-                                                            <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                v-model="filters.search"
-                                                                placeholder="Search by Brand"
-                                                                @input="applyFilters"
-                                                            />
-                                                            <div class="input-group-append" v-if="filters.search">
-                                                                <button
-                                                                    class="btn btn-outline-secondary"
-                                                                    type="button"
-                                                                    @click="filters.search = ''; applyFilters()"
-                                                                >
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="row">
-                                                    <!-- Sort By Filter -->
-                                                    <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Sort By</label>
-                                                        <select
-                                                            v-model="filters.sortBy"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="name_asc">PC Parts (A-Z)</option>
-                                                            <option value="name_desc">PC Parts (Z-A)</option>
-                                                            <option value="date_asc">Date Created (Oldest)</option>
-                                                            <option value="date_desc">Date Created (Newest)</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <!-- Name Starts With Filter -->
-                                                    <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Brand Starts With</label>
-                                                        <select
-                                                            v-model="filters.nameStartsWith"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="">All</option>
-                                                            <option
-                                                                v-for="letter in nameStartingLetters"
-                                                                :key="letter"
-                                                                :value="letter"
-                                                            >
-                                                                {{ letter }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    <!-- Year Filter -->
-                                                    <div class="col-md-1.5 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Year</label>
-                                                        <select
-                                                            v-model="filters.year"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="">All</option>
-                                                            <option
-                                                                v-for="year in availableYears"
-                                                                :key="year"
-                                                                :value="year"
-                                                            >
-                                                                {{ year }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    <!-- Month Filter -->
-                                                    <div class="col-md-1.5 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Month</label>
-                                                        <select
-                                                            v-model="filters.month"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                            :disabled="!filters.year"
-                                                        >
-                                                            <option value="">All</option>
-                                                            <option
-                                                                v-for="(monthName, index) in monthNames"
-                                                                :key="index"
-                                                                :value="index + 1"
-                                                            >
-                                                                {{ monthName }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Active Filters Badges -->
-                                                <div class="row mt-2" v-if="hasActiveFilters">
-                                                    <div class="col-12">
-                                                        <div class="d-flex flex-wrap gap-2">
-                                                            <span
-                                                                v-for="(value, key) in activeFilters"
-                                                                :key="key"
-                                                                class="badge badge-info"
-                                                            >
-                                                                {{ getFilterLabel(key, value) }}
-                                                                <button
-                                                                    @click="removeFilter(key)"
-                                                                    class="badge badge-light ml-1 p-0 border-0"
-                                                                    style="background: transparent;"
-                                                                >
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                </transition>
                                             </div>
                                         </div>
                                     </div>
@@ -226,12 +213,19 @@
 </template>
 
 <script>
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
 export default {
+    components: { ColumnSearchPanel },
     data() {
         return {
             categories: [],
+            showFilters: false,
+            filterColumns: [
+                { key: 'name', label: 'Brand', type: 'text' },
+            ],
             filters: {
-                search: '',
+                name: '',
                 sortBy: 'name_asc',
                 nameStartsWith: '',
                 year: '',
@@ -319,7 +313,7 @@ export default {
         },
         clearFilters() {
             this.filters = {
-                search: '',
+                name: '',
                 sortBy: 'name_asc',
                 nameStartsWith: '',
                 year: '',
@@ -327,8 +321,8 @@ export default {
             };
         },
         removeFilter(filterKey) {
-            if (filterKey === 'search') {
-                this.filters.search = '';
+            if (filterKey === 'name') {
+                this.filters.name = '';
             } else if (this.filters[filterKey] !== undefined) {
                 this.filters[filterKey] = '';
                 // If year is removed, also clear month
@@ -361,8 +355,8 @@ export default {
                 }
             };
 
-            if (key === 'search') {
-                return `Search: "${value}"`;
+            if (key === 'name') {
+                return `Brand: "${value}"`;
             }
 
             if (key === 'nameStartsWith') {
@@ -415,8 +409,8 @@ export default {
         filteredCategories() {
             let filtered = this.categories;
 
-            if (this.filters.search) {
-                const keyword = this.filters.search.toLowerCase();
+            if (this.filters.name) {
+                const keyword = this.filters.name.toLowerCase();
                 filtered = filtered.filter(category =>
                     (category.name && category.name.toLowerCase().includes(keyword))
                 );
@@ -605,5 +599,15 @@ select:disabled {
     background-color: #e9ecef;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
