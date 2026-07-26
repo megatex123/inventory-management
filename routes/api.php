@@ -121,6 +121,12 @@ Route::prefix('order/{orderId}/performance-test/{round}')->group(function () {
     Route::post('/storage-results', 'PerformanceTestController@updateStorageResults');
     Route::post('/cooling-performance-results', 'PerformanceTestController@updateCoolingPerformanceResults');
     Route::post('/cooling-system-results', 'PerformanceTestController@updateCoolingSystemResults');
+    Route::post('/display-results', 'PerformanceTestController@updateDisplayResults');
+    Route::post('/network-results', 'PerformanceTestController@updateNetworkResults');
+    Route::post('/usb-results', 'PerformanceTestController@updateUsbResults');
+    Route::post('/usb-ports', 'PerformanceTestController@storeUsbPort');
+    Route::post('/usb-ports/{itemId}', 'PerformanceTestController@updateUsbPort');
+    Route::delete('/usb-ports/{itemId}', 'PerformanceTestController@destroyUsbPort');
     Route::post('/complete', 'PerformanceTestController@complete');
 });
 
