@@ -9,8 +9,23 @@
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <router-link to="/care/create" class="btn btn-primary ml-3">Add QuiviCare</router-link>
                                     <h5 class="m-0 font-weight-bold text-primary">QuiviCare List</h5>
-                                    <input type="text" class="form-control" v-model='searchItem' id="searchItems" placeholder="Search QuiviCare By Name">
+                                    <button
+                                        @click="showFilters = !showFilters"
+                                        class="btn btn-sm btn-outline-secondary"
+                                    >
+                                        <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                                    </button>
                                 </div>
+                                <transition name="filter-panel">
+                                <div class="card-body py-2" v-if="showFilters">
+                                    <column-search-panel
+                                        :columns="filterColumns"
+                                        v-model="filters"
+                                        :visible="true"
+                                    />
+                                </div>
+                                </transition>
                                 <div class="table-responsive">
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
@@ -54,11 +69,20 @@
     </div>
 </template>
 <script>
+    import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
     export default {
+        components: { ColumnSearchPanel },
         data() {
             return {
                 care: [],
-                searchItem:'',
+                showFilters: false,
+                filterColumns: [
+                    { key: 'name', label: 'Name', type: 'text' },
+                ],
+                filters: {
+                    name: '',
+                },
             }
         },
         methods: {
@@ -102,7 +126,7 @@
         computed: {
             filterSearch(){
                 return this.care.filter(data=>{
-                    return data.name.match(this.searchItem)
+                    return data.name.match(this.filters.name)
                 })
             }
         },
@@ -118,7 +142,13 @@
 </script>
 
 <style scoped>
-    #searchItems {
-        width: 270px !important;
-    }
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>
