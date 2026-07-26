@@ -31,7 +31,17 @@ The component is stateless — it emits an `input` event (Vue 2 v-model compatib
 
 Full rollout to the remaining ~35 list pages is a follow-up initiative, not part of this pilot.
 
+### PhotoUploadField.vue
+
+`resources/js/components/shared/PhotoUploadField.vue` (added 2026-07-27) — uncapped, notes-free photo grid widget: props `existingPhotos`/`newPhotos` (both `Array`), emits `add-photos`/`remove-existing`/`remove-new`. Generalizes `performance_test/index.vue`'s inline `PhotoNoteField` local component (which is hardcoded to a 2-photo cap and bundles in its own notes textarea) into a standalone component with no cap and no notes field — OnSite Handover's sections already have their own separate notes textareas, so only the photo-grid part needed extracting. Used by `onsite_handover/ArrivalSection.vue`, `TransportationSection.vue` (twice, one per photo field), `AssemblySection.vue`, `PostBuildHardwareSection.vue`, `PostBuildSoftwareSection.vue`.
+
 Shared code: `resources/js/Helpers` (likely Axios instance / formatting utilities — check before adding new HTTP calls to avoid duplicating the client setup).
+
+## Section Components
+
+**Performance Testing (added 2026-07-25)** — multiple self-contained section components under `resources/js/components/performance_test/`, following an established contract: `apiBase` and `initialData` props, `FIELD_KEYS` constant listing all columns touched by this section, `save()` method emitting a `saved` event once the section's subset of the `PerformanceTest` row is persisted. Mounted from `performance_test/index.vue`, covering the full 4-phase structure: Phase 1 (Assembly & Boot, Thermal Interface, Self QC, OS Config, Drivers, Applications); Phase 2 (CPU/GPU/System Stress & Benchmark); Phase 3 (Memory/Storage/Cooling Validation); Phase 4 (Display Output/Network & Wireless/USB Port Test).
+
+**OnSite Handover (QuiviCraft, added 2026-07-27)** — 11 self-contained section components under `resources/js/components/onsite_handover/`, following Performance Testing's established `apiBase`/`initialData` props + `FIELD_KEYS` + `save()`-emits-`saved` contract, mounted from `onsite_handover/index.vue`. Sections: ReportInformationSection, CustomerInformationSection, BuildInformationSection, StudioDocumentationVerificationSection, ArrivalSection, TransportationSection, AssemblySection, PostBuildHardwareSection, PostBuildSoftwareSection, CustomerAcceptanceSection, AcknowledgementSection.
 
 Build: Laravel Mix (`webpack.mix.js`) compiles to `public/js/app.js`. That compiled file shows up as modified in `git status` — it's a build artifact; regenerate with `npm run dev`/`npm run production` rather than hand-editing, and don't be surprised if it diffs on every build.
 

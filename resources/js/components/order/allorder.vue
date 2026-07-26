@@ -276,6 +276,13 @@
                                                         >
                                                             <i class="fas fa-tachometer-alt"></i>
                                                         </router-link>
+                                                        <router-link
+                                                            :to="{name:'onsitehandover', params:{id:order.id, round:1}}"
+                                                            class="btn btn-sm btn-dark ml-1"
+                                                            title="OnSite Handover"
+                                                        >
+                                                            <i class="fas fa-truck-loading"></i>
+                                                        </router-link>
                                                         <!-- Approve Button -->
                                                         <button
                                                             v-if="order.approve === null || order.approve === '' || order.approve === undefined"
