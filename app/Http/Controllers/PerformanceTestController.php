@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\ValidatesPhotoEvidence;
 use App\Models\Order;
 use App\Models\PerformanceTest;
 use App\Models\PerformanceTestChecklistItem;
+use App\Models\PerformanceTestUsbPort;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -161,6 +162,13 @@ class PerformanceTestController extends Controller
         'overall_network_wireless', 'technician_notes',
     ];
 
+    const USB_RESULT_FIELDS = [
+        'test_device', 'usb_device_capacity',
+        'front_usb_ports_operational', 'rear_usb_ports_operational', 'stable_device_detection', 'successful_data_transfer',
+        'front_usb_verification', 'rear_usb_verification', 'data_transfer_verification', 'overall_usb_ports',
+        'technician_notes',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -187,6 +195,11 @@ class PerformanceTestController extends Controller
         $performanceTest->coolingSystemResults()->firstOrCreate([]);
         $performanceTest->displayResults()->firstOrCreate([]);
         $performanceTest->networkResults()->firstOrCreate([]);
+        $performanceTest->usbResults()->firstOrCreate([]);
+
+        if ($performanceTest->usbPorts()->count() === 0) {
+            $this->seedUsbPorts($performanceTest);
+        }
 
         $performanceTest->load([
             'checklistItems' => function ($q) {
@@ -201,6 +214,10 @@ class PerformanceTestController extends Controller
             'coolingSystemResults',
             'displayResults',
             'networkResults',
+            'usbResults',
+            'usbPorts' => function ($q) {
+                $q->orderBy('sort_order');
+            },
         ]);
 
         return response()->json([
@@ -877,6 +894,52 @@ class PerformanceTestController extends Controller
         }
     }
 
+    public function updateUsbResults(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'test_device' => 'nullable|string|max:255',
+            'usb_device_capacity' => 'nullable|string|max:255',
+            'front_usb_ports_operational' => 'nullable|boolean',
+            'rear_usb_ports_operational' => 'nullable|boolean',
+            'stable_device_detection' => 'nullable|boolean',
+            'successful_data_transfer' => 'nullable|boolean',
+            'front_usb_verification' => 'nullable|boolean',
+            'rear_usb_verification' => 'nullable|boolean',
+            'data_transfer_verification' => 'nullable|boolean',
+            'overall_usb_ports' => 'nullable|boolean',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $usbResults = $performanceTest->usbResults()->firstOrCreate([]);
+            $usbResults->fill($request->only(self::USB_RESULT_FIELDS));
+            $usbResults->save();
+
+            if ($request->has('overall_usb_ports')) {
+                $performanceTest->overall_usb_ports = $request->boolean('overall_usb_ports');
+                $performanceTest->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'USB results updated successfully',
+                'data' => $usbResults->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update USB results', 'error' => $e->getMessage()], 500);
+        }
+    }
+
     public function updateItem(Request $request, $orderId, $round, $itemId)
     {
         $item = PerformanceTestChecklistItem::whereHas('performanceTest', function ($q) use ($orderId, $round) {
@@ -924,6 +987,103 @@ class PerformanceTestController extends Controller
         }
     }
 
+    public function storeUsbPort(Request $request, $orderId, $round = 1)
+    {
+        $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$performanceTest) {
+            return response()->json(['success' => false, 'message' => 'Performance test not found'], 404);
+        }
+
+        try {
+            $existingNumbers = PerformanceTestUsbPort::where('performance_test_id', $performanceTest->id)
+                ->where('location', 'rear')
+                ->pluck('label')
+                ->map(function ($label) {
+                    return (int) preg_replace('/[^0-9]/', '', $label);
+                })
+                ->filter()
+                ->values();
+            $nextNumber = $existingNumbers->isEmpty() ? 1 : $existingNumbers->max() + 1;
+            $nextSortOrder = (PerformanceTestUsbPort::where('performance_test_id', $performanceTest->id)->max('sort_order') ?? 0) + 1;
+
+            $port = PerformanceTestUsbPort::create([
+                'performance_test_id' => $performanceTest->id,
+                'location' => 'rear',
+                'label' => 'Port ' . $nextNumber,
+                'sort_order' => $nextSortOrder,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'USB port added successfully',
+                'data' => $port,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to add USB port', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateUsbPort(Request $request, $orderId, $round, $itemId)
+    {
+        $port = PerformanceTestUsbPort::whereHas('performanceTest', function ($q) use ($orderId, $round) {
+            $q->where('order_id', $orderId)->where('round', $round);
+        })->find($itemId);
+
+        if (!$port) {
+            return response()->json(['success' => false, 'message' => 'USB port not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'label' => 'nullable|string|max:255',
+            'device_detected' => 'nullable|boolean',
+            'data_transfer' => 'nullable|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            if ($request->filled('label')) {
+                $port->label = $request->label;
+            }
+            $port->device_detected = $request->boolean('device_detected');
+            $port->data_transfer = $request->boolean('data_transfer');
+            $port->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'USB port updated successfully',
+                'data' => $port->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update USB port', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroyUsbPort($orderId, $round, $itemId)
+    {
+        $port = PerformanceTestUsbPort::whereHas('performanceTest', function ($q) use ($orderId, $round) {
+            $q->where('order_id', $orderId)->where('round', $round);
+        })->find($itemId);
+
+        if (!$port) {
+            return response()->json(['success' => false, 'message' => 'USB port not found'], 404);
+        }
+
+        if ($port->location !== 'rear') {
+            return response()->json(['success' => false, 'message' => 'Only rear USB ports can be removed'], 422);
+        }
+
+        try {
+            $port->delete();
+            return response()->json(['success' => true, 'message' => 'USB port removed successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to remove USB port', 'error' => $e->getMessage()], 500);
+        }
+    }
+
     public function complete($orderId, $round = 1)
     {
         $performanceTest = PerformanceTest::where('order_id', $orderId)->where('round', $round)->first();
@@ -966,6 +1126,25 @@ class PerformanceTestController extends Controller
                     'photos' => [],
                 ]);
             }
+        }
+    }
+
+    private function seedUsbPorts(PerformanceTest $performanceTest)
+    {
+        $ports = [
+            ['location' => 'front', 'label' => 'USB-A Port 1', 'sort_order' => 1],
+            ['location' => 'front', 'label' => 'USB-A Port 2', 'sort_order' => 2],
+            ['location' => 'front', 'label' => 'USB-C', 'sort_order' => 3],
+            ['location' => 'rear', 'label' => 'Port 1', 'sort_order' => 4],
+            ['location' => 'rear', 'label' => 'Port 2', 'sort_order' => 5],
+            ['location' => 'rear', 'label' => 'Port 3', 'sort_order' => 6],
+            ['location' => 'rear', 'label' => 'Port 4', 'sort_order' => 7],
+        ];
+
+        foreach ($ports as $port) {
+            PerformanceTestUsbPort::create(array_merge($port, [
+                'performance_test_id' => $performanceTest->id,
+            ]));
         }
     }
 
