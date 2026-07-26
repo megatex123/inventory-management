@@ -11562,6 +11562,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
@@ -11574,12 +11575,22 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   data: function data() {
     return {
       items: [],
       stats: {},
       loading: true,
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Item Name / SKU Code',
+        type: 'text'
+      }],
       filters: {
         search: ''
       },
@@ -11598,6 +11609,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var end = Math.min(this.lastPage, this.currentPage + 2);
       for (var i = start; i <= end; i++) pages.push(i);
       return pages;
+    }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted: function mounted() {
@@ -11679,7 +11698,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.filters = {
         search: ''
       };
-      this.applyFilters();
     },
     changePage: function changePage(page) {
       if (page < 1 || page > this.lastPage) return;
@@ -12337,6 +12355,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
@@ -12349,12 +12368,22 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   data: function data() {
     return {
       items: [],
       stats: {},
       loading: true,
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Item Name / SKU Code',
+        type: 'text'
+      }],
       filters: {
         search: ''
       },
@@ -12373,6 +12402,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var end = Math.min(this.lastPage, this.currentPage + 2);
       for (var i = start; i <= end; i++) pages.push(i);
       return pages;
+    }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted: function mounted() {
@@ -12454,7 +12491,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.filters = {
         search: ''
       };
-      this.applyFilters();
     },
     changePage: function changePage(page) {
       if (page < 1 || page > this.lastPage) return;
@@ -12720,6 +12756,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
@@ -12732,12 +12769,22 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   data: function data() {
     return {
       items: [],
       stats: {},
       loading: true,
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Item Name / SKU Code',
+        type: 'text'
+      }],
       filters: {
         search: ''
       },
@@ -12756,6 +12803,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var end = Math.min(this.lastPage, this.currentPage + 2);
       for (var i = start; i <= end; i++) pages.push(i);
       return pages;
+    }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted: function mounted() {
@@ -12837,7 +12892,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.filters = {
         search: ''
       };
-      this.applyFilters();
     },
     changePage: function changePage(page) {
       if (page < 1 || page > this.lastPage) return;
@@ -32114,11 +32168,24 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       suppliers: [],
-      searchItem: ''
+      showFilters: false,
+      filterColumns: [{
+        key: 'product_name',
+        label: 'Name',
+        type: 'text'
+      }],
+      filters: {
+        product_name: ''
+      }
     };
   },
   methods: {
@@ -32137,7 +32204,7 @@ __webpack_require__.r(__webpack_exports__);
     filterSearch: function filterSearch() {
       var _this2 = this;
       return this.suppliers.filter(function (data) {
-        return data.product_name.match(_this2.searchItem);
+        return data.product_name.match(_this2.filters.product_name);
       });
     }
   },
@@ -49120,36 +49187,41 @@ var render = function render() {
     staticClass: "h4 font-weight-bold mb-0"
   }, [_vm._v(_vm._s(_vm.stats.low_stock_count || 0))])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(4), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "card-header d-flex justify-content-between align-items-center"
+  }, [_vm._m(4), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n          " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n      ")])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-10"
-  }, [_c("div", {
-    staticClass: "input-group"
-  }, [_vm._m(5), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }, [_c("column-search-panel", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Item Name or SKU Code..."
+      columns: _vm.filterColumns,
+      visible: true
     },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  })])]), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-md-2"
   }, [_c("button", {
     staticClass: "btn btn-outline-secondary w-100",
@@ -49158,11 +49230,11 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-redo mr-1"
-  }), _vm._v(" Clear")])])])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" Clear")])])])]) : _vm._e()])], 1), _vm._v(" "), _c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header d-flex justify-content-between align-items-center"
-  }, [_vm._m(6), _vm._v(" "), _c("span", {
+  }, [_vm._m(5), _vm._v(" "), _c("span", {
     staticClass: "text-muted"
   }, [_vm._v("Total: " + _vm._s(_vm.total) + " records")])]), _vm._v(" "), _c("div", {
     staticClass: "card-body p-0"
@@ -49170,7 +49242,7 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(7), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(8)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(9)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
+  }, [_vm._m(6), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(7)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(8)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
     return _c("tr", {
       key: item.id
     }, [_c("td", {
@@ -49296,23 +49368,11 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "card-header"
-  }, [_c("h5", {
+  return _c("h5", {
     staticClass: "mb-0"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters & Search")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
+  }), _vm._v("Filters & Search")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -50928,36 +50988,41 @@ var render = function render() {
     staticClass: "h4 font-weight-bold mb-0"
   }, [_vm._v(_vm._s(_vm.stats.low_stock_count || 0))])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(4), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "card-header d-flex justify-content-between align-items-center"
+  }, [_vm._m(4), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n          " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n      ")])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-10"
-  }, [_c("div", {
-    staticClass: "input-group"
-  }, [_vm._m(5), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }, [_c("column-search-panel", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Item Name or SKU Code..."
+      columns: _vm.filterColumns,
+      visible: true
     },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  })])]), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-md-2"
   }, [_c("button", {
     staticClass: "btn btn-outline-secondary w-100",
@@ -50966,11 +51031,11 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-redo mr-1"
-  }), _vm._v(" Clear")])])])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" Clear")])])])]) : _vm._e()])], 1), _vm._v(" "), _c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header d-flex justify-content-between align-items-center"
-  }, [_vm._m(6), _vm._v(" "), _c("span", {
+  }, [_vm._m(5), _vm._v(" "), _c("span", {
     staticClass: "text-muted"
   }, [_vm._v("Total: " + _vm._s(_vm.total) + " records")])]), _vm._v(" "), _c("div", {
     staticClass: "card-body p-0"
@@ -50978,7 +51043,7 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(7), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(8)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(9)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
+  }, [_vm._m(6), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(7)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(8)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
     return _c("tr", {
       key: item.id
     }, [_c("td", {
@@ -51104,23 +51169,11 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "card-header"
-  }, [_c("h5", {
+  return _c("h5", {
     staticClass: "mb-0"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters & Search")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
+  }), _vm._v("Filters & Search")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -51780,36 +51833,41 @@ var render = function render() {
     staticClass: "h4 font-weight-bold mb-0"
   }, [_vm._v(_vm._s(_vm.stats.low_stock_count || 0))])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
-  }, [_vm._m(4), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "card-header d-flex justify-content-between align-items-center"
+  }, [_vm._m(4), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n          " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n      ")])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
   }, [_c("div", {
     staticClass: "col-md-10"
-  }, [_c("div", {
-    staticClass: "input-group"
-  }, [_vm._m(5), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.search,
-      expression: "filters.search"
-    }],
-    staticClass: "form-control",
+  }, [_c("column-search-panel", {
     attrs: {
-      type: "text",
-      placeholder: "Search by Item Name or SKU Code..."
+      columns: _vm.filterColumns,
+      visible: true
     },
-    domProps: {
-      value: _vm.filters.search
-    },
-    on: {
-      input: [function ($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "search", $event.target.value);
-      }, _vm.applyFilters]
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  })])]), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
     staticClass: "col-md-2"
   }, [_c("button", {
     staticClass: "btn btn-outline-secondary w-100",
@@ -51818,11 +51876,11 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-redo mr-1"
-  }), _vm._v(" Clear")])])])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" Clear")])])])]) : _vm._e()])], 1), _vm._v(" "), _c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header d-flex justify-content-between align-items-center"
-  }, [_vm._m(6), _vm._v(" "), _c("span", {
+  }, [_vm._m(5), _vm._v(" "), _c("span", {
     staticClass: "text-muted"
   }, [_vm._v("Total: " + _vm._s(_vm.total) + " records")])]), _vm._v(" "), _c("div", {
     staticClass: "card-body p-0"
@@ -51830,7 +51888,7 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(7), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(8)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(9)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
+  }, [_vm._m(6), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(7)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(8)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
     return _c("tr", {
       key: item.id
     }, [_c("td", {
@@ -51956,23 +52014,11 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "card-header"
-  }, [_c("h5", {
+  return _c("h5", {
     staticClass: "mb-0"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters & Search")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "input-group-prepend"
-  }, [_c("span", {
-    staticClass: "input-group-text bg-light"
-  }, [_c("i", {
-    staticClass: "fas fa-search text-muted"
-  })])]);
+  }), _vm._v("Filters & Search")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -84982,29 +85028,35 @@ var render = function render() {
     }
   }, [_vm._v("Add Product")]), _vm._v(" "), _c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("Stock List")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.searchItem,
-      expression: "searchItem"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "searchItems",
-      placeholder: "Search Product By Name"
-    },
-    domProps: {
-      value: _vm.searchItem
-    },
+  }, [_vm._v("Stock List")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.searchItem = $event.target.value;
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
       }
     }
-  })], 1), _vm._v(" "), _c("div", {
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                      " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                  ")])], 1), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", {
+    staticClass: "card-body py-2"
+  }, [_c("column-search-panel", {
+    attrs: {
+      columns: _vm.filterColumns,
+      visible: true
+    },
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
+    }
+  })], 1) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
@@ -85033,7 +85085,7 @@ var render = function render() {
         }
       }
     }, [_vm._v("Edit ")])], 1)]);
-  }), 0)])])]), _vm._v(" "), _c("div", {
+  }), 0)])])], 1), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])])]);
 };
@@ -96497,7 +96549,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-stats[data-v-265f2bf8] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-265f2bf8] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-265f2bf8] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n", ""]);
+exports.push([module.i, "\n.card-stats[data-v-265f2bf8] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-265f2bf8] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-265f2bf8] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n.filter-panel-enter-active[data-v-265f2bf8],\n.filter-panel-leave-active[data-v-265f2bf8] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-265f2bf8],\n.filter-panel-leave-to[data-v-265f2bf8] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -96611,7 +96663,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-stats[data-v-620ab48e] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-620ab48e] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-620ab48e] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n", ""]);
+exports.push([module.i, "\n.card-stats[data-v-620ab48e] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-620ab48e] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-620ab48e] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n.filter-panel-enter-active[data-v-620ab48e],\n.filter-panel-leave-active[data-v-620ab48e] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-620ab48e],\n.filter-panel-leave-to[data-v-620ab48e] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -96668,7 +96720,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-stats[data-v-42dea6e6] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-42dea6e6] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-42dea6e6] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n", ""]);
+exports.push([module.i, "\n.card-stats[data-v-42dea6e6] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-42dea6e6] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-42dea6e6] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n.filter-panel-enter-active[data-v-42dea6e6],\n.filter-panel-leave-active[data-v-42dea6e6] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-42dea6e6],\n.filter-panel-leave-to[data-v-42dea6e6] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -98112,7 +98164,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n#searchItems[data-v-258c0b1e] {\n    width: 270px !important;\n}\n", ""]);
+exports.push([module.i, "\n.filter-panel-enter-active[data-v-258c0b1e],\n.filter-panel-leave-active[data-v-258c0b1e] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-258c0b1e],\n.filter-panel-leave-to[data-v-258c0b1e] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
