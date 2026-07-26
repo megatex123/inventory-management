@@ -53,20 +53,32 @@
     </div>
 
     <div class="card mb-4">
-      <div class="card-header"><h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters & Search</h5></div>
-      <div class="card-body">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters & Search</h5>
+        <button
+            @click="showFilters = !showFilters"
+            class="btn btn-sm btn-outline-secondary"
+        >
+            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
+      </div>
+      <transition name="filter-panel">
+      <div class="card-body" v-if="showFilters">
         <div class="row">
           <div class="col-md-10">
-            <div class="input-group">
-              <div class="input-group-prepend"><span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span></div>
-              <input type="text" v-model="filters.search" class="form-control" placeholder="Search by Item Name or SKU Code..." @input="applyFilters">
-            </div>
+            <column-search-panel
+                :columns="filterColumns"
+                v-model="filters"
+                :visible="true"
+            />
           </div>
           <div class="col-md-2">
             <button class="btn btn-outline-secondary w-100" @click="resetFilters"><i class="fas fa-redo mr-1"></i> Clear</button>
           </div>
         </div>
       </div>
+      </transition>
     </div>
 
     <div class="card">
@@ -132,13 +144,19 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       items: [],
       stats: {},
       loading: true,
+      showFilters: false,
+      filterColumns: [
+        { key: 'search', label: 'Item Name / SKU Code', type: 'text' },
+      ],
       filters: { search: '' },
       currentPage: 1,
       perPage: 15,
@@ -155,6 +173,14 @@ export default {
       let end = Math.min(this.lastPage, this.currentPage + 2);
       for (let i = start; i <= end; i++) pages.push(i);
       return pages;
+    }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -226,4 +252,13 @@ export default {
 .card-stats { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
 .icon-shape { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
 .table thead th { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>
