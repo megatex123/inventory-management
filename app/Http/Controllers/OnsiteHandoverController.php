@@ -33,6 +33,20 @@ class OnsiteHandoverController extends Controller
         'studio_docs_notes',
     ];
 
+    const ARRIVAL_FIELDS = [
+        'arrival_time', 'service_environment',
+        'workspace_available', 'adequate_lighting', 'stable_work_surface', 'sufficient_working_space',
+        'power_outlet_available', 'internet_available', 'customer_present_at_arrival', 'assembly_area_approved_by_customer',
+        'arrival_notes',
+    ];
+
+    const TRANSPORTATION_FIELDS = [
+        'transport_case_note', 'transport_case_status',
+        'component_packaging_note', 'component_packaging_status',
+        'security_seal_intact', 'no_signs_of_transit_damage', 'accessories_present', 'documentation_present',
+        'transportation_notes', 'transportation_verdict',
+    ];
+
     public function show($orderId, $round = 1)
     {
         $order = Order::with(['customer', 'craft'])->find($orderId);
@@ -218,5 +232,135 @@ class OnsiteHandoverController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to update studio documentation verification', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function updateArrival(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'arrival_time' => 'nullable|string|max:255',
+            'service_environment' => 'nullable|in:residential,office,studio,commercial,other',
+            'workspace_available' => 'nullable|boolean',
+            'adequate_lighting' => 'nullable|boolean',
+            'stable_work_surface' => 'nullable|boolean',
+            'sufficient_working_space' => 'nullable|boolean',
+            'power_outlet_available' => 'nullable|boolean',
+            'internet_available' => 'nullable|boolean',
+            'customer_present_at_arrival' => 'nullable|boolean',
+            'assembly_area_approved_by_customer' => 'nullable|boolean',
+            'arrival_notes' => 'nullable|string|max:1000',
+            'arrival_photos.*' => 'nullable|image|max:5120',
+            'remove_arrival_photos' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::ARRIVAL_FIELDS));
+
+            if ($request->hasFile('arrival_photos') || $request->filled('remove_arrival_photos')) {
+                $handover->arrival_photos = $this->mergePhotos($handover->arrival_photos, $request, 'arrival_photos', 'remove_arrival_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Arrival verification updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update arrival verification', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateTransportation(Request $request, $orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'transport_case_note' => 'nullable|string|max:255',
+            'transport_case_status' => 'nullable|in:sound,damaged',
+            'transport_case_photos.*' => 'nullable|image|max:5120',
+            'remove_transport_case_photos' => 'nullable|array',
+            'component_packaging_note' => 'nullable|string|max:255',
+            'component_packaging_status' => 'nullable|in:sound,damaged',
+            'component_packaging_photos.*' => 'nullable|image|max:5120',
+            'remove_component_packaging_photos' => 'nullable|array',
+            'security_seal_intact' => 'nullable|boolean',
+            'no_signs_of_transit_damage' => 'nullable|boolean',
+            'accessories_present' => 'nullable|boolean',
+            'documentation_present' => 'nullable|boolean',
+            'transportation_notes' => 'nullable|string|max:1000',
+            'transportation_verdict' => 'nullable|in:sound_ready,issue_found',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $handover->fill($request->only(self::TRANSPORTATION_FIELDS));
+
+            if ($request->hasFile('transport_case_photos') || $request->filled('remove_transport_case_photos')) {
+                $handover->transport_case_photos = $this->mergePhotos($handover->transport_case_photos, $request, 'transport_case_photos', 'remove_transport_case_photos');
+            }
+            if ($request->hasFile('component_packaging_photos') || $request->filled('remove_component_packaging_photos')) {
+                $handover->component_packaging_photos = $this->mergePhotos($handover->component_packaging_photos, $request, 'component_packaging_photos', 'remove_component_packaging_photos');
+            }
+
+            $handover->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transportation inspection updated successfully',
+                'data' => $handover->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to update transportation inspection', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    private function storePhotos(Request $request, $field)
+    {
+        if (!$request->hasFile($field)) {
+            return [];
+        }
+
+        $paths = [];
+        foreach ($request->file($field) as $file) {
+            $paths[] = $file->store('onsite-handovers', 'public');
+        }
+
+        return $paths;
+    }
+
+    private function mergePhotos($existing, Request $request, $field, $removeField)
+    {
+        $existing = $existing ?? [];
+        $toRemove = $request->input($removeField, []);
+
+        foreach ($toRemove as $path) {
+            if (($key = array_search($path, $existing)) !== false) {
+                Storage::disk('public')->delete($path);
+                unset($existing[$key]);
+            }
+        }
+
+        $existing = array_values($existing);
+        $newPhotos = $this->storePhotos($request, $field);
+
+        return array_merge($existing, $newPhotos);
     }
 }
