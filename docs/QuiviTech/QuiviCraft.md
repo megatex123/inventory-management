@@ -107,6 +107,15 @@ A third, separate QC report type — created 2026-07-27, ships after all 4 Perfo
 - No e-signature capture. Acknowledgement uses a typed name + an "I acknowledge" tickbox for both customer and technician, with a server-set `acknowledged_at` timestamp once both are true.
 - Route/API shape is `order/{orderId}/onsite-handover/{round}` — quick-launch button on the QuiviCraft list sits next to Studio Inspection's and Performance Testing's.
 
+## 7. OnSite Handover (Studio)
+
+The last of the 4 QuiviCare QC report sub-projects — shipped 2026-07-28. A lighter sibling of [[QuiviCraft]]'s own OnSite Handover: covers delivery of a PC built entirely in-studio (no on-site assembly). 7 sections instead of 11 — no Customer Information section, no packaging-condition Transportation Inspection (replaced by a lighter "Post-Transport Hardware Verification" checking the pre-built unit's internals are still secure), no Acknowledgement/signatures, no assembly checklist.
+
+- **`OnsiteHandoverStudio`** — same single-table architecture as the QuiviCraft version (table `onsite_handovers_studio`), one per `(order_id, round)`, own `report_id` business code (`OSH-STD-XXXX`), same 4-value `status` set even though the source doc doesn't show a Report Status field (kept for consistency with every other QC report in this app).
+- 7 sections, each with its own save endpoint: Report Information, Build Information, Studio Documentation Verification, On-Site Arrival Verification, Post-Transport Hardware Verification, Post-Handover System Verification, Customer Acceptance.
+- Reuses the shared `PhotoUploadField.vue` component (no new photo widget needed) and the same auto-populated read-only cross-report/tier lookup pattern as the QuiviCraft version.
+- Route/API shape is `order/{orderId}/onsite-handover-studio/{round}` — quick-launch button on the QuiviCraft list sits next to the other 3 QC report buttons. This completes all 4 sub-projects of the QuiviCare QC Report system.
+
 ## Known gaps
 
 - Auto tier assignment can **change** an order's craft/serve/care tier after the fact if line items are edited post-approval — re-check whether `ServeData`/`CareData` get updated to match, or just the `order` row (not yet audited; see [[Work-In-Progress]] before assuming).
