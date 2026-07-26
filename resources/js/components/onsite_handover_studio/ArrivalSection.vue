@@ -3,6 +3,15 @@
     <div class="card-header"><h5 class="mb-0">On-Site Arrival Verification</h5></div>
     <div class="card-body">
       <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="form-label">Arrival Time</label>
+            <input type="time" class="form-control" v-model="form.arrival_time">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-md-3" v-for="f in checklistFields" :key="f.key">
           <div class="custom-control custom-checkbox mb-2">
             <input type="checkbox" class="custom-control-input" :id="'arr-' + f.key" v-model="form[f.key]">
