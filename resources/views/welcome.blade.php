@@ -213,8 +213,38 @@
         });
       }
 
+      // 3b. AUTO-EXPAND THE SIDEBAR GROUP FOR THE CURRENT PAGE
+      // Longest-prefix match: currentPath must equal a nav link's href, or
+      // be a sub-path of it (e.g. "/refunds/edit/5" under a "/refunds"
+      // link) -- picks the most specific link if more than one matches.
+      function findActiveMenuCollapse() {
+        const currentPath = window.location.pathname;
+        let bestLink = null;
+        let bestLength = -1;
+
+        document.querySelectorAll('#accordionSidebar a.collapse-item[href]').forEach(function(link) {
+          const href = link.getAttribute('href');
+          if (!href || href === '/') return;
+          const isMatch = currentPath === href || currentPath.indexOf(href + '/') === 0;
+          if (isMatch && href.length > bestLength) {
+            bestLink = link;
+            bestLength = href.length;
+          }
+        });
+
+        return bestLink ? bestLink.closest('.collapse') : null;
+      }
+
+      function expandActiveMenu() {
+        const collapseEl = findActiveMenuCollapse();
+        if (collapseEl && !collapseEl.classList.contains('show')) {
+          $(collapseEl).collapse('show');
+        }
+      }
+
       // Initial call
       initBootstrapComponents();
+      expandActiveMenu();
 
       // 4. RE-INIT BOOTSTRAP FOR VUE ROUTES
       const appElement = document.getElementById('app');
@@ -224,10 +254,25 @@
           setTimeout(() => {
             initBootstrapComponents();
 
-            // Close any open collapses on route change if needed
+            // Close other open collapses on route change -- but never the
+            // group that already matches the new page: calling
+            // collapse('hide') then collapse('show') on the SAME element in
+            // the same tick makes Bootstrap's plugin silently ignore the
+            // show(), since it guards against a second transition starting
+            // while the hide() it just triggered is still animating. Only
+            // hiding collapses that aren't the target sidesteps that guard
+            // entirely, and also avoids an unnecessary close+reopen flicker
+            // when navigating between two pages under the same group.
             if (from.path !== to.path) {
-              $('.collapse.show').collapse('hide');
+              const activeCollapse = findActiveMenuCollapse();
+              $('.collapse.show').each(function() {
+                if (this !== activeCollapse) {
+                  $(this).collapse('hide');
+                }
+              });
             }
+
+            expandActiveMenu();
           }, 100);
         });
       }
