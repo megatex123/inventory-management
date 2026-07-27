@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meeting;
 use App\Models\Customers;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -34,9 +35,7 @@ class MeetingController extends Controller
         }
 
         try {
-            $nextId = DB::table('meetings')->max('id') + 1;
-            $meetingNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $meetingId = 'QV-MEET-' . $meetingNumber;
+            $meetingId = BusinessId::next('meetings', 'meeting_id', 'QV-MEET-', 6);
 
             $meeting = Meeting::create([
                 'meeting_id'       => $meetingId,
