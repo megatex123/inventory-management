@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customers;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -118,10 +119,7 @@ class CustomersController extends Controller
         DB::beginTransaction();
 
         try {
-            $totalCustomers = Customers::where('deleted_at', null)->count();
-            $nextId = $totalCustomers + 1;
-            $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $customerId = "QVCST-{$serveNumber}";
+            $customerId = BusinessId::next('customers', 'customer_id', 'QV-CUST-', 6);
 
             $customer = Customers::create([
                 'customer_id'      => $customerId,
