@@ -16,14 +16,6 @@
                     <h5 class="m-0 font-weight-bold text-primary">
                       Meetings
                     </h5>
-
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="searchItem"
-                      id="searchItems"
-                      placeholder="Search Meetings By Customer"
-                    />
                   </div>
 
                   <!-- Statistics Cards -->
@@ -128,29 +120,29 @@
                               >
                                 <i class="fas fa-times mr-1"></i>Clear Filters
                               </button>
+                              <button
+                                @click="showFilters = !showFilters"
+                                class="btn btn-sm btn-outline-secondary ml-1"
+                              >
+                                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                              </button>
+                            </div>
+                          </div>
+
+                          <transition name="filter-panel">
+                          <div v-if="showFilters">
+                          <div class="row mt-2">
+                            <div class="col-md-12">
+                              <column-search-panel
+                                  :columns="filterColumns"
+                                  v-model="filters"
+                                  :visible="true"
+                              />
                             </div>
                           </div>
 
                           <div class="row mt-2">
-                            <!-- Date Range Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Date Range</label>
-                              <select
-                                v-model="filters.dateRange"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Dates</option>
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="thisWeek">This Week</option>
-                                <option value="lastWeek">Last Week</option>
-                                <option value="thisMonth">This Month</option>
-                                <option value="lastMonth">Last Month</option>
-                                <option value="thisYear">This Year</option>
-                              </select>
-                            </div>
-
                             <!-- Month Filter -->
                             <div class="col-md-3 mb-2">
                               <label class="small font-weight-bold text-muted">Month</label>
@@ -189,20 +181,6 @@
                                 </option>
                               </select>
                             </div>
-
-                            <!-- Document Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Document</label>
-                              <select
-                                v-model="filters.hasDocument"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All</option>
-                                <option value="yes">With Document</option>
-                                <option value="no">Without Document</option>
-                              </select>
-                            </div>
                           </div>
 
                           <!-- Active Filters Badges -->
@@ -226,6 +204,8 @@
                               </div>
                             </div>
                           </div>
+                          </div>
+                          </transition>
                         </div>
                       </div>
                     </div>
@@ -334,12 +314,30 @@
 
 <script>
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       meetings: [],
-      searchItem: '',
+      showFilters: false,
+      filterColumns: [
+        { key: 'search', label: 'Customer / Title / Meeting ID / Notes', type: 'text' },
+        { key: 'dateRange', label: 'Date Range', type: 'select', options: [
+          { value: 'today', label: 'Today' },
+          { value: 'yesterday', label: 'Yesterday' },
+          { value: 'thisWeek', label: 'This Week' },
+          { value: 'lastWeek', label: 'Last Week' },
+          { value: 'thisMonth', label: 'This Month' },
+          { value: 'lastMonth', label: 'Last Month' },
+          { value: 'thisYear', label: 'This Year' },
+        ] },
+        { key: 'hasDocument', label: 'Document', type: 'select', options: [
+          { value: 'yes', label: 'With Document' },
+          { value: 'no', label: 'Without Document' },
+        ] },
+      ],
       statistics: {
         total: 0,
         thisMonth: 0,
@@ -347,6 +345,7 @@ export default {
         last7Days: 0
       },
       filters: {
+        search: '',
         dateRange: '',
         month: '',
         year: '',
@@ -364,8 +363,8 @@ export default {
       let filtered = this.meetings;
 
       // Apply text search
-      if (this.searchItem) {
-        const keyword = this.searchItem.toLowerCase();
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
         filtered = filtered.filter(m =>
           (m.customer?.full_name && m.customer.full_name.toLowerCase().includes(keyword)) ||
           (m.customer?.phone && m.customer.phone.toLowerCase().includes(keyword)) ||
@@ -523,6 +522,7 @@ export default {
     },
     clearFilters() {
       this.filters = {
+        search: '',
         dateRange: '',
         month: '',
         year: '',
@@ -564,6 +564,10 @@ export default {
           'no': 'Without Document'
         }
       };
+
+      if (key === 'search') {
+        return `Search: ${value}`;
+      }
 
       if (key === 'year') {
         return `Year: ${value}`;
@@ -612,10 +616,6 @@ export default {
 </script>
 
 <style scoped>
-#searchItems {
-  width: 270px !important;
-}
-
 .table th, .table td {
   vertical-align: middle !important;
 }
@@ -669,11 +669,6 @@ export default {
     align-items: flex-start !important;
   }
 
-  #searchItems {
-    width: 100% !important;
-    margin-top: 10px;
-  }
-
   .table-responsive {
     font-size: 0.8rem;
   }
@@ -700,5 +695,15 @@ img {
   padding: 6px 12px;
   border-radius: 6px;
   display: inline-block;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
