@@ -27,26 +27,32 @@
     </div>
 
     <div class="card mb-4">
-      <div class="card-header"><h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters</h5></div>
-      <div class="card-body">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters</h5>
+        <button
+            @click="showFilters = !showFilters"
+            class="btn btn-sm btn-outline-secondary"
+        >
+            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
+      </div>
+      <transition name="filter-panel">
+      <div class="card-body" v-if="showFilters">
         <div class="row">
-          <div class="col-md-5">
-            <select v-model="filters.psu_brand" class="form-control" @change="applyFilters">
-              <option value="">All Brands</option>
-              <option v-for="b in brands" :key="b.psu_brand" :value="b.psu_brand">{{ b.psu_brand }} ({{ b.count }})</option>
-            </select>
-          </div>
-          <div class="col-md-5">
-            <select v-model="filters.cable_type" class="form-control" @change="applyFilters">
-              <option value="">All Cable Types</option>
-              <option v-for="c in cableTypeStats" :key="c.cable_type" :value="c.cable_type">{{ cableTypeLabel(c.cable_type) }} ({{ c.count }})</option>
-            </select>
+          <div class="col-md-10">
+            <column-search-panel
+                :columns="filterColumns"
+                v-model="filters"
+                :visible="true"
+            />
           </div>
           <div class="col-md-2">
             <button class="btn btn-outline-secondary w-100" @click="resetFilters"><i class="fas fa-redo mr-1"></i> Clear</button>
           </div>
         </div>
       </div>
+      </transition>
     </div>
 
     <div class="card">
@@ -110,8 +116,10 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       items: [],
@@ -119,6 +127,7 @@ export default {
       brands: [],
       cableTypeStats: [],
       loading: true,
+      showFilters: false,
       filters: { psu_brand: '', cable_type: '' },
       currentPage: 1,
       perPage: 15,
@@ -135,6 +144,20 @@ export default {
       let end = Math.min(this.lastPage, this.currentPage + 2);
       for (let i = start; i <= end; i++) pages.push(i);
       return pages;
+    },
+    filterColumns() {
+      return [
+        { key: 'psu_brand', label: 'PSU Brand', type: 'select', options: this.brands.map(b => ({ value: b.psu_brand, label: `${b.psu_brand} (${b.count})` })) },
+        { key: 'cable_type', label: 'Cable Type', type: 'select', options: this.cableTypeStats.map(c => ({ value: c.cable_type, label: `${this.cableTypeLabel(c.cable_type)} (${c.count})` })) },
+      ];
+    }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -181,7 +204,6 @@ export default {
     },
     resetFilters() {
       this.filters = { psu_brand: '', cable_type: '' };
-      this.applyFilters();
     },
     changePage(page) {
       if (page < 1 || page > this.lastPage) return;
@@ -216,4 +238,13 @@ export default {
 .card-stats { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); }
 .icon-shape { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
 .table thead th { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>
