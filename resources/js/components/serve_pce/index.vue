@@ -88,49 +88,27 @@
 
         <!-- Filter Section -->
         <div class="card mb-4">
-          <div class="card-header bg-light">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">
               <i class="fas fa-filter mr-2"></i>Filter Records
             </h5>
+            <button
+                @click="showFilters = !showFilters"
+                class="btn btn-sm btn-outline-secondary"
+            >
+                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+            </button>
           </div>
-          <div class="card-body">
+          <transition name="filter-panel">
+          <div class="card-body" v-if="showFilters">
             <div class="row">
-              <!-- Search by QVSE CID -->
-              <div class="col-md-3 mb-3">
-                <label class="form-label">Search QVSE CID</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
-                  </div>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="filters.qvse_cid"
-                    placeholder="Enter QVSE CID..."
-                    @keyup.enter="applyFilters"
-                  >
-                </div>
-              </div>
-
-              <!-- Filter by Warranty Status -->
-              <div class="col-md-3 mb-3">
-                <label class="form-label">Warranty Status</label>
-                <select class="form-control" v-model="filters.warranty_status" @change="applyFilters">
-                  <option value="">All Status</option>
-                  <option value="active">Active Warranty</option>
-                  <option value="expired">Expired Warranty</option>
-                </select>
-              </div>
-
-              <!-- Filter by Promo Code Status -->
-              <div class="col-md-3 mb-3">
-                <label class="form-label">Promo Code Status</label>
-                <select class="form-control" v-model="filters.promo_status" @change="applyFilters">
-                  <option value="">All Promo Codes</option>
-                  <option value="available">Available</option>
-                  <option value="claimed">Claimed</option>
-                  <option value="generated">Generated</option>
-                </select>
+              <div class="col-md-9">
+                <column-search-panel
+                    :columns="filterColumns"
+                    v-model="filters"
+                    :visible="true"
+                />
               </div>
 
               <!-- Date From -->
@@ -140,7 +118,6 @@
                   type="date"
                   class="form-control"
                   v-model="filters.start_date_from"
-                  @change="applyFilters"
                 >
               </div>
             </div>
@@ -153,7 +130,6 @@
                   type="date"
                   class="form-control"
                   v-model="filters.start_date_to"
-                  @change="applyFilters"
                 >
               </div>
 
@@ -161,9 +137,6 @@
                 <div class="w-100">
                   <button class="btn btn-secondary mr-2" @click="resetFilters">
                     <i class="fas fa-redo mr-1"></i> Reset Filters
-                  </button>
-                  <button class="btn btn-primary" @click="applyFilters">
-                    <i class="fas fa-filter mr-1"></i> Apply Filters
                   </button>
                   <span class="ml-3 text-muted">
                     Showing {{ filteredServePces.length }} of {{ servePces.length }} records
@@ -226,6 +199,7 @@
               </div>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- Records Table -->
@@ -386,13 +360,16 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
 
 export default {
   name: 'ServePceIndex',
+  components: { ColumnSearchPanel },
   data() {
     return {
       servePces: [],
       loading: true,
+      showFilters: false,
       filters: {
         qvse_cid: '',
         warranty_status: '',
@@ -426,6 +403,20 @@ export default {
   computed: {
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '')
+    },
+    filterColumns() {
+      return [
+        { key: 'qvse_cid', label: 'QVSE CID', type: 'text' },
+        { key: 'warranty_status', label: 'Warranty Status', type: 'select', options: [
+          { value: 'active', label: 'Active Warranty' },
+          { value: 'expired', label: 'Expired Warranty' },
+        ] },
+        { key: 'promo_status', label: 'Promo Code Status', type: 'select', options: [
+          { value: 'available', label: 'Available' },
+          { value: 'claimed', label: 'Claimed' },
+          { value: 'generated', label: 'Generated' },
+        ] },
+      ]
     },
     totalPages() {
       return this.paginationMeta.last_page || 1
@@ -494,6 +485,14 @@ export default {
       const start = (this.currentPage - 1) * this.itemsPerPage
       const end = start + this.itemsPerPage
       return this.filteredServePces.slice(start, end)
+    }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters()
+      },
+      deep: true
     }
   },
   methods: {
@@ -665,20 +664,17 @@ export default {
         start_date_to: ''
       }
       this.currentPage = 1
-      this.fetchServePces()
     },
 
     // Clear specific filter
     clearFilter(filterName) {
       this.filters[filterName] = ''
-      this.applyFilters()
     },
 
     // Clear date filters
     clearDateFilter() {
       this.filters.start_date_from = ''
       this.filters.start_date_to = ''
-      this.applyFilters()
     },
 
     // Clear all filters
@@ -1107,5 +1103,15 @@ export default {
 /* Custom SweetAlert2 width */
 :deep(.swal2-container-custom) {
   z-index: 99999 !important;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
