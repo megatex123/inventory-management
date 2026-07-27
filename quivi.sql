@@ -107,6 +107,7 @@ DROP TABLE IF EXISTS `care_data`;
 CREATE TABLE `care_data` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `care_id` varchar(50) NOT NULL,
+  `care_data_id` varchar(191) DEFAULT NULL,
   `customer_id` bigint(20) unsigned NOT NULL,
   `order_id` bigint(20) unsigned NOT NULL,
   `lkp_care_id` bigint(20) unsigned NOT NULL,
@@ -130,17 +131,17 @@ LOCK TABLES `care_data` WRITE;
 /*!40000 ALTER TABLE `care_data` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `care_data` VALUES
-(1,'VIS10N-2712-0001',19,2,3,'13913','1489',1,'2026-03-21 04:13:39','2026-03-23 04:45:36',NULL),
-(2,'VIS10N-2712-0002',4,1,3,'15432','1709',0,'2026-03-21 05:12:21','2026-07-09 14:21:43',NULL),
-(7,'VIS10N-2712-0003',20,3,3,'23333','2479',1,'2026-07-09 14:21:57','2026-07-09 14:46:58',NULL),
-(8,'COR3-1402-0001',20,5,1,'5198','379',1,'2026-07-09 14:22:08','2026-07-19 17:15:08',NULL),
-(9,'RI5E-2109-0001',20,4,2,'7435','689',1,'2026-07-09 14:22:11','2026-07-19 17:15:31',NULL),
-(10,'VIS10N-2712-0004',21,6,3,'10537','1159',1,'2026-07-09 15:44:53','2026-07-09 15:49:19',NULL),
-(11,'COR3-1402-0002',20,8,1,'3500','379',0,'2026-07-12 12:24:24','2026-07-19 17:03:21',NULL),
-(12,'COR3-1402-0003',20,9,1,'6200','379',0,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(13,'COR3-1402-0004',20,10,1,'8200','379',0,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(14,'COR3-1402-0005',20,11,1,'9750','379',0,'2026-07-12 12:24:24','2026-07-20 03:17:41',NULL),
-(15,'VIS10N-2712-0005',4,7,3,'22411','2479',0,'2026-07-20 11:39:47','2026-07-20 11:39:47',NULL);
+(1,'VIS10N-2712-0001','QV-CARE-000001',19,2,3,'13913','1489',1,'2026-03-21 04:13:39','2026-07-27 08:40:49',NULL),
+(2,'VIS10N-2712-0002','QV-CARE-000002',4,1,3,'15432','1709',0,'2026-03-21 05:12:21','2026-07-27 08:40:49',NULL),
+(7,'VIS10N-2712-0003','QV-CARE-000003',20,3,3,'23333','2479',1,'2026-07-09 14:21:57','2026-07-27 08:40:49',NULL),
+(8,'COR3-1402-0001','QV-CARE-000004',20,5,1,'5198','379',1,'2026-07-09 14:22:08','2026-07-27 08:40:49',NULL),
+(9,'RI5E-2109-0001','QV-CARE-000005',20,4,2,'7435','689',1,'2026-07-09 14:22:11','2026-07-27 08:40:49',NULL),
+(10,'VIS10N-2712-0004','QV-CARE-000006',21,6,3,'10537','1159',1,'2026-07-09 15:44:53','2026-07-27 08:40:49',NULL),
+(11,'COR3-1402-0002','QV-CARE-000007',20,8,1,'3500','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(12,'COR3-1402-0003','QV-CARE-000008',20,9,1,'6200','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(13,'COR3-1402-0004','QV-CARE-000009',20,10,1,'8200','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(14,'COR3-1402-0005','QV-CARE-000010',20,11,1,'9750','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(15,'VIS10N-2712-0005','QV-CARE-000011',4,7,3,'22411','2479',0,'2026-07-20 11:39:47','2026-07-27 08:40:49',NULL);
 /*!40000 ALTER TABLE `care_data` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -340,7 +341,7 @@ CREATE TABLE `craft_inspection_items` (
   KEY `craft_inspection_items_order_detail_id_foreign` (`order_detail_id`),
   CONSTRAINT `craft_inspection_items_craft_inspection_id_foreign` FOREIGN KEY (`craft_inspection_id`) REFERENCES `craft_inspections` (`id`) ON DELETE CASCADE,
   CONSTRAINT `craft_inspection_items_order_detail_id_foreign` FOREIGN KEY (`order_detail_id`) REFERENCES `order_details` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -359,7 +360,12 @@ INSERT INTO `craft_inspection_items` VALUES
 (6,1,'aio',12,'{\"model\":\"HydroShift II LCD-C 360N\",\"serial\":\"H236NW250601375\",\"radiator\":\"sound\",\"pump_housing\":\"sound\",\"cold_plate\":\"sound\",\"tubes\":\"sound\",\"fans\":\"fanless\",\"accessories\":\"sound\"}',1,1,1,1,'sound',NULL,'[]','intact',NULL,'[]','sound_pristine',NULL,'[]','2026-07-07 12:17:37','2026-07-07 12:17:37',NULL),
 (7,1,'psu',11,'{\"model\":\"Corsair RM1000x Shift\",\"serial\":\"A6GLA512K00M98\",\"wattage\":\"1000 Watt\",\"efficiency_rating\":\"80 Plus Gold\",\"modularity\":\"Fully Modular\",\"cables_inclusion\":\"Complete\",\"housing\":\"\",\"fan\":\"\"}',1,1,1,1,'sound',NULL,'[]','intact',NULL,'[]','sound_pristine',NULL,'[]','2026-07-07 12:17:37','2026-07-07 12:17:37',NULL),
 (9,4,'cpu',15,'{\"model\":\"AMD Ryzen 7 9800X3D\",\"serial\":\"test\",\"batch\":\"test\",\"visual\":\"test\",\"pins\":\"test\"}',1,1,1,1,'sound',NULL,'[\"craft-inspections\\/EOtzpnKcQ81BjUZe5kzzf24CWlLgAg6tYsl4g4FK.gif\"]','intact',NULL,'[\"craft-inspections\\/ZP2xsG5xBn0sV1dEb6v0awzQSG3MoBYJ4Jqo1m33.gif\"]','sound_pristine',NULL,'[\"craft-inspections\\/SklxAQIyVT7ljzjzJfvummpiYxY82TwdbobLJxob.gif\"]','2026-07-09 14:25:23','2026-07-09 14:25:23',NULL),
-(10,6,'cpu',60,'{\"model\":\"AMD Ryzen 7 9800X3D\",\"serial\":\"1324123123123\",\"batch\":\"bsdw\",\"visual\":\"sound\",\"pins\":\"sound\"}',1,1,1,1,'sound',NULL,'[\"craft-inspections\\/LYSCzcG7nTAzELA07PO8UI7RV6woV2lrgT8YLRJa.gif\"]','intact',NULL,'[\"craft-inspections\\/eaO2wmdjIFVnCBlh53UgKbjYN8mSTK3c6PXOCyeF.gif\"]','issue','dent on the top side of box','[]','2026-07-09 15:46:41','2026-07-09 15:46:41',NULL);
+(10,6,'cpu',60,'{\"model\":\"AMD Ryzen 7 9800X3D\",\"serial\":\"1324123123123\",\"batch\":\"bsdw\",\"visual\":\"sound\",\"pins\":\"sound\"}',1,1,1,1,'sound',NULL,'[\"craft-inspections\\/LYSCzcG7nTAzELA07PO8UI7RV6woV2lrgT8YLRJa.gif\"]','intact',NULL,'[\"craft-inspections\\/eaO2wmdjIFVnCBlh53UgKbjYN8mSTK3c6PXOCyeF.gif\"]','issue','dent on the top side of box','[]','2026-07-09 15:46:41','2026-07-09 15:46:41',NULL),
+(11,3,'cpu',NULL,'[]',0,0,0,0,'not_sound','Test note for bad status with photo','[\"craft-inspections\\/sGuISNupFYOfFbRiEmfUkrP0cFsQXI9WXQMW5TYG.png\"]','intact',NULL,'[\"craft-inspections\\/IwmjltRrxgZ84JXVz42G1AnTz6hkzQCvaBC1P7gw.png\"]','sound_pristine',NULL,'[\"craft-inspections\\/ArKD6AoqzIYzEKy4oqLORLyfXRbdC1j9y0N0eWQZ.png\"]','2026-07-25 09:53:25','2026-07-25 10:00:03','2026-07-25 10:00:03'),
+(12,3,'gpu',NULL,'[]',0,0,0,0,'sound','Optional note on the good-status path','[\"craft-inspections\\/Lqp1qD21vpGVRixmpJTdALEMnteBvwfQ6eh7tWAs.png\"]','intact',NULL,'[\"craft-inspections\\/sW4VMwJ1ioGJ8314C2cQMSalnsTmdu3fR497EGlF.png\"]','sound_pristine',NULL,'[\"craft-inspections\\/QXWaDg8GacK3WCg0iUXCCHyk7LZ2gbpATBElXgfG.png\"]','2026-07-25 10:06:31','2026-07-25 10:06:39','2026-07-25 10:06:39'),
+(13,3,'cpu',NULL,'[]',0,0,0,0,'not_sound','Regression check after trait extraction','[\"craft-inspections\\/YAJO66UQKnbDE6z1cotkPkDEhVZvuhZTdqrNSLwg.png\"]','intact',NULL,'[\"craft-inspections\\/hf8P5sFEfwlRetsdq2wf6BzNHL57K3QSbZwkwh5f.png\"]','sound_pristine',NULL,'[\"craft-inspections\\/R1f51tUp92SeDt6FO741dOyHNgeti5cCpfxBGXXd.png\"]','2026-07-25 11:15:47','2026-07-25 11:18:56','2026-07-25 11:18:56'),
+(14,3,'ram',NULL,'[]',0,0,0,0,'not_sound','0','[]','intact',NULL,'[\"craft-inspections\\/p1O31uL2xPV59ezbng7QFTCc6DHQprnsK7wrY7os.png\"]','sound_pristine',NULL,'[\"craft-inspections\\/1NHkJWRwdZ67hAhShk7Ax4Zwk2KtKfl6kwuZ5eHl.png\"]','2026-07-25 11:23:51','2026-07-25 11:24:11','2026-07-25 11:24:11'),
+(15,3,'ram',NULL,'[]',0,0,0,0,'not_sound','0','[]','intact',NULL,'[\"craft-inspections\\/pvNUYvwH3fcB1aGPg9E0Bvg4UmBAQE1pJKE5RgyR.png\"]','sound_pristine',NULL,'[\"craft-inspections\\/wPfWHawwEvXBuZ1qcoGTUdoeXfeBqm34TNnf26Nq.png\"]','2026-07-25 11:26:07','2026-07-25 11:26:20','2026-07-25 11:26:20');
 /*!40000 ALTER TABLE `craft_inspection_items` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -401,7 +407,7 @@ INSERT INTO `craft_inspections` VALUES
 (5,3,2,2,'completed','2026-07-09 14:27:33','2026-07-09 14:29:39',NULL),
 (6,6,2,1,'completed','2026-07-09 15:45:14','2026-07-09 15:47:05',NULL),
 (7,6,2,2,'draft','2026-07-09 15:47:13','2026-07-09 15:47:13',NULL),
-(8,11,2,1,'draft','2026-07-16 13:43:19','2026-07-16 13:43:19',NULL),
+(8,11,2,1,'completed','2026-07-16 13:43:19','2026-07-25 09:42:35',NULL),
 (9,9,2,1,'draft','2026-07-16 13:43:26','2026-07-16 13:43:26',NULL);
 /*!40000 ALTER TABLE `craft_inspections` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -506,17 +512,17 @@ LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `customers` VALUES
-(3,'QVCST-0001','MUHAMMAD FARIS ISKANDAR BIN SHAMSIR','BruhRis','fariskandar99@gmail.com','+60172109876','47810','WhatsApp',NULL,'Custom PC build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-07-09 15:30:49','ac450a3c-93a4-4e70-aaac-5a46e5d11578',1,'2025-12-29 20:54:33','2026-07-09 15:30:49',NULL),
-(4,'QVCST-0002','MUHAMMAD NAJMI NOOR ZAIRUL','Najmi','najminoorzairul@gmail.com','+60197017321','A-1-10, Cita Damansara, Jalan PJU 3/27, Sunway Damansara','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'711774c2-478a-4c85-808e-18848a78e45a',1,'2025-12-29 21:32:12','2025-12-30 00:04:11',NULL),
-(5,'QVCST-0003','NURSYAZWANI BINTI AHMAD NIZAM','Wani','wannieq8@gmail.com','+60197266130','A-1-10','WhatsApp',NULL,NULL,'TikTok',NULL,NULL,1,1,'2026-07-09 15:30:43','9f8be78c-9ba9-4218-9e1c-c3028a74a8a6',1,'2025-12-29 21:33:04','2026-07-09 15:30:43',NULL),
-(6,'QVCST-0004','MUHAMMAD EIRFAN BIN NOOR ZAIRUL','Epan','eirfan019@gmail.com','+60197091129','No 2&4, Jalan Perdana 2/42, Taman Bukit Perdana 2, 83000, Batu Pahat,Johor','WhatsApp',NULL,'Nice',NULL,NULL,NULL,1,1,'2026-01-11 07:13:03','01064af6-083e-4e5e-9722-b05921e9876f',1,'2025-12-29 22:30:09','2026-01-11 07:13:03',NULL),
-(7,'QVCST-0005','MUHAMMAD IZZHAZIQ BIN MOHD RAJIL','Izz','Izzhaziq1117@gmail.com','+601126605294','A-404, Tingkat 3, Palma Perak Apartment, Jalan Cecawi 6/6, 47810,Petaling Jaya, Selangor','WhatsApp',NULL,'Pc build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-01-11 07:05:43','420c2946-d5da-45d3-ac54-75f521152dbc',1,'2025-12-29 21:35:06','2026-01-11 07:05:43',NULL),
-(9,'QVCST-0006','TEST DATA','test',NULL,'+602603123123','dasasd.12312312,123,daman','TikTok',NULL,'asdasdasd','Event / Booth',NULL,NULL,1,1,'2026-01-11 07:12:56','08bcdc01-a436-43ee-82f8-61d7f30f938d',1,'2025-12-31 09:22:52','2026-01-11 07:12:56',NULL),
-(11,'QVCST-0007','AHMAD ALBAB BIN ISMAIL','Ahmad','ahmad@gmail.com','+600232323232','Damansara, 47810, Petaling jaya,Selangor','Facebook',NULL,'aswdasdasd','TikTok',NULL,NULL,1,1,'2025-10-01 05:23:04','1c422c11-129e-45f5-af66-6641cccc2525',1,'2026-01-01 05:16:58','2026-01-01 05:23:04',NULL),
-(12,'QVCST-0008','SYED IQBAL','Iqbal','iqbal@mail.com','+60912121212','atas klang','Instagram',NULL,'sdasdsd','Friend / Referral',NULL,'megat',1,1,'2026-01-18 01:43:25','fee7c0b0-4b5e-49f0-ae7e-4db95a1022b6',1,'2026-01-18 01:40:54','2026-01-18 01:43:25',NULL),
-(19,'QVCST-0009','WAWA FFF','wawa','wawa@gmail.com','+600234234234','werwrwerer',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cde29dba-c6c9-4941-bb47-ec6b96a5f111',0,'2026-03-21 02:23:08','2026-03-21 02:23:08',NULL),
-(20,'QVCST-0010','TEST','test1','test@gmail.com','+60123456789','test1','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,1,'2026-07-09 14:07:03','dc0de823-f55f-430f-882e-85a6548cb116',1,'2026-07-09 14:03:54','2026-07-09 14:07:03',NULL),
-(21,'QVCST-0011','FARIS BIN FARIS','Faris','faris@gmail.com','+601912312312','kota damansara seksyen 7','Discord',NULL,'mas amba','Instagram',NULL,NULL,1,1,'2026-07-09 15:33:07','93eb19ba-9628-48de-bb2c-668cc732a646',1,'2026-07-09 15:31:42','2026-07-09 15:33:07',NULL);
+(3,'QV-CUST-000001','MUHAMMAD FARIS ISKANDAR BIN SHAMSIR','BruhRis','fariskandar99@gmail.com','+60172109876','47810','WhatsApp',NULL,'Custom PC build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-07-09 15:30:49','ac450a3c-93a4-4e70-aaac-5a46e5d11578',1,'2025-12-29 20:54:33','2026-07-09 15:30:49',NULL),
+(4,'QV-CUST-000002','MUHAMMAD NAJMI NOOR ZAIRUL','Najmi','najminoorzairul@gmail.com','+60197017321','A-1-10, Cita Damansara, Jalan PJU 3/27, Sunway Damansara','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'711774c2-478a-4c85-808e-18848a78e45a',1,'2025-12-29 21:32:12','2025-12-30 00:04:11',NULL),
+(5,'QV-CUST-000003','NURSYAZWANI BINTI AHMAD NIZAM','Wani','wannieq8@gmail.com','+60197266130','A-1-10','WhatsApp',NULL,NULL,'TikTok',NULL,NULL,1,1,'2026-07-09 15:30:43','9f8be78c-9ba9-4218-9e1c-c3028a74a8a6',1,'2025-12-29 21:33:04','2026-07-09 15:30:43',NULL),
+(6,'QV-CUST-000004','MUHAMMAD EIRFAN BIN NOOR ZAIRUL','Epan','eirfan019@gmail.com','+60197091129','No 2&4, Jalan Perdana 2/42, Taman Bukit Perdana 2, 83000, Batu Pahat,Johor','WhatsApp',NULL,'Nice',NULL,NULL,NULL,1,1,'2026-01-11 07:13:03','01064af6-083e-4e5e-9722-b05921e9876f',1,'2025-12-29 22:30:09','2026-01-11 07:13:03',NULL),
+(7,'QV-CUST-000005','MUHAMMAD IZZHAZIQ BIN MOHD RAJIL','Izz','Izzhaziq1117@gmail.com','+601126605294','A-404, Tingkat 3, Palma Perak Apartment, Jalan Cecawi 6/6, 47810,Petaling Jaya, Selangor','WhatsApp',NULL,'Pc build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-01-11 07:05:43','420c2946-d5da-45d3-ac54-75f521152dbc',1,'2025-12-29 21:35:06','2026-01-11 07:05:43',NULL),
+(9,'QV-CUST-000006','TEST DATA','test',NULL,'+602603123123','dasasd.12312312,123,daman','TikTok',NULL,'asdasdasd','Event / Booth',NULL,NULL,1,1,'2026-01-11 07:12:56','08bcdc01-a436-43ee-82f8-61d7f30f938d',1,'2025-12-31 09:22:52','2026-01-11 07:12:56',NULL),
+(11,'QV-CUST-000007','AHMAD ALBAB BIN ISMAIL','Ahmad','ahmad@gmail.com','+600232323232','Damansara, 47810, Petaling jaya,Selangor','Facebook',NULL,'aswdasdasd','TikTok',NULL,NULL,1,1,'2025-10-01 05:23:04','1c422c11-129e-45f5-af66-6641cccc2525',1,'2026-01-01 05:16:58','2026-01-01 05:23:04',NULL),
+(12,'QV-CUST-000008','SYED IQBAL','Iqbal','iqbal@mail.com','+60912121212','atas klang','Instagram',NULL,'sdasdsd','Friend / Referral',NULL,'megat',1,1,'2026-01-18 01:43:25','fee7c0b0-4b5e-49f0-ae7e-4db95a1022b6',1,'2026-01-18 01:40:54','2026-01-18 01:43:25',NULL),
+(19,'QV-CUST-000009','WAWA FFF','wawa','wawa@gmail.com','+600234234234','werwrwerer',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cde29dba-c6c9-4941-bb47-ec6b96a5f111',0,'2026-03-21 02:23:08','2026-03-21 02:23:08',NULL),
+(20,'QV-CUST-000010','TEST','test1','test@gmail.com','+60123456789','test1','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,1,'2026-07-09 14:07:03','dc0de823-f55f-430f-882e-85a6548cb116',1,'2026-07-09 14:03:54','2026-07-09 14:07:03',NULL),
+(21,'QV-CUST-000011','FARIS BIN FARIS','Faris','faris@gmail.com','+601912312312','kota damansara seksyen 7','Discord',NULL,'mas amba','Instagram',NULL,NULL,1,1,'2026-07-09 15:33:07','93eb19ba-9628-48de-bb2c-668cc732a646',1,'2026-07-09 15:31:42','2026-07-09 15:33:07',NULL);
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -753,12 +759,12 @@ LOCK TABLES `inv_care` WRITE;
 /*!40000 ALTER TABLE `inv_care` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `inv_care` VALUES
-(1,'IC-0001',2,'QVSK-SPARE-CPU-001','AMD Ryzen 7 9800X3D (Spare)',2399,5,3,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','AMD','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL),
-(2,'IC-0002',1,'QVSK-SPARE-CPU-002','INTEL Core Ultra 7 265 (Spare)',1699,4,2,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','INTEL','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL),
-(3,'IC-0003',7,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL),
-(4,'IC-0004',9,'QVSK-SPARE-GPU-002','ASUS ROG Strix RTX 5070 Ti 16GB (Spare)',3799,3,2,3,1,0,0,'2026-01-01 00:00:00',60,'2031-01-01 00:00:00','ASUS','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL),
-(5,'IC-0005',8,'QVSK-SPARE-RAM-001','G.SKILL Trident Z5 32GB Kit (Spare)',899,6,4,5,1,0,0,'2026-01-01 00:00:00',24,'2028-01-01 00:00:00','G.Skill','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL),
-(6,'IC-0006',10,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-12 18:18:12','2026-07-12 18:18:12',NULL);
+(1,'IC-CPU-0001',2,'QVSK-SPARE-CPU-001','AMD Ryzen 7 9800X3D (Spare)',2399,5,3,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','AMD','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
+(2,'IC-CPU-0002',1,'QVSK-SPARE-CPU-002','INTEL Core Ultra 7 265 (Spare)',1699,4,2,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','INTEL','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
+(3,'IC-GPU-0001',7,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
+(4,'IC-GPU-0002',9,'QVSK-SPARE-GPU-002','ASUS ROG Strix RTX 5070 Ti 16GB (Spare)',3799,3,2,3,1,0,0,'2026-01-01 00:00:00',60,'2031-01-01 00:00:00','ASUS','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
+(5,'IC-RAM-0001',8,'QVSK-SPARE-RAM-001','G.SKILL Trident Z5 32GB Kit (Spare)',899,6,4,5,1,0,0,'2026-01-01 00:00:00',24,'2028-01-01 00:00:00','G.Skill','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
+(6,'IC-GPU-0003',10,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL);
 /*!40000 ALTER TABLE `inv_care` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1239,10 +1245,10 @@ LOCK TABLES `meetings` WRITE;
 /*!40000 ALTER TABLE `meetings` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `meetings` VALUES
-(13,'QV-MEET-0001',20,'custom gaming pc test','2026-07-09','9:00 pm',NULL,'2026-07-09 14:30:43','2026-07-09 14:30:43',NULL),
-(14,'QV-MEET-0014',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL),
-(15,'QV-MEET-0015',21,'2nd meeting','2026-07-17',NULL,NULL,'2026-07-16 14:25:47','2026-07-16 14:25:47',NULL),
-(16,'QV-MEET-0016',20,'first meeting','2026-07-17',NULL,NULL,'2026-07-16 14:28:17','2026-07-16 14:28:17',NULL);
+(13,'QV-MEET-000001',20,'custom gaming pc test','2026-07-09','9:00 pm',NULL,'2026-07-09 14:30:43','2026-07-09 14:30:43',NULL),
+(14,'QV-MEET-000002',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL),
+(15,'QV-MEET-000003',21,'2nd meeting','2026-07-17',NULL,NULL,'2026-07-16 14:25:47','2026-07-16 14:25:47',NULL),
+(16,'QV-MEET-000004',20,'first meeting','2026-07-17',NULL,NULL,'2026-07-16 14:28:17','2026-07-16 14:28:17',NULL);
 /*!40000 ALTER TABLE `meetings` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1530,7 +1536,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1585,8 +1591,251 @@ INSERT INTO `migrations` VALUES
 (65,'2026_07_14_120004_create_thread_order_items_table',28),
 (66,'2026_07_20_090000_add_skip_quivicare_to_order_table',29),
 (67,'2026_07_20_130000_create_uat_meeting_table',30),
-(68,'2026_07_20_150000_create_menu_items_table',31);
+(68,'2026_07_20_150000_create_menu_items_table',31),
+(69,'2021_06_02_153225_create_sub_categories_table',1),
+(70,'2025_12_30_120000_create_serve_data_table',1),
+(71,'2025_12_30_120001_create_serve_bek_table',1),
+(72,'2025_12_30_120002_create_serve_mps_table',1),
+(73,'2025_12_30_120003_create_serve_pce_table',1),
+(74,'2025_12_30_130000_create_care_data_table',1),
+(75,'2025_12_30_130001_create_care_warranty_table',1),
+(76,'2026_02_25_051317_create_product_warranty_table',1),
+(77,'2026_06_15_000001_create_brand_table',1),
+(78,'2026_06_15_000002_create_destination_table',1),
+(79,'2026_06_20_000000_create_product_raw_table',1),
+(80,'2026_06_20_000001_create_master_sku_table',1),
+(81,'2026_06_20_000002_create_inv_care_table',1),
+(82,'2026_06_20_000003_create_inv_excl_serve_table',1),
+(83,'2026_06_20_000004_create_inv_move_table',1),
+(84,'2026_07_03_100000_create_craft_inspections_table',1),
+(85,'2026_07_07_120000_add_round_to_craft_inspections_table',1),
+(86,'2026_07_08_090000_create_documents_table',1),
+(87,'2026_07_11_120000_add_missing_columns_to_order_table',1),
+(88,'2026_07_25_100000_create_performance_tests_table',32),
+(89,'2026_07_25_100001_create_performance_test_checklist_items_table',32),
+(90,'2026_07_25_110000_create_performance_test_cpu_results_table',33),
+(91,'2026_07_25_110001_create_performance_test_gpu_results_table',33),
+(92,'2026_07_25_110002_create_performance_test_system_stability_results_table',34),
+(93,'2026_07_26_100000_create_performance_test_memory_results_table',35),
+(94,'2026_07_26_100001_create_performance_test_storage_results_table',35),
+(95,'2026_07_26_100002_create_performance_test_cooling_performance_results_table',35),
+(96,'2026_07_26_100003_create_performance_test_cooling_system_results_table',35),
+(97,'2026_07_27_100000_create_performance_test_display_results_table',36),
+(98,'2026_07_27_100001_create_performance_test_network_results_table',36),
+(99,'2026_07_27_100002_create_performance_test_usb_ports_table',36),
+(100,'2026_07_27_100003_create_performance_test_usb_results_table',36),
+(101,'2026_07_27_200000_create_onsite_handovers_table',37),
+(102,'2026_07_28_100000_create_onsite_handovers_studio_table',38),
+(103,'2026_07_27_300000_add_care_data_id_to_care_data_table',39);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `onsite_handovers`
+--
+
+DROP TABLE IF EXISTS `onsite_handovers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `onsite_handovers` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) unsigned NOT NULL,
+  `round` int(10) unsigned NOT NULL DEFAULT 1,
+  `report_id` varchar(191) NOT NULL,
+  `report_version` varchar(191) DEFAULT NULL,
+  `status` varchar(191) NOT NULL DEFAULT 'in_progress',
+  `service_date` date DEFAULT NULL,
+  `arrival_time` time DEFAULT NULL,
+  `work_start_time` time DEFAULT NULL,
+  `work_completion_time` time DEFAULT NULL,
+  `technician_name` varchar(191) DEFAULT NULL,
+  `assistant_technician` varchar(191) DEFAULT NULL,
+  `service_location` varchar(191) DEFAULT NULL,
+  `service_type` varchar(191) DEFAULT NULL,
+  `customer_present_during_assembly` varchar(191) DEFAULT NULL,
+  `authorised_representative` varchar(191) DEFAULT NULL,
+  `service_address` varchar(191) DEFAULT NULL,
+  `pc_purpose` varchar(191) DEFAULT NULL,
+  `operating_system` varchar(191) DEFAULT NULL,
+  `operating_system_version` varchar(191) DEFAULT NULL,
+  `component_serial_numbers_matched` tinyint(1) DEFAULT NULL,
+  `customer_order_specification_verified` tinyint(1) DEFAULT NULL,
+  `required_components_present` tinyint(1) DEFAULT NULL,
+  `required_tools_present` tinyint(1) DEFAULT NULL,
+  `required_consumables_present` tinyint(1) DEFAULT NULL,
+  `studio_docs_notes` text DEFAULT NULL,
+  `service_environment` varchar(191) DEFAULT NULL,
+  `workspace_available` tinyint(1) DEFAULT NULL,
+  `adequate_lighting` tinyint(1) DEFAULT NULL,
+  `stable_work_surface` tinyint(1) DEFAULT NULL,
+  `sufficient_working_space` tinyint(1) DEFAULT NULL,
+  `power_outlet_available` tinyint(1) DEFAULT NULL,
+  `internet_available` tinyint(1) DEFAULT NULL,
+  `customer_present_at_arrival` tinyint(1) DEFAULT NULL,
+  `assembly_area_approved_by_customer` tinyint(1) DEFAULT NULL,
+  `arrival_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`arrival_photos`)),
+  `arrival_notes` text DEFAULT NULL,
+  `transport_case_note` varchar(191) DEFAULT NULL,
+  `transport_case_status` varchar(191) DEFAULT NULL,
+  `transport_case_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`transport_case_photos`)),
+  `component_packaging_note` varchar(191) DEFAULT NULL,
+  `component_packaging_status` varchar(191) DEFAULT NULL,
+  `component_packaging_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`component_packaging_photos`)),
+  `security_seal_intact` tinyint(1) DEFAULT NULL,
+  `no_signs_of_transit_damage` tinyint(1) DEFAULT NULL,
+  `accessories_present` tinyint(1) DEFAULT NULL,
+  `documentation_present` tinyint(1) DEFAULT NULL,
+  `transportation_notes` text DEFAULT NULL,
+  `transportation_verdict` varchar(191) DEFAULT NULL,
+  `cpu_installed` tinyint(1) DEFAULT NULL,
+  `memory_installed` tinyint(1) DEFAULT NULL,
+  `storage_installed` tinyint(1) DEFAULT NULL,
+  `cpu_cooler_installed` tinyint(1) DEFAULT NULL,
+  `motherboard_installed` tinyint(1) DEFAULT NULL,
+  `power_supply_installed` tinyint(1) DEFAULT NULL,
+  `case_fans_installed` tinyint(1) DEFAULT NULL,
+  `graphics_card_installed` tinyint(1) DEFAULT NULL,
+  `cable_management_completed` tinyint(1) DEFAULT NULL,
+  `assembly_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`assembly_photos`)),
+  `assembly_notes` text DEFAULT NULL,
+  `system_powered_on` tinyint(1) DEFAULT NULL,
+  `post_successful` tinyint(1) DEFAULT NULL,
+  `bios_accessible` tinyint(1) DEFAULT NULL,
+  `cpu_detected` tinyint(1) DEFAULT NULL,
+  `memory_detected` tinyint(1) DEFAULT NULL,
+  `storage_detected` tinyint(1) DEFAULT NULL,
+  `graphics_card_detected` tinyint(1) DEFAULT NULL,
+  `cpu_cooler_operating` tinyint(1) DEFAULT NULL,
+  `case_fans_operating` tinyint(1) DEFAULT NULL,
+  `no_abnormal_noise` tinyint(1) DEFAULT NULL,
+  `post_build_hardware_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_build_hardware_photos`)),
+  `post_build_hardware_notes` text DEFAULT NULL,
+  `windows_boot_successful` tinyint(1) DEFAULT NULL,
+  `windows_activation_verified` tinyint(1) DEFAULT NULL,
+  `display_output_verified` tinyint(1) DEFAULT NULL,
+  `network_connected` tinyint(1) DEFAULT NULL,
+  `internet_accessible` tinyint(1) DEFAULT NULL,
+  `audio_output_verified` tinyint(1) DEFAULT NULL,
+  `usb_ports_verified` tinyint(1) DEFAULT NULL,
+  `rgb_lighting_verified` tinyint(1) DEFAULT NULL,
+  `post_build_software_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_build_software_photos`)),
+  `post_build_software_notes` text DEFAULT NULL,
+  `physical_condition_accepted` tinyint(1) DEFAULT NULL,
+  `system_boot_verified` tinyint(1) DEFAULT NULL,
+  `display_verified` tinyint(1) DEFAULT NULL,
+  `peripherals_verified` tinyint(1) DEFAULT NULL,
+  `accessories_received` tinyint(1) DEFAULT NULL,
+  `documentation_received` tinyint(1) DEFAULT NULL,
+  `customer_demonstration_completed` tinyint(1) DEFAULT NULL,
+  `customer_acceptance_notes` text DEFAULT NULL,
+  `customer_ack_name` varchar(191) DEFAULT NULL,
+  `customer_acknowledged` tinyint(1) DEFAULT NULL,
+  `technician_ack_name` varchar(191) DEFAULT NULL,
+  `technician_acknowledged` tinyint(1) DEFAULT NULL,
+  `acknowledged_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `onsite_handovers_order_id_round_unique` (`order_id`,`round`),
+  UNIQUE KEY `onsite_handovers_report_id_unique` (`report_id`),
+  CONSTRAINT `onsite_handovers_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `onsite_handovers`
+--
+
+LOCK TABLES `onsite_handovers` WRITE;
+/*!40000 ALTER TABLE `onsite_handovers` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `onsite_handovers` VALUES
+(2,11,1,'OSH-QVCT-0001',NULL,'in_progress',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 19:17:34','2026-07-26 19:17:34',NULL);
+/*!40000 ALTER TABLE `onsite_handovers` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `onsite_handovers_studio`
+--
+
+DROP TABLE IF EXISTS `onsite_handovers_studio`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `onsite_handovers_studio` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) unsigned NOT NULL,
+  `round` int(10) unsigned NOT NULL DEFAULT 1,
+  `report_id` varchar(191) NOT NULL,
+  `report_version` varchar(191) DEFAULT NULL,
+  `status` varchar(191) NOT NULL DEFAULT 'in_progress',
+  `service_date` date DEFAULT NULL,
+  `arrival_time` time DEFAULT NULL,
+  `handover_completion_time` time DEFAULT NULL,
+  `technician_name` varchar(191) DEFAULT NULL,
+  `assistant_technician` varchar(191) DEFAULT NULL,
+  `service_location` varchar(191) DEFAULT NULL,
+  `service_type` varchar(191) DEFAULT NULL,
+  `operating_system` varchar(191) DEFAULT NULL,
+  `operating_system_version` varchar(191) DEFAULT NULL,
+  `security_seal_verified_before_delivery` tinyint(1) DEFAULT NULL,
+  `studio_docs_notes` text DEFAULT NULL,
+  `workspace_available` tinyint(1) DEFAULT NULL,
+  `power_outlet_available` tinyint(1) DEFAULT NULL,
+  `display_available` tinyint(1) DEFAULT NULL,
+  `keyboard_available` tinyint(1) DEFAULT NULL,
+  `mouse_available` tinyint(1) DEFAULT NULL,
+  `internet_available` tinyint(1) DEFAULT NULL,
+  `arrival_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`arrival_photos`)),
+  `arrival_notes` text DEFAULT NULL,
+  `gpu_securely_installed` tinyint(1) DEFAULT NULL,
+  `memory_fully_seated` tinyint(1) DEFAULT NULL,
+  `cpu_cooler_secure` tinyint(1) DEFAULT NULL,
+  `power_connections_secure` tinyint(1) DEFAULT NULL,
+  `storage_secure` tinyint(1) DEFAULT NULL,
+  `no_loose_cables` tinyint(1) DEFAULT NULL,
+  `no_loose_screws` tinyint(1) DEFAULT NULL,
+  `post_transport_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_transport_photos`)),
+  `post_transport_notes` text DEFAULT NULL,
+  `system_powered_on` tinyint(1) DEFAULT NULL,
+  `post_successful` tinyint(1) DEFAULT NULL,
+  `windows_boot_successful` tinyint(1) DEFAULT NULL,
+  `display_output_verified` tinyint(1) DEFAULT NULL,
+  `network_connected` tinyint(1) DEFAULT NULL,
+  `internet_accessible` tinyint(1) DEFAULT NULL,
+  `audio_verified` tinyint(1) DEFAULT NULL,
+  `usb_ports_verified` tinyint(1) DEFAULT NULL,
+  `rgb_lighting_verified` tinyint(1) DEFAULT NULL,
+  `post_handover_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`post_handover_photos`)),
+  `post_handover_notes` text DEFAULT NULL,
+  `physical_condition_accepted` tinyint(1) DEFAULT NULL,
+  `system_boot_verified` tinyint(1) DEFAULT NULL,
+  `display_verified` tinyint(1) DEFAULT NULL,
+  `accessories_received` tinyint(1) DEFAULT NULL,
+  `documentation_received` tinyint(1) DEFAULT NULL,
+  `customer_demonstration_completed` tinyint(1) DEFAULT NULL,
+  `customer_questions_addressed` tinyint(1) DEFAULT NULL,
+  `customer_acceptance_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `onsite_handovers_studio_order_id_round_unique` (`order_id`,`round`),
+  UNIQUE KEY `onsite_handovers_studio_report_id_unique` (`report_id`),
+  CONSTRAINT `onsite_handovers_studio_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `onsite_handovers_studio`
+--
+
+LOCK TABLES `onsite_handovers_studio` WRITE;
+/*!40000 ALTER TABLE `onsite_handovers_studio` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `onsite_handovers_studio` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -1634,17 +1883,17 @@ LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `order` VALUES
-(1,'QV-ORDR-0001','QVT-INV-2607-1',4,'8','15432',NULL,'15432',NULL,NULL,NULL,'2026-03-19 14:36:42','March','2026',2,3,3,0,1,'2026-07-09 14:21:43','2026-03-19 14:36:42','2026-07-10 18:37:41',NULL,1),
-(2,'QV-ORDR-0002','QVT-INV-2603-2',19,'7','13913',NULL,'13913',NULL,NULL,NULL,'2026-03-21 10:30:29','March','2026',2,3,3,0,1,'2026-03-21 05:11:40','2026-03-21 10:30:29','2026-07-10 18:37:41',NULL,2),
-(3,'QV-ORDR-0003','QVT-INV-2607-3',20,'17','23333',NULL,'23333',NULL,NULL,NULL,'2026-07-09 14:08:47','July','2026',4,3,3,0,1,'2026-07-09 14:22:43','2026-07-09 14:08:47','2026-07-10 18:37:41',NULL,2),
-(4,'QV-ORDR-0004','QVT-INV-2607-4',20,'8','7435',NULL,'7435',NULL,NULL,NULL,'2026-07-09 14:17:17','July','2026',3,2,1,0,1,'2026-07-12 11:40:41','2026-07-09 14:17:17','2026-07-12 11:40:41',NULL,2),
-(5,'QV-ORDR-0005','QVT-INV-2607-5',20,'9','5198',NULL,'5198',NULL,NULL,NULL,'2026-07-09 14:19:06','July','2026',1,1,1,0,1,'2026-07-12 11:56:01','2026-07-09 14:19:06','2026-07-12 11:56:01',NULL,2),
-(6,'QV-ORDR-0006','QVT-INV-2607-6',21,'14','10537',NULL,'10537',NULL,NULL,NULL,'2026-07-09 15:35:33','July','2026',2,3,3,0,1,'2026-07-09 15:44:53','2026-07-09 15:35:33','2026-07-10 17:15:04',NULL,2),
-(7,'QV-ORDR-0007','QVT-INV-2607-7',4,'9','22411',NULL,'22411',NULL,NULL,NULL,'2026-07-10 16:16:33','July','2026',4,3,3,0,1,'2026-07-20 11:39:47','2026-07-10 16:16:33','2026-07-20 11:39:47',NULL,1),
-(8,'QV-ORDR-0008','QVT-INV-2607-8',20,'14','3500.00',NULL,'3500.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-20 09:58:33',NULL,1),
-(9,'QV-ORDR-0009','QVT-INV-2607-9',20,'14','6200.00',NULL,'6200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-20 09:58:33',NULL,1),
-(10,'QV-ORDR-0010','QVT-INV-2607-10',20,'14','8200.00',NULL,'8200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-20 09:58:33',NULL,1),
-(11,'QV-ORDR-0011','QVT-INV-2607-11',20,'14','9750.00',NULL,'9750.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-20 09:58:33',NULL,1);
+(1,'QV-ORDR-000001','QVT-INV-2607-1',4,'8','15432',NULL,'15432',NULL,NULL,NULL,'2026-03-19 14:36:42','March','2026',2,3,3,0,1,'2026-07-09 14:21:43','2026-03-19 14:36:42','2026-07-27 08:40:49',NULL,1),
+(2,'QV-ORDR-000002','QVT-INV-2603-2',19,'7','13913',NULL,'13913',NULL,NULL,NULL,'2026-03-21 10:30:29','March','2026',2,3,3,0,1,'2026-03-21 05:11:40','2026-03-21 10:30:29','2026-07-27 08:40:49',NULL,2),
+(3,'QV-ORDR-000003','QVT-INV-2607-3',20,'17','23333',NULL,'23333',NULL,NULL,NULL,'2026-07-09 14:08:47','July','2026',4,3,3,0,1,'2026-07-09 14:22:43','2026-07-09 14:08:47','2026-07-27 08:40:49',NULL,2),
+(4,'QV-ORDR-000004','QVT-INV-2607-4',20,'8','7435',NULL,'7435',NULL,NULL,NULL,'2026-07-09 14:17:17','July','2026',3,2,1,0,1,'2026-07-12 11:40:41','2026-07-09 14:17:17','2026-07-27 08:40:49',NULL,2),
+(5,'QV-ORDR-000005','QVT-INV-2607-5',20,'9','5198',NULL,'5198',NULL,NULL,NULL,'2026-07-09 14:19:06','July','2026',1,1,1,0,1,'2026-07-12 11:56:01','2026-07-09 14:19:06','2026-07-27 08:40:49',NULL,2),
+(6,'QV-ORDR-000006','QVT-INV-2607-6',21,'14','10537',NULL,'10537',NULL,NULL,NULL,'2026-07-09 15:35:33','July','2026',2,3,3,0,1,'2026-07-09 15:44:53','2026-07-09 15:35:33','2026-07-27 08:40:49',NULL,2),
+(7,'QV-ORDR-000007','QVT-INV-2607-7',4,'9','22411',NULL,'22411',NULL,NULL,NULL,'2026-07-10 16:16:33','July','2026',4,3,3,0,1,'2026-07-20 11:39:47','2026-07-10 16:16:33','2026-07-27 08:40:49',NULL,1),
+(8,'QV-ORDR-000008','QVT-INV-2607-8',20,'14','3500.00',NULL,'3500.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
+(9,'QV-ORDR-000009','QVT-INV-2607-9',20,'14','6200.00',NULL,'6200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
+(10,'QV-ORDR-000010','QVT-INV-2607-10',20,'14','8200.00',NULL,'8200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
+(11,'QV-ORDR-000011','QVT-INV-2607-11',20,'14','9750.00',NULL,'9750.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1799,6 +2048,770 @@ LOCK TABLES `password_resets` WRITE;
 /*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
 set autocommit=0;
 /*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_checklist_items`
+--
+
+DROP TABLE IF EXISTS `performance_test_checklist_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_checklist_items` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `section` varchar(30) NOT NULL,
+  `item_key` varchar(60) NOT NULL,
+  `item_label` varchar(191) NOT NULL,
+  `status` varchar(191) NOT NULL DEFAULT 'pass',
+  `note` text DEFAULT NULL,
+  `photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`photos`)),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `performance_test_checklist_items_performance_test_id_foreign` (`performance_test_id`),
+  CONSTRAINT `performance_test_checklist_items_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=481 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_checklist_items`
+--
+
+LOCK TABLES `performance_test_checklist_items` WRITE;
+/*!40000 ALTER TABLE `performance_test_checklist_items` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_checklist_items` VALUES
+(211,8,'assembly','cpu_installation','CPU Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(212,8,'assembly','memory_installation','Memory Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(213,8,'assembly','storage_installation','Storage Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(214,8,'assembly','thermal_paste_installation','Thermal Paste Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(215,8,'assembly','cooler_installation','Air Cooler Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(216,8,'assembly','motherboard_installation','Motherboard Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(217,8,'assembly','power_supply_installation','Power Supply Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(218,8,'assembly','fans_installation','Fans Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(219,8,'assembly','gpu_installation','GPU Installation','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(220,8,'assembly','cable_management','Cable Management','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(221,8,'assembly','cpu_power_connection_test','CPU Power Connection Test','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(222,8,'assembly','front_panel_connection_test','Front Panel Connection Test','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(223,8,'boot_verification','initial_power_on','Initial Power On','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(224,8,'boot_verification','post_successful','POST Successful','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(225,8,'boot_verification','bios_accessible','BIOS Accessible','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(226,8,'boot_verification','cpu_detected','CPU Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(227,8,'boot_verification','memory_detected','Memory Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(228,8,'boot_verification','storage_detected','Storage Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(229,8,'boot_verification','gpu_detected','GPU Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(230,8,'boot_verification','cpu_fan_detected','CPU Fan Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(231,8,'boot_verification','pump_detected','Pump Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(232,8,'boot_verification','case_fans_detected','Case Fans Detected','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(233,8,'bios_configuration','bios_updated','BIOS Updated','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(234,8,'bios_configuration','expo_xmp_enabled','EXPO/XMP Enabled','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(235,8,'bios_configuration','resizeable_bar_enabled','Resizeable BAR Enabled','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(236,8,'bios_configuration','tpm_enabled','TPM Enabled','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(237,8,'bios_configuration','secure_boot_enabled','Secure Boot Enabled','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(238,8,'bios_configuration','fan_curve_configured','Fan Curve Configured','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(239,8,'bios_configuration','boot_order_configured','Boot Order Configured','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL),
+(240,8,'bios_configuration','date_time_verified','Date & Time Verified','pass',NULL,'[]','2026-07-25 17:38:29','2026-07-25 17:38:29',NULL);
+/*!40000 ALTER TABLE `performance_test_checklist_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cooling_performance_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_cooling_performance_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_cooling_performance_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `cooling_solution` varchar(191) DEFAULT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `ambient_temp_c` decimal(5,2) DEFAULT NULL,
+  `cpu_idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `cpu_load_temp_c` decimal(5,2) DEFAULT NULL,
+  `gpu_idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `gpu_load_temp_c` decimal(5,2) DEFAULT NULL,
+  `vrm_idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `vrm_load_temp_c` decimal(5,2) DEFAULT NULL,
+  `chipset_idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `chipset_load_temp_c` decimal(5,2) DEFAULT NULL,
+  `cpu_temp_within_range` tinyint(1) DEFAULT NULL,
+  `gpu_temp_within_range` tinyint(1) DEFAULT NULL,
+  `vrm_temp_within_range` tinyint(1) DEFAULT NULL,
+  `chipset_temp_within_range` tinyint(1) DEFAULT NULL,
+  `cooling_operating_normally` tinyint(1) DEFAULT NULL,
+  `no_thermal_throttling` tinyint(1) DEFAULT NULL,
+  `temps_stable_under_load` tinyint(1) DEFAULT NULL,
+  `cpu_cooling_performance` tinyint(1) DEFAULT NULL,
+  `gpu_cooling_performance` tinyint(1) DEFAULT NULL,
+  `motherboard_cooling_performance` tinyint(1) DEFAULT NULL,
+  `overall_cpu_cooling_performance` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pt_cooling_performance_results_pt_id_unique` (`performance_test_id`),
+  CONSTRAINT `pt_cooling_performance_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_cooling_performance_results`
+--
+
+LOCK TABLES `performance_test_cooling_performance_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cooling_performance_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_cooling_performance_results` VALUES
+(9,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_cooling_performance_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cooling_system_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_cooling_system_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_cooling_system_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `cooling_solution` varchar(191) DEFAULT NULL,
+  `fan_control_mode` varchar(191) DEFAULT NULL,
+  `fan_curve` varchar(191) DEFAULT NULL,
+  `cpu_fan_rpm` int(11) DEFAULT NULL,
+  `cpu_pump_rpm` int(11) DEFAULT NULL,
+  `front_fans_rpm` int(11) DEFAULT NULL,
+  `rear_fans_rpm` int(11) DEFAULT NULL,
+  `top_fans_rpm` int(11) DEFAULT NULL,
+  `bottom_fans_rpm` int(11) DEFAULT NULL,
+  `cpu_fan_detected` tinyint(1) DEFAULT NULL,
+  `cpu_pump_detected` tinyint(1) DEFAULT NULL,
+  `all_case_fans_detected` tinyint(1) DEFAULT NULL,
+  `cpu_fan_rpm_stable` tinyint(1) DEFAULT NULL,
+  `cpu_pump_rpm_stable` tinyint(1) DEFAULT NULL,
+  `front_fan_rpm_stable` tinyint(1) DEFAULT NULL,
+  `rear_fan_rpm_stable` tinyint(1) DEFAULT NULL,
+  `top_fan_rpm_stable` tinyint(1) DEFAULT NULL,
+  `bottom_fan_rpm_stable` tinyint(1) DEFAULT NULL,
+  `all_devices_operational` tinyint(1) DEFAULT NULL,
+  `no_fan_failures` tinyint(1) DEFAULT NULL,
+  `stable_rpm_monitoring` tinyint(1) DEFAULT NULL,
+  `front_fan_direction` varchar(191) DEFAULT NULL,
+  `rear_fan_direction` varchar(191) DEFAULT NULL,
+  `top_fan_direction` varchar(191) DEFAULT NULL,
+  `bottom_fan_direction` varchar(191) DEFAULT NULL,
+  `cpu_cooler_operation` tinyint(1) DEFAULT NULL,
+  `pump_operation` tinyint(1) DEFAULT NULL,
+  `chassis_fan_cooling_operation` tinyint(1) DEFAULT NULL,
+  `overall_cooling_system` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pt_cooling_system_results_pt_id_unique` (`performance_test_id`),
+  CONSTRAINT `pt_cooling_system_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_cooling_system_results`
+--
+
+LOCK TABLES `performance_test_cooling_system_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cooling_system_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_cooling_system_results` VALUES
+(9,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_cooling_system_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cpu_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_cpu_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_cpu_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `threads_mode` varchar(191) DEFAULT NULL,
+  `avg_temp_c` decimal(5,2) DEFAULT NULL,
+  `max_temp_c` decimal(5,2) DEFAULT NULL,
+  `avg_clock_mhz` int(11) DEFAULT NULL,
+  `peak_package_power_w` decimal(6,2) DEFAULT NULL,
+  `thermal_throttling` tinyint(1) DEFAULT NULL,
+  `whea_errors` tinyint(1) DEFAULT NULL,
+  `system_crash` tinyint(1) DEFAULT NULL,
+  `no_thermal_throttling` tinyint(1) DEFAULT NULL,
+  `no_whea_errors` tinyint(1) DEFAULT NULL,
+  `no_application_crash` tinyint(1) DEFAULT NULL,
+  `stable_clock_speed` tinyint(1) DEFAULT NULL,
+  `temperature_within_range` tinyint(1) DEFAULT NULL,
+  `single_core_score` int(11) DEFAULT NULL,
+  `multi_core_score` int(11) DEFAULT NULL,
+  `benchmark_temp_c` decimal(5,2) DEFAULT NULL,
+  `benchmark_peak_power_w` decimal(6,2) DEFAULT NULL,
+  `benchmark_completed` tinyint(1) DEFAULT NULL,
+  `performance_within_range` tinyint(1) DEFAULT NULL,
+  `no_thermal_throttling_benchmark` tinyint(1) DEFAULT NULL,
+  `idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `load_temp_c` decimal(5,2) DEFAULT NULL,
+  `ccd_temp_c` decimal(5,2) DEFAULT NULL,
+  `core_voltage_v` decimal(5,3) DEFAULT NULL,
+  `avg_effective_clock_mhz` int(11) DEFAULT NULL,
+  `peak_package_power_benchmark_w` decimal(6,2) DEFAULT NULL,
+  `stability_test_passed` tinyint(1) DEFAULT NULL,
+  `benchmark_test_passed` tinyint(1) DEFAULT NULL,
+  `thermal_performance_passed` tinyint(1) DEFAULT NULL,
+  `clock_stability_passed` tinyint(1) DEFAULT NULL,
+  `power_delivery_passed` tinyint(1) DEFAULT NULL,
+  `overall_cpu_validation` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_cpu_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_cpu_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_cpu_results`
+--
+
+LOCK TABLES `performance_test_cpu_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cpu_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_cpu_results` VALUES
+(4,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-25 17:38:29','2026-07-25 17:38:29',NULL);
+/*!40000 ALTER TABLE `performance_test_cpu_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_display_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_display_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_display_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `connection_type` varchar(191) DEFAULT NULL,
+  `graphic_driver_version` varchar(191) DEFAULT NULL,
+  `benchmark_display` varchar(191) DEFAULT NULL,
+  `display_detected` tinyint(1) DEFAULT NULL,
+  `resolution` varchar(191) DEFAULT NULL,
+  `refresh_rate_hz` int(10) unsigned DEFAULT NULL,
+  `hdr_status` varchar(191) DEFAULT NULL,
+  `output_port_tested` varchar(191) DEFAULT NULL,
+  `display_detected_successfully` tinyint(1) DEFAULT NULL,
+  `correct_resolution_applied` tinyint(1) DEFAULT NULL,
+  `correct_refresh_rate_applied` tinyint(1) DEFAULT NULL,
+  `hdr_functions_correctly` tinyint(1) DEFAULT NULL,
+  `stable_video_output` tinyint(1) DEFAULT NULL,
+  `display_detection` tinyint(1) DEFAULT NULL,
+  `resolution_verification` tinyint(1) DEFAULT NULL,
+  `refresh_rate_verification` tinyint(1) DEFAULT NULL,
+  `video_output_verification` tinyint(1) DEFAULT NULL,
+  `overall_display_output` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_display_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_display_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_display_results`
+--
+
+LOCK TABLES `performance_test_display_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_display_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_display_results` VALUES
+(2,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_display_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_gpu_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_gpu_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_gpu_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `vram_test` tinyint(1) DEFAULT NULL,
+  `avg_temp_c` decimal(5,2) DEFAULT NULL,
+  `max_temp_c` decimal(5,2) DEFAULT NULL,
+  `max_hotspot_temp_c` decimal(5,2) DEFAULT NULL,
+  `avg_clock_mhz` int(11) DEFAULT NULL,
+  `peak_power_draw_w` decimal(6,2) DEFAULT NULL,
+  `thermal_throttling` tinyint(1) DEFAULT NULL,
+  `visual_artifacts` tinyint(1) DEFAULT NULL,
+  `driver_crash` tinyint(1) DEFAULT NULL,
+  `no_visual_artifacts` tinyint(1) DEFAULT NULL,
+  `no_driver_crash` tinyint(1) DEFAULT NULL,
+  `stable_clock_speed` tinyint(1) DEFAULT NULL,
+  `temperature_within_range` tinyint(1) DEFAULT NULL,
+  `gpu_score` int(11) DEFAULT NULL,
+  `overall_score` int(11) DEFAULT NULL,
+  `benchmark_temp_c` decimal(5,2) DEFAULT NULL,
+  `benchmark_peak_power_w` decimal(6,2) DEFAULT NULL,
+  `benchmark_completed` tinyint(1) DEFAULT NULL,
+  `performance_within_range` tinyint(1) DEFAULT NULL,
+  `no_performance_anomalies` tinyint(1) DEFAULT NULL,
+  `idle_temp_c` decimal(5,2) DEFAULT NULL,
+  `load_temp_c` decimal(5,2) DEFAULT NULL,
+  `hotspot_temp_c` decimal(5,2) DEFAULT NULL,
+  `core_clock_mhz` int(11) DEFAULT NULL,
+  `memory_clock_mhz` int(11) DEFAULT NULL,
+  `power_draw_w` decimal(6,2) DEFAULT NULL,
+  `fan_speed_rpm` int(11) DEFAULT NULL,
+  `stability_test_passed` tinyint(1) DEFAULT NULL,
+  `benchmark_test_passed` tinyint(1) DEFAULT NULL,
+  `thermal_performance_passed` tinyint(1) DEFAULT NULL,
+  `clock_stability_passed` tinyint(1) DEFAULT NULL,
+  `cooling_performance_passed` tinyint(1) DEFAULT NULL,
+  `overall_gpu_validation` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_gpu_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_gpu_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_gpu_results`
+--
+
+LOCK TABLES `performance_test_gpu_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_gpu_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_gpu_results` VALUES
+(4,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-25 17:38:29','2026-07-25 17:38:29',NULL);
+/*!40000 ALTER TABLE `performance_test_gpu_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_memory_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_memory_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_memory_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `memory_capacity` varchar(191) DEFAULT NULL,
+  `memory_configuration` varchar(191) DEFAULT NULL,
+  `expo_xmp_profile` varchar(191) DEFAULT NULL,
+  `memory_frequency_mts` int(11) DEFAULT NULL,
+  `memory_timings` varchar(191) DEFAULT NULL,
+  `memory_passes` varchar(191) DEFAULT NULL,
+  `total_passes_completed` int(11) DEFAULT NULL,
+  `total_tests_completed` int(11) DEFAULT NULL,
+  `memory_errors_detected` int(11) DEFAULT NULL,
+  `test_completed_successfully` tinyint(1) DEFAULT NULL,
+  `zero_memory_errors` tinyint(1) DEFAULT NULL,
+  `stable_expo_xmp_operation` tinyint(1) DEFAULT NULL,
+  `capacity_expected` varchar(191) DEFAULT NULL,
+  `capacity_detected` varchar(191) DEFAULT NULL,
+  `capacity_status` tinyint(1) DEFAULT NULL,
+  `configuration_expected` varchar(191) DEFAULT NULL,
+  `configuration_detected` varchar(191) DEFAULT NULL,
+  `configuration_status` tinyint(1) DEFAULT NULL,
+  `frequency_expected` varchar(191) DEFAULT NULL,
+  `frequency_detected` varchar(191) DEFAULT NULL,
+  `frequency_status` tinyint(1) DEFAULT NULL,
+  `expo_xmp_expected` varchar(191) DEFAULT NULL,
+  `expo_xmp_detected` varchar(191) DEFAULT NULL,
+  `expo_xmp_status` tinyint(1) DEFAULT NULL,
+  `memory_stability_test` tinyint(1) DEFAULT NULL,
+  `memory_frequency_verified` tinyint(1) DEFAULT NULL,
+  `error_detection` tinyint(1) DEFAULT NULL,
+  `overall_memory_validation` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_memory_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_memory_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_memory_results`
+--
+
+LOCK TABLES `performance_test_memory_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_memory_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_memory_results` VALUES
+(9,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_memory_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_network_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_network_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_network_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `wired_network` tinyint(1) DEFAULT NULL,
+  `wireless_network` varchar(191) DEFAULT NULL,
+  `internet_access_available` varchar(191) DEFAULT NULL,
+  `bluetooth_device_tested` varchar(191) DEFAULT NULL,
+  `lan_detected` tinyint(1) DEFAULT NULL,
+  `lan_connected` tinyint(1) DEFAULT NULL,
+  `wifi_adapter_detected` tinyint(1) DEFAULT NULL,
+  `wifi_connected` tinyint(1) DEFAULT NULL,
+  `internet_access` tinyint(1) DEFAULT NULL,
+  `bluetooth_adapter_detected` tinyint(1) DEFAULT NULL,
+  `bluetooth_pairing_successful` tinyint(1) DEFAULT NULL,
+  `lan_operating_normally` tinyint(1) DEFAULT NULL,
+  `wifi_operating_normally` tinyint(1) DEFAULT NULL,
+  `internet_connection_verified` tinyint(1) DEFAULT NULL,
+  `bluetooth_pairing_confirmed` tinyint(1) DEFAULT NULL,
+  `wifi_antenna_installed_correctly` tinyint(1) DEFAULT NULL,
+  `lan_verification` tinyint(1) DEFAULT NULL,
+  `wifi_verification` tinyint(1) DEFAULT NULL,
+  `internet_connectivity` tinyint(1) DEFAULT NULL,
+  `bluetooth_verification` tinyint(1) DEFAULT NULL,
+  `overall_network_wireless` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_network_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_network_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_network_results`
+--
+
+LOCK TABLES `performance_test_network_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_network_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_network_results` VALUES
+(2,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_network_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_storage_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_storage_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_storage_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `storage_device` varchar(191) DEFAULT NULL,
+  `interface` varchar(191) DEFAULT NULL,
+  `capacity` varchar(191) DEFAULT NULL,
+  `firmware_version` varchar(191) DEFAULT NULL,
+  `health_status` varchar(191) DEFAULT NULL,
+  `drive_temp_c` decimal(5,2) DEFAULT NULL,
+  `power_on_hours` varchar(191) DEFAULT NULL,
+  `interface_mode` varchar(191) DEFAULT NULL,
+  `health_status_good` tinyint(1) DEFAULT NULL,
+  `drive_detected_correctly` tinyint(1) DEFAULT NULL,
+  `firmware_verified` tinyint(1) DEFAULT NULL,
+  `temperature_within_range` tinyint(1) DEFAULT NULL,
+  `sequential_read_speed_mbs` decimal(8,2) DEFAULT NULL,
+  `sequential_write_speed_mbs` decimal(8,2) DEFAULT NULL,
+  `benchmark_completed` tinyint(1) DEFAULT NULL,
+  `read_performance_within_range` tinyint(1) DEFAULT NULL,
+  `write_performance_within_range` tinyint(1) DEFAULT NULL,
+  `driver_expected` varchar(191) DEFAULT NULL,
+  `driver_detected` varchar(191) DEFAULT NULL,
+  `driver_status` tinyint(1) DEFAULT NULL,
+  `storage_health_verification` tinyint(1) DEFAULT NULL,
+  `firmware_verification` tinyint(1) DEFAULT NULL,
+  `performance_verification` tinyint(1) DEFAULT NULL,
+  `temperature_verification` tinyint(1) DEFAULT NULL,
+  `overall_storage_validation` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_storage_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_storage_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_storage_results`
+--
+
+LOCK TABLES `performance_test_storage_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_storage_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_storage_results` VALUES
+(9,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_storage_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_system_stability_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_system_stability_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_system_stability_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `duration` varchar(191) DEFAULT NULL,
+  `ambient_temp_c` decimal(5,2) DEFAULT NULL,
+  `windows_power_plan` varchar(191) DEFAULT NULL,
+  `max_cpu_temp_c` decimal(5,2) DEFAULT NULL,
+  `max_gpu_temp_c` decimal(5,2) DEFAULT NULL,
+  `cpu_package_power_w` decimal(6,2) DEFAULT NULL,
+  `gpu_power_draw_w` decimal(6,2) DEFAULT NULL,
+  `total_system_power_w` decimal(6,2) DEFAULT NULL,
+  `cpu_clock_stability` varchar(191) DEFAULT NULL,
+  `gpu_clock_stability` varchar(191) DEFAULT NULL,
+  `unexpected_shutdown` tinyint(1) DEFAULT NULL,
+  `bsod` tinyint(1) DEFAULT NULL,
+  `application_crash` tinyint(1) DEFAULT NULL,
+  `whea_errors` tinyint(1) DEFAULT NULL,
+  `thermal_throttling` tinyint(1) DEFAULT NULL,
+  `test_completed_successfully` tinyint(1) DEFAULT NULL,
+  `no_shutdowns` tinyint(1) DEFAULT NULL,
+  `no_bsod` tinyint(1) DEFAULT NULL,
+  `no_whea_errors` tinyint(1) DEFAULT NULL,
+  `no_thermal_throttling` tinyint(1) DEFAULT NULL,
+  `stable_cpu_gpu_operation` tinyint(1) DEFAULT NULL,
+  `cpu_temp_c` decimal(5,2) DEFAULT NULL,
+  `gpu_temp_c` decimal(5,2) DEFAULT NULL,
+  `motherboard_temp_c` decimal(5,2) DEFAULT NULL,
+  `vrm_temp_c` decimal(5,2) DEFAULT NULL,
+  `chipset_temp_c` decimal(5,2) DEFAULT NULL,
+  `cpu_fan_speed_rpm` int(11) DEFAULT NULL,
+  `pump_speed_rpm` int(11) DEFAULT NULL,
+  `combined_load_stability` tinyint(1) DEFAULT NULL,
+  `thermal_performance` tinyint(1) DEFAULT NULL,
+  `power_delivery` tinyint(1) DEFAULT NULL,
+  `cooling_performance` tinyint(1) DEFAULT NULL,
+  `overall_system_stability` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pt_system_stability_results_pt_id_unique` (`performance_test_id`),
+  CONSTRAINT `pt_system_stability_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_system_stability_results`
+--
+
+LOCK TABLES `performance_test_system_stability_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_system_stability_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_system_stability_results` VALUES
+(4,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-25 17:38:29','2026-07-25 17:38:29',NULL);
+/*!40000 ALTER TABLE `performance_test_system_stability_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_usb_ports`
+--
+
+DROP TABLE IF EXISTS `performance_test_usb_ports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_usb_ports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `location` varchar(191) NOT NULL,
+  `label` varchar(191) NOT NULL,
+  `device_detected` tinyint(1) DEFAULT NULL,
+  `data_transfer` tinyint(1) DEFAULT NULL,
+  `sort_order` int(10) unsigned NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `performance_test_usb_ports_performance_test_id_foreign` (`performance_test_id`),
+  CONSTRAINT `performance_test_usb_ports_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_usb_ports`
+--
+
+LOCK TABLES `performance_test_usb_ports` WRITE;
+/*!40000 ALTER TABLE `performance_test_usb_ports` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_usb_ports` VALUES
+(9,8,'front','USB-A Port 1',NULL,NULL,1,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(10,8,'front','USB-A Port 2',NULL,NULL,2,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(11,8,'front','USB-C',NULL,NULL,3,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(12,8,'rear','Port 1',NULL,NULL,4,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(13,8,'rear','Port 2',NULL,NULL,5,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(14,8,'rear','Port 3',NULL,NULL,6,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL),
+(15,8,'rear','Port 4',NULL,NULL,7,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_usb_ports` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_usb_results`
+--
+
+DROP TABLE IF EXISTS `performance_test_usb_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_test_usb_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `performance_test_id` bigint(20) unsigned NOT NULL,
+  `test_device` varchar(191) DEFAULT NULL,
+  `usb_device_capacity` varchar(191) DEFAULT NULL,
+  `front_usb_ports_operational` tinyint(1) DEFAULT NULL,
+  `rear_usb_ports_operational` tinyint(1) DEFAULT NULL,
+  `stable_device_detection` tinyint(1) DEFAULT NULL,
+  `successful_data_transfer` tinyint(1) DEFAULT NULL,
+  `front_usb_verification` tinyint(1) DEFAULT NULL,
+  `rear_usb_verification` tinyint(1) DEFAULT NULL,
+  `data_transfer_verification` tinyint(1) DEFAULT NULL,
+  `overall_usb_ports` tinyint(1) DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `performance_test_usb_results_performance_test_id_unique` (`performance_test_id`),
+  CONSTRAINT `performance_test_usb_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_test_usb_results`
+--
+
+LOCK TABLES `performance_test_usb_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_usb_results` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_test_usb_results` VALUES
+(2,8,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-26 17:39:30','2026-07-26 17:39:30',NULL);
+/*!40000 ALTER TABLE `performance_test_usb_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_tests`
+--
+
+DROP TABLE IF EXISTS `performance_tests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `performance_tests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) unsigned NOT NULL,
+  `round` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `status` varchar(191) NOT NULL DEFAULT 'draft',
+  `cooling_solution` varchar(191) DEFAULT NULL,
+  `overall_cpu_performance` tinyint(1) DEFAULT NULL,
+  `overall_gpu_performance` tinyint(1) DEFAULT NULL,
+  `overall_system_stability` tinyint(1) DEFAULT NULL,
+  `overall_memory_validation` tinyint(1) DEFAULT NULL,
+  `overall_storage_validation` tinyint(1) DEFAULT NULL,
+  `overall_cpu_cooling_performance` tinyint(1) DEFAULT NULL,
+  `overall_cooling_system` tinyint(1) DEFAULT NULL,
+  `overall_display_output` tinyint(1) DEFAULT NULL,
+  `overall_network_wireless` tinyint(1) DEFAULT NULL,
+  `overall_usb_ports` tinyint(1) DEFAULT NULL,
+  `overall_notes` text DEFAULT NULL,
+  `thermal_paste_brand` varchar(191) DEFAULT NULL,
+  `thermal_paste_batch` varchar(191) DEFAULT NULL,
+  `thermal_paste_application_method` varchar(191) DEFAULT NULL,
+  `ready_for_first_boot` tinyint(1) NOT NULL DEFAULT 0,
+  `ready_for_bios_configuration` tinyint(1) NOT NULL DEFAULT 0,
+  `ready_for_stability_testing` tinyint(1) NOT NULL DEFAULT 0,
+  `ready_for_performance_testing` tinyint(1) NOT NULL DEFAULT 0,
+  `ready_for_stress_testing` tinyint(1) NOT NULL DEFAULT 0,
+  `os_installed` varchar(191) DEFAULT NULL,
+  `windows_activation` tinyint(1) NOT NULL DEFAULT 0,
+  `windows_update` tinyint(1) NOT NULL DEFAULT 0,
+  `os_config_note` text DEFAULT NULL,
+  `os_config_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`os_config_photos`)),
+  `driver_chipset` tinyint(1) NOT NULL DEFAULT 0,
+  `driver_wifi` tinyint(1) NOT NULL DEFAULT 0,
+  `driver_gpu` tinyint(1) NOT NULL DEFAULT 0,
+  `driver_bluetooth` tinyint(1) NOT NULL DEFAULT 0,
+  `driver_lan` tinyint(1) NOT NULL DEFAULT 0,
+  `driver_audio` tinyint(1) NOT NULL DEFAULT 0,
+  `drivers_note` text DEFAULT NULL,
+  `drivers_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`drivers_photos`)),
+  `applications_installed` text DEFAULT NULL,
+  `applications_note` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `performance_tests_order_id_foreign` (`order_id`),
+  CONSTRAINT `performance_tests_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `performance_tests`
+--
+
+LOCK TABLES `performance_tests` WRITE;
+/*!40000 ALTER TABLE `performance_tests` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `performance_tests` VALUES
+(8,11,1,'draft',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,0,NULL,0,0,NULL,NULL,0,0,0,0,0,0,NULL,NULL,NULL,NULL,'2026-07-25 17:38:29','2026-07-25 17:38:29',NULL);
+/*!40000 ALTER TABLE `performance_tests` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -2244,17 +3257,17 @@ LOCK TABLES `serve_data` WRITE;
 /*!40000 ALTER TABLE `serve_data` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `serve_data` VALUES
-(7,'QV-SRV-0001','PCE-2610-0001',19,2,3,0,NULL,NULL,0,NULL,'2026-03-21 05:11:40','2026-07-10 12:21:49',NULL),
-(8,'QV-SRV-0002','PCE-2610-0002',4,1,3,0,NULL,NULL,0,NULL,'2026-03-21 05:12:20','2026-07-10 12:21:49',NULL),
-(13,'QV-SRV-0003','PCE-2610-0003',20,3,3,1,'2026-07-09 14:34:00',1783607692,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer shows high engagement potential. Recommend premium package upgrade with additional features.','2026-07-09 14:21:57','2026-07-10 12:21:49',NULL),
-(23,'QV-SRV-0004','PCE-2610-0004',21,6,3,1,'2026-07-09 15:47:00',1783612136,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer feedback positive. Recommend adding support for additional users/teams.','2026-07-09 15:44:53','2026-07-10 12:21:49',NULL),
-(24,'QV-SRV-0005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-07-23 17:50:47',NULL),
-(27,'QV-SRV-0006','BEK-2304-0001',20,5,1,0,NULL,NULL,0,NULL,'2026-07-12 11:56:01','2026-07-12 11:56:01',NULL),
-(28,'QV-SRV-0007','BEK-2304-0002',20,8,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(29,'QV-SRV-0008','BEK-2304-0003',20,9,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(30,'QV-SRV-0009','MPS-0407-0002',20,10,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(31,'QV-SRV-0010','MPS-0407-0003',20,11,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-12 12:24:24',NULL),
-(33,'QV-SRV-0011','PCE-2610-0005',4,7,3,0,NULL,NULL,0,NULL,'2026-07-20 11:39:47','2026-07-20 11:39:47',NULL);
+(7,'QV-SRV-000001','PCE-2610-0001',19,2,3,0,NULL,NULL,0,NULL,'2026-03-21 05:11:40','2026-07-27 08:40:49',NULL),
+(8,'QV-SRV-000002','PCE-2610-0002',4,1,3,0,NULL,NULL,0,NULL,'2026-03-21 05:12:20','2026-07-27 08:40:49',NULL),
+(13,'QV-SRV-000003','PCE-2610-0003',20,3,3,1,'2026-07-09 14:34:00',1783607692,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer shows high engagement potential. Recommend premium package upgrade with additional features.','2026-07-09 14:21:57','2026-07-27 08:40:49',NULL),
+(23,'QV-SRV-000004','PCE-2610-0004',21,6,3,1,'2026-07-09 15:47:00',1783612136,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer feedback positive. Recommend adding support for additional users/teams.','2026-07-09 15:44:53','2026-07-27 08:40:49',NULL),
+(24,'QV-SRV-000005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-07-27 08:40:49',NULL),
+(27,'QV-SRV-000006','BEK-2304-0001',20,5,1,0,NULL,NULL,0,NULL,'2026-07-12 11:56:01','2026-07-27 08:40:49',NULL),
+(28,'QV-SRV-000007','BEK-2304-0002',20,8,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(29,'QV-SRV-000008','BEK-2304-0003',20,9,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(30,'QV-SRV-000009','MPS-0407-0002',20,10,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(31,'QV-SRV-000010','MPS-0407-0003',20,11,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(33,'QV-SRV-000011','PCE-2610-0005',4,7,3,0,NULL,NULL,0,NULL,'2026-07-20 11:39:47','2026-07-27 08:40:49',NULL);
 /*!40000 ALTER TABLE `serve_data` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2555,18 +3568,18 @@ LOCK TABLES `suppliers` WRITE;
 /*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `suppliers` VALUES
-(1,'QV-SUPP-0001','Magic Print','sales@imagemagic.com.my','018-2388238','Malaysia','/backend/suppliers/1784743462.jpeg','Magic Print','2026-07-22 18:04:22','2026-07-22 18:04:22',NULL),
-(2,'QV-SUPP-0002','RaffleStag','sales@rafflestag.com.my','017-8496166','Malaysia','/backend/suppliers/1784742955.png','RaffleStag','2026-07-22 17:55:55','2026-07-22 17:55:55',NULL),
-(3,'QV-SUPP-0003','CamiSasca','sales@camincusa.com','949-4520195','USA','/backend/suppliers/1784742769.jpeg','CamiSasca','2026-07-22 17:52:49','2026-07-22 17:52:49',NULL),
-(4,'QV-SUPP-0004','Popov Leather','custom@popovleather.com','018-3341524','Canada','/backend/suppliers/1784743008.png','Popov Leather','2026-07-22 17:56:48','2026-07-22 17:56:48',NULL),
-(5,'QV-SUPP-0005','AEIOU Studio','enquiry@uylprinter.com','016-2632273','Malaysia','/backend/suppliers/1784742223.jpeg','AEIOU Studio','2026-07-22 17:43:43','2026-07-22 17:43:43',NULL),
-(6,'QV-SUPP-0006','2S Packaging','info@2Spackaging.com','012-2223202','Malaysia','/backend/suppliers/1784742147.png','2S Packaging','2026-07-22 17:42:27','2026-07-22 17:42:27',NULL),
-(7,'QV-SUPP-0007','HookandLoop','traceyt@hookandloop.com','180-0940693','USA','/backend/suppliers/1784742912.png','HookandLoop','2026-07-22 17:55:12','2026-07-22 17:55:12',NULL),
-(8,'QV-SUPP-0008','BoardGameGeek Store','contact@boardgamegeekstore.com','121-4321773','USA','/backend/suppliers/1784742318.png','BoardGameGeek Store','2026-07-22 17:45:18','2026-07-22 17:45:18',NULL),
-(9,'QV-SUPP-0009','BS Gift','contact@bsgifts.com.my','017-8798548','Malaysia','/backend/suppliers/1784742422.jpeg','BS Gift','2026-07-22 17:47:02','2026-07-22 17:47:02',NULL),
-(10,'QV-SUPP-0010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1784743554.jpeg','Gift Market','2026-07-22 18:05:54','2026-07-22 18:05:54',NULL),
-(11,'QV-SUPP-0011','Digikey','orders@t.digikey.com','180-0344453','USA','/backend/suppliers/1784742835.png','Digikey','2026-07-22 17:53:55','2026-07-22 17:53:55',NULL),
-(12,'QV-SUPP-0012','MDPC-X','contact@Cable-Sleeving.com','491-7697416','Germany','/backend/suppliers/1784743105.png','MDPC-X','2026-07-22 17:58:25','2026-07-22 17:58:25',NULL);
+(1,'QV-SUPP-000001','Magic Print','sales@imagemagic.com.my','018-2388238','Malaysia','/backend/suppliers/1784743462.jpeg','Magic Print','2026-07-27 08:40:49','2026-07-22 18:04:22',NULL),
+(2,'QV-SUPP-000002','RaffleStag','sales@rafflestag.com.my','017-8496166','Malaysia','/backend/suppliers/1784742955.png','RaffleStag','2026-07-27 08:40:49','2026-07-22 17:55:55',NULL),
+(3,'QV-SUPP-000003','CamiSasca','sales@camincusa.com','949-4520195','USA','/backend/suppliers/1784742769.jpeg','CamiSasca','2026-07-27 08:40:49','2026-07-22 17:52:49',NULL),
+(4,'QV-SUPP-000004','Popov Leather','custom@popovleather.com','018-3341524','Canada','/backend/suppliers/1784743008.png','Popov Leather','2026-07-27 08:40:49','2026-07-22 17:56:48',NULL),
+(5,'QV-SUPP-000005','AEIOU Studio','enquiry@uylprinter.com','016-2632273','Malaysia','/backend/suppliers/1784742223.jpeg','AEIOU Studio','2026-07-27 08:40:49','2026-07-22 17:43:43',NULL),
+(6,'QV-SUPP-000006','2S Packaging','info@2Spackaging.com','012-2223202','Malaysia','/backend/suppliers/1784742147.png','2S Packaging','2026-07-27 08:40:49','2026-07-22 17:42:27',NULL),
+(7,'QV-SUPP-000007','HookandLoop','traceyt@hookandloop.com','180-0940693','USA','/backend/suppliers/1784742912.png','HookandLoop','2026-07-27 08:40:49','2026-07-22 17:55:12',NULL),
+(8,'QV-SUPP-000008','BoardGameGeek Store','contact@boardgamegeekstore.com','121-4321773','USA','/backend/suppliers/1784742318.png','BoardGameGeek Store','2026-07-27 08:40:49','2026-07-22 17:45:18',NULL),
+(9,'QV-SUPP-000009','BS Gift','contact@bsgifts.com.my','017-8798548','Malaysia','/backend/suppliers/1784742422.jpeg','BS Gift','2026-07-27 08:40:49','2026-07-22 17:47:02',NULL),
+(10,'QV-SUPP-000010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1784743554.jpeg','Gift Market','2026-07-27 08:40:49','2026-07-22 18:05:54',NULL),
+(11,'QV-SUPP-000011','Digikey','orders@t.digikey.com','180-0344453','USA','/backend/suppliers/1784742835.png','Digikey','2026-07-27 08:40:49','2026-07-22 17:53:55',NULL),
+(12,'QV-SUPP-000012','MDPC-X','contact@Cable-Sleeving.com','491-7697416','Germany','/backend/suppliers/1784743105.png','MDPC-X','2026-07-27 08:40:49','2026-07-22 17:58:25',NULL);
 /*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -2887,4 +3900,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-24  6:37:05
+-- Dump completed on 2026-07-27  9:22:58
