@@ -1275,7 +1275,7 @@ CREATE TABLE `menu_items` (
   PRIMARY KEY (`id`),
   KEY `menu_items_parent_id_foreign` (`parent_id`),
   CONSTRAINT `menu_items_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `menu_items` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1399,7 +1399,11 @@ INSERT INTO `menu_items` VALUES
 (111,110,'header','Supplier Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (112,111,'link','All Suppliers',NULL,'/suppliers',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (113,111,'link','Add Supplier',NULL,'/supplier/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(114,NULL,'group','Stock','fas fa-fw fa-boxes',NULL,12,0,1,'2026-07-23 17:27:23','2026-07-23 18:40:59');
+(114,NULL,'group','Stock','fas fa-fw fa-boxes',NULL,12,0,1,'2026-07-23 17:27:23','2026-07-23 18:40:59'),
+(115,NULL,'group','Refund','fas fa-fw fa-undo-alt',NULL,13,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04'),
+(116,115,'header','Refund Management',NULL,NULL,0,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04'),
+(117,116,'link','All Refunds',NULL,'/refunds',0,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04'),
+(118,116,'link','Add Refund',NULL,'/refunds/create',1,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04');
 /*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1536,7 +1540,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1626,7 +1630,9 @@ INSERT INTO `migrations` VALUES
 (100,'2026_07_27_100003_create_performance_test_usb_results_table',36),
 (101,'2026_07_27_200000_create_onsite_handovers_table',37),
 (102,'2026_07_28_100000_create_onsite_handovers_studio_table',38),
-(103,'2026_07_27_300000_add_care_data_id_to_care_data_table',39);
+(103,'2026_07_27_300000_add_care_data_id_to_care_data_table',39),
+(104,'2026_07_28_150000_create_refunds_table',40),
+(105,'2026_07_28_160000_add_refunds_menu_item',41);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1825,7 +1831,7 @@ CREATE TABLE `onsite_handovers_studio` (
   UNIQUE KEY `onsite_handovers_studio_order_id_round_unique` (`order_id`,`round`),
   UNIQUE KEY `onsite_handovers_studio_report_id_unique` (`report_id`),
   CONSTRAINT `onsite_handovers_studio_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1835,6 +1841,8 @@ CREATE TABLE `onsite_handovers_studio` (
 LOCK TABLES `onsite_handovers_studio` WRITE;
 /*!40000 ALTER TABLE `onsite_handovers_studio` DISABLE KEYS */;
 set autocommit=0;
+INSERT INTO `onsite_handovers_studio` VALUES
+(2,11,1,'OSH-STD-0001',NULL,'in_progress',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-07-27 09:42:11','2026-07-27 09:42:11',NULL);
 /*!40000 ALTER TABLE `onsite_handovers_studio` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -3142,6 +3150,54 @@ UNLOCK TABLES;
 commit;
 
 --
+-- Table structure for table `refunds`
+--
+
+DROP TABLE IF EXISTS `refunds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `refunds` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `refund_id` varchar(50) NOT NULL,
+  `customer_id` bigint(20) unsigned NOT NULL,
+  `order_id` bigint(20) unsigned DEFAULT NULL,
+  `plus_order_id` bigint(20) unsigned DEFAULT NULL,
+  `merch_order_id` bigint(20) unsigned DEFAULT NULL,
+  `thread_order_id` bigint(20) unsigned DEFAULT NULL,
+  `refund_amount` decimal(10,2) NOT NULL,
+  `deposit_amount` decimal(10,2) DEFAULT NULL,
+  `payment_type` varchar(50) DEFAULT NULL,
+  `cash_journal` tinyint(1) NOT NULL DEFAULT 0,
+  `notes` text DEFAULT NULL,
+  `refunded_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `refunds_refund_id_unique` (`refund_id`),
+  KEY `refunds_customer_id_index` (`customer_id`),
+  KEY `refunds_order_id_index` (`order_id`),
+  KEY `refunds_plus_order_id_index` (`plus_order_id`),
+  KEY `refunds_merch_order_id_index` (`merch_order_id`),
+  KEY `refunds_thread_order_id_index` (`thread_order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `refunds`
+--
+
+LOCK TABLES `refunds` WRITE;
+/*!40000 ALTER TABLE `refunds` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `refunds` VALUES
+(1,'QV-REFD-000001',3,NULL,NULL,NULL,NULL,10.50,NULL,NULL,0,NULL,NULL,'2026-07-27 12:33:34','2026-07-27 12:33:34','2026-07-27 12:33:34'),
+(2,'QV-REFD-000002',3,NULL,NULL,NULL,NULL,25.00,NULL,'cash',0,NULL,NULL,'2026-07-27 12:43:45','2026-07-27 12:43:45',NULL);
+/*!40000 ALTER TABLE `refunds` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
 -- Table structure for table `salaries`
 --
 
@@ -3900,4 +3956,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-27  9:22:58
+-- Dump completed on 2026-07-27 14:24:52
