@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductWarranty;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -411,19 +412,8 @@ class ProductWarrantyController extends Controller
             // continuously incrementing, no date component (unlike the old PW-YYYYMM#### scheme).
             $prefix = 'QV-WRTY-';
 
-            $lastRecord = ProductWarranty::where('serial_no', 'like', $prefix . '%')
-                ->orderBy('id', 'desc')
-                ->first();
-
-            if ($lastRecord) {
-                preg_match('/' . preg_quote($prefix, '/') . '(\d+)/', $lastRecord->serial_no, $matches);
-                $lastNumber = isset($matches[1]) ? intval($matches[1]) : 0;
-                $nextNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
-            } else {
-                $nextNumber = '000001';
-            }
-
-            $serialNo = $prefix . $nextNumber;
+            $serialNo = BusinessId::next('product_warranties', 'serial_no', $prefix, 6);
+            $nextNumber = substr($serialNo, strlen($prefix));
 
             return response()->json([
                 'success' => true,
