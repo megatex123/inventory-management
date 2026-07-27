@@ -13,6 +13,7 @@ use App\Models\Categories;
 use App\Models\Order;
 use App\Models\OrderDetails;
 use App\Models\Customers;
+use App\Support\BusinessId;
 use App\Models\Products;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -438,10 +439,7 @@ class OrderController extends Controller
                 $serve_pce_id = "PCE-2610-{$serveNumber}";
 
                 // Create new serve data if it doesn't exist
-                $totalServes = ServeData::count();
-                $nextId = $totalServes + 1;
-                $serveNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-                $serveId = "QV-SRV-{$serveNumber}";
+                $serveId = BusinessId::next('serve_data', 'serve_id', 'QV-SRV-', 6);
 
                 // Get serve type for QVSE CID generation based on order total
                 // QuiviServe tier — < RM7,000 Essential Kit, RM7,000-9,999 Prime
