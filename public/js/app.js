@@ -61034,13 +61034,13 @@ var render = function render() {
     staticClass: "text-muted d-block"
   }, [_vm._v("Studio Inspection Report")]), _vm._v(" "), _c("span", {
     "class": _vm.studioInspectionReportCompleted ? "text-success" : "text-muted"
-  }, [_vm._v("\n          " + _vm._s(_vm.studioInspectionReportCompleted ? "Completed" : "Not completed") + "\n        ")]), _vm._v(" "), _vm.studioInspectionReportId ? _c("span", [_vm._v(" — ID " + _vm._s(_vm.studioInspectionReportId))]) : _vm._e()]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n          " + _vm._s(_vm.studioInspectionReportCompleted ? "Completed" : "Not completed") + "\n        ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("small", {
     staticClass: "text-muted d-block"
   }, [_vm._v("Performance Testing Report")]), _vm._v(" "), _c("span", {
     "class": _vm.performanceTestingReportCompleted ? "text-success" : "text-muted"
-  }, [_vm._v("\n          " + _vm._s(_vm.performanceTestingReportCompleted ? "Completed" : "Not completed") + "\n        ")]), _vm._v(" "), _vm.performanceTestingReportId ? _c("span", [_vm._v(" — ID " + _vm._s(_vm.performanceTestingReportId))]) : _vm._e()])]), _vm._v(" "), _c("h6", {
+  }, [_vm._v("\n          " + _vm._s(_vm.performanceTestingReportCompleted ? "Completed" : "Not completed") + "\n        ")])])]), _vm._v(" "), _c("h6", {
     staticClass: "text-muted mt-3"
   }, [_vm._v("Verification")]), _vm._v(" "), _c("div", {
     staticClass: "row"
@@ -62646,13 +62646,13 @@ var render = function render() {
     staticClass: "text-muted d-block"
   }, [_vm._v("Studio Inspection Report")]), _vm._v(" "), _c("span", {
     "class": _vm.studioInspectionReportCompleted ? "text-success" : "text-muted"
-  }, [_vm._v("\n          " + _vm._s(_vm.studioInspectionReportCompleted ? "Completed" : "Not completed") + "\n        ")]), _vm._v(" "), _vm.studioInspectionReportId ? _c("span", [_vm._v(" — ID " + _vm._s(_vm.studioInspectionReportId))]) : _vm._e()]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n          " + _vm._s(_vm.studioInspectionReportCompleted ? "Completed" : "Not completed") + "\n        ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("small", {
     staticClass: "text-muted d-block"
   }, [_vm._v("Performance Testing Report")]), _vm._v(" "), _c("span", {
     "class": _vm.performanceTestingReportCompleted ? "text-success" : "text-muted"
-  }, [_vm._v("\n          " + _vm._s(_vm.performanceTestingReportCompleted ? "Completed" : "Not completed") + "\n        ")]), _vm._v(" "), _vm.performanceTestingReportId ? _c("span", [_vm._v(" — ID " + _vm._s(_vm.performanceTestingReportId))]) : _vm._e()])]), _vm._v(" "), _c("h6", {
+  }, [_vm._v("\n          " + _vm._s(_vm.performanceTestingReportCompleted ? "Completed" : "Not completed") + "\n        ")])])]), _vm._v(" "), _c("h6", {
     staticClass: "text-muted mt-3"
   }, [_vm._v("Verification")]), _vm._v(" "), _c("div", {
     staticClass: "custom-control custom-checkbox mb-2"

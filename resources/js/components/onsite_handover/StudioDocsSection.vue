@@ -9,14 +9,12 @@
           <span :class="studioInspectionReportCompleted ? 'text-success' : 'text-muted'">
             {{ studioInspectionReportCompleted ? 'Completed' : 'Not completed' }}
           </span>
-          <span v-if="studioInspectionReportId"> — ID {{ studioInspectionReportId }}</span>
         </div>
         <div class="col-md-6">
           <small class="text-muted d-block">Performance Testing Report</small>
           <span :class="performanceTestingReportCompleted ? 'text-success' : 'text-muted'">
             {{ performanceTestingReportCompleted ? 'Completed' : 'Not completed' }}
           </span>
-          <span v-if="performanceTestingReportId"> — ID {{ performanceTestingReportId }}</span>
         </div>
       </div>
 
