@@ -88,48 +88,27 @@
 
         <!-- Filter Section -->
         <div class="card mb-4">
-          <div class="card-header bg-light">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">
               <i class="fas fa-filter mr-2"></i>Filter Records (Local Filtering)
             </h5>
+            <button
+                @click="showFilters = !showFilters"
+                class="btn btn-sm btn-outline-secondary"
+            >
+                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+            </button>
           </div>
-          <div class="card-body">
+          <transition name="filter-panel">
+          <div class="card-body" v-if="showFilters">
             <div class="row">
-              <!-- Search by QVSE CID -->
-              <div class="col-md-4 mb-3">
-                <label class="form-label">Search QVSE CID</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
-                  </div>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="filters.qvse_cid"
-                    placeholder="Enter QVSE CID..."
-                  >
-                </div>
-              </div>
-
-              <!-- Filter by Warranty Status -->
-              <div class="col-md-4 mb-3">
-                <label class="form-label">Warranty Status</label>
-                <select class="form-control" v-model="filters.warranty_status">
-                  <option value="">All Status</option>
-                  <option value="active">Active Warranty</option>
-                  <option value="expired">Expired Warranty</option>
-                </select>
-              </div>
-
-              <!-- Filter by Promo Code Status -->
-              <div class="col-md-4 mb-3">
-                <label class="form-label">Promo Code Status</label>
-                <select class="form-control" v-model="filters.promo_status">
-                  <option value="">All Promo Codes</option>
-                  <option value="available">Available (Generated)</option>
-                  <option value="claimed">Claimed</option>
-                  <option value="not_generated">Not Generated</option>
-                </select>
+              <div class="col-md-12">
+                <column-search-panel
+                    :columns="filterColumns"
+                    v-model="filters"
+                    :visible="true"
+                />
               </div>
             </div>
 
@@ -225,6 +204,7 @@
               </div>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- Records Table -->
@@ -412,13 +392,28 @@
 <script>
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
 
 export default {
   name: 'ServeMpsIndex',
+  components: { ColumnSearchPanel },
   data() {
     return {
       serveMps: [],
       loading: true,
+      showFilters: false,
+      filterColumns: [
+        { key: 'qvse_cid', label: 'QVSE CID', type: 'text' },
+        { key: 'warranty_status', label: 'Warranty Status', type: 'select', options: [
+          { value: 'active', label: 'Active Warranty' },
+          { value: 'expired', label: 'Expired Warranty' },
+        ] },
+        { key: 'promo_status', label: 'Promo Code Status', type: 'select', options: [
+          { value: 'available', label: 'Available (Generated)' },
+          { value: 'claimed', label: 'Claimed' },
+          { value: 'not_generated', label: 'Not Generated' },
+        ] },
+      ],
       filters: {
         qvse_cid: '',
         warranty_status: '',
@@ -995,5 +990,15 @@ export default {
     margin-top: 10px;
     width: 100%;
   }
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
