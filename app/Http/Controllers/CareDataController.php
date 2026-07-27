@@ -577,31 +577,14 @@ class CareDataController extends Controller
 
             DB::beginTransaction();
 
-            // If care type changes, we might need to regenerate care_id
+            // If care type changes, we might need to regenerate care_id, using
+            // the same canonical format as the create paths in this controller
+            // and OrderController::updatecare(): full tier code + sequence, no
+            // date component.
             if ($request->has('lkp_care_id') && $request->lkp_care_id != $careData->lkp_care_id) {
                 $careType = Care::find($request->lkp_care_id);
-                $careTypeCode = $careType ? strtoupper(substr($careType->code, 0, 3)) : 'VIS';
-
-                // Find next sequence for new care type
-                $lastCare = CareData::where('lkp_care_id', $request->lkp_care_id)
-                    ->orderBy('id', 'desc')
-                    ->first();
-
-                $sequence = $lastCare ?
-                    intval(substr($lastCare->care_id, -4)) + 1 : 1;
-                $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-
-                $monthYear = date('my');
-                $newCareId = "{$careTypeCode}-{$monthYear}-{$sequenceNumber}";
-
-                // Ensure uniqueness
-                while (CareData::where('care_id', $newCareId)->exists()) {
-                    $sequence++;
-                    $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-                    $newCareId = "{$careTypeCode}-{$monthYear}-{$sequenceNumber}";
-                }
-
-                $careData->care_id = $newCareId;
+                $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QV-CARE';
+                $careData->care_id = BusinessId::next('care_data', 'care_id', "{$careTypeCode}-", 4);
             }
 
             // Update main fields
