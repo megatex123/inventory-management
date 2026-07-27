@@ -97,82 +97,34 @@
 
     <!-- Filters Card -->
     <div class="card mb-4">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters & Search</h5>
+        <button
+            @click="showFilters = !showFilters"
+            class="btn btn-sm btn-outline-secondary"
+        >
+            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
       </div>
-      <div class="card-body">
-        <!-- Search Bar -->
+      <transition name="filter-panel">
+      <div class="card-body" v-if="showFilters">
         <div class="row mb-3">
           <div class="col-md-12">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text bg-light">
-                  <i class="fas fa-search text-muted"></i>
-                </span>
-              </div>
-              <input
-                type="text"
-                v-model="filters.search"
-                class="form-control"
-                placeholder="Search by Customer Name, Serve ID, Customer ID, Order ID, QVSE CID, or Notes..."
-                @input="applyFilters"
-              >
-              <div class="input-group-append" v-if="filters.search">
-                <button class="btn btn-outline-secondary" @click="filters.search = ''; applyFilters()">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
+            <column-search-panel
+                :columns="filterColumns"
+                v-model="filters"
+                :visible="true"
+            />
           </div>
         </div>
 
         <div class="row">
-          <!-- Status Filter -->
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Status</label>
-              <select v-model="filters.status" class="form-control form-control-sm" @change="applyFilters">
-                <option value="">All Status</option>
-                <option value="active">Active Serves</option>
-                <option value="not_started">Not Started</option>
-                <option value="with_upgrade">With Upgrade</option>
-                <option value="started">Started</option>
-                <option value="not_started_only">Not Started Only</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Customer Filter -->
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Customer</label>
-              <select v-model="filters.customer_id" class="form-control form-control-sm" @change="applyFilters">
-                <option value="">All Customers</option>
-                <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-                  {{ customer.full_name }} ({{ customer.customer_id }})
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Serve Type Filter -->
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Serve Type</label>
-              <select v-model="filters.lkp_serve_id" class="form-control form-control-sm" @change="applyFilters">
-                <option value="">All Types</option>
-                <option v-for="serve in serves" :key="serve.id" :value="serve.id">
-                  {{ serve.name }} (RM{{ serve.fee }})
-                </option>
-              </select>
-            </div>
-          </div>
-
           <!-- Date Range Filter -->
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Date From</label>
-              <input type="date" v-model="filters.date_from" class="form-control form-control-sm" @change="applyFilters">
+              <input type="date" v-model="filters.date_from" class="form-control form-control-sm">
             </div>
           </div>
         </div>
@@ -182,7 +134,7 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Year</label>
-              <select v-model="filters.year" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.year" class="form-control form-control-sm">
                 <option value="">All Years</option>
                 <option v-for="year in availableYears" :key="year" :value="year">
                   {{ year }}
@@ -194,7 +146,7 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Month</label>
-              <select v-model="filters.month" class="form-control form-control-sm" @change="applyFilters" :disabled="!filters.year">
+              <select v-model="filters.month" class="form-control form-control-sm" :disabled="!filters.year">
                 <option value="">All Months</option>
                 <option v-for="(monthName, index) in monthNames" :key="index" :value="index + 1">
                   {{ monthName }}
@@ -207,7 +159,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Sort By</label>
-              <select v-model="filters.sortBy" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.sortBy" class="form-control form-control-sm">
                 <option value="created_at_desc">Date (Newest)</option>
                 <option value="created_at_asc">Date (Oldest)</option>
                 <option value="customer_name_asc">Customer Name (A-Z)</option>
@@ -263,6 +215,7 @@
           </div>
         </div>
       </div>
+      </transition>
     </div>
 
     <!-- Main Table -->
@@ -440,8 +393,10 @@
 <script>
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       serveData: [],
@@ -450,6 +405,7 @@ export default {
       stats: {},
       allStats: {},
       loading: true,
+      showFilters: false,
       filters: {
         search: '',
         status: '',
@@ -525,6 +481,20 @@ export default {
         }
       });
       return active;
+    },
+    filterColumns() {
+      return [
+        { key: 'search', label: 'Customer Name / Serve ID / Customer ID / Order ID / QVSE CID / Notes', type: 'text' },
+        { key: 'status', label: 'Status', type: 'select', options: [
+          { value: 'active', label: 'Active Serves' },
+          { value: 'not_started', label: 'Not Started' },
+          { value: 'with_upgrade', label: 'With Upgrade' },
+          { value: 'started', label: 'Started' },
+          { value: 'not_started_only', label: 'Not Started Only' },
+        ] },
+        { key: 'customer_id', label: 'Customer', type: 'select', options: this.customers.map(c => ({ value: c.id, label: `${c.full_name} (${c.customer_id})` })) },
+        { key: 'lkp_serve_id', label: 'Serve Type', type: 'select', options: this.serves.map(s => ({ value: s.id, label: `${s.name} (RM${s.fee})` })) },
+      ];
     }
   },
   watch: {
@@ -532,6 +502,12 @@ export default {
       if (!newYear) {
         this.filters.month = '';
       }
+    },
+    filters: {
+      handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -824,7 +800,6 @@ export default {
       };
       this.perPage = 25;
       this.currentPage = 1;
-      this.fetchServeData();
       this.stats = { ...this.allStats };
     },
 
@@ -834,7 +809,6 @@ export default {
         if (filterKey === 'year') {
           this.filters.month = '';
         }
-        this.applyFilters();
       }
     },
 
@@ -1747,5 +1721,15 @@ select:disabled {
   background-color: #e9ecef;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
