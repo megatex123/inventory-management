@@ -43,8 +43,13 @@ Introduced in Phase 1/2 (the `saveForm()`/`performanceTest = res.data.data` patt
 
 `sortSuppliers()`'s `shop_desc` case compares `b.shopname` to itself (`(b.shopname || '').localeCompare(b.shopname || '')`), which always returns `0` — the sort silently does nothing. Should be `(b.shopname || '').localeCompare(a.shopname || '')`, matching the `name_desc`/`code_desc` pattern used elsewhere in this and sibling pages (`brand`/`category`/`craft`/`sub_category`). Confirmed pre-existing (identical before the [[Frontend-Components]] "Collapsible Per-Column Search" Batch 1 migration touched this file) — found during that migration's final review, carried forward faithfully rather than fixed, since the migration's own scope was preserving existing filtering/sorting logic verbatim. Not yet fixed.
 
+## Known bug: `care_warranties.i_qvca_id` doesn't store what its name implies (found 2026-07-27)
+
+`Domain-Models.md`'s own documentation says `i_qvca_id` stores an InvCare business code (e.g. `IC-0001`) — true for 3 old manually-seeded rows, but not what the live create/edit UI does anymore. `resources/js/components/care_warranty/create.vue` and `edit.vue` both set `this.form.i_qvca_id = warranty.id.toString()`, where `warranty` comes from `ProductWarrantyController::getAvailableWarranties()`, which queries `product_warranties` — so as currently wired, new rows actually store a `product_warranties.id` raw integer PK as a string, not an InvCare code at all. Confirmed via `ProductWarrantyController.php`'s `getAvailableWarranties()`, which does a `whereNotIn('product_warranties.id', ...select('i_qvca_id')...)` subquery that only makes sense if `i_qvca_id` holds `product_warranties.id` values. Found during [[Business-ID-Normalization]]'s research (2026-07-27) — deliberately left out of that initiative's scope (it's a data-mapping bug, not a code-format inconsistency), not yet fixed.
+
 ## Related
 - [[Domain-Models]]
 - [[API-Routes]]
 - [[Architecture]]
 - [[Dev-Setup]]
+- [[Business-ID-Normalization]]

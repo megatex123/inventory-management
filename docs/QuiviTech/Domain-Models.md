@@ -106,3 +106,4 @@ Grouped by business area. All models live in `app/Models/`. Most use `SoftDelete
 - [[API-Routes]]
 - [[Work-In-Progress]]
 - [[Dev-Setup]]
+- [[Business-ID-Normalization]] — how each entity's human-readable business/display ID column (as opposed to its raw `id` PK) is generated as of 2026-07-27

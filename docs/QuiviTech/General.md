@@ -14,6 +14,7 @@ Map of content for the Quivitech project notes. Open this folder (`docs/QuiviTec
 - [[API-Routes]] — full `routes/api.php` map by feature
 - [[Frontend-Components]] — Vue component modules under `resources/js/components`
 - [[Dev-Setup]] — local dev environment: Docker workaround for host PHP, DB creds, nvm, known Doctrine/DBAL gotcha
+- [[Business-ID-Normalization]] — the shared `BusinessId::next()` helper and which entities' human-readable codes it now generates (2026-07-27)
 - [[Deployment]] — Docker + Kubernetes production deployment setup
 - [[Command]] — cheatsheet of every operational command (build/run/DB/frontend/deploy) in one place
 - [[Work-In-Progress]] — in-flight / not-yet-wired-up work
