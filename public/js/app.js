@@ -38087,7 +38087,13 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
+    staticClass: "text-right mb-2"
+  }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -38097,11 +38103,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
-    attrs: {
-      name: "filter-panel"
-    }
-  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -42721,12 +42723,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n          ")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-sm btn-link",
-    on: {
-      click: _vm.resetFilters
-    }
-  }, [_vm._v("Reset")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n          ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -42746,7 +42743,14 @@ var render = function render() {
       },
       expression: "filters"
     }
-  })], 1)]), _vm._v(" "), _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
+    staticClass: "col-md-2 text-right"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-link",
+    on: {
+      click: _vm.resetFilters
+    }
+  }, [_vm._v("Reset")])])]), _vm._v(" "), _c("div", {
     staticClass: "filter-grid mt-3"
   }, [_c("div", {
     staticClass: "form-group"
@@ -43594,7 +43598,13 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
+    staticClass: "text-right mb-2"
+  }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -43604,11 +43614,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
-    attrs: {
-      name: "filter-panel"
-    }
-  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -44385,7 +44391,13 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
+    staticClass: "text-right mb-2"
+  }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -44395,11 +44407,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
-    attrs: {
-      name: "filter-panel"
-    }
-  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -55896,16 +55904,6 @@ var render = function render() {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
-    attrs: {
-      disabled: !_vm.hasActiveFilters
-    },
-    on: {
-      click: _vm.clearFilters
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-sm btn-outline-secondary ml-1",
     on: {
       click: function click($event) {
         _vm.showFilters = !_vm.showFilters;
@@ -55921,6 +55919,18 @@ var render = function render() {
   }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
+    staticClass: "col-md-12 text-right mb-2"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    attrs: {
+      disabled: !_vm.hasActiveFilters
+    },
+    on: {
+      click: _vm.clearFilters
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-times mr-1"
+  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -58065,16 +58075,6 @@ var render = function render() {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
-    attrs: {
-      disabled: !_vm.hasActiveFilters
-    },
-    on: {
-      click: _vm.clearFilters
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-sm btn-outline-secondary ml-1",
     on: {
       click: function click($event) {
         _vm.showFilters = !_vm.showFilters;
@@ -58090,6 +58090,18 @@ var render = function render() {
   }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
+    staticClass: "col-md-12 text-right mb-2"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    attrs: {
+      disabled: !_vm.hasActiveFilters
+    },
+    on: {
+      click: _vm.clearFilters
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-times mr-1"
+  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -76302,16 +76314,6 @@ var render = function render() {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
-    attrs: {
-      disabled: !_vm.hasActiveFilters
-    },
-    on: {
-      click: _vm.clearFilters
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-sm btn-outline-secondary ml-1",
     on: {
       click: function click($event) {
         _vm.showFilters = !_vm.showFilters;
@@ -76327,6 +76329,18 @@ var render = function render() {
   }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
+    staticClass: "col-md-12 text-right mb-2"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    attrs: {
+      disabled: !_vm.hasActiveFilters
+    },
+    on: {
+      click: _vm.clearFilters
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-times mr-1"
+  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -87256,7 +87270,13 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")]), _vm._v(" "), _c("button", {
+  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
+    staticClass: "text-right mb-2"
+  }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -87266,11 +87286,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])])]), _vm._v(" "), _c("transition", {
-    attrs: {
-      name: "filter-panel"
-    }
-  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -88221,7 +88237,13 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                            " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                        ")]), _vm._v(" "), _c("button", {
+  }), _vm._v("\n                                                            " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                        ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
+    staticClass: "text-right mb-2"
+  }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
     attrs: {
       disabled: !_vm.hasActiveFilters
@@ -88231,11 +88253,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                        ")])])]), _vm._v(" "), _c("transition", {
-    attrs: {
-      name: "filter-panel"
-    }
-  }, [_vm.showFilters ? _c("div", [_c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                                                        ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -92618,16 +92636,6 @@ var render = function render() {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
-    attrs: {
-      disabled: !_vm.hasActiveFilters
-    },
-    on: {
-      click: _vm.clearFilters
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-sm btn-outline-secondary ml-1",
     on: {
       click: function click($event) {
         _vm.showFilters = !_vm.showFilters;
@@ -92643,6 +92651,18 @@ var render = function render() {
   }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
+    staticClass: "col-md-12 text-right mb-2"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary",
+    attrs: {
+      disabled: !_vm.hasActiveFilters
+    },
+    on: {
+      click: _vm.clearFilters
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-times mr-1"
+  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {

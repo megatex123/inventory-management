@@ -114,15 +114,8 @@
                             </div>
                             <div class="col-md-6 text-right">
                               <button
-                                @click="clearFilters"
-                                class="btn btn-sm btn-outline-secondary"
-                                :disabled="!hasActiveFilters"
-                              >
-                                <i class="fas fa-times mr-1"></i>Clear Filters
-                              </button>
-                              <button
                                 @click="showFilters = !showFilters"
-                                class="btn btn-sm btn-outline-secondary ml-1"
+                                class="btn btn-sm btn-outline-secondary"
                               >
                                 <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
                                 {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
@@ -133,6 +126,15 @@
                           <transition name="filter-panel">
                           <div v-if="showFilters">
                           <div class="row mt-2">
+                            <div class="col-md-12 text-right mb-2">
+                              <button
+                                @click="clearFilters"
+                                class="btn btn-sm btn-outline-secondary"
+                                :disabled="!hasActiveFilters"
+                              >
+                                <i class="fas fa-times mr-1"></i>Clear Filters
+                              </button>
+                            </div>
                             <div class="col-md-12">
                               <column-search-panel
                                   :columns="filterColumns"

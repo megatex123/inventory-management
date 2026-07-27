@@ -35,6 +35,12 @@
                                                             <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
                                                             {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
                                                         </button>
+                                                    </div>
+                                                </div>
+
+                                                <transition name="filter-panel">
+                                                <div v-if="showFilters">
+                                                    <div class="text-right mb-2">
                                                         <button
                                                             @click="clearFilters"
                                                             class="btn btn-sm btn-outline-secondary"
@@ -43,10 +49,6 @@
                                                             <i class="fas fa-times mr-1"></i>Clear Filters
                                                         </button>
                                                     </div>
-                                                </div>
-
-                                                <transition name="filter-panel">
-                                                <div v-if="showFilters">
                                                     <column-search-panel
                                                         :columns="filterColumns"
                                                         v-model="filters"

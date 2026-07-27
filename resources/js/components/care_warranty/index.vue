@@ -67,7 +67,6 @@
                 <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
                 {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
             </button>
-            <button class="btn btn-sm btn-link" @click="resetFilters">Reset</button>
           </div>
         </div>
         <transition name="filter-panel">
@@ -79,6 +78,9 @@
                 v-model="filters"
                 :visible="true"
             />
+          </div>
+          <div class="col-md-2 text-right">
+            <button class="btn btn-sm btn-link" @click="resetFilters">Reset</button>
           </div>
         </div>
         <div class="filter-grid mt-3">
