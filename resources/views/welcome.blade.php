@@ -183,23 +183,23 @@
         // Initialize all dropdowns
         $('.dropdown-toggle').dropdown();
 
-        // Reinitialize collapse functionality
+        // Reinitialize collapse functionality. Each group's target div
+        // already carries data-parent="#accordionSidebar" (see
+        // partials/sidebar-menu-item.blade.php), so Bootstrap's own collapse
+        // plugin closes sibling groups automatically as part of show() --
+        // do NOT also close siblings manually here. Bootstrap's show()
+        // refuses to open a target if it finds an "active" (.show or
+        // .collapsing) sibling within the same data-parent that is still
+        // mid-transition; a manual hide() on the sibling immediately before
+        // toggling the target puts that sibling into exactly that transition
+        // state, so the target's open would be silently dropped and require
+        // a second click to actually show. Toggling just the target and
+        // letting Bootstrap's own accordion logic close the rest avoids the
+        // race entirely.
         $('[data-toggle="collapse"]').off('click.collapse').on('click.collapse', function(e) {
           e.preventDefault();
           e.stopPropagation();
-
-          const target = $(this).data('target');
-          const $target = $(target);
-
-          // Close other collapses in the same accordion if needed
-          const $parent = $(this).closest('.accordion');
-          if ($parent.length) {
-            const $siblings = $parent.find('.collapse.show');
-            $siblings.not(target).collapse('hide');
-          }
-
-          // Toggle current collapse
-          $target.collapse('toggle');
+          $($(this).data('target')).collapse('toggle');
         });
 
         // Ensure all collapse elements are properly initialized
@@ -254,24 +254,13 @@
           setTimeout(() => {
             initBootstrapComponents();
 
-            // Close other open collapses on route change -- but never the
-            // group that already matches the new page: calling
-            // collapse('hide') then collapse('show') on the SAME element in
-            // the same tick makes Bootstrap's plugin silently ignore the
-            // show(), since it guards against a second transition starting
-            // while the hide() it just triggered is still animating. Only
-            // hiding collapses that aren't the target sidesteps that guard
-            // entirely, and also avoids an unnecessary close+reopen flicker
-            // when navigating between two pages under the same group.
-            if (from.path !== to.path) {
-              const activeCollapse = findActiveMenuCollapse();
-              $('.collapse.show').each(function() {
-                if (this !== activeCollapse) {
-                  $(this).collapse('hide');
-                }
-              });
-            }
-
+            // Opening the new page's group is enough on its own: Bootstrap's
+            // native data-parent="#accordionSidebar" accordion behavior
+            // closes whichever other group was open as an automatic part of
+            // showing this one (see the click-handler comment above for why
+            // closing it manually first would instead block the open). If
+            // the new page doesn't belong to any group, nothing here forces
+            // the previous one shut, which is harmless.
             expandActiveMenu();
           }, 100);
         });
