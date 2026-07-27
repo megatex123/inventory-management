@@ -588,6 +588,26 @@ Route::prefix('thread-orders')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| REFUND ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('refunds')->group(function () {
+    Route::get('/', 'RefundController@index');
+    Route::post('/', 'RefundController@store');
+    Route::get('/statistics', 'RefundController@statistics');
+    Route::get('/order-options', 'RefundController@orderOptions');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'RefundController@show');
+        Route::get('/edit', 'RefundController@edit');
+        Route::put('/', 'RefundController@update');
+        Route::patch('/', 'RefundController@update');
+        Route::delete('/', 'RefundController@destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | CARE DATA ROUTES (Removed duplicate, corrected)
 |--------------------------------------------------------------------------
 */

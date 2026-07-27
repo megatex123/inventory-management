@@ -80,6 +80,16 @@ All nine controllers below share one identical shape: `index`/`store`/`statistic
 
 All business codes above are generated the same way: `Model::count() + 1`, zero-padded to 4 digits, checked for uniqueness in a loop — not a DB sequence. All nine models use `SoftDeletes`, so `Model::count()` (unscoped, excludes soft-deleted rows by default) stays consistent with what's actually visible; a code only risks reuse if a row is force-deleted.
 
+## Refund (built 2026-07-27, see [[QuiviRefund]])
+
+- `prefix: refunds` → `RefundController` (`refund_id` = `QV-REFD-XXXXXX`, via the shared `BusinessId::next()` helper — see [[Business-ID-Normalization]])
+  - `GET /` → `index` (paginated list, `?search=` matches `refund_id`, `?customer_id=` filters)
+  - `POST /` → `store`
+  - `GET /statistics` → `statistics` (total/this-month/average refund amounts)
+  - `GET /order-options?search=` → `orderOptions` (lightweight `order_id`/`id` picker for the main `order` table — QuiviPlus/QuiviMerch/QuiviThread order pickers reuse those modules' own existing `/search` endpoints instead)
+  - `GET /{id}`, `GET /{id}/edit`, `PUT|PATCH /{id}`, `DELETE /{id}` → standard show/edit/update/soft-delete
+- A refund optionally links to **one** of `order_id` (covers QuiviCraft/Serve/Care, which live on the `order` record itself), `plus_order_id`, `merch_order_id`, `thread_order_id` — not enforced as mutually exclusive at the validation layer, by design (see [[QuiviRefund]]).
+
 ## Diagnostics
 - `GET /test-connection` — health check, returns timestamp/version
 - `Route::fallback` — JSON 404 with a hint list of serve-mps endpoints (debug aid left in from that module's build-out)
