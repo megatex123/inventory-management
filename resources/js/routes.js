@@ -189,6 +189,11 @@ let threadorders = require('./components/thread_orders/index.vue').default;
 let threadorderscreate = require('./components/thread_orders/create.vue').default;
 let threadordersedit = require('./components/thread_orders/edit.vue').default;
 
+//refunds
+let refunds = require('./components/refunds/index.vue').default;
+let refundscreate = require('./components/refunds/create.vue').default;
+let refundsedit = require('./components/refunds/edit.vue').default;
+
 //inventory movement
 let inventorymovement = require('./components/inventory_movement/index.vue').default;
 let inventorymovementcreate = require('./components/inventory_movement/create.vue').default;
@@ -394,6 +399,11 @@ export const routes=[
       { path: '/thread-orders', component: threadorders, name: 'threadorders', meta: { layout: 'app' } },
       { path: '/thread-orders/create', component: threadorderscreate, name: 'threadorderscreate', meta: { layout: 'app' } },
       { path: '/thread-orders/edit/:id', component: threadordersedit, name: 'threadordersedit', meta: { layout: 'app' } },
+
+      // refunds
+      { path: '/refunds', component: refunds, name: 'refunds', meta: { layout: 'app' } },
+      { path: '/refunds/create', component: refundscreate, name: 'refundscreate', meta: { layout: 'app' } },
+      { path: '/refunds/edit/:id', component: refundsedit, name: 'refundsedit', meta: { layout: 'app' } },
 
       // inventory movement
       { path: '/inventory-movements', component: inventorymovement, name: 'inventorymovement', meta: { layout: 'app' } },
