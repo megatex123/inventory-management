@@ -499,6 +499,9 @@ class CareDataController extends Controller
             // auto-create path: full tier code + sequence, no date component (fixes
             // the pre-existing inconsistency between the two entry points).
             $careType = Care::find($request->lkp_care_id);
+            // Fallback prefix intentionally matches care_data_id's own 'QV-CARE-'
+            // prefix below -- harmless, since BusinessId::next() scopes its
+            // lookup to this specific column, not across columns.
             $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QV-CARE';
             $careId = BusinessId::next('care_data', 'care_id', "{$careTypeCode}-", 4);
             $careDataId = BusinessId::next('care_data', 'care_data_id', 'QV-CARE-', 6);
