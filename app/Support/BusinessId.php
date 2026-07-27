@@ -21,7 +21,13 @@ class BusinessId
 
         $nextNumber = 1;
         if ($lastValue) {
-            preg_match('/' . preg_quote($prefix, '/') . '(\d+)/', $lastValue, $matches);
+            // Anchor on the TRAILING digits, not the first digit-run after the
+            // prefix — matches the original pre-refactor semantics (substr(-4))
+            // and is required for care_id, whose still-unbackfilled legacy rows
+            // carry an extra date segment between the prefix and the real
+            // sequence (e.g. "COR3-1402-0005"); capturing the first digit-run
+            // there would misread the date as the sequence.
+            preg_match('/(\d+)$/', $lastValue, $matches);
             $nextNumber = (isset($matches[1]) ? (int) $matches[1] : 0) + 1;
         }
 
