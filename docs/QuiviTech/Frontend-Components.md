@@ -6,9 +6,11 @@ tags: [frontend, vue]
 
 One folder per feature, mirroring the API modules in [[API-Routes]]:
 
-`auth`, `brand`, `care`, `care_data`, `care_warranty`, `category`, `craft`, `craft_inspection`, `customer`, `customer_progress`, `employee`, `expens`, `inv_care`, `inv_excl_serve`, `inventory_movement`, `master_sku`, `meeting`, `meeting_details`, `order`, `pos`, `product`, `salary`, `serve`, `serve_bek`, `serve_data`, `serve_mps`, `serve_pce`, `stock`, `sub_category`, `suppliers`, `uat_meeting` (added 2026-07-20, identical structure to `meeting_details`). (`product_warranty` removed 2026-07-20 — see [[Product-Warranty]].)
+`auth`, `brand`, `care`, `care_data`, `care_warranty`, `category`, `craft`, `craft_inspection`, `customer`, `customer_progress`, `employee`, `expens`, `inv_care`, `inv_excl_serve`, `inventory_movement`, `master_sku`, `meeting`, `meeting_details`, `order`, `pos`, `product`, `refunds`, `salary`, `serve`, `serve_bek`, `serve_data`, `serve_mps`, `serve_pce`, `stock`, `sub_category`, `suppliers`, `uat_meeting` (added 2026-07-20, identical structure to `meeting_details`). (`product_warranty` removed 2026-07-20 — see [[Product-Warranty]].)
 
 `craft_inspection`, `inv_care`, `inv_excl_serve`, `master_sku` were added after the original 2026-07-02 snapshot of this vault — see [[Work-In-Progress]] and [[Domain-Models]] for their backing tables/migration history. `customer_progress` (2026-07-11) replaced the old `document` module outright, and `inventory_movement` (2026-07-11) turned the previously UI-less `inv_move` table into a real feature — see [[Domain-Models]] for what changed in both.
+
+- **`resources/js/components/refunds/`** — `index.vue` (list + stat cards + delete), `create.vue`/`edit.vue` (customer + an optional single "Linked To" picker across Order/Plus Order/Merch Order/Thread Order, since a refund can attach to at most one), `print.vue` (letterhead receipt view, `window.print()` only — no PDF library). See [[QuiviRefund]].
 
 ## Shared Components
 

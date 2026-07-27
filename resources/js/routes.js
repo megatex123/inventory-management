@@ -193,6 +193,7 @@ let threadordersedit = require('./components/thread_orders/edit.vue').default;
 let refunds = require('./components/refunds/index.vue').default;
 let refundscreate = require('./components/refunds/create.vue').default;
 let refundsedit = require('./components/refunds/edit.vue').default;
+let refundsprint = require('./components/refunds/print.vue').default;
 
 //inventory movement
 let inventorymovement = require('./components/inventory_movement/index.vue').default;
@@ -404,6 +405,7 @@ export const routes=[
       { path: '/refunds', component: refunds, name: 'refunds', meta: { layout: 'app' } },
       { path: '/refunds/create', component: refundscreate, name: 'refundscreate', meta: { layout: 'app' } },
       { path: '/refunds/edit/:id', component: refundsedit, name: 'refundsedit', meta: { layout: 'app' } },
+      { path: '/refunds/print/:id', component: refundsprint, name: 'refundsprint', meta: { layout: 'app' } },
 
       // inventory movement
       { path: '/inventory-movements', component: inventorymovement, name: 'inventorymovement', meta: { layout: 'app' } },
