@@ -9,7 +9,6 @@
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <router-link to="/serve/create" class="btn btn-primary ml-3">Add QuiviServe</router-link>
                                     <h5 class="m-0 font-weight-bold text-primary">QuiviServe List</h5>
-                                    <input type="text" class="form-control" v-model='searchItem' id="searchItems" placeholder="Search Serve By Name or Code">
                                 </div>
 
                                 <!-- Filter Section -->
@@ -31,46 +30,29 @@
                                                         >
                                                             <i class="fas fa-times mr-1"></i>Clear Filters
                                                         </button>
+                                                        <button
+                                                            @click="showFilters = !showFilters"
+                                                            class="btn btn-sm btn-outline-secondary ml-1"
+                                                        >
+                                                            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                                            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <transition name="filter-panel">
+                                                <div v-if="showFilters">
+                                                <div class="row mt-2">
+                                                    <div class="col-md-12">
+                                                        <column-search-panel
+                                                            :columns="filterColumns"
+                                                            v-model="filters"
+                                                            :visible="true"
+                                                        />
                                                     </div>
                                                 </div>
 
                                                 <div class="row mt-2">
-                                                    <!-- Fee Range Filter -->
-                                                    <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Fee Range</label>
-                                                        <select
-                                                            v-model="filters.feeRange"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="">All Fees</option>
-                                                            <option value="free">Free (RM 0)</option>
-                                                            <option value="low">Low (RM 1 - 100)</option>
-                                                            <option value="medium">Medium (RM 101 - 500)</option>
-                                                            <option value="high">High (RM 501+)</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <!-- Color Filter -->
-                                                    <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Color</label>
-                                                        <select
-                                                            v-model="filters.color"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="">All Colors</option>
-                                                            <option
-                                                                v-for="color in availableColors"
-                                                                :key="color"
-                                                                :value="color"
-                                                                :style="{ color: getTextColor(color), backgroundColor: color }"
-                                                            >
-                                                                {{ color }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
                                                     <!-- Code Filter -->
                                                     <div class="col-md-3 mb-2">
                                                         <label class="small font-weight-bold text-muted">Code Starts With</label>
@@ -129,6 +111,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                </div>
+                                                </transition>
                                             </div>
                                         </div>
                                     </div>
@@ -241,12 +225,16 @@
 </template>
 
 <script>
+    import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
     export default {
+        components: { ColumnSearchPanel },
         data() {
             return {
                 serves: [],
-                searchItem:'',
+                showFilters: false,
                 filters: {
+                    search: '',
                     feeRange: '',
                     color: '',
                     codeStartsWith: '',
@@ -369,6 +357,7 @@
             },
             clearFilters() {
                 this.filters = {
+                    search: '',
                     feeRange: '',
                     color: '',
                     codeStartsWith: '',
@@ -397,6 +386,10 @@
                         'code_desc': 'Code Z-A'
                     }
                 };
+
+                if (key === 'search') {
+                    return `Search: ${value}`;
+                }
 
                 if (key === 'color') {
                     return `Color: ${value}`;
@@ -437,12 +430,24 @@
             }
         },
         computed: {
+            filterColumns() {
+                return [
+                    { key: 'search', label: 'Name / Code / Description', type: 'text' },
+                    { key: 'feeRange', label: 'Fee Range', type: 'select', options: [
+                        { value: 'free', label: 'Free (RM 0)' },
+                        { value: 'low', label: 'Low (RM 1 - 100)' },
+                        { value: 'medium', label: 'Medium (RM 101 - 500)' },
+                        { value: 'high', label: 'High (RM 501+)' },
+                    ] },
+                    { key: 'color', label: 'Color', type: 'select', options: this.availableColors.map(c => ({ value: c, label: c })) },
+                ];
+            },
             filteredServes() {
                 let filtered = this.serves;
 
                 // Apply text search
-                if (this.searchItem) {
-                    const keyword = this.searchItem.toLowerCase();
+                if (this.filters.search) {
+                    const keyword = this.filters.search.toLowerCase();
                     filtered = filtered.filter(data =>
                         (data.name && data.name.toLowerCase().includes(keyword)) ||
                         (data.code && data.code.toLowerCase().includes(keyword)) ||
@@ -512,10 +517,6 @@
 </script>
 
 <style scoped>
-    #searchItems {
-        width: 270px !important;
-    }
-
     .table th, .table td {
         vertical-align: middle !important;
     }
@@ -581,11 +582,6 @@
             align-items: flex-start !important;
         }
 
-        #searchItems {
-            width: 100% !important;
-            margin-top: 10px;
-        }
-
         .table-responsive {
             font-size: 0.8rem;
         }
@@ -602,5 +598,15 @@
             padding: 6px 10px;
             font-size: 0.8em;
         }
+    }
+
+    .filter-panel-enter-active,
+    .filter-panel-leave-active {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .filter-panel-enter,
+    .filter-panel-leave-to {
+        opacity: 0;
+        transform: translateY(-8px);
     }
 </style>
