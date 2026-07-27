@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\products;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class PosController extends Controller
@@ -105,9 +106,7 @@ public function orderdone(Request $request)
         $careTierId = 3; // VIS10N
     }
 
-    $nextId = DB::table('order')->max('id') + 1;
-    $orderNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-    $orderId = 'QV-ORDR-' . $orderNumber;
+    $orderId = BusinessId::next('order', 'order_id', 'QV-ORDR-', 6);
 
     $data = [
         'order_id' => $orderId,
