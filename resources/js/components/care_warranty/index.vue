@@ -59,55 +59,29 @@
       <div class="card-body">
         <div class="filter-header">
           <h5>Filters</h5>
-          <button class="btn btn-sm btn-link" @click="resetFilters">Reset</button>
+          <div>
+            <button
+                @click="showFilters = !showFilters"
+                class="btn btn-sm btn-outline-secondary mr-2"
+            >
+                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+            </button>
+            <button class="btn btn-sm btn-link" @click="resetFilters">Reset</button>
+          </div>
         </div>
-        <div class="filter-grid">
-          <div class="form-group">
-            <label>Warranty ID</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="filters.care_warranty_id"
-              @keyup.enter="applyFilters"
-              placeholder="Search by warranty ID"
-            >
+        <transition name="filter-panel">
+        <div v-if="showFilters">
+        <div class="row">
+          <div class="col-md-10">
+            <column-search-panel
+                :columns="filterColumns"
+                v-model="filters"
+                :visible="true"
+            />
           </div>
-          <div class="form-group">
-            <label>Invoice ID</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="filters.care_invoice_id"
-              @keyup.enter="applyFilters"
-              placeholder="Search by invoice ID"
-            >
-          </div>
-          <div class="form-group">
-            <label>Item Name</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="filters.product_id"
-              @keyup.enter="applyFilters"
-              placeholder="Search by item name"
-            >
-          </div>
-          <div class="form-group">
-            <label>Warranty Status</label>
-            <select class="form-control" v-model="filters.warranty_status">
-              <option value="">All</option>
-              <option value="active">Active</option>
-              <option value="expired">Expired</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Reset Status</label>
-            <select class="form-control" v-model="filters.reset_status">
-              <option value="">All</option>
-              <option value="1">Yes</option>
-              <option value="0">No</option>
-            </select>
-          </div>
+        </div>
+        <div class="filter-grid mt-3">
           <div class="form-group">
             <label>Date Start From</label>
             <input
@@ -125,26 +99,13 @@
             >
           </div>
         </div>
-        <div class="filter-actions">
-          <button class="btn btn-primary" @click="applyFilters">
-            <i class="fas fa-search"></i> Apply Filters
-          </button>
         </div>
+        </transition>
       </div>
     </div>
 
     <!-- Search and Per Page -->
     <div class="table-toolbar">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input
-          type="text"
-          class="form-control"
-          v-model="searchTerm"
-          @keyup.enter="handleSearch"
-          placeholder="Search by ID, Invoice, Item..."
-        >
-      </div>
       <div class="per-page">
         <label>Show</label>
         <select class="form-control" v-model="perPage" @change="fetchData">
@@ -424,16 +385,34 @@
 import axios from 'axios'
 import $ from 'jquery'
 import Swal from 'sweetalert2'
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
 
 export default {
   name: 'CareWarrantyIndex',
+  components: { ColumnSearchPanel },
   data() {
     return {
       items: [],
       statistics: null,
       loading: false,
       deleting: false,
+      showFilters: false,
+      filterColumns: [
+        { key: 'search', label: 'Warranty ID / Invoice ID / Item / QVCA ID / Spare Item', type: 'text' },
+        { key: 'care_warranty_id', label: 'Warranty ID', type: 'text' },
+        { key: 'care_invoice_id', label: 'Invoice ID', type: 'text' },
+        { key: 'product_id', label: 'Item Name', type: 'text' },
+        { key: 'warranty_status', label: 'Warranty Status', type: 'select', options: [
+          { value: 'active', label: 'Active' },
+          { value: 'expired', label: 'Expired' },
+        ] },
+        { key: 'reset_status', label: 'Reset Status', type: 'select', options: [
+          { value: '1', label: 'Yes' },
+          { value: '0', label: 'No' },
+        ] },
+      ],
       filters: {
+        search: '',
         care_warranty_id: '',
         care_invoice_id: '',
         product_id: '',
@@ -442,7 +421,6 @@ export default {
         date_start_from: '',
         date_start_to: ''
       },
-      searchTerm: '',
       sortField: 'created_at',
       sortDirection: 'desc',
       perPage: 10,
@@ -491,6 +469,14 @@ export default {
       return pages
     }
   },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters()
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.fetchData()
     this.fetchStatistics()
@@ -521,10 +507,6 @@ export default {
                 per_page: this.perPage,
                 sort_field: this.sortField,
                 sort_direction: this.sortDirection
-            }
-
-            if (this.searchTerm) {
-                params.search = this.searchTerm
             }
 
             Object.keys(this.filters).forEach(key => {
@@ -834,7 +816,6 @@ export default {
       try {
         const params = {
           ...this.filters,
-          search: this.searchTerm,
           per_page: 10000,
           page: 1,
           sort_field: this.sortField,
@@ -1008,6 +989,7 @@ export default {
 
     resetFilters() {
       this.filters = {
+        search: '',
         care_warranty_id: '',
         care_invoice_id: '',
         product_id: '',
@@ -1016,13 +998,6 @@ export default {
         date_start_from: '',
         date_start_to: ''
       }
-      this.searchTerm = ''
-      this.applyFilters()
-    },
-
-    handleSearch() {
-      this.meta.current_page = 1
-      this.fetchData()
     },
 
     sort(field) {
@@ -1201,27 +1176,11 @@ export default {
   margin-bottom: 15px;
 }
 
-.search-box {
-  position: relative;
-  width: 300px;
-}
-
-.search-box i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6c757d;
-}
-
-.search-box input {
-  padding-left: 35px;
-}
-
 .per-page {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
 }
 
 .per-page select {
@@ -1314,14 +1273,20 @@ export default {
     gap: 10px;
   }
 
-  .search-box {
-    width: 100%;
-  }
-
   .pagination-wrapper {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
   }
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
