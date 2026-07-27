@@ -33,6 +33,7 @@ One note per connected module in [[Workflow]], in flow order:
 - [[QuiviMerch]] — merch store (2026-07-15)
 - [[QuiviPlus]] — paid add-on services (2026-07-15)
 - [[QuiviThread]] — custom sleeved-cable BOM configurator (2026-07-15)
+- [[QuiviRefund]] — customer refund records (2026-07-27)
 - [[HR-Operations]] — employees/salaries/expenses (disconnected from the customer flow)
 
 ## Quick facts

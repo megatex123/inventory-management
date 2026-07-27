@@ -22,3 +22,4 @@ Unlike QuiviMerch, there's no discount concept here — `PlusOrderController::st
 - [[QuiviCraft]] — the order a QuiviPlus job can optionally attach to
 - [[Domain-Models]]
 - [[API-Routes]]
+- [[QuiviRefund]] — the refund schema exists and can technically link to a QuiviPlus order despite this module's "no refunds" policy; see [[QuiviRefund]] for why that's not enforced
