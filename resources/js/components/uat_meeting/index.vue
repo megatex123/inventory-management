@@ -16,14 +16,6 @@
                     <h5 class="m-0 font-weight-bold text-primary">
                       UAT Meeting
                     </h5>
-
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="searchItem"
-                      id="searchItems"
-                      placeholder="Search by meeting ID or notes"
-                    />
                   </div>
 
                   <!-- Statistics Cards -->
@@ -128,68 +120,25 @@
                               >
                                 <i class="fas fa-times mr-1"></i>Clear Filters
                               </button>
+                              <button
+                                @click="showFilters = !showFilters"
+                                class="btn btn-sm btn-outline-secondary ml-1"
+                              >
+                                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                              </button>
                             </div>
                           </div>
 
+                          <transition name="filter-panel">
+                          <div v-if="showFilters">
                           <div class="row mt-2">
-                            <!-- Reason Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Reason</label>
-                              <select
-                                v-model="filters.reason"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Reasons</option>
-                                <option value="1">Work</option>
-                                <option value="2">Gaming</option>
-                              </select>
-                            </div>
-
-                            <!-- Budget Range Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Budget Range</label>
-                              <select
-                                v-model="filters.budgetRange"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Budgets</option>
-                                <option value="low">Low (&lt; RM 7,000)</option>
-                                <option value="medium">Medium (RM 7,000 - 10,000)</option>
-                                <option value="high">High (&gt; RM 10,000)</option>
-                              </select>
-                            </div>
-
-                            <!-- Case Size Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Case Size</label>
-                              <select
-                                v-model="filters.caseSize"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Sizes</option>
-                                <option value="1">ITX</option>
-                                <option value="2">MATX</option>
-                                <option value="3">ATX</option>
-                              </select>
-                            </div>
-
-                            <!-- Features Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Features</label>
-                              <select
-                                v-model="filters.features"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Features</option>
-                                <option value="future_proof">Future Proof</option>
-                                <option value="aio">AIO Compatible</option>
-                                <option value="gpu_sag">GPU Sag Concern</option>
-                                <option value="rgb">RGB Needed</option>
-                              </select>
+                            <div class="col-md-12">
+                              <column-search-panel
+                                  :columns="filterColumns"
+                                  v-model="filters"
+                                  :visible="true"
+                              />
                             </div>
                           </div>
 
@@ -214,6 +163,8 @@
                               </div>
                             </div>
                           </div>
+                          </div>
+                          </transition>
                         </div>
                       </div>
                     </div>
@@ -460,12 +411,37 @@
 
 <script>
 import Swal from 'sweetalert2';
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 
 export default {
+  components: { ColumnSearchPanel },
   data() {
     return {
       uatMeetings: [],
-      searchItem: '',
+      showFilters: false,
+      filterColumns: [
+        { key: 'search', label: 'Meeting ID / Theme / Preference / Exemption / Location', type: 'text' },
+        { key: 'reason', label: 'Reason', type: 'select', options: [
+          { value: '1', label: 'Work' },
+          { value: '2', label: 'Gaming' },
+        ] },
+        { key: 'budgetRange', label: 'Budget Range', type: 'select', options: [
+          { value: 'low', label: 'Low (< RM 7,000)' },
+          { value: 'medium', label: 'Medium (RM 7,000 - 10,000)' },
+          { value: 'high', label: 'High (> RM 10,000)' },
+        ] },
+        { key: 'caseSize', label: 'Case Size', type: 'select', options: [
+          { value: '1', label: 'ITX' },
+          { value: '2', label: 'MATX' },
+          { value: '3', label: 'ATX' },
+        ] },
+        { key: 'features', label: 'Features', type: 'select', options: [
+          { value: 'future_proof', label: 'Future Proof' },
+          { value: 'aio', label: 'AIO Compatible' },
+          { value: 'gpu_sag', label: 'GPU Sag Concern' },
+          { value: 'rgb', label: 'RGB Needed' },
+        ] },
+      ],
       statistics: {
         total: 0,
         gaming: 0,
@@ -475,6 +451,7 @@ export default {
         withMonitor: 0
       },
       filters: {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -490,8 +467,8 @@ export default {
       let filtered = this.uatMeetings;
 
       // Apply text search
-      if (this.searchItem) {
-        const keyword = this.searchItem.toLowerCase();
+      if (this.filters.search) {
+        const keyword = this.filters.search.toLowerCase();
         filtered = filtered.filter(detail => {
           // Existing search logic
           if (detail.meeting && detail.meeting.meeting_id &&
@@ -641,6 +618,7 @@ export default {
     },
     clearFilters() {
       this.filters = {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -675,6 +653,10 @@ export default {
           'rgb': 'RGB Needed'
         }
       };
+
+      if (key === 'search') {
+        return `Search: ${value}`;
+      }
 
       return labels[key] && labels[key][value]
         ? `${key.replace(/_/g, ' ').toUpperCase()}: ${labels[key][value]}`
@@ -731,10 +713,6 @@ export default {
 </script>
 
 <style scoped>
-#searchItems {
-  width: 300px !important;
-}
-
 .table th, .table td {
   vertical-align: middle !important;
 }
@@ -818,11 +796,6 @@ export default {
     align-items: flex-start !important;
   }
 
-  #searchItems {
-    width: 100% !important;
-    margin-top: 10px;
-  }
-
   .table-responsive {
     font-size: 0.8rem;
   }
@@ -838,5 +811,15 @@ export default {
   .statistics-cards .col-xl-3 {
     margin-bottom: 15px;
   }
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
