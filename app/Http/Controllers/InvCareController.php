@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InvCare;
 use App\Models\MasterSku;
 use App\Models\Categories;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -123,8 +124,8 @@ class InvCareController extends Controller
 
         DB::beginTransaction();
         try {
-            $nextId = InvCare::count() + 1;
-            $invCareCode = 'IC-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $categoryName = Categories::find($request->category)->name ?? 'MISC';
+            $invCareCode = BusinessId::next('inv_care', 'inv_care', "IC-{$categoryName}-", 4);
 
             $invCare = InvCare::create([
                 'inv_care' => $invCareCode,
