@@ -14375,12 +14375,59 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
       meetings: [],
-      searchItem: '',
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Customer / Title / Meeting ID / Notes',
+        type: 'text'
+      }, {
+        key: 'dateRange',
+        label: 'Date Range',
+        type: 'select',
+        options: [{
+          value: 'today',
+          label: 'Today'
+        }, {
+          value: 'yesterday',
+          label: 'Yesterday'
+        }, {
+          value: 'thisWeek',
+          label: 'This Week'
+        }, {
+          value: 'lastWeek',
+          label: 'Last Week'
+        }, {
+          value: 'thisMonth',
+          label: 'This Month'
+        }, {
+          value: 'lastMonth',
+          label: 'Last Month'
+        }, {
+          value: 'thisYear',
+          label: 'This Year'
+        }]
+      }, {
+        key: 'hasDocument',
+        label: 'Document',
+        type: 'select',
+        options: [{
+          value: 'yes',
+          label: 'With Document'
+        }, {
+          value: 'no',
+          label: 'Without Document'
+        }]
+      }],
       statistics: {
         total: 0,
         thisMonth: 0,
@@ -14388,6 +14435,7 @@ __webpack_require__.r(__webpack_exports__);
         last7Days: 0
       },
       filters: {
+        search: '',
         dateRange: '',
         month: '',
         year: '',
@@ -14406,8 +14454,8 @@ __webpack_require__.r(__webpack_exports__);
       var filtered = this.meetings;
 
       // Apply text search
-      if (this.searchItem) {
-        var keyword = this.searchItem.toLowerCase();
+      if (this.filters.search) {
+        var keyword = this.filters.search.toLowerCase();
         filtered = filtered.filter(function (m) {
           var _m$customer, _m$customer2;
           return ((_m$customer = m.customer) === null || _m$customer === void 0 ? void 0 : _m$customer.full_name) && m.customer.full_name.toLowerCase().includes(keyword) || ((_m$customer2 = m.customer) === null || _m$customer2 === void 0 ? void 0 : _m$customer2.phone) && m.customer.phone.toLowerCase().includes(keyword) || m.meeting_date && m.meeting_date.toLowerCase().includes(keyword) || m.title && m.title.toLowerCase().includes(keyword) || m.meeting_id && m.meeting_id.toLowerCase().includes(keyword) || m.meeting_notes && m.meeting_notes.toLowerCase().includes(keyword);
@@ -14565,6 +14613,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
+        search: '',
         dateRange: '',
         month: '',
         year: '',
@@ -14606,6 +14655,9 @@ __webpack_require__.r(__webpack_exports__);
           'no': 'Without Document'
         }
       };
+      if (key === 'search') {
+        return "Search: ".concat(value);
+      }
       if (key === 'year') {
         return "Year: ".concat(value);
       }
@@ -15016,12 +15068,78 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
       meetingDetails: [],
-      searchItem: '',
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        type: 'text'
+      }, {
+        key: 'reason',
+        label: 'Reason',
+        type: 'select',
+        options: [{
+          value: '1',
+          label: 'Work'
+        }, {
+          value: '2',
+          label: 'Gaming'
+        }]
+      }, {
+        key: 'budgetRange',
+        label: 'Budget Range',
+        type: 'select',
+        options: [{
+          value: 'low',
+          label: 'Low (< RM 7,000)'
+        }, {
+          value: 'medium',
+          label: 'Medium (RM 7,000 - 10,000)'
+        }, {
+          value: 'high',
+          label: 'High (> RM 10,000)'
+        }]
+      }, {
+        key: 'caseSize',
+        label: 'Case Size',
+        type: 'select',
+        options: [{
+          value: '1',
+          label: 'ITX'
+        }, {
+          value: '2',
+          label: 'MATX'
+        }, {
+          value: '3',
+          label: 'ATX'
+        }]
+      }, {
+        key: 'features',
+        label: 'Features',
+        type: 'select',
+        options: [{
+          value: 'future_proof',
+          label: 'Future Proof'
+        }, {
+          value: 'aio',
+          label: 'AIO Compatible'
+        }, {
+          value: 'gpu_sag',
+          label: 'GPU Sag Concern'
+        }, {
+          value: 'rgb',
+          label: 'RGB Needed'
+        }]
+      }],
       statistics: {
         total: 0,
         gaming: 0,
@@ -15031,6 +15149,7 @@ __webpack_require__.r(__webpack_exports__);
         withMonitor: 0
       },
       filters: {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -15047,8 +15166,8 @@ __webpack_require__.r(__webpack_exports__);
       var filtered = this.meetingDetails;
 
       // Apply text search
-      if (this.searchItem) {
-        var keyword = this.searchItem.toLowerCase();
+      if (this.filters.search) {
+        var keyword = this.filters.search.toLowerCase();
         filtered = filtered.filter(function (detail) {
           // Existing search logic
           if (detail.meeting && detail.meeting.meeting_id && detail.meeting.meeting_id.toLowerCase().includes(keyword)) {
@@ -15219,6 +15338,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -15253,6 +15373,9 @@ __webpack_require__.r(__webpack_exports__);
           'rgb': 'RGB Needed'
         }
       };
+      if (key === 'search') {
+        return "Search: ".concat(value);
+      }
       return labels[key] && labels[key][value] ? "".concat(key.replace(/_/g, ' ').toUpperCase(), ": ").concat(labels[key][value]) : "".concat(key, ": ").concat(value);
     },
     deleteMeeting: function deleteMeeting(id) {
@@ -35342,12 +35465,78 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
       uatMeetings: [],
-      searchItem: '',
+      showFilters: false,
+      filterColumns: [{
+        key: 'search',
+        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        type: 'text'
+      }, {
+        key: 'reason',
+        label: 'Reason',
+        type: 'select',
+        options: [{
+          value: '1',
+          label: 'Work'
+        }, {
+          value: '2',
+          label: 'Gaming'
+        }]
+      }, {
+        key: 'budgetRange',
+        label: 'Budget Range',
+        type: 'select',
+        options: [{
+          value: 'low',
+          label: 'Low (< RM 7,000)'
+        }, {
+          value: 'medium',
+          label: 'Medium (RM 7,000 - 10,000)'
+        }, {
+          value: 'high',
+          label: 'High (> RM 10,000)'
+        }]
+      }, {
+        key: 'caseSize',
+        label: 'Case Size',
+        type: 'select',
+        options: [{
+          value: '1',
+          label: 'ITX'
+        }, {
+          value: '2',
+          label: 'MATX'
+        }, {
+          value: '3',
+          label: 'ATX'
+        }]
+      }, {
+        key: 'features',
+        label: 'Features',
+        type: 'select',
+        options: [{
+          value: 'future_proof',
+          label: 'Future Proof'
+        }, {
+          value: 'aio',
+          label: 'AIO Compatible'
+        }, {
+          value: 'gpu_sag',
+          label: 'GPU Sag Concern'
+        }, {
+          value: 'rgb',
+          label: 'RGB Needed'
+        }]
+      }],
       statistics: {
         total: 0,
         gaming: 0,
@@ -35357,6 +35546,7 @@ __webpack_require__.r(__webpack_exports__);
         withMonitor: 0
       },
       filters: {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -35373,8 +35563,8 @@ __webpack_require__.r(__webpack_exports__);
       var filtered = this.uatMeetings;
 
       // Apply text search
-      if (this.searchItem) {
-        var keyword = this.searchItem.toLowerCase();
+      if (this.filters.search) {
+        var keyword = this.filters.search.toLowerCase();
         filtered = filtered.filter(function (detail) {
           // Existing search logic
           if (detail.meeting && detail.meeting.meeting_id && detail.meeting.meeting_id.toLowerCase().includes(keyword)) {
@@ -35545,6 +35735,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearFilters: function clearFilters() {
       this.filters = {
+        search: '',
         reason: '',
         budgetRange: '',
         caseSize: '',
@@ -35579,6 +35770,9 @@ __webpack_require__.r(__webpack_exports__);
           'rgb': 'RGB Needed'
         }
       };
+      if (key === 'search') {
+        return "Search: ".concat(value);
+      }
       return labels[key] && labels[key][value] ? "".concat(key.replace(/_/g, ' ').toUpperCase(), ": ").concat(labels[key][value]) : "".concat(key, ": ").concat(value);
     },
     deleteMeeting: function deleteMeeting(id) {
@@ -54832,29 +55026,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                    Create Meeting\n                  ")]), _vm._v(" "), _c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    Meetings\n                  ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.searchItem,
-      expression: "searchItem"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "searchItems",
-      placeholder: "Search Meetings By Customer"
-    },
-    domProps: {
-      value: _vm.searchItem
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.searchItem = $event.target.value;
-      }
-    }
-  })], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    Meetings\n                  ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -54934,64 +55106,39 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary ml-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Date Range")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.dateRange,
-      expression: "filters.dateRange"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "dateRange", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
+    staticClass: "col-md-12"
+  }, [_c("column-search-panel", {
     attrs: {
-      value: ""
+      columns: _vm.filterColumns,
+      visible: true
+    },
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_vm._v("All Dates")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "today"
-    }
-  }, [_vm._v("Today")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "yesterday"
-    }
-  }, [_vm._v("Yesterday")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "thisWeek"
-    }
-  }, [_vm._v("This Week")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "lastWeek"
-    }
-  }, [_vm._v("Last Week")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "thisMonth"
-    }
-  }, [_vm._v("This Month")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "lastMonth"
-    }
-  }, [_vm._v("Last Month")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "thisYear"
-    }
-  }, [_vm._v("This Year")])])]), _vm._v(" "), _c("div", {
+  })], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "row mt-2"
+  }, [_c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
@@ -55100,42 +55247,7 @@ var render = function render() {
         value: year
       }
     }, [_vm._v("\n                                " + _vm._s(year) + "\n                              ")]);
-  })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Document")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.hasDocument,
-      expression: "filters.hasDocument"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "hasDocument", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "yes"
-    }
-  }, [_vm._v("With Document")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "no"
-    }
-  }, [_vm._v("Without Document")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
     staticClass: "col-12"
@@ -55158,7 +55270,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()]) : _vm._e()])], 1)])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
@@ -57083,29 +57195,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                    Create Meeting Details\n                  ")]), _vm._v(" "), _c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    Meeting Details\n                  ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.searchItem,
-      expression: "searchItem"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "searchItems",
-      placeholder: "Search by meeting ID or notes"
-    },
-    domProps: {
-      value: _vm.searchItem
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.searchItem = $event.target.value;
-      }
-    }
-  })], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    Meeting Details\n                  ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -57185,165 +57275,37 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary ml-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Reason")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.reason,
-      expression: "filters.reason"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "reason", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
+    staticClass: "col-md-12"
+  }, [_c("column-search-panel", {
     attrs: {
-      value: ""
+      columns: _vm.filterColumns,
+      visible: true
+    },
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_vm._v("All Reasons")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("Work")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "2"
-    }
-  }, [_vm._v("Gaming")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Budget Range")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.budgetRange,
-      expression: "filters.budgetRange"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "budgetRange", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Budgets")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "low"
-    }
-  }, [_vm._v("Low (< RM 7,000)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "medium"
-    }
-  }, [_vm._v("Medium (RM 7,000 - 10,000)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "high"
-    }
-  }, [_vm._v("High (> RM 10,000)")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Case Size")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.caseSize,
-      expression: "filters.caseSize"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "caseSize", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Sizes")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("ITX")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "2"
-    }
-  }, [_vm._v("MATX")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "3"
-    }
-  }, [_vm._v("ATX")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Features")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.features,
-      expression: "filters.features"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "features", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Features")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "future_proof"
-    }
-  }, [_vm._v("Future Proof")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "aio"
-    }
-  }, [_vm._v("AIO Compatible")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "gpu_sag"
-    }
-  }, [_vm._v("GPU Sag Concern")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "rgb"
-    }
-  }, [_vm._v("RGB Needed")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  })], 1)]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
     staticClass: "col-12"
@@ -57366,7 +57328,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()]) : _vm._e()])], 1)])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
@@ -90658,29 +90620,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                    Create UAT Meeting\n                  ")]), _vm._v(" "), _c("h5", {
     staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    UAT Meeting\n                  ")]), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.searchItem,
-      expression: "searchItem"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "text",
-      id: "searchItems",
-      placeholder: "Search by meeting ID or notes"
-    },
-    domProps: {
-      value: _vm.searchItem
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.searchItem = $event.target.value;
-      }
-    }
-  })], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                    UAT Meeting\n                  ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -90760,165 +90700,37 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                            ")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary ml-1",
+    on: {
+      click: function click($event) {
+        _vm.showFilters = !_vm.showFilters;
+      }
+    }
+  }, [_c("i", {
+    staticClass: "fas",
+    "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
+  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+    attrs: {
+      name: "filter-panel"
+    }
+  }, [_vm.showFilters ? _c("div", [_c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Reason")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.reason,
-      expression: "filters.reason"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "reason", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
+    staticClass: "col-md-12"
+  }, [_c("column-search-panel", {
     attrs: {
-      value: ""
+      columns: _vm.filterColumns,
+      visible: true
+    },
+    model: {
+      value: _vm.filters,
+      callback: function callback($$v) {
+        _vm.filters = $$v;
+      },
+      expression: "filters"
     }
-  }, [_vm._v("All Reasons")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("Work")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "2"
-    }
-  }, [_vm._v("Gaming")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Budget Range")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.budgetRange,
-      expression: "filters.budgetRange"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "budgetRange", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Budgets")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "low"
-    }
-  }, [_vm._v("Low (< RM 7,000)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "medium"
-    }
-  }, [_vm._v("Medium (RM 7,000 - 10,000)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "high"
-    }
-  }, [_vm._v("High (> RM 10,000)")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Case Size")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.caseSize,
-      expression: "filters.caseSize"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "caseSize", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Sizes")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("ITX")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "2"
-    }
-  }, [_vm._v("MATX")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "3"
-    }
-  }, [_vm._v("ATX")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Features")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.features,
-      expression: "filters.features"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "features", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: ""
-    }
-  }, [_vm._v("All Features")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "future_proof"
-    }
-  }, [_vm._v("Future Proof")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "aio"
-    }
-  }, [_vm._v("AIO Compatible")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "gpu_sag"
-    }
-  }, [_vm._v("GPU Sag Concern")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "rgb"
-    }
-  }, [_vm._v("RGB Needed")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  })], 1)]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
     staticClass: "col-12"
@@ -90941,7 +90753,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-times"
     })])]);
-  }), 0)])]) : _vm._e()])])])]), _vm._v(" "), _c("div", {
+  }), 0)])]) : _vm._e()]) : _vm._e()])], 1)])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
@@ -96539,7 +96351,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n#searchItems[data-v-4771e67a] {\n  width: 270px !important;\n}\n.table th[data-v-4771e67a], .table td[data-v-4771e67a] {\n  vertical-align: middle !important;\n}\n.badge[data-v-4771e67a] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.btn-sm[data-v-4771e67a] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-4771e67a] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-4771e67a] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-4771e67a] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-4771e67a] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-4771e67a] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-4771e67a] {\n  gap: 0.5rem;\n}\n\n/* Read More button */\n.btn-link[data-v-4771e67a] {\n  text-decoration: none;\n  font-size: 0.8em;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-4771e67a] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n#searchItems[data-v-4771e67a] {\n    width: 100% !important;\n    margin-top: 10px;\n}\n.table-responsive[data-v-4771e67a] {\n    font-size: 0.8rem;\n}\n.badge[data-v-4771e67a] {\n    font-size: 0.7em;\n}\n.col-md-3[data-v-4771e67a] {\n    margin-bottom: 10px;\n}\n.col-xl-3[data-v-4771e67a] {\n    margin-bottom: 15px;\n}\n}\nimg[data-v-4771e67a] {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.bg-highlight-purple[data-v-4771e67a] {\n  background: rgba(111, 66, 193, 0.15);\n  padding: 6px 12px;\n  border-radius: 6px;\n  display: inline-block;\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-4771e67a], .table td[data-v-4771e67a] {\n  vertical-align: middle !important;\n}\n.badge[data-v-4771e67a] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.btn-sm[data-v-4771e67a] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-4771e67a] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-4771e67a] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-4771e67a] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-4771e67a] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-4771e67a] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-4771e67a] {\n  gap: 0.5rem;\n}\n\n/* Read More button */\n.btn-link[data-v-4771e67a] {\n  text-decoration: none;\n  font-size: 0.8em;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-4771e67a] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-4771e67a] {\n    font-size: 0.8rem;\n}\n.badge[data-v-4771e67a] {\n    font-size: 0.7em;\n}\n.col-md-3[data-v-4771e67a] {\n    margin-bottom: 10px;\n}\n.col-xl-3[data-v-4771e67a] {\n    margin-bottom: 15px;\n}\n}\nimg[data-v-4771e67a] {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.bg-highlight-purple[data-v-4771e67a] {\n  background: rgba(111, 66, 193, 0.15);\n  padding: 6px 12px;\n  border-radius: 6px;\n  display: inline-block;\n}\n.filter-panel-enter-active[data-v-4771e67a],\n.filter-panel-leave-active[data-v-4771e67a] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-4771e67a],\n.filter-panel-leave-to[data-v-4771e67a] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -96596,7 +96408,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n#searchItems[data-v-37b353f4] {\n  width: 300px !important;\n}\n.table th[data-v-37b353f4], .table td[data-v-37b353f4] {\n  vertical-align: middle !important;\n}\n.badge[data-v-37b353f4] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-37b353f4] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-37b353f4] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-37b353f4] {\n  color: #28a745 !important;\n}\n.text-info[data-v-37b353f4] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-37b353f4] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-37b353f4] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-37b353f4] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-37b353f4] {\n  font-size: 0.9em;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-37b353f4] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-37b353f4] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-37b353f4] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-37b353f4] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Filter Section */\n.filter-card[data-v-37b353f4] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-37b353f4] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-37b353f4] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-37b353f4] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n#searchItems[data-v-37b353f4] {\n    width: 100% !important;\n    margin-top: 10px;\n}\n.table-responsive[data-v-37b353f4] {\n    font-size: 0.8rem;\n}\n.badge[data-v-37b353f4] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-37b353f4] {\n    margin-bottom: 10px;\n}\n.statistics-cards .col-xl-3[data-v-37b353f4] {\n    margin-bottom: 15px;\n}\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-37b353f4], .table td[data-v-37b353f4] {\n  vertical-align: middle !important;\n}\n.badge[data-v-37b353f4] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-37b353f4] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-37b353f4] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-37b353f4] {\n  color: #28a745 !important;\n}\n.text-info[data-v-37b353f4] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-37b353f4] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-37b353f4] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-37b353f4] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-37b353f4] {\n  font-size: 0.9em;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-37b353f4] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-37b353f4] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-37b353f4] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-37b353f4] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Filter Section */\n.filter-card[data-v-37b353f4] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-37b353f4] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-37b353f4] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-37b353f4] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-37b353f4] {\n    font-size: 0.8rem;\n}\n.badge[data-v-37b353f4] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-37b353f4] {\n    margin-bottom: 10px;\n}\n.statistics-cards .col-xl-3[data-v-37b353f4] {\n    margin-bottom: 15px;\n}\n}\n.filter-panel-enter-active[data-v-37b353f4],\n.filter-panel-leave-active[data-v-37b353f4] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-37b353f4],\n.filter-panel-leave-to[data-v-37b353f4] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
@@ -98135,7 +97947,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n#searchItems[data-v-12d35da8] {\n  width: 300px !important;\n}\n.table th[data-v-12d35da8], .table td[data-v-12d35da8] {\n  vertical-align: middle !important;\n}\n.badge[data-v-12d35da8] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-12d35da8] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-12d35da8] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-12d35da8] {\n  color: #28a745 !important;\n}\n.text-info[data-v-12d35da8] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-12d35da8] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-12d35da8] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-12d35da8] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-12d35da8] {\n  font-size: 0.9em;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-12d35da8] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-12d35da8] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-12d35da8] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-12d35da8] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Filter Section */\n.filter-card[data-v-12d35da8] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-12d35da8] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-12d35da8] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-12d35da8] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n#searchItems[data-v-12d35da8] {\n    width: 100% !important;\n    margin-top: 10px;\n}\n.table-responsive[data-v-12d35da8] {\n    font-size: 0.8rem;\n}\n.badge[data-v-12d35da8] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-12d35da8] {\n    margin-bottom: 10px;\n}\n.statistics-cards .col-xl-3[data-v-12d35da8] {\n    margin-bottom: 15px;\n}\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-12d35da8], .table td[data-v-12d35da8] {\n  vertical-align: middle !important;\n}\n.badge[data-v-12d35da8] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-12d35da8] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-12d35da8] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-12d35da8] {\n  color: #28a745 !important;\n}\n.text-info[data-v-12d35da8] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-12d35da8] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-12d35da8] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-12d35da8] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-12d35da8] {\n  font-size: 0.9em;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-12d35da8] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-12d35da8] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-12d35da8] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-12d35da8] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Filter Section */\n.filter-card[data-v-12d35da8] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-12d35da8] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-12d35da8] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-12d35da8] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-12d35da8] {\n    font-size: 0.8rem;\n}\n.badge[data-v-12d35da8] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-12d35da8] {\n    margin-bottom: 10px;\n}\n.statistics-cards .col-xl-3[data-v-12d35da8] {\n    margin-bottom: 15px;\n}\n}\n.filter-panel-enter-active[data-v-12d35da8],\n.filter-panel-leave-active[data-v-12d35da8] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-12d35da8],\n.filter-panel-leave-to[data-v-12d35da8] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
