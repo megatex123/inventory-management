@@ -82,36 +82,26 @@
 
     <!-- Filters -->
     <div class="card mb-4">
-      <div class="card-header bg-light">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h5 class="m-0 font-weight-bold text-primary">
           <i class="fas fa-filter mr-2"></i>Filter Records
         </h5>
+        <button
+            @click="showFilters = !showFilters"
+            class="btn btn-sm btn-outline-secondary"
+        >
+            <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+            {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
       </div>
-      <div class="card-body">
+      <transition name="filter-panel">
+      <div class="card-body" v-if="showFilters">
         <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Search QVSE CID</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
-              </div>
-              <input
-                type="text"
-                v-model="filters.qvse_cid"
-                class="form-control"
-                placeholder="Enter QVSE CID..."
-                @keyup.enter="applyFilters"
-              />
-            </div>
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label">Serve Data ID</label>
-            <input
-              type="text"
-              v-model="filters.serve_data_id"
-              class="form-control"
-              placeholder="Enter Serve Data ID"
-              @keyup.enter="applyFilters"
+          <div class="col-md-8">
+            <column-search-panel
+                :columns="filterColumns"
+                v-model="filters"
+                :visible="true"
             />
           </div>
           <div class="col-md-2 mb-3">
@@ -120,7 +110,6 @@
               type="date"
               v-model="filters.date_from"
               class="form-control"
-              @change="applyFilters"
             />
           </div>
           <div class="col-md-2 mb-3">
@@ -129,21 +118,18 @@
               type="date"
               v-model="filters.date_to"
               class="form-control"
-              @change="applyFilters"
             />
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button @click="applyFilters" class="btn btn-primary mr-2">
-              <i class="fas fa-search mr-1"></i> Search
-            </button>
             <button @click="resetFilters" class="btn btn-secondary">
               <i class="fas fa-redo mr-1"></i> Reset
             </button>
           </div>
         </div>
       </div>
+      </transition>
     </div>
 
     <!-- Loading State -->
@@ -364,8 +350,11 @@
 </template>
 
 <script>
+import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+
 export default {
   name: 'ServeBekIndex',
+  components: { ColumnSearchPanel },
   data() {
     return {
       serveBeks: {
@@ -382,6 +371,11 @@ export default {
       deleting: false,
       showDeleteModal: false,
       itemToDelete: null,
+      showFilters: false,
+      filterColumns: [
+        { key: 'qvse_cid', label: 'QVSE CID', type: 'text' },
+        { key: 'serve_data_id', label: 'Serve Data ID', type: 'text' },
+      ],
       filters: {
         qvse_cid: '',
         serve_data_id: '',
@@ -420,6 +414,14 @@ export default {
       });
 
       return rangeWithDots;
+    }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -578,7 +580,6 @@ export default {
         date_to: '',
       };
       this.serveBeks.current_page = 1;
-      this.fetchServeBeks();
     },
 
     changePage(page) {
@@ -714,5 +715,15 @@ export default {
 
 .modal {
   z-index: 1050;
+}
+
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
