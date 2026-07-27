@@ -7,7 +7,12 @@ Beyond basic inventory/POS, it covers three linked service programs tied to each
 - **QuiviServe** — post-build service tiers: BEK / MPS / PCE, each with its own claim tracking
 - **QuiviCare** — RMA/warranty & spare-parts inventory (`care_data`, `care_warranty`, `inv_care`)
 
-Plus Inventory Movement tracking (stock transfers linked to `master_sku`/`destination`/orders) and Customer Progress tracking (per-customer milestone/status tracking).
+Plus three standalone storefront/configurator modules:
+- **QuiviMerch** — merch store
+- **QuiviPlus** — paid add-on services
+- **QuiviThread** — custom sleeved-cable BOM configurator
+
+And Inventory Movement tracking (stock transfers linked to `master_sku`/`destination`/orders), Customer Progress tracking (per-customer milestone/status tracking), and a set of QC report forms (Studio Inspection, Performance Testing, OnSite Handover) for QuiviCare's build/repair workflow.
 
 ---
 
@@ -71,7 +76,7 @@ Every migration in `database/migrations/` runs cleanly on an empty database (`mi
 
 ## Production deployment
 
-Ships as a Docker image to Kubernetes; `docker-compose.yaml` in this repo is a reference for running the published image standalone. See `docs/QuiviTech/Deployment.md`.
+Deploys are a Docker image build + push to a private registry, then a `docker compose` restart on the deploy server — see `docker-build-push.sh` for the exact steps, or `docs/QuiviTech/Command.md` for the operational cheatsheet. (This repo also has Kubernetes manifests under `deployment/`, but they're not the currently-used deploy path.) See `docs/QuiviTech/Deployment.md` for the full writeup.
 
 ---
 
