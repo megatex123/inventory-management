@@ -12,6 +12,7 @@ class CareData extends Model
 
     protected $fillable = [
         'care_id',
+        'care_data_id',
         'customer_id',
         'order_id',
         'lkp_care_id',

@@ -364,24 +364,12 @@ class OrderController extends Controller
                 } else {
                     $careType = Care::find($lkp_care_id);
                     $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QV-CARE';
-                    $lastCare = CareData::where('lkp_care_id', $lkp_care_id)
-                        ->orderBy('id', 'desc')
-                        ->first();
-
-                    $sequence = $lastCare ?
-                        intval(substr($lastCare->care_id, -4)) + 1 : 1;
-                    $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-                    $careId = "{$careTypeCode}-{$sequenceNumber}";
-
-                    // Ensure uniqueness
-                    while (CareData::where('care_id', $careId)->exists()) {
-                        $sequence++;
-                        $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-                        $careId = "{$careTypeCode}-{$sequenceNumber}";
-                    }
+                    $careId = BusinessId::next('care_data', 'care_id', "{$careTypeCode}-", 4);
+                    $careDataId = BusinessId::next('care_data', 'care_data_id', 'QV-CARE-', 6);
 
                     $careData = CareData::create([
                         'care_id' => $careId,
+                        'care_data_id' => $careDataId,
                         'customer_id' => $order->customer_id,
                         'order_id' => $order->id,
                         'lkp_care_id' => $lkp_care_id,

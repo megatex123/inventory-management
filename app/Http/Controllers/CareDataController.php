@@ -6,6 +6,7 @@ use App\Models\CareData;
 use App\Models\Care;
 use App\Models\Customers;
 use App\Models\Order;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -494,32 +495,17 @@ class CareDataController extends Controller
 
             DB::beginTransaction();
 
-            // Generate unique care_id based on QVCA pattern
+            // Generate care_id using the same canonical format as OrderController's
+            // auto-create path: full tier code + sequence, no date component (fixes
+            // the pre-existing inconsistency between the two entry points).
             $careType = Care::find($request->lkp_care_id);
-            $careTypeCode = $careType ? strtoupper(substr($careType->code, 0, 3)) : 'VIS';
-
-            // Find next sequence for this care type
-            $lastCare = CareData::where('lkp_care_id', $request->lkp_care_id)
-                ->orderBy('id', 'desc')
-                ->first();
-
-            $sequence = $lastCare ?
-                intval(substr($lastCare->care_id, -4)) + 1 : 1;
-            $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-
-            // Generate care ID: QVCA-2712-0001 pattern
-            $monthYear = date('my'); // Format: 2712 for December 2027
-            $careId = "{$careTypeCode}-{$monthYear}-{$sequenceNumber}";
-
-            // Ensure uniqueness
-            while (CareData::where('care_id', $careId)->exists()) {
-                $sequence++;
-                $sequenceNumber = str_pad($sequence, 4, '0', STR_PAD_LEFT);
-                $careId = "{$careTypeCode}-{$monthYear}-{$sequenceNumber}";
-            }
+            $careTypeCode = $careType ? strtoupper(substr($careType->code, 0)) : 'QV-CARE';
+            $careId = BusinessId::next('care_data', 'care_id', "{$careTypeCode}-", 4);
+            $careDataId = BusinessId::next('care_data', 'care_data_id', 'QV-CARE-', 6);
 
             $careData = CareData::create([
                 'care_id' => $careId,
+                'care_data_id' => $careDataId,
                 'customer_id' => $request->customer_id,
                 'order_id' => $request->order_id,
                 'lkp_care_id' => $request->lkp_care_id,
