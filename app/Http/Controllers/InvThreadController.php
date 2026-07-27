@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InvThread;
 use App\Models\MasterSku;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -102,8 +103,7 @@ class InvThreadController extends Controller
 
         DB::beginTransaction();
         try {
-            $nextId = InvThread::count() + 1;
-            $code = 'I-QVMR-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            $code = BusinessId::next('inv_thread', 'inv_thread_id', 'I-QVTD-', 4);
 
             $item = InvThread::create([
                 'inv_thread_id' => $code,
