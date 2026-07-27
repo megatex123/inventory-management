@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
@@ -29,9 +30,7 @@ class SuppliersController extends Controller
 
         try {
 
-            $nextId = DB::table('suppliers')->max('id') + 1;
-            $meetingNumber = str_pad($nextId, 4, '0', STR_PAD_LEFT);
-            $supplierId = 'QV-SUPP-' . $meetingNumber;
+            $supplierId = BusinessId::next('suppliers', 'supplier_id', 'QV-SUPP-', 6);
 
             $data = [
                 'name' => $request->name,
