@@ -12,6 +12,24 @@ Grouped by business area. All models live in `app/Models/`. Most use `SoftDelete
 - `Suppliers`, `Customers` → hasMany `Order`
 - `Employees`, `Salaries`
 
+### Numeric-meaning columns stored as `varchar` (List Page Standardization initiative)
+
+Confirmed live via `information_schema.COLUMNS` (2026-07-29) — these columns hold numeric (or, for the two `salary_*` date/period columns, date-like) data but are typed `varchar(191)`, not a numeric/date column:
+
+| Table | Column(s) |
+|---|---|
+| `craft` | `fee` |
+| `care` | `fee` |
+| `expenses` | `amount` |
+| `products` | `price` |
+| `salaries` | `amount`, `salary_date`, `salary_month`, `salary_year` |
+
+**The recipe (apply identically wherever one of these columns needs sorting or range filtering):**
+- Sorting requires `CAST(column AS DECIMAL(10,2))` via `orderByRaw()` — never a plain `orderBy()`, which does lexicographic string comparison (e.g. `"9.99"` would sort after `"600.00"`).
+- Range/min-max filtering requires the same `CAST` via `whereRaw()` with bound parameters — never raw string interpolation.
+
+`craft.fee` was the first of these handled, in `CraftController::index()`'s `sort_by=fee` and `min_fee`/`max_fee` filters (see [[API-Routes]]). `care`, `expens`, `product`, and `salary` are all list pages still pending migration in this same initiative — when each is migrated, its numeric-typed-as-`varchar` column(s) above will need the same treatment.
+
 ## Orders / POS
 - `Order` — central hub: belongsTo `Customers`, `Craft`, `Serves`, `Care`; hasMany `ServeData` (`order_id`), hasMany `CareData` (`order_id`)
 - `OrderDetails` — belongsTo `Order`, belongsTo `Products` (`pro_id`); `hasOneThrough` (check for warranty linkage)
