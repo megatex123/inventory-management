@@ -55795,30 +55795,20 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("div", {
+  return _c("div", {
     staticClass: "row justify-content-center"
-  }, [_c("div", {
-    staticClass: "col-xl-12 col-lg-12 col-md-12"
-  }, [_c("div", {
-    staticClass: "card shadow-sm my-5"
-  }, [_c("div", {
-    staticClass: "card-body p-0"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
-  }, [_c("router-link", {
-    staticClass: "btn btn-primary ml-3",
+  }, [_c("h2", {
+    staticClass: "mb-1 font-weight-bold text-primary"
+  }, [_vm._v("Meetings")]), _vm._v(" "), _c("router-link", {
+    staticClass: "btn btn-primary m-0",
     attrs: {
       to: "/meeting/create"
     }
-  }, [_vm._v("\n                    Create Meeting\n                  ")]), _vm._v(" "), _c("h5", {
-    staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    Meetings\n                  ")])], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n        Create Meeting\n      ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -55832,9 +55822,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-primary text-uppercase mb-1"
-  }, [_vm._v("\n                              Total Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Total Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.total) + "\n                            ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.total) + "\n                ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-success shadow-sm h-100 py-2"
@@ -55846,9 +55836,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-success text-uppercase mb-1"
-  }, [_vm._v("\n                              This Month\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  This Month\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.thisMonth) + "\n                            ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.thisMonth) + "\n                ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-info shadow-sm h-100 py-2"
@@ -55860,9 +55850,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-info text-uppercase mb-1"
-  }, [_vm._v("\n                              With Documents\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  With Documents\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.withDocuments) + "\n                            ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.withDocuments) + "\n                ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-warning shadow-sm h-100 py-2"
@@ -55874,9 +55864,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-warning text-uppercase mb-1"
-  }, [_vm._v("\n                              Recent (Last 7 Days)\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Recent (Last 7 Days)\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.last7Days) + "\n                            ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.last7Days) + "\n                ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mb-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -55898,7 +55888,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n                  " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -55916,7 +55906,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -56040,7 +56030,7 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                " + _vm._s(year) + "\n                              ")]);
+    }, [_vm._v("\n                    " + _vm._s(year) + "\n                  ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -56051,7 +56041,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                "), _c("button", {
+    }, [_vm._v("\n                    " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                    "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -56081,18 +56071,18 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(meeting.customer.phone))])])])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(meeting.title))]), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge badge-primary"
-    }, [_vm._v("\n                            " + _vm._s(_vm.formatDate(meeting.meeting_date)) + "\n                          ")]), _vm._v(" "), _c("br"), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                " + _vm._s(_vm.formatDate(meeting.meeting_date)) + "\n              ")]), _vm._v(" "), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
-    }, [_vm._v(_vm._s(_vm.formatDay(meeting.meeting_date)))])]), _vm._v(" "), _c("td", [meeting.meeting_notes ? _c("div", [_vm._v("\n                            " + _vm._s(meeting.meeting_notes.length > 50 ? meeting.meeting_notes.substring(0, 50) + "..." : meeting.meeting_notes) + "\n                            "), meeting.meeting_notes.length > 50 ? _c("button", {
+    }, [_vm._v(_vm._s(_vm.formatDay(meeting.meeting_date)))])]), _vm._v(" "), _c("td", [meeting.meeting_notes ? _c("div", [_vm._v("\n                " + _vm._s(meeting.meeting_notes.length > 50 ? meeting.meeting_notes.substring(0, 50) + "..." : meeting.meeting_notes) + "\n                "), meeting.meeting_notes.length > 50 ? _c("button", {
       staticClass: "btn btn-link btn-sm p-0 ml-1",
       on: {
         click: function click($event) {
           return _vm.toggleNotes(meeting.id);
         }
       }
-    }, [_vm._v("\n                              " + _vm._s(_vm.expandedNotes.includes(meeting.id) ? "Show Less" : "Read More") + "\n                            ")]) : _vm._e(), _vm._v(" "), _vm.expandedNotes.includes(meeting.id) ? _c("div", {
+    }, [_vm._v("\n                  " + _vm._s(_vm.expandedNotes.includes(meeting.id) ? "Show Less" : "Read More") + "\n                ")]) : _vm._e(), _vm._v(" "), _vm.expandedNotes.includes(meeting.id) ? _c("div", {
       staticClass: "mt-1"
-    }, [_vm._v("\n                              " + _vm._s(meeting.meeting_notes) + "\n                            ")]) : _vm._e()]) : _c("span", {
+    }, [_vm._v("\n                  " + _vm._s(meeting.meeting_notes) + "\n                ")]) : _vm._e()]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", [meeting.document ? _c("a", {
       staticClass: "btn btn-sm btn-info",
@@ -56102,7 +56092,7 @@ var render = function render() {
       }
     }, [_c("i", {
       staticClass: "fas fa-file-alt mr-1"
-    }), _vm._v("View\n                          ")]) : _c("span", {
+    }), _vm._v("View\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("No document")])]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "btn-group",
@@ -56130,7 +56120,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -56173,7 +56163,7 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters\n                            ")])]);
+  }), _vm._v("Filters\n                ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -56204,7 +56194,7 @@ var staticRenderFns = [function () {
     }
   }, [_c("i", {
     staticClass: "fas fa-inbox fa-2x mb-2"
-  }), _c("br"), _vm._v("\n                          No meetings found.\n                        ")]);
+  }), _c("br"), _vm._v("\n              No meetings found.\n            ")]);
 }];
 render._withStripped = true;
 
@@ -57966,30 +57956,20 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("div", {
+  return _c("div", {
     staticClass: "row justify-content-center"
-  }, [_c("div", {
-    staticClass: "col-xl-12 col-lg-12 col-md-12"
-  }, [_c("div", {
-    staticClass: "card shadow-sm my-5"
-  }, [_c("div", {
-    staticClass: "card-body p-0"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
-  }, [_c("router-link", {
-    staticClass: "btn btn-primary ml-3",
+  }, [_c("h2", {
+    staticClass: "mb-1 font-weight-bold text-primary"
+  }, [_vm._v("Meeting Details")]), _vm._v(" "), _c("router-link", {
+    staticClass: "btn btn-primary m-0",
     attrs: {
       to: "/meeting-details/create"
     }
-  }, [_vm._v("\n                    Create Meeting Details\n                  ")]), _vm._v(" "), _c("h5", {
-    staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    Meeting Details\n                  ")])], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n        Create Meeting Details\n      ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -58003,9 +57983,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-primary text-uppercase mb-1"
-  }, [_vm._v("\n                              Total Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Total Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.total) + "\n                            ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.total) + "\n                ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-success shadow-sm h-100 py-2"
@@ -58017,9 +57997,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-success text-uppercase mb-1"
-  }, [_vm._v("\n                              Gaming Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Gaming Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.gaming) + "\n                            ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.gaming) + "\n                ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-info shadow-sm h-100 py-2"
@@ -58031,9 +58011,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-info text-uppercase mb-1"
-  }, [_vm._v("\n                              Work Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Work Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.work) + "\n                            ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.work) + "\n                ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-warning shadow-sm h-100 py-2"
@@ -58045,9 +58025,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-warning text-uppercase mb-1"
-  }, [_vm._v("\n                              Avg Budget\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Avg Budget\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              RM " + _vm._s(_vm.formatPrice(_vm.statistics.avgBudget)) + "\n                            ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  RM " + _vm._s(_vm.formatPrice(_vm.statistics.avgBudget)) + "\n                ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mb-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -58069,7 +58049,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n                  " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -58087,7 +58067,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -58111,7 +58091,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                "), _c("button", {
+    }, [_vm._v("\n                    " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                    "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -58133,11 +58113,11 @@ var render = function render() {
       key: detail.id
     }, [_c("td", {
       staticClass: "text-center"
-    }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                            " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                            " + _vm._s(detail.meeting.customer.full_name) + "\n                          ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                            " + _vm._s(detail.meeting_id) + "\n                          ")]) : _c("span", {
+    }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_c("div", {
       staticClass: "d-flex flex-column align-items-center"
@@ -58147,25 +58127,25 @@ var render = function render() {
       staticClass: "badge badge-primary"
     }, [_c("i", {
       staticClass: "fas fa-briefcase mr-1"
-    }), _vm._v(" Work\n                              ")]) : detail.reason == 2 ? _c("span", {
+    }), _vm._v(" Work\n                  ")]) : detail.reason == 2 ? _c("span", {
       staticClass: "badge badge-success"
     }, [_c("i", {
       staticClass: "fas fa-gamepad mr-1"
-    }), _vm._v(" Gaming\n                              ")]) : _c("span", {
+    }), _vm._v(" Gaming\n                  ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), detail.reason == 2 ? _c("div", [detail.play_mode == 1 ? _c("span", {
       staticClass: "badge badge-info badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-users mr-1"
-    }), _vm._v(" Multiplayer\n                              ")]) : detail.play_mode == 2 ? _c("span", {
+    }), _vm._v(" Multiplayer\n                  ")]) : detail.play_mode == 2 ? _c("span", {
       staticClass: "badge badge-warning badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-user mr-1"
-    }), _vm._v(" Singleplayer\n                              ")]) : _c("span", {
+    }), _vm._v(" Singleplayer\n                  ")]) : _c("span", {
       staticClass: "badge badge-secondary badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-question mr-1"
-    }), _vm._v(" Not Specified\n                              ")])]) : _vm._e()])]), _vm._v(" "), _c("td", {
+    }), _vm._v(" Not Specified\n                  ")])]) : _vm._e()])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.include_monitor ? _c("span", {
       staticClass: "badge badge-light"
@@ -58173,19 +58153,19 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.include_monitor == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.include_monitor == 1 ? "Yes" : "No") + "\n                                  ")])]), _vm._v(" "), detail.include_monitor == 1 ? [_vm._v("\n                                  " + _vm._s(detail.include_notes) + "\n                              ")] : _vm._e()], 2) : _c("span", {
+    }, [_vm._v("\n                      " + _vm._s(detail.include_monitor == 1 ? "Yes" : "No") + "\n                      ")])]), _vm._v(" "), detail.include_monitor == 1 ? [_vm._v("\n                      " + _vm._s(detail.include_notes) + "\n                  ")] : _vm._e()], 2) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.theme_style ? _c("span", {
       staticClass: "badge badge-dark"
-    }, [_vm._v("\n                            " + _vm._s(detail.theme_style) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(detail.theme_style) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          " + _vm._s(detail.preference || "-") + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              " + _vm._s(detail.preference || "-") + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          " + _vm._s(detail.exemption || "-") + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              " + _vm._s(detail.exemption || "-") + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center",
       staticStyle: {
         "min-width": "200px"
@@ -58198,7 +58178,7 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.future_proof == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.future_proof == 1 ? "Yes" : "No") + "\n                                ")])])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                      " + _vm._s(detail.future_proof == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between mb-2"
     }, [_vm._m(7, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
@@ -58218,13 +58198,13 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.okay_with_aio == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.okay_with_aio == 1 ? "Yes" : "No") + "\n                                ")])])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                      " + _vm._s(detail.okay_with_aio == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between"
     }, [_vm._m(9, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.gpu_sag == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.gpu_sag == 1 ? "Yes" : "No") + "\n                                ")])])])])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n                      " + _vm._s(detail.gpu_sag == 1 ? "Yes" : "No") + "\n                    ")])])])])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_c("div", {
       staticClass: "d-flex flex-column"
@@ -58232,27 +58212,27 @@ var render = function render() {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvcrf_tag == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVCRF: " + _vm._s(detail.qvcrf_tag == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                    QVCRF: " + _vm._s(detail.qvcrf_tag == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvse == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVSE: " + _vm._s(detail.qvse == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                    QVSE: " + _vm._s(detail.qvse == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvca == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVCA: " + _vm._s(detail.qvca == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", [_c("span", {
+    }, [_vm._v("\n                    QVCA: " + _vm._s(detail.qvca == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", [_c("span", {
       "class": detail.qvtd == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVTD: " + _vm._s(detail.qvtd == 1 ? "Yes" : "No") + "\n                                "), _c("br"), _vm._v(" "), detail.qvtd == 1 ? [_vm._v("\n                                  Notes: " + _vm._s(detail.qvtd_notes) + "\n                                ")] : _vm._e()], 2)])])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n                    QVTD: " + _vm._s(detail.qvtd == 1 ? "Yes" : "No") + "\n                    "), _c("br"), _vm._v(" "), detail.qvtd == 1 ? [_vm._v("\n                      Notes: " + _vm._s(detail.qvtd_notes) + "\n                    ")] : _vm._e()], 2)])])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.target_build_date ? _c("span", {
       staticClass: "badge badge-dark"
-    }, [_vm._v("\n                            " + _vm._s(_vm.formatDate(detail.target_build_date)) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(_vm.formatDate(detail.target_build_date)) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.target_location ? _c("span", {
       staticClass: "badge badge-primary"
-    }, [_vm._v("\n                            " + _vm._s(detail.target_location) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(detail.target_location) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
@@ -58282,7 +58262,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(10)]) : _vm._e()], 2)])])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(10)]) : _vm._e()], 2)])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -58325,7 +58305,7 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters\n                            ")])]);
+  }), _vm._v("Filters\n                ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -58406,7 +58386,7 @@ var staticRenderFns = [function () {
     }
   }, [_c("i", {
     staticClass: "fas fa-inbox fa-2x mb-2"
-  }), _c("br"), _vm._v("\n                          No meeting details found.\n                        ")]);
+  }), _c("br"), _vm._v("\n              No meeting details found.\n            ")]);
 }];
 render._withStripped = true;
 
@@ -92476,30 +92456,20 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("div", {
+  return _c("div", {
     staticClass: "row justify-content-center"
-  }, [_c("div", {
-    staticClass: "col-xl-12 col-lg-12 col-md-12"
-  }, [_c("div", {
-    staticClass: "card shadow-sm my-5"
-  }, [_c("div", {
-    staticClass: "card-body p-0"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
-  }, [_c("router-link", {
-    staticClass: "btn btn-primary ml-3",
+  }, [_c("h2", {
+    staticClass: "mb-1 font-weight-bold text-primary"
+  }, [_vm._v("UAT Meeting")]), _vm._v(" "), _c("router-link", {
+    staticClass: "btn btn-primary m-0",
     attrs: {
       to: "/uat-meeting/create"
     }
-  }, [_vm._v("\n                    Create UAT Meeting\n                  ")]), _vm._v(" "), _c("h5", {
-    staticClass: "m-0 font-weight-bold text-primary"
-  }, [_vm._v("\n                    UAT Meeting\n                  ")])], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n        UAT Meeting\n      ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mt-3 px-3"
   }, [_c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
@@ -92513,9 +92483,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-primary text-uppercase mb-1"
-  }, [_vm._v("\n                              Total Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Total Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.total) + "\n                            ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.total) + "\n                ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-success shadow-sm h-100 py-2"
@@ -92527,9 +92497,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-success text-uppercase mb-1"
-  }, [_vm._v("\n                              Gaming Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Gaming Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.gaming) + "\n                            ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.gaming) + "\n                ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-info shadow-sm h-100 py-2"
@@ -92541,9 +92511,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-info text-uppercase mb-1"
-  }, [_vm._v("\n                              Work Meetings\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Work Meetings\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              " + _vm._s(_vm.statistics.work) + "\n                            ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.work) + "\n                ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-3 col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card border-left-warning shadow-sm h-100 py-2"
@@ -92555,9 +92525,9 @@ var render = function render() {
     staticClass: "col mr-2"
   }, [_c("div", {
     staticClass: "text-xs font-weight-bold text-warning text-uppercase mb-1"
-  }, [_vm._v("\n                              Avg Budget\n                            ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  Avg Budget\n                ")]), _vm._v(" "), _c("div", {
     staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                              RM " + _vm._s(_vm.formatPrice(_vm.statistics.avgBudget)) + "\n                            ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                  RM " + _vm._s(_vm.formatPrice(_vm.statistics.avgBudget)) + "\n                ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mb-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -92579,7 +92549,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                              " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                            ")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n                  " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -92597,7 +92567,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                            ")])]), _vm._v(" "), _c("div", {
+  }), _vm._v("Clear Filters\n                ")])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-12"
   }, [_c("column-search-panel", {
     attrs: {
@@ -92621,7 +92591,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                "), _c("button", {
+    }, [_vm._v("\n                    " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                    "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -92643,11 +92613,11 @@ var render = function render() {
       key: detail.id
     }, [_c("td", {
       staticClass: "text-center"
-    }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                            " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                            " + _vm._s(detail.meeting.customer.full_name) + "\n                          ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                            " + _vm._s(detail.meeting_id) + "\n                          ")]) : _c("span", {
+    }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_c("div", {
       staticClass: "d-flex flex-column align-items-center"
@@ -92657,25 +92627,25 @@ var render = function render() {
       staticClass: "badge badge-primary"
     }, [_c("i", {
       staticClass: "fas fa-briefcase mr-1"
-    }), _vm._v(" Work\n                              ")]) : detail.reason == 2 ? _c("span", {
+    }), _vm._v(" Work\n                  ")]) : detail.reason == 2 ? _c("span", {
       staticClass: "badge badge-success"
     }, [_c("i", {
       staticClass: "fas fa-gamepad mr-1"
-    }), _vm._v(" Gaming\n                              ")]) : _c("span", {
+    }), _vm._v(" Gaming\n                  ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), detail.reason == 2 ? _c("div", [detail.play_mode == 1 ? _c("span", {
       staticClass: "badge badge-info badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-users mr-1"
-    }), _vm._v(" Multiplayer\n                              ")]) : detail.play_mode == 2 ? _c("span", {
+    }), _vm._v(" Multiplayer\n                  ")]) : detail.play_mode == 2 ? _c("span", {
       staticClass: "badge badge-warning badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-user mr-1"
-    }), _vm._v(" Singleplayer\n                              ")]) : _c("span", {
+    }), _vm._v(" Singleplayer\n                  ")]) : _c("span", {
       staticClass: "badge badge-secondary badge-sm"
     }, [_c("i", {
       staticClass: "fas fa-question mr-1"
-    }), _vm._v(" Not Specified\n                              ")])]) : _vm._e()])]), _vm._v(" "), _c("td", {
+    }), _vm._v(" Not Specified\n                  ")])]) : _vm._e()])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.include_monitor ? _c("span", {
       staticClass: "badge badge-light"
@@ -92683,19 +92653,19 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.include_monitor == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.include_monitor == 1 ? "Yes" : "No") + "\n                                  ")])]), _vm._v(" "), detail.include_monitor == 1 ? [_vm._v("\n                                  " + _vm._s(detail.include_notes) + "\n                              ")] : _vm._e()], 2) : _c("span", {
+    }, [_vm._v("\n                      " + _vm._s(detail.include_monitor == 1 ? "Yes" : "No") + "\n                      ")])]), _vm._v(" "), detail.include_monitor == 1 ? [_vm._v("\n                      " + _vm._s(detail.include_notes) + "\n                  ")] : _vm._e()], 2) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.theme_style ? _c("span", {
       staticClass: "badge badge-dark"
-    }, [_vm._v("\n                            " + _vm._s(detail.theme_style) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(detail.theme_style) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          " + _vm._s(detail.preference || "-") + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              " + _vm._s(detail.preference || "-") + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
-    }, [_vm._v("\n                          " + _vm._s(detail.exemption || "-") + "\n                        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n              " + _vm._s(detail.exemption || "-") + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center",
       staticStyle: {
         "min-width": "200px"
@@ -92708,7 +92678,7 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.future_proof == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.future_proof == 1 ? "Yes" : "No") + "\n                                ")])])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                      " + _vm._s(detail.future_proof == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between mb-2"
     }, [_vm._m(7, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
@@ -92728,13 +92698,13 @@ var render = function render() {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.okay_with_aio == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.okay_with_aio == 1 ? "Yes" : "No") + "\n                                ")])])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                      " + _vm._s(detail.okay_with_aio == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between"
     }, [_vm._m(9, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.gpu_sag == 1 ? "badge badge-success" : "badge badge-danger"
-    }, [_vm._v("\n                                  " + _vm._s(detail.gpu_sag == 1 ? "Yes" : "No") + "\n                                ")])])])])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n                      " + _vm._s(detail.gpu_sag == 1 ? "Yes" : "No") + "\n                    ")])])])])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_c("div", {
       staticClass: "d-flex flex-column"
@@ -92742,27 +92712,27 @@ var render = function render() {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvcrf_tag == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVCRF: " + _vm._s(detail.qvcrf_tag == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                    QVCRF: " + _vm._s(detail.qvcrf_tag == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvse == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVSE: " + _vm._s(detail.qvse == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", {
+    }, [_vm._v("\n                    QVSE: " + _vm._s(detail.qvse == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", {
       staticClass: "mb-1"
     }, [_c("span", {
       "class": detail.qvca == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVCA: " + _vm._s(detail.qvca == 1 ? "Yes" : "No") + "\n                              ")])]), _vm._v(" "), _c("small", [_c("span", {
+    }, [_vm._v("\n                    QVCA: " + _vm._s(detail.qvca == 1 ? "Yes" : "No") + "\n                  ")])]), _vm._v(" "), _c("small", [_c("span", {
       "class": detail.qvtd == 1 ? "badge badge-success badge-sm" : "badge badge-danger badge-sm"
-    }, [_vm._v("\n                                QVTD: " + _vm._s(detail.qvtd == 1 ? "Yes" : "No") + "\n                                "), _c("br"), _vm._v(" "), detail.qvtd == 1 ? [_vm._v("\n                                  Notes: " + _vm._s(detail.qvtd_notes) + "\n                                ")] : _vm._e()], 2)])])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n                    QVTD: " + _vm._s(detail.qvtd == 1 ? "Yes" : "No") + "\n                    "), _c("br"), _vm._v(" "), detail.qvtd == 1 ? [_vm._v("\n                      Notes: " + _vm._s(detail.qvtd_notes) + "\n                    ")] : _vm._e()], 2)])])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.target_build_date ? _c("span", {
       staticClass: "badge badge-dark"
-    }, [_vm._v("\n                            " + _vm._s(_vm.formatDate(detail.target_build_date)) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(_vm.formatDate(detail.target_build_date)) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [detail.target_location ? _c("span", {
       staticClass: "badge badge-primary"
-    }, [_vm._v("\n                            " + _vm._s(detail.target_location) + "\n                          ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(detail.target_location) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
@@ -92792,7 +92762,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(10)]) : _vm._e()], 2)])])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(10)]) : _vm._e()], 2)])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -92835,7 +92805,7 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters\n                            ")])]);
+  }), _vm._v("Filters\n                ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -92916,7 +92886,7 @@ var staticRenderFns = [function () {
     }
   }, [_c("i", {
     staticClass: "fas fa-inbox fa-2x mb-2"
-  }), _c("br"), _vm._v("\n                          No UAT meetings found.\n                        ")]);
+  }), _c("br"), _vm._v("\n              No UAT meetings found.\n            ")]);
 }];
 render._withStripped = true;
 

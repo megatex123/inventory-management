@@ -1,411 +1,396 @@
 <template>
-  <div>
-    <div class="row justify-content-center">
-      <div class="col-xl-12 col-lg-12 col-md-12">
-        <div class="card shadow-sm my-5">
-          <div class="card-body p-0">
-            <div class="row">
-              <div class="col-lg-12">
-                <!-- Card Header -->
-                <div class="card">
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <router-link to="/meeting-details/create" class="btn btn-primary ml-3">
-                      Create Meeting Details
-                    </router-link>
+  <div class="row justify-content-center">
+    <!-- Card Header -->
+    <div class="card">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h2 class="mb-1 font-weight-bold text-primary">Meeting Details</h2>
+        <router-link to="/meeting-details/create" class="btn btn-primary m-0">
+          Create Meeting Details
+        </router-link>
+      </div>
 
-                    <h5 class="m-0 font-weight-bold text-primary">
-                      Meeting Details
-                    </h5>
+      <!-- Statistics Cards -->
+      <div class="row mt-3 px-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-primary shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                    Total Meetings
                   </div>
-
-                  <!-- Statistics Cards -->
-                  <div class="row mt-3 px-3">
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-primary shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Meetings
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.total }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-success shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Gaming Meetings
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.gaming }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-gamepad fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-info shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Work Meetings
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.work }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-briefcase fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-warning shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Avg Budget
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                RM {{ formatPrice(statistics.avgBudget) }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.total }}
                   </div>
-
-                  <!-- Filter Section -->
-                  <div class="row px-3 mb-3">
-                    <div class="col-12">
-                      <div class="card shadow-sm">
-                        <div class="card-body py-2">
-                          <div class="row align-items-center">
-                            <div class="col-md-6">
-                              <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="fas fa-filter mr-2"></i>Filters
-                              </h6>
-                            </div>
-                            <div class="col-md-6 text-right">
-                              <button
-                                @click="showFilters = !showFilters"
-                                class="btn btn-sm btn-outline-secondary"
-                              >
-                                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
-                                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-                              </button>
-                            </div>
-                          </div>
-
-                          <transition name="filter-panel">
-                          <div v-if="showFilters">
-                          <div class="row mt-2">
-                            <div class="col-md-12 text-right mb-2">
-                              <button
-                                @click="clearFilters"
-                                class="btn btn-sm btn-outline-secondary"
-                                :disabled="!hasActiveFilters"
-                              >
-                                <i class="fas fa-times mr-1"></i>Clear Filters
-                              </button>
-                            </div>
-                            <div class="col-md-12">
-                              <column-search-panel
-                                  :columns="filterColumns"
-                                  v-model="filters"
-                                  :visible="true"
-                              />
-                            </div>
-                          </div>
-
-                          <!-- Active Filters Badges -->
-                          <div class="row mt-2" v-if="hasActiveFilters">
-                            <div class="col-12">
-                              <div class="d-flex flex-wrap gap-2">
-                                <span
-                                  v-for="(value, key) in activeFilters"
-                                  :key="key"
-                                  class="badge badge-info"
-                                >
-                                  {{ getFilterLabel(key, value) }}
-                                  <button
-                                    @click="removeFilter(key)"
-                                    class="badge badge-light ml-1 p-0 border-0"
-                                    style="background: transparent;"
-                                  >
-                                    <i class="fas fa-times"></i>
-                                  </button>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          </div>
-                          </transition>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Table -->
-                  <div class="table-responsive">
-                    <table class="table align-items-center table-flush">
-                      <thead class="thead-light">
-                        <tr>
-                          <th class="text-center align-top">Meeting ID</th>
-                          <th class="text-center align-top">Budget (RM)</th>
-                          <th class="text-center align-top">Reason & Play Mode</th>
-                          <th class="text-center align-top">Include Peripheral</th>
-                          <th class="text-center align-top">Theme Style</th>
-                          <th class="text-center align-top">Preference</th>
-                          <th class="text-center align-top">Exemption</th>
-                          <th class="text-center align-top">Features</th>
-                          <th class="text-center align-top">QV</th>
-                          <th class="text-center align-top">Target Date</th>
-                          <th class="text-center align-top">Target Location</th>
-                          <th class="text-center align-top">Actions</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr v-for="detail in filteredMeetings" :key="detail.id">
-                          <!-- Meeting ID -->
-                          <td class="text-center">
-                            <span v-if="detail.meeting && detail.meeting.meeting_id">
-                              {{ detail.meeting.meeting_id }}<br>
-                              {{ detail.meeting.customer.full_name }}
-                            </span>
-                            <span v-else-if="detail.meeting_id">
-                              {{ detail.meeting_id }}
-                            </span>
-                            <span v-else class="text-muted">N/A</span>
-                          </td>
-
-                          <!-- Budget -->
-                          <td class="text-center">
-                            RM {{ formatPrice(detail.initial_budget) }}
-                          </td>
-
-                          <!-- Combined Reason & Play Mode -->
-                          <td class="text-center">
-                            <div class="d-flex flex-column align-items-center">
-                              <!-- Reason -->
-                              <div class="mb-1">
-                                <span v-if="detail.reason == 1" class="badge badge-primary">
-                                  <i class="fas fa-briefcase mr-1"></i> Work
-                                </span>
-                                <span v-else-if="detail.reason == 2" class="badge badge-success">
-                                  <i class="fas fa-gamepad mr-1"></i> Gaming
-                                </span>
-                                <span v-else class="text-muted">-</span>
-                              </div>
-
-                              <!-- Play Mode (only show if reason is Gaming) -->
-                              <div v-if="detail.reason == 2">
-                                <span v-if="detail.play_mode == 1" class="badge badge-info badge-sm">
-                                  <i class="fas fa-users mr-1"></i> Multiplayer
-                                </span>
-                                <span v-else-if="detail.play_mode == 2" class="badge badge-warning badge-sm">
-                                  <i class="fas fa-user mr-1"></i> Singleplayer
-                                </span>
-                                <span v-else class="badge badge-secondary badge-sm">
-                                  <i class="fas fa-question mr-1"></i> Not Specified
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-
-                          <!-- Include Monitor -->
-                          <td class="text-center">
-                            <span v-if="detail.include_monitor" class="badge badge-light">
-                                <div class="feature-value">
-                                    <span :class="detail.include_monitor == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                                    {{ detail.include_monitor == 1 ? 'Yes' : 'No' }}
-                                    </span>
-                                </div>
-                                <template v-if="detail.include_monitor == 1 ">
-                                    {{ detail.include_notes }}
-                                </template>
-                            </span>
-                            <span v-else class="text-muted">-</span>
-                          </td>
-
-                          <!-- Theme Style -->
-                          <td class="text-center">
-                            <span v-if="detail.theme_style" class="badge badge-dark">
-                              {{ detail.theme_style }}
-                            </span>
-                            <span v-else class="text-muted">-</span>
-                          </td>
-
-                          <!-- Preference -->
-                          <td class="text-center">
-                            {{ detail.preference || '-' }}
-                          </td>
-
-                          <!-- Exemption -->
-                          <td class="text-center">
-                            {{ detail.exemption || '-' }}
-                          </td>
-
-                          <!-- Features -->
-                          <td class="text-center" style="min-width: 200px;">
-                            <div class="features-table">
-                              <div class="feature-row d-flex justify-content-between mb-2">
-                                <div class="feature-label">
-                                  <i class="fas fa-shield-alt mr-1"></i>
-                                  <span class="font-weight-bold">Future Proof</span>
-                                </div>
-                                <div class="feature-value">
-                                  <span :class="detail.future_proof == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                                    {{ detail.future_proof == 1 ? 'Yes' : 'No' }}
-                                  </span>
-                                </div>
-                              </div>
-                              <div class="feature-row d-flex justify-content-between mb-2">
-                                <div class="feature-label">
-                                  <i class="fas fa-box mr-1"></i>
-                                  <span class="font-weight-bold">Case</span>
-                                </div>
-                                <div class="feature-value">
-                                  <span v-if="detail.case_size == 1" class="badge badge-info">ITX</span>
-                                  <span v-else-if="detail.case_size == 2" class="badge badge-info">MATX</span>
-                                  <span v-else-if="detail.case_size == 3" class="badge badge-info">ATX</span>
-                                  <span v-else-if="detail.case_size == 4" class="badge badge-info">EATX</span>
-                                  <span v-else class="badge badge-secondary">-</span>
-                                </div>
-                              </div>
-                              <div class="feature-row d-flex justify-content-between mb-2">
-                                <div class="feature-label">
-                                  <i class="fas fa-water mr-1"></i>
-                                  <span class="font-weight-bold">AIO</span>
-                                </div>
-                                <div class="feature-value">
-                                  <span :class="detail.okay_with_aio == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                                    {{ detail.okay_with_aio == 1 ? 'Yes' : 'No' }}
-                                  </span>
-                                </div>
-                              </div>
-                              <div class="feature-row d-flex justify-content-between">
-                                <div class="feature-label">
-                                  <i class="fas fa-server mr-1"></i>
-                                  <span class="font-weight-bold">GPU Sag</span>
-                                </div>
-                                <div class="feature-value">
-                                  <span :class="detail.gpu_sag == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                                    {{ detail.gpu_sag == 1 ? 'Yes' : 'No' }}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-
-                          <!-- QV Tags -->
-                          <td class="text-center">
-                            <div class="d-flex flex-column">
-                              <small class="mb-1">
-                                <span :class="detail.qvcrf_tag == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                                  QVCRF: {{ detail.qvcrf_tag == 1 ? 'Yes' : 'No' }}
-                                </span>
-                              </small>
-                              <small class="mb-1">
-                                <span :class="detail.qvse == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                                  QVSE: {{ detail.qvse == 1 ? 'Yes' : 'No' }}
-                                </span>
-                              </small>
-                              <small class="mb-1">
-                                <span :class="detail.qvca == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                                  QVCA: {{ detail.qvca == 1 ? 'Yes' : 'No' }}
-                                </span>
-                              </small>
-                              <small>
-                                <span :class="detail.qvtd == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                                  QVTD: {{ detail.qvtd == 1 ? 'Yes' : 'No' }}
-                                  <br>
-                                  <template v-if="detail.qvtd == 1 ">
-                                    Notes: {{ detail.qvtd_notes }}
-                                  </template>
-                                </span>
-                              </small>
-                            </div>
-                          </td>
-
-                          <!-- Target Date -->
-                          <td class="text-center">
-                            <span v-if="detail.target_build_date" class="badge badge-dark">
-                              {{ formatDate(detail.target_build_date) }}
-                            </span>
-                            <span v-else class="text-muted">-</span>
-                          </td>
-
-                          <!-- Target Location -->
-                          <td class="text-center">
-                            <span v-if="detail.target_location" class="badge badge-primary">
-                              {{ detail.target_location }}
-                            </span>
-                            <span v-else class="text-muted">-</span>
-                          </td>
-
-                          <!-- Actions -->
-                          <td class="text-center">
-                            <div class="btn-group" role="group">
-                              <router-link
-                                :to="`/meeting-details/edit/${detail.id}`"
-                                class="btn btn-sm btn-primary mr-1"
-                                title="Edit"
-                              >
-                                <i class="fas fa-edit"></i>
-                              </router-link>
-                              <button
-                                class="btn btn-sm btn-danger"
-                                @click="deleteMeeting(detail.id)"
-                                title="Delete"
-                              >
-                                <i class="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr v-if="filteredMeetings.length === 0">
-                          <td colspan="12" class="text-center text-muted py-4">
-                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                            No meeting details found.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-success shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                    Gaming Meetings
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.gaming }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-gamepad fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-info shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                    Work Meetings
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.work }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-briefcase fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-warning shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                    Avg Budget
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    RM {{ formatPrice(statistics.avgBudget) }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="row px-3 mb-3">
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-body py-2">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-filter mr-2"></i>Filters
+                  </h6>
+                </div>
+                <div class="col-md-6 text-right">
+                  <button
+                    @click="showFilters = !showFilters"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                    {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                  </button>
+                </div>
+              </div>
+
+              <transition name="filter-panel">
+              <div v-if="showFilters">
+              <div class="row mt-2">
+                <div class="col-md-12 text-right mb-2">
+                  <button
+                    @click="clearFilters"
+                    class="btn btn-sm btn-outline-secondary"
+                    :disabled="!hasActiveFilters"
+                  >
+                    <i class="fas fa-times mr-1"></i>Clear Filters
+                  </button>
+                </div>
+                <div class="col-md-12">
+                  <column-search-panel
+                      :columns="filterColumns"
+                      v-model="filters"
+                      :visible="true"
+                  />
+                </div>
+              </div>
+
+              <!-- Active Filters Badges -->
+              <div class="row mt-2" v-if="hasActiveFilters">
+                <div class="col-12">
+                  <div class="d-flex flex-wrap gap-2">
+                    <span
+                      v-for="(value, key) in activeFilters"
+                      :key="key"
+                      class="badge badge-info"
+                    >
+                      {{ getFilterLabel(key, value) }}
+                      <button
+                        @click="removeFilter(key)"
+                        class="badge badge-light ml-1 p-0 border-0"
+                        style="background: transparent;"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th class="text-center align-top">Meeting ID</th>
+              <th class="text-center align-top">Budget (RM)</th>
+              <th class="text-center align-top">Reason & Play Mode</th>
+              <th class="text-center align-top">Include Peripheral</th>
+              <th class="text-center align-top">Theme Style</th>
+              <th class="text-center align-top">Preference</th>
+              <th class="text-center align-top">Exemption</th>
+              <th class="text-center align-top">Features</th>
+              <th class="text-center align-top">QV</th>
+              <th class="text-center align-top">Target Date</th>
+              <th class="text-center align-top">Target Location</th>
+              <th class="text-center align-top">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="detail in filteredMeetings" :key="detail.id">
+              <!-- Meeting ID -->
+              <td class="text-center">
+                <span v-if="detail.meeting && detail.meeting.meeting_id">
+                  {{ detail.meeting.meeting_id }}<br>
+                  {{ detail.meeting.customer.full_name }}
+                </span>
+                <span v-else-if="detail.meeting_id">
+                  {{ detail.meeting_id }}
+                </span>
+                <span v-else class="text-muted">N/A</span>
+              </td>
+
+              <!-- Budget -->
+              <td class="text-center">
+                RM {{ formatPrice(detail.initial_budget) }}
+              </td>
+
+              <!-- Combined Reason & Play Mode -->
+              <td class="text-center">
+                <div class="d-flex flex-column align-items-center">
+                  <!-- Reason -->
+                  <div class="mb-1">
+                    <span v-if="detail.reason == 1" class="badge badge-primary">
+                      <i class="fas fa-briefcase mr-1"></i> Work
+                    </span>
+                    <span v-else-if="detail.reason == 2" class="badge badge-success">
+                      <i class="fas fa-gamepad mr-1"></i> Gaming
+                    </span>
+                    <span v-else class="text-muted">-</span>
+                  </div>
+
+                  <!-- Play Mode (only show if reason is Gaming) -->
+                  <div v-if="detail.reason == 2">
+                    <span v-if="detail.play_mode == 1" class="badge badge-info badge-sm">
+                      <i class="fas fa-users mr-1"></i> Multiplayer
+                    </span>
+                    <span v-else-if="detail.play_mode == 2" class="badge badge-warning badge-sm">
+                      <i class="fas fa-user mr-1"></i> Singleplayer
+                    </span>
+                    <span v-else class="badge badge-secondary badge-sm">
+                      <i class="fas fa-question mr-1"></i> Not Specified
+                    </span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Include Monitor -->
+              <td class="text-center">
+                <span v-if="detail.include_monitor" class="badge badge-light">
+                    <div class="feature-value">
+                        <span :class="detail.include_monitor == 1 ? 'badge badge-success' : 'badge badge-danger'">
+                        {{ detail.include_monitor == 1 ? 'Yes' : 'No' }}
+                        </span>
+                    </div>
+                    <template v-if="detail.include_monitor == 1 ">
+                        {{ detail.include_notes }}
+                    </template>
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+
+              <!-- Theme Style -->
+              <td class="text-center">
+                <span v-if="detail.theme_style" class="badge badge-dark">
+                  {{ detail.theme_style }}
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+
+              <!-- Preference -->
+              <td class="text-center">
+                {{ detail.preference || '-' }}
+              </td>
+
+              <!-- Exemption -->
+              <td class="text-center">
+                {{ detail.exemption || '-' }}
+              </td>
+
+              <!-- Features -->
+              <td class="text-center" style="min-width: 200px;">
+                <div class="features-table">
+                  <div class="feature-row d-flex justify-content-between mb-2">
+                    <div class="feature-label">
+                      <i class="fas fa-shield-alt mr-1"></i>
+                      <span class="font-weight-bold">Future Proof</span>
+                    </div>
+                    <div class="feature-value">
+                      <span :class="detail.future_proof == 1 ? 'badge badge-success' : 'badge badge-danger'">
+                        {{ detail.future_proof == 1 ? 'Yes' : 'No' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="feature-row d-flex justify-content-between mb-2">
+                    <div class="feature-label">
+                      <i class="fas fa-box mr-1"></i>
+                      <span class="font-weight-bold">Case</span>
+                    </div>
+                    <div class="feature-value">
+                      <span v-if="detail.case_size == 1" class="badge badge-info">ITX</span>
+                      <span v-else-if="detail.case_size == 2" class="badge badge-info">MATX</span>
+                      <span v-else-if="detail.case_size == 3" class="badge badge-info">ATX</span>
+                      <span v-else-if="detail.case_size == 4" class="badge badge-info">EATX</span>
+                      <span v-else class="badge badge-secondary">-</span>
+                    </div>
+                  </div>
+                  <div class="feature-row d-flex justify-content-between mb-2">
+                    <div class="feature-label">
+                      <i class="fas fa-water mr-1"></i>
+                      <span class="font-weight-bold">AIO</span>
+                    </div>
+                    <div class="feature-value">
+                      <span :class="detail.okay_with_aio == 1 ? 'badge badge-success' : 'badge badge-danger'">
+                        {{ detail.okay_with_aio == 1 ? 'Yes' : 'No' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="feature-row d-flex justify-content-between">
+                    <div class="feature-label">
+                      <i class="fas fa-server mr-1"></i>
+                      <span class="font-weight-bold">GPU Sag</span>
+                    </div>
+                    <div class="feature-value">
+                      <span :class="detail.gpu_sag == 1 ? 'badge badge-success' : 'badge badge-danger'">
+                        {{ detail.gpu_sag == 1 ? 'Yes' : 'No' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- QV Tags -->
+              <td class="text-center">
+                <div class="d-flex flex-column">
+                  <small class="mb-1">
+                    <span :class="detail.qvcrf_tag == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
+                      QVCRF: {{ detail.qvcrf_tag == 1 ? 'Yes' : 'No' }}
+                    </span>
+                  </small>
+                  <small class="mb-1">
+                    <span :class="detail.qvse == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
+                      QVSE: {{ detail.qvse == 1 ? 'Yes' : 'No' }}
+                    </span>
+                  </small>
+                  <small class="mb-1">
+                    <span :class="detail.qvca == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
+                      QVCA: {{ detail.qvca == 1 ? 'Yes' : 'No' }}
+                    </span>
+                  </small>
+                  <small>
+                    <span :class="detail.qvtd == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
+                      QVTD: {{ detail.qvtd == 1 ? 'Yes' : 'No' }}
+                      <br>
+                      <template v-if="detail.qvtd == 1 ">
+                        Notes: {{ detail.qvtd_notes }}
+                      </template>
+                    </span>
+                  </small>
+                </div>
+              </td>
+
+              <!-- Target Date -->
+              <td class="text-center">
+                <span v-if="detail.target_build_date" class="badge badge-dark">
+                  {{ formatDate(detail.target_build_date) }}
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+
+              <!-- Target Location -->
+              <td class="text-center">
+                <span v-if="detail.target_location" class="badge badge-primary">
+                  {{ detail.target_location }}
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+
+              <!-- Actions -->
+              <td class="text-center">
+                <div class="btn-group" role="group">
+                  <router-link
+                    :to="`/meeting-details/edit/${detail.id}`"
+                    class="btn btn-sm btn-primary mr-1"
+                    title="Edit"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </router-link>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    @click="deleteMeeting(detail.id)"
+                    title="Delete"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr v-if="filteredMeetings.length === 0">
+              <td colspan="12" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                No meeting details found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

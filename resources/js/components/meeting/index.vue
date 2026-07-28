@@ -1,314 +1,299 @@
 <template>
-  <div>
-    <div class="row justify-content-center">
-      <div class="col-xl-12 col-lg-12 col-md-12">
-        <div class="card shadow-sm my-5">
-          <div class="card-body p-0">
-            <div class="row">
-              <div class="col-lg-12">
-                <!-- Card Header -->
-                <div class="card">
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <router-link to="/meeting/create" class="btn btn-primary ml-3">
-                      Create Meeting
-                    </router-link>
+  <div class="row justify-content-center">
+    <!-- Card Header -->
+    <div class="card">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h2 class="mb-1 font-weight-bold text-primary">Meetings</h2>
+        <router-link to="/meeting/create" class="btn btn-primary m-0">
+          Create Meeting
+        </router-link>
+      </div>
 
-                    <h5 class="m-0 font-weight-bold text-primary">
-                      Meetings
-                    </h5>
+      <!-- Statistics Cards -->
+      <div class="row mt-3 px-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-primary shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                    Total Meetings
                   </div>
-
-                  <!-- Statistics Cards -->
-                  <div class="row mt-3 px-3">
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-primary shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Meetings
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.total }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-success shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                This Month
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.thisMonth }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-info shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                With Documents
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.withDocuments }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-file-alt fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-warning shadow-sm h-100 py-2">
-                        <div class="card-body">
-                          <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Recent (Last 7 Days)
-                              </div>
-                              <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ statistics.last7Days }}
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <i class="fas fa-clock fa-2x text-gray-300"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.total }}
                   </div>
-
-                  <!-- Filter Section -->
-                  <div class="row px-3 mb-3">
-                    <div class="col-12">
-                      <div class="card shadow-sm">
-                        <div class="card-body py-2">
-                          <div class="row align-items-center">
-                            <div class="col-md-6">
-                              <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="fas fa-filter mr-2"></i>Filters
-                              </h6>
-                            </div>
-                            <div class="col-md-6 text-right">
-                              <button
-                                @click="showFilters = !showFilters"
-                                class="btn btn-sm btn-outline-secondary"
-                              >
-                                <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
-                                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-                              </button>
-                            </div>
-                          </div>
-
-                          <transition name="filter-panel">
-                          <div v-if="showFilters">
-                          <div class="row mt-2">
-                            <div class="col-md-12 text-right mb-2">
-                              <button
-                                @click="clearFilters"
-                                class="btn btn-sm btn-outline-secondary"
-                                :disabled="!hasActiveFilters"
-                              >
-                                <i class="fas fa-times mr-1"></i>Clear Filters
-                              </button>
-                            </div>
-                            <div class="col-md-12">
-                              <column-search-panel
-                                  :columns="filterColumns"
-                                  v-model="filters"
-                                  :visible="true"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="row mt-2">
-                            <!-- Month Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Month</label>
-                              <select
-                                v-model="filters.month"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Months</option>
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
-                                <option value="5">May</option>
-                                <option value="6">June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                              </select>
-                            </div>
-
-                            <!-- Year Filter -->
-                            <div class="col-md-3 mb-2">
-                              <label class="small font-weight-bold text-muted">Year</label>
-                              <select
-                                v-model="filters.year"
-                                class="form-control form-control-sm"
-                                @change="applyFilters"
-                              >
-                                <option value="">All Years</option>
-                                <option v-for="year in availableYears" :value="year" :key="year">
-                                  {{ year }}
-                                </option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <!-- Active Filters Badges -->
-                          <div class="row mt-2" v-if="hasActiveFilters">
-                            <div class="col-12">
-                              <div class="d-flex flex-wrap gap-2">
-                                <span
-                                  v-for="(value, key) in activeFilters"
-                                  :key="key"
-                                  class="badge badge-info"
-                                >
-                                  {{ getFilterLabel(key, value) }}
-                                  <button
-                                    @click="removeFilter(key)"
-                                    class="badge badge-light ml-1 p-0 border-0"
-                                    style="background: transparent;"
-                                  >
-                                    <i class="fas fa-times"></i>
-                                  </button>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          </div>
-                          </transition>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Table -->
-                  <div class="table-responsive">
-                    <table class="table align-items-center table-flush">
-                      <thead class="thead-light">
-                        <tr>
-                          <th class="align-top">Meeting ID</th>
-                          <th class="align-top">Customer</th>
-                          <th class="align-top">Title</th>
-                          <th class="align-top">Date</th>
-                          <th class="align-top">Notes</th>
-                          <th class="align-top">Document</th>
-                          <th class="align-top">Action</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr v-for="meeting in filteredMeetings" :key="meeting.id">
-                          <td>
-                            <span class="font-weight-bold">{{ meeting.meeting_id }}</span>
-                          </td>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <div>
-                                <div class="font-weight-bold">{{ meeting.customer.full_name }}</div>
-                                <small class="text-muted">{{ meeting.customer.phone }}</small>
-                              </div>
-                            </div>
-                          </td>
-                          <td>{{ meeting.title }}</td>
-                          <td>
-                            <span class="badge badge-primary">
-                              {{ formatDate(meeting.meeting_date) }}
-                            </span>
-                            <br>
-                            <small class="text-muted">{{ formatDay(meeting.meeting_date) }}</small>
-                          </td>
-                          <td>
-                            <div v-if="meeting.meeting_notes">
-                              {{
-                                meeting.meeting_notes.length > 50
-                                  ? meeting.meeting_notes.substring(0, 50) + '...'
-                                  : meeting.meeting_notes
-                              }}
-                              <button
-                                v-if="meeting.meeting_notes.length > 50"
-                                @click="toggleNotes(meeting.id)"
-                                class="btn btn-link btn-sm p-0 ml-1"
-                              >
-                                {{ expandedNotes.includes(meeting.id) ? 'Show Less' : 'Read More' }}
-                              </button>
-                              <div v-if="expandedNotes.includes(meeting.id)" class="mt-1">
-                                {{ meeting.meeting_notes }}
-                              </div>
-                            </div>
-                            <span v-else class="text-muted">-</span>
-                          </td>
-                          <td>
-                            <a v-if="meeting.document" :href="`/storage/${meeting.document}`" target="_blank" class="btn btn-sm btn-info">
-                              <i class="fas fa-file-alt mr-1"></i>View
-                            </a>
-                            <span v-else class="text-muted">No document</span>
-                          </td>
-                          <td>
-                            <div class="btn-group" role="group">
-                              <router-link
-                                :to="`/meeting/edit/${meeting.id}`"
-                                class="btn btn-sm btn-primary mr-1"
-                                title="Edit"
-                              >
-                                <i class="fas fa-edit"></i>
-                              </router-link>
-                              <button
-                                class="btn btn-sm btn-danger"
-                                @click="deleteMeeting(meeting.id)"
-                                title="Delete"
-                              >
-                                <i class="fas fa-trash"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-
-                        <tr v-if="filteredMeetings.length === 0">
-                          <td colspan="7" class="text-center text-muted py-4">
-                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                            No meetings found.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-success shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                    This Month
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.thisMonth }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-info shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                    With Documents
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.withDocuments }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card border-left-warning shadow-sm h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                    Recent (Last 7 Days)
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    {{ statistics.last7Days }}
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-clock fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="row px-3 mb-3">
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-body py-2">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-filter mr-2"></i>Filters
+                  </h6>
+                </div>
+                <div class="col-md-6 text-right">
+                  <button
+                    @click="showFilters = !showFilters"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-filter'"></i>
+                    {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+                  </button>
+                </div>
+              </div>
+
+              <transition name="filter-panel">
+              <div v-if="showFilters">
+              <div class="row mt-2">
+                <div class="col-md-12 text-right mb-2">
+                  <button
+                    @click="clearFilters"
+                    class="btn btn-sm btn-outline-secondary"
+                    :disabled="!hasActiveFilters"
+                  >
+                    <i class="fas fa-times mr-1"></i>Clear Filters
+                  </button>
+                </div>
+                <div class="col-md-12">
+                  <column-search-panel
+                      :columns="filterColumns"
+                      v-model="filters"
+                      :visible="true"
+                  />
+                </div>
+              </div>
+
+              <div class="row mt-2">
+                <!-- Month Filter -->
+                <div class="col-md-3 mb-2">
+                  <label class="small font-weight-bold text-muted">Month</label>
+                  <select
+                    v-model="filters.month"
+                    class="form-control form-control-sm"
+                    @change="applyFilters"
+                  >
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+
+                <!-- Year Filter -->
+                <div class="col-md-3 mb-2">
+                  <label class="small font-weight-bold text-muted">Year</label>
+                  <select
+                    v-model="filters.year"
+                    class="form-control form-control-sm"
+                    @change="applyFilters"
+                  >
+                    <option value="">All Years</option>
+                    <option v-for="year in availableYears" :value="year" :key="year">
+                      {{ year }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Active Filters Badges -->
+              <div class="row mt-2" v-if="hasActiveFilters">
+                <div class="col-12">
+                  <div class="d-flex flex-wrap gap-2">
+                    <span
+                      v-for="(value, key) in activeFilters"
+                      :key="key"
+                      class="badge badge-info"
+                    >
+                      {{ getFilterLabel(key, value) }}
+                      <button
+                        @click="removeFilter(key)"
+                        class="badge badge-light ml-1 p-0 border-0"
+                        style="background: transparent;"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th class="align-top">Meeting ID</th>
+              <th class="align-top">Customer</th>
+              <th class="align-top">Title</th>
+              <th class="align-top">Date</th>
+              <th class="align-top">Notes</th>
+              <th class="align-top">Document</th>
+              <th class="align-top">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="meeting in filteredMeetings" :key="meeting.id">
+              <td>
+                <span class="font-weight-bold">{{ meeting.meeting_id }}</span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="font-weight-bold">{{ meeting.customer.full_name }}</div>
+                    <small class="text-muted">{{ meeting.customer.phone }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ meeting.title }}</td>
+              <td>
+                <span class="badge badge-primary">
+                  {{ formatDate(meeting.meeting_date) }}
+                </span>
+                <br>
+                <small class="text-muted">{{ formatDay(meeting.meeting_date) }}</small>
+              </td>
+              <td>
+                <div v-if="meeting.meeting_notes">
+                  {{
+                    meeting.meeting_notes.length > 50
+                      ? meeting.meeting_notes.substring(0, 50) + '...'
+                      : meeting.meeting_notes
+                  }}
+                  <button
+                    v-if="meeting.meeting_notes.length > 50"
+                    @click="toggleNotes(meeting.id)"
+                    class="btn btn-link btn-sm p-0 ml-1"
+                  >
+                    {{ expandedNotes.includes(meeting.id) ? 'Show Less' : 'Read More' }}
+                  </button>
+                  <div v-if="expandedNotes.includes(meeting.id)" class="mt-1">
+                    {{ meeting.meeting_notes }}
+                  </div>
+                </div>
+                <span v-else class="text-muted">-</span>
+              </td>
+              <td>
+                <a v-if="meeting.document" :href="`/storage/${meeting.document}`" target="_blank" class="btn btn-sm btn-info">
+                  <i class="fas fa-file-alt mr-1"></i>View
+                </a>
+                <span v-else class="text-muted">No document</span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <router-link
+                    :to="`/meeting/edit/${meeting.id}`"
+                    class="btn btn-sm btn-primary mr-1"
+                    title="Edit"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </router-link>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    @click="deleteMeeting(meeting.id)"
+                    title="Delete"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr v-if="filteredMeetings.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                No meetings found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
