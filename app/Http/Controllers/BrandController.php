@@ -13,10 +13,79 @@ class BrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $Brand=Brand::all();
-        return response()->json($Brand);
+        $query = Brand::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('name_starts_with')) {
+            $query->where('name', 'LIKE', $request->name_starts_with . '%');
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+
+            if ($request->filled('month')) {
+                $query->whereMonth('created_at', $request->month);
+            }
+        }
+
+        $sortBy = $request->get('sort_by', 'name');
+        $sortDir = $request->get('sort_dir', 'asc');
+
+        if (!in_array($sortBy, ['name', 'created_at'], true)) {
+            $sortBy = 'name';
+        }
+        if (!in_array($sortDir, ['asc', 'desc'], true)) {
+            $sortDir = 'asc';
+        }
+
+        $query->orderBy($sortBy, $sortDir);
+
+        $results = $query->paginate($request->get('per_page', 10));
+
+        return response()->json([
+            'success' => true,
+            'data' => $results->items(),
+            'meta' => [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * Distinct filter option values computed across the whole table, not
+     * just the current page -- needed because the old client-side
+     * extractFilterOptions() scanned the full unpaginated dataset, which no
+     * longer exists once index() paginates.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filterOptions()
+    {
+        $nameStartingLetters = Brand::selectRaw('DISTINCT UPPER(LEFT(name, 1)) as letter')
+            ->whereNotNull('name')
+            ->where('name', '!=', '')
+            ->orderBy('letter')
+            ->pluck('letter');
+
+        $availableYears = Brand::selectRaw('DISTINCT YEAR(created_at) as year')
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'name_starting_letters' => $nameStartingLetters,
+                'available_years' => $availableYears,
+            ],
+        ]);
     }
 
     /**
