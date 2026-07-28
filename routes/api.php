@@ -36,6 +36,7 @@ Route::apiResource('/employee', 'EmployeesController');
 Route::apiResource('/suppliers', 'SuppliersController');
 Route::apiResource('/categories', 'CategoriesController');
 Route::apiResource('/sub-categories', 'SubCategoriesController');
+Route::get('/craft/filter-options', 'CraftController@filterOptions');
 Route::apiResource('/craft', 'CraftController');
 Route::apiResource('/care', 'CaresController');
 Route::apiResource('/serves', 'ServesController');
