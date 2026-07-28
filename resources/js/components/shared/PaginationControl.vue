@@ -5,31 +5,31 @@
       <nav>
         <ul class="pagination pagination-sm mb-0 mr-3">
           <li class="page-item" :class="{ disabled: isFirstPage }">
-            <button class="page-link" @click="goTo(1)" :disabled="isFirstPage" aria-label="First page">&laquo;</button>
+            <button type="button" class="page-link" @click="goTo(1)" :disabled="isFirstPage" aria-label="First page">&laquo;</button>
           </li>
           <li class="page-item" :class="{ disabled: isFirstPage }">
-            <button class="page-link" @click="goTo(meta.current_page - 1)" :disabled="isFirstPage" aria-label="Previous page">&lsaquo;</button>
+            <button type="button" class="page-link" @click="goTo(meta.current_page - 1)" :disabled="isFirstPage" aria-label="Previous page">&lsaquo;</button>
           </li>
 
-          <li class="page-item" v-if="showStartEllipsis">
-            <button class="page-link" @click="goTo(1)">1</button>
+          <li class="page-item" v-if="showFirstPageButton">
+            <button type="button" class="page-link" @click="goTo(1)">1</button>
           </li>
           <li class="page-item disabled" v-if="showStartEllipsis"><span class="page-link">&hellip;</span></li>
 
           <li class="page-item" v-for="page in pageNumbers" :key="page" :class="{ active: page === meta.current_page }">
-            <button class="page-link" @click="goTo(page)">{{ page }}</button>
+            <button type="button" class="page-link" @click="goTo(page)">{{ page }}</button>
           </li>
 
           <li class="page-item disabled" v-if="showEndEllipsis"><span class="page-link">&hellip;</span></li>
-          <li class="page-item" v-if="showEndEllipsis">
-            <button class="page-link" @click="goTo(meta.last_page)">{{ meta.last_page }}</button>
+          <li class="page-item" v-if="showLastPageButton">
+            <button type="button" class="page-link" @click="goTo(meta.last_page)">{{ meta.last_page }}</button>
           </li>
 
           <li class="page-item" :class="{ disabled: isLastPage }">
-            <button class="page-link" @click="goTo(meta.current_page + 1)" :disabled="isLastPage" aria-label="Next page">&rsaquo;</button>
+            <button type="button" class="page-link" @click="goTo(meta.current_page + 1)" :disabled="isLastPage" aria-label="Next page">&rsaquo;</button>
           </li>
           <li class="page-item" :class="{ disabled: isLastPage }">
-            <button class="page-link" @click="goTo(meta.last_page)" :disabled="isLastPage" aria-label="Last page">&raquo;</button>
+            <button type="button" class="page-link" @click="goTo(meta.last_page)" :disabled="isLastPage" aria-label="Last page">&raquo;</button>
           </li>
         </ul>
       </nav>
@@ -78,8 +78,14 @@ export default {
       for (let i = this.startPage; i <= this.endPage; i++) pages.push(i);
       return pages;
     },
+    showFirstPageButton() {
+      return this.startPage > 1;
+    },
     showStartEllipsis() {
       return this.startPage > 2;
+    },
+    showLastPageButton() {
+      return this.endPage < this.meta.last_page;
     },
     showEndEllipsis() {
       return this.endPage < this.meta.last_page - 1;
