@@ -34,10 +34,7 @@
         </ul>
       </nav>
       <select class="form-control form-control-sm" style="width: auto;" :value="meta.per_page" @change="onPerPageChange">
-        <option :value="10">10 / page</option>
-        <option :value="20">20 / page</option>
-        <option :value="50">50 / page</option>
-        <option :value="100">100 / page</option>
+        <option v-for="size in perPageOptions" :key="size" :value="size">{{ size }} / page</option>
       </select>
     </div>
   </div>
@@ -89,6 +86,14 @@ export default {
     },
     showEndEllipsis() {
       return this.endPage < this.meta.last_page - 1;
+    },
+    perPageOptions() {
+      const standard = [10, 20, 50, 100];
+      if (standard.includes(this.meta.per_page)) return standard;
+      // Current value isn't one of the standard sizes (e.g. a page still on
+      // the old default of 15) -- include it so the select always reflects
+      // reality instead of silently showing the wrong size.
+      return [...standard, this.meta.per_page].sort((a, b) => a - b);
     },
   },
   methods: {

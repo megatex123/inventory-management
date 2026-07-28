@@ -47,6 +47,41 @@ Also used by `onsite_handover_studio/ArrivalSection.vue`, `PostTransportSection.
 
 Shared code: `resources/js/Helpers` (likely Axios instance / formatting utilities — check before adding new HTTP calls to avoid duplicating the client setup).
 
+### PaginationControl.vue / SortableTh.vue
+
+`resources/js/components/shared/PaginationControl.vue` and `resources/js/components/shared/SortableTh.vue` (added 2026-07-28) are the first two components of the "List Page Standardization" initiative — Batch 1. Both are presentation-only (no axios, no route knowledge): the parent page always owns fetching and re-fetches on any emitted event.
+
+**`PaginationControl.vue`**
+
+- **Props:** `meta` (Object, required) — `{ total, per_page, current_page, last_page }`.
+- **Emits:** `page-change` (payload: the clamped target page number), `per-page-change` (payload: the new per-page size, parsed to an int).
+- **Consuming markup** — the wrapper must be a plain `card-footer`, **not** `card-footer d-flex justify-content-between`: the component lays out its own internal flex (`Showing X–Y of Z` on one side, pagination + page-size select on the other), and nesting it inside another flex container collapses the "Showing X-Y of Z" text against the buttons instead of spreading across the footer.
+  ```html
+  <div class="card-footer">
+    <pagination-control :meta="meta" @page-change="onPageChange" @per-page-change="onPerPageChange" />
+  </div>
+  ```
+- **Page-size select robustness (fixed 2026-07-28, final review of Batch 1):** the `<select>`'s options are data-driven via a `perPageOptions` computed property, not hardcoded. It normally renders the 4 standard sizes (`[10, 20, 50, 100]`), but if `meta.per_page` is anything else (e.g. a page still on the old default of 15 — 16 frontend pages and 7+ backend controllers default to `per_page: 15`), the current value is inserted into the option list in sorted position so the dropdown always reflects the real page size instead of rendering blank/desynced.
+- **Important correction for whoever plans Batch 2+:** the design spec's original claim that this `meta` shape is "the same shape the 20 already-paginated pages already receive" is only literally true of the *raw API response* — most of those 20 pages do **not** keep a `meta` object in their own Vue `data()`. E.g. `refunds/index.vue` discards everything but `this.total = res.data.meta.total`, keeping `currentPage`/`perPage` as separate flat data fields and computing `lastPage` itself; `serve_mps`/`serve_pce` use a differently-named `paginationMeta` object with extra `from`/`to` keys; only `care_warranty` already stores something literally called `meta`. **Wiring `PaginationControl` into an existing paginated page is a `data()`/fetch-method restructure (build a real `meta: {total, per_page, current_page, last_page}` object and keep it, instead of the page's current ad hoc fields), not a pure markup swap.**
+
+**`SortableTh.vue`**
+
+- **Props:** `label` (String, required) — column header text; `sortKey` (String, required) — the key to emit when this header is clicked; `currentSort` (Object, default `{ key: '', dir: 'asc' }`) — `{ key, dir }` of the column currently sorted, used to render the active sort arrow.
+- **Emits:** `sort` with the clicked `sortKey` as payload.
+- **Reference parent-side toggle handler** — every consuming page hand-writes one of these, since the component itself has no sort-state opinion:
+  ```js
+  onSort(key) {
+    if (this.sortState.key === key) {
+      this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState = { key, dir: 'asc' };
+    }
+    this.fetchItems(); // or whatever the page's own fetch method is called
+  },
+  ```
+
+Batch 2+ (wiring both components into the ~37 real list pages) is a follow-up initiative — see [[Work-In-Progress]].
+
 ## Section Components
 
 **Performance Testing (added 2026-07-25)** — multiple self-contained section components under `resources/js/components/performance_test/`, following an established contract: `apiBase` and `initialData` props, `FIELD_KEYS` constant listing all columns touched by this section, `save()` method emitting a `saved` event once the section's subset of the `PerformanceTest` row is persisted. Mounted from `performance_test/index.vue`, covering the full 4-phase structure: Phase 1 (Assembly & Boot, Thermal Interface, Self QC, OS Config, Drivers, Applications); Phase 2 (CPU/GPU/System Stress & Benchmark); Phase 3 (Memory/Storage/Cooling Validation); Phase 4 (Display Output/Network & Wireless/USB Port Test).
