@@ -168,23 +168,12 @@
 
                                         <!-- Image Upload -->
                                         <div class="form-group">
-                                            <div class="form-row">
-                                                <div class="col-6">
-                                                    <div class="custom-file">
-                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="customFile">
-                                                        <label class="custom-file-label" for="customFile">Choose new image (optional)</label>
-                                                    </div>
-                                                    <small class="text-danger" v-if='errors.image'>
-                                                        {{errors.image[0]}}
-                                                    </small>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div v-if="form.image">
-                                                        <p>Current Image:</p>
-                                                        <img :src="form.image" width="80px" height="80px" alt="Product Image" style="object-fit: cover;">
-                                                    </div>
-                                                </div>
+                                            <label class="small text-muted mb-1">Photo</label>
+                                            <div class="photo-upload-btn" :class="{ 'has-photo': form.image }">
+                                                <img v-if="form.image" :src="form.image" alt="Product Image">
+                                                <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
+                                            <small class="text-danger d-block" v-if='errors.image'>{{errors.image[0]}}</small>
                                         </div>
 
                                         <!-- Submit Button -->
@@ -316,9 +305,36 @@ export default {
 </script>
 
 <style scoped>
-.custom-file-label {
+.photo-upload-btn {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border: 1px dashed #adb5bd;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+}
+.photo-upload-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.photo-upload-btn input[type="file"] {
+    font-size: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.photo-upload-btn:not(.has-photo)::before {
+    content: '+';
+    font-size: 1.5rem;
+    color: #adb5bd;
+    pointer-events: none;
 }
 </style>

@@ -163,21 +163,12 @@
                                         </div> -->
 
                                         <div class="form-group">
-                                            <div class="form-row">
-                                                <div class="col-6">
-                                                    <input type="file" @change='onFileSelect' class="custom-file-input"
-                                                        id="customFile">
-                                                    <small class="text-danger" v-if='errors.photo'>
-                                                        {{errors.photo[0]}}</small> </small>
-                                                    <label class="custom-file-label" for="customFile">Choose
-                                                        file</label>
-                                                </div>
-                                                <div class="col-6">
-                                                    <img :src="form.photo" width="40px" height="40px" alt="">
-
-                                                </div>
+                                            <label class="small text-muted mb-1">Photo</label>
+                                            <div class="photo-upload-btn" :class="{ 'has-photo': form.photo }">
+                                                <img v-if="form.photo" :src="form.photo" alt="photo">
+                                                <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
-
+                                            <small class="text-danger d-block" v-if='errors.photo'>{{errors.photo[0]}}</small>
                                         </div>
 
                                         <div class="form-group">
@@ -276,6 +267,37 @@
         },
     }
 </script>
-<style lang="">
-
+<style scoped>
+.photo-upload-btn {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border: 1px dashed #adb5bd;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.photo-upload-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.photo-upload-btn input[type="file"] {
+    font-size: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.photo-upload-btn:not(.has-photo)::before {
+    content: '+';
+    font-size: 1.5rem;
+    color: #adb5bd;
+    pointer-events: none;
+}
 </style>

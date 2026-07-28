@@ -69,23 +69,12 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Photo</label>
-                                                    <div class="custom-file">
-                                                        <input type="file" @change='onFileSelect' class="custom-file-input" id="photoInput" accept="image/jpeg,image/jpg,image/png">
-                                                        <label class="custom-file-label" for="photoInput" id="photoLabel">
-                                                            {{ photoFileName || 'Choose file' }}
-                                                        </label>
+                                                    <div class="photo-upload-btn" :class="{ 'has-photo': form.photo }">
+                                                        <img v-if="form.photo" :src="form.photo" alt="photo">
+                                                        <input type="file" @change='onFileSelect' accept="image/jpeg,image/jpg,image/png">
                                                     </div>
-                                                    <small class="text-danger" v-if='errors.photo'>{{ errors.photo[0] }}</small>
+                                                    <small class="text-danger d-block" v-if='errors.photo'>{{ errors.photo[0] }}</small>
                                                     <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group" v-if="form.photo">
-                                            <div class="form-row">
-                                                <div class="col-md-12 text-center">
-                                                    <p class="small text-muted mb-2">Photo Preview:</p>
-                                                    <img :src="form.photo" class="img-thumbnail" width="150" height="150" alt="Preview">
                                                 </div>
                                             </div>
                                         </div>
@@ -250,13 +239,37 @@
 </script>
 
 <style scoped>
-.custom-file-label::after {
-    content: "Browse";
+.photo-upload-btn {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border: 1px dashed #adb5bd;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
-
-.img-thumbnail {
+.photo-upload-btn img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border: 2px solid #dee2e6;
+}
+.photo-upload-btn input[type="file"] {
+    font-size: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.photo-upload-btn:not(.has-photo)::before {
+    content: '+';
+    font-size: 1.5rem;
+    color: #adb5bd;
+    pointer-events: none;
 }
 
 .btn:disabled {
