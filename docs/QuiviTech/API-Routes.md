@@ -17,6 +17,8 @@ Base prefix: `/api`. Mix of `Route::apiResource` (standard CRUD) and hand-rolled
 
 Extra customer routes: `generate-update-link`, `approve`, plus custom `show`/`update`.
 
+**`brand` deviates from plain CRUD as of 2026-07-29** (Batch 2 of the List Page Standardization initiative, backend half — see [[Work-In-Progress]]): `GET /brand` now takes `page`/`per_page`/`sort_by`/`sort_dir`/`name`/`name_starts_with`/`year`/`month` query params and returns the app-wide paginated shape `{success, data: [...], meta: {total, per_page, current_page, last_page}}` instead of a bare `Brand::all()` array. `sort_by` is allow-listed to `['name', 'created_at']` server-side (falls back to `name` for anything else — never passed raw to `orderBy()`). A new `GET /brand/filter-options` route (`BrandController@filterOptions`) is registered **before** the `apiResource('/brand', ...)` line — required, since `apiResource` registers an implicit `GET /brand/{brand}` that would otherwise swallow `/brand/filter-options` with `{brand}` bound to the literal string `"filter-options"`; it returns `{success, data: {name_starting_letters: [...], available_years: [...]}}` computed across the whole table (needed because the old client-side full-table scan for filter options no longer works once `index()` paginates). `brand`'s `store()` still has a pre-existing, unrelated bug — writes to a non-existent `code` column — left untouched as out of scope. The frontend `brand/index.vue` rewrite to consume this is a separate task.
+
 ## POS / Cart / Orders
 - `PosController`: `catProduct`, `addCategoryToCart`, `orderdone`, dashboard stats (`todaySell`, `todayincome`, `todaydue`, `todayexp`, `todaystock`)
 - `CartController`: add/get/remove/inc/dec
