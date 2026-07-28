@@ -80,7 +80,7 @@ Shared code: `resources/js/Helpers` (likely Axios instance / formatting utilitie
   },
   ```
 
-Batch 2+ (wiring both components into the ~37 real list pages) is a follow-up initiative — see [[Work-In-Progress]].
+Batch 2+ (wiring both components into the ~37 real list pages) is a follow-up initiative — see [[Work-In-Progress]]. **`brand/index.vue`** (rewired 2026-07-29) is the first completed end-to-end example and the reference template for the remaining pages: it pairs `BrandController@index`'s server-side pagination/filtering/sorting (`page`/`per_page`/`sort_by`/`sort_dir`/`name`/`name_starts_with`/`year`/`month` query params, `{success, data, meta}` response) with both shared components, keeps `sortState: { key, dir }` as its own `data()` property separate from `filters`, and demonstrates the delete-with-page-clamping pattern (decrement `meta.current_page` before refetching when the deleted row was the last one on a non-first page). Its outer wrapper was also flattened from the old 6-level nested layout to the standardized `row.justify-content-center > card` shape (matching `meeting.vue`) as part of the same rewrite — worth doing for every page in this initiative, not just the ones already using these two components.
 
 ## Section Components
 
