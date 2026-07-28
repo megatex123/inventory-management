@@ -44,8 +44,12 @@ class BrandController extends Controller
         }
 
         $query->orderBy($sortBy, $sortDir);
+        if ($sortBy !== 'id') {
+            $query->orderBy('id', $sortDir);
+        }
 
-        $results = $query->paginate((int) $request->get('per_page', 10));
+        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $results = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
