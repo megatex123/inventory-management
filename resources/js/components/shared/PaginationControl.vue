@@ -33,9 +33,27 @@
           </li>
         </ul>
       </nav>
-      <select class="form-control form-control-sm" style="width: auto;" :value="meta.per_page" @change="onPerPageChange">
-        <option v-for="size in perPageOptions" :key="size" :value="size">{{ size }} / page</option>
-      </select>
+      <div class="dropdown">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary dropdown-toggle"
+          @click.stop="perPageMenuOpen = !perPageMenuOpen"
+        >
+          Show {{ meta.per_page }} items
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" :class="{ show: perPageMenuOpen }">
+          <a
+            v-for="size in perPageOptions"
+            :key="size"
+            href="#"
+            class="dropdown-item"
+            :class="{ active: size === meta.per_page }"
+            @click.prevent="selectPerPage(size)"
+          >
+            Show {{ size }} items
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -49,6 +67,11 @@ export default {
       required: true,
       // { total, per_page, current_page, last_page }
     },
+  },
+  data() {
+    return {
+      perPageMenuOpen: false,
+    };
   },
   computed: {
     isFirstPage() {
@@ -102,9 +125,22 @@ export default {
       if (clamped === this.meta.current_page) return;
       this.$emit('page-change', clamped);
     },
-    onPerPageChange(event) {
-      this.$emit('per-page-change', parseInt(event.target.value, 10));
+    selectPerPage(size) {
+      this.perPageMenuOpen = false;
+      if (size === this.meta.per_page) return;
+      this.$emit('per-page-change', size);
     },
+    handleOutsideClick(event) {
+      if (this.perPageMenuOpen && !this.$el.contains(event.target)) {
+        this.perPageMenuOpen = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener('click', this.handleOutsideClick);
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleOutsideClick);
   },
 };
 </script>

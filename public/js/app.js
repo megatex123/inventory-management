@@ -33564,6 +33564,11 @@ __webpack_require__.r(__webpack_exports__);
       // { total, per_page, current_page, last_page }
     }
   },
+  data: function data() {
+    return {
+      perPageMenuOpen: false
+    };
+  },
   computed: {
     isFirstPage: function isFirstPage() {
       return this.meta.current_page <= 1;
@@ -33618,9 +33623,22 @@ __webpack_require__.r(__webpack_exports__);
       if (clamped === this.meta.current_page) return;
       this.$emit('page-change', clamped);
     },
-    onPerPageChange: function onPerPageChange(event) {
-      this.$emit('per-page-change', parseInt(event.target.value, 10));
+    selectPerPage: function selectPerPage(size) {
+      this.perPageMenuOpen = false;
+      if (size === this.meta.per_page) return;
+      this.$emit('per-page-change', size);
+    },
+    handleOutsideClick: function handleOutsideClick(event) {
+      if (this.perPageMenuOpen && !this.$el.contains(event.target)) {
+        this.perPageMenuOpen = false;
+      }
     }
+  },
+  mounted: function mounted() {
+    document.addEventListener('click', this.handleOutsideClick);
+  },
+  beforeDestroy: function beforeDestroy() {
+    document.removeEventListener('click', this.handleOutsideClick);
   }
 });
 
@@ -86672,25 +86690,42 @@ var render = function render() {
         return _vm.goTo(_vm.meta.last_page);
       }
     }
-  }, [_vm._v("»")])])], 2)]), _vm._v(" "), _c("select", {
-    staticClass: "form-control form-control-sm",
-    staticStyle: {
-      width: "auto"
-    },
-    domProps: {
-      value: _vm.meta.per_page
+  }, [_vm._v("»")])])], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "dropdown"
+  }, [_c("button", {
+    staticClass: "btn btn-sm btn-outline-secondary dropdown-toggle",
+    attrs: {
+      type: "button"
     },
     on: {
-      change: _vm.onPerPageChange
+      click: function click($event) {
+        $event.stopPropagation();
+        _vm.perPageMenuOpen = !_vm.perPageMenuOpen;
+      }
+    }
+  }, [_vm._v("\n        Show " + _vm._s(_vm.meta.per_page) + " items\n      ")]), _vm._v(" "), _c("div", {
+    staticClass: "dropdown-menu dropdown-menu-right",
+    "class": {
+      show: _vm.perPageMenuOpen
     }
   }, _vm._l(_vm.perPageOptions, function (size) {
-    return _c("option", {
+    return _c("a", {
       key: size,
-      domProps: {
-        value: size
+      staticClass: "dropdown-item",
+      "class": {
+        active: size === _vm.meta.per_page
+      },
+      attrs: {
+        href: "#"
+      },
+      on: {
+        click: function click($event) {
+          $event.preventDefault();
+          return _vm.selectPerPage(size);
+        }
       }
-    }, [_vm._v(_vm._s(size) + " / page")]);
-  }), 0)])]) : _vm._e();
+    }, [_vm._v("\n          Show " + _vm._s(size) + " items\n        ")]);
+  }), 0)])])]) : _vm._e();
 };
 var staticRenderFns = [];
 render._withStripped = true;
