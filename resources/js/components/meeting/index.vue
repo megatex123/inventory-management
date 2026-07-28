@@ -118,11 +118,7 @@
               <div v-if="showFilters">
               <div class="row mt-2">
                 <div class="col-md-12 text-right mb-2">
-                  <button
-                    @click="clearFilters"
-                    class="btn btn-sm btn-outline-secondary"
-                    :disabled="!hasActiveFilters"
-                  >
+                  <button class="btn btn-sm btn-outline-secondary" @click="clearFilters" :disabled="!hasActiveFilters">
                     <i class="fas fa-times mr-1"></i>Clear Filters
                   </button>
                 </div>
