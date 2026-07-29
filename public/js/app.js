@@ -5535,7 +5535,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this.isLoadingCategories = true;
               _context.p = 1;
               _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all');
             case 2:
               response = _context.v;
               _this.categories = response.data || [];
@@ -6188,7 +6188,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this.isLoadingCategories = true;
               _context.p = 1;
               _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all');
             case 2:
               response = _context.v;
               _this.categories = response.data || [];
@@ -10741,10 +10741,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context2.p = 0;
               _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all');
             case 1:
               res = _context2.v;
-              _this2.categories = res.data.data || res.data;
+              _this2.categories = res.data;
               _context2.n = 3;
               break;
             case 2:
@@ -10843,10 +10843,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.p = 0;
               _context.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all');
             case 1:
               res = _context.v;
-              _this.categories = res.data.data || res.data;
+              _this.categories = res.data;
               _context.n = 3;
               break;
             case 2:
@@ -11081,10 +11081,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context2.p = 0;
               _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all');
             case 1:
               res = _context2.v;
-              _this2.categories = res.data.data || res.data;
+              _this2.categories = res.data;
               _context2.n = 3;
               break;
             case 2:
@@ -20513,7 +20513,7 @@ __webpack_require__.r(__webpack_exports__);
     loadAllData: function loadAllData() {
       var _this6 = this;
       // Load categories
-      axios.get('/api/categories').then(function (res) {
+      axios.get('/api/categories/all').then(function (res) {
         _this6.categories = res.data;
         console.log('Categories loaded:', _this6.categories.length);
       })["catch"](function (err) {
@@ -25157,7 +25157,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     getCat: function getCat() {
       var _this13 = this;
-      axios.get('/api/categories').then(function (res) {
+      axios.get('/api/categories/all').then(function (res) {
         _this13.categories = res.data;
       })["catch"](function (err) {
         console.error('Error loading categories:', err);
@@ -25241,7 +25241,7 @@ __webpack_require__.r(__webpack_exports__);
     }
     ;
     var id = this.$route.params.id;
-    axios.get('/api/categories').then(function (res) {
+    axios.get('/api/categories/all').then(function (res) {
       _this.categories = res.data;
     });
     axios.get('/api/suppliers').then(function (res) {
@@ -25333,7 +25333,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       _this.form = res.data;
       console.log('Product data loaded:', _this.form);
     });
-    axios.get('/api/categories').then(function (res) {
+    axios.get('/api/categories/all').then(function (res) {
       _this.categories = res.data;
     });
     axios.get('/api/suppliers').then(function (res) {
@@ -33631,7 +33631,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     fetchCategories: function fetchCategories() {
       var _this = this;
-      axios.get('/api/categories').then(function (res) {
+      axios.get('/api/categories/all').then(function (res) {
         _this.categories = res.data;
       })["catch"](function (err) {
         console.error('Error fetching categories:', err);
@@ -33714,7 +33714,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     fetchCategories: function fetchCategories() {
       var _this2 = this;
-      axios.get('/api/categories').then(function (res) {
+      axios.get('/api/categories/all').then(function (res) {
         _this2.categories = res.data;
       })["catch"](function (err) {
         console.error('Error fetching categories:', err);
@@ -33800,7 +33800,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     fetchAllCategories: function fetchAllCategories() {
       var _this2 = this;
-      axios.get('/api/categories').then(function (res) {
+      axios.get('/api/categories/all').then(function (res) {
         _this2.allCategories = res.data;
       })["catch"](function (err) {
         console.error('Error fetching categories:', err);

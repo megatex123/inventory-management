@@ -70,6 +70,16 @@ class CategoriesController extends Controller
     }
 
     /**
+     * All categories, unpaginated, for dropdown/lookup consumers.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
+    {
+        return response()->json(Categories::orderBy('name')->get());
+    }
+
+    /**
      * Distinct filter option values computed across the whole table.
      *
      * @return \Illuminate\Http\Response

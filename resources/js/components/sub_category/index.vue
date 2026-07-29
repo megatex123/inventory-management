@@ -293,7 +293,7 @@ export default {
         },
 
         fetchAllCategories() {
-            axios.get('/api/categories')
+            axios.get('/api/categories/all')
             .then(res => {
                 this.allCategories = res.data;
             })

@@ -214,8 +214,8 @@ export default {
     },
     async fetchCategories() {
       try {
-        const res = await axios.get('/api/categories');
-        this.categories = res.data.data || res.data;
+        const res = await axios.get('/api/categories/all');
+        this.categories = res.data;
       } catch (error) {
         console.error('Error fetching categories:', error);
       }

@@ -34,6 +34,7 @@ Route::post('/customer/public/{token}', 'CustomersController@publicUpdate');
 */
 Route::apiResource('/employee', 'EmployeesController');
 Route::apiResource('/suppliers', 'SuppliersController');
+Route::get('/categories/all', 'CategoriesController@all');
 Route::get('/categories/filter-options', 'CategoriesController@filterOptions');
 Route::apiResource('/categories', 'CategoriesController');
 Route::apiResource('/sub-categories', 'SubCategoriesController');

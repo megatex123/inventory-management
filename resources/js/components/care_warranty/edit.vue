@@ -553,7 +553,7 @@ export default {
     async fetchCategories() {
       this.isLoadingCategories = true
       try {
-        const response = await axios.get('/api/categories')
+        const response = await axios.get('/api/categories/all')
         this.categories = response.data || []
       } catch (error) {
         console.error('Error fetching categories:', error)

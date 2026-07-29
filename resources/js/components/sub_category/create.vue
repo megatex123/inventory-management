@@ -139,7 +139,7 @@ export default {
     },
     methods: {
         fetchCategories() {
-            axios.get('/api/categories')
+            axios.get('/api/categories/all')
             .then(res => {
                 this.categories = res.data;
             })

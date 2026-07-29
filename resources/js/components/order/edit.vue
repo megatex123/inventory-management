@@ -568,7 +568,7 @@ export default {
     // Load all necessary data
     loadAllData() {
       // Load categories
-      axios.get('/api/categories')
+      axios.get('/api/categories/all')
         .then(res => {
           this.categories = res.data;
           console.log('Categories loaded:', this.categories.length);

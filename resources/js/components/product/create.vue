@@ -199,7 +199,7 @@
             };
             let id = this.$route.params.id
 
-            axios.get('/api/categories')
+            axios.get('/api/categories/all')
                 .then(res => {
                     this.categories = res.data;
                 })
