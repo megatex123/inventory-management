@@ -4,15 +4,110 @@ namespace App\Http\Controllers;
 
 use App\Models\MeetingDetails;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class MeetingDetailsController extends Controller
 {
+    use FiltersSortsAndPaginates;
 
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(
-            MeetingDetails::with('meeting.customer')->latest()->get()
-        );
+        $query = MeetingDetails::with('meeting.customer');
+
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $keyword = strtolower((string) $search);
+
+            $query->where(function ($q) use ($escaped, $keyword) {
+                $q->where('theme_style', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('preference', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('exemption', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('target_location', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('meeting', function ($mq) use ($escaped) {
+                        $mq->where('meeting_id', 'LIKE', '%' . $escaped . '%');
+                    });
+
+                // Replicates the pre-migration client-side search's
+                // "does the keyword appear as a substring of the fixed
+                // display word" behavior for the two enum-derived text
+                // columns (e.g. typing "gam" matches reason=2 because
+                // "gam" is a substring of "gaming").
+                if ($keyword !== '' && strpos('work', $keyword) !== false) {
+                    $q->orWhere('reason', 1);
+                }
+                if ($keyword !== '' && strpos('gaming', $keyword) !== false) {
+                    $q->orWhere('reason', 2);
+                }
+                if ($keyword !== '' && strpos('multiplayer', $keyword) !== false) {
+                    $q->orWhere('play_mode', 1);
+                }
+                if ($keyword !== '' && strpos('singleplayer', $keyword) !== false) {
+                    $q->orWhere('play_mode', 2);
+                }
+            });
+        }
+
+        $this->applyEqualsFilter($query, $request, 'reason', 'reason');
+        $this->applyEqualsFilter($query, $request, 'caseSize', 'case_size');
+
+        $budgetRange = $request->input('budgetRange');
+        if (is_scalar($budgetRange) && $budgetRange !== '') {
+            if ($budgetRange === 'low') {
+                $query->whereRaw('COALESCE(initial_budget, 0) < 7000');
+            } elseif ($budgetRange === 'medium') {
+                $query->whereRaw('COALESCE(initial_budget, 0) >= 7000 AND COALESCE(initial_budget, 0) <= 10000');
+            } elseif ($budgetRange === 'high') {
+                $query->whereRaw('COALESCE(initial_budget, 0) > 10000');
+            }
+        }
+
+        $features = $request->input('features');
+        if (is_scalar($features) && $features !== '') {
+            if ($features === 'future_proof') {
+                $query->where('future_proof', 1);
+            } elseif ($features === 'aio') {
+                $query->where('okay_with_aio', 1);
+            } elseif ($features === 'gpu_sag') {
+                $query->where('gpu_sag', 1);
+            } elseif ($features === 'rgb') {
+                $query->where('need_rgb', 1);
+            }
+        }
+
+        $this->resolveSortAndApply($query, $request, ['initial_budget', 'target_build_date', 'created_at'], 'created_at', 'id', [], 'desc');
+
+        $perPage = $this->resolvePerPage($request);
+        $paginated = $query->paginate($perPage);
+
+        return $this->paginatedResponse($paginated);
+    }
+
+    /**
+     * Whole-table statistics, unaffected by the list's active filters --
+     * matches the pre-migration client-side calculateStatistics().
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function statistics()
+    {
+        $total = MeetingDetails::count();
+        $gaming = MeetingDetails::where('reason', 2)->count();
+        $work = MeetingDetails::where('reason', 1)->count();
+
+        $avgBudget = MeetingDetails::where('initial_budget', '>', 0)
+            ->whereNotNull('initial_budget')
+            ->avg('initial_budget');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => $total,
+                'gaming' => $gaming,
+                'work' => $work,
+                'avgBudget' => $avgBudget ? round($avgBudget) : 0,
+            ],
+        ]);
     }
 
     public function store(Request $request)
