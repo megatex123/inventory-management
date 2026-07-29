@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Meeting;
 use App\Models\Customers;
 use App\Support\BusinessId;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -12,11 +13,165 @@ use Illuminate\Support\Facades\Storage;
 
 class MeetingController extends Controller
 {
-    public function index()
+    use FiltersSortsAndPaginates;
+
+    public function index(Request $request)
+    {
+        $query = Meeting::with('customer');
+
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('meetings.title', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('meetings.meeting_id', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('meetings.meeting_notes', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('meetings.meeting_date', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('customer', function ($cq) use ($escaped) {
+                        $cq->where('full_name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('phone', 'LIKE', '%' . $escaped . '%');
+                    });
+            });
+        }
+
+        $dateRange = $request->input('dateRange');
+        if (is_scalar($dateRange) && $dateRange !== '') {
+            $today = \Carbon\Carbon::today();
+            switch ($dateRange) {
+                case 'today':
+                    $query->whereDate('meeting_date', $today);
+                    break;
+                case 'yesterday':
+                    $query->whereDate('meeting_date', $today->copy()->subDay());
+                    break;
+                case 'thisWeek':
+                    $query->whereBetween('meeting_date', [
+                        $today->copy()->startOfWeek(\Carbon\Carbon::SUNDAY)->toDateString(),
+                        $today->toDateString(),
+                    ]);
+                    break;
+                case 'lastWeek':
+                    $startOfThisWeek = $today->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                    $query->whereBetween('meeting_date', [
+                        $startOfThisWeek->copy()->subWeek()->toDateString(),
+                        $startOfThisWeek->copy()->subDay()->toDateString(),
+                    ]);
+                    break;
+                case 'thisMonth':
+                    $query->whereYear('meeting_date', $today->year)
+                        ->whereMonth('meeting_date', $today->month);
+                    break;
+                case 'lastMonth':
+                    $lastMonth = $today->copy()->subMonthNoOverflow();
+                    $query->whereYear('meeting_date', $lastMonth->year)
+                        ->whereMonth('meeting_date', $lastMonth->month);
+                    break;
+                case 'thisYear':
+                    $query->whereYear('meeting_date', $today->year);
+                    break;
+            }
+        }
+
+        // month and year are INDEPENDENT filters here (unlike other pages
+        // in this initiative, where month requires year to be set) --
+        // this matches the pre-migration client-side filteredMeetings
+        // computed property's actual behavior, preserved as-is.
+        $month = $request->input('month');
+        if (is_scalar($month) && $month !== '') {
+            $query->whereMonth('meeting_date', $month);
+        }
+        $year = $request->input('year');
+        if (is_scalar($year) && $year !== '') {
+            $query->whereYear('meeting_date', $year);
+        }
+
+        $hasDocument = $request->input('hasDocument');
+        if (is_scalar($hasDocument) && $hasDocument !== '') {
+            if ($hasDocument === 'yes') {
+                $query->whereNotNull('document')->where('document', '!=', '');
+            } elseif ($hasDocument === 'no') {
+                $query->where(function ($q) {
+                    $q->whereNull('document')->orWhere('document', '');
+                });
+            }
+        }
+
+        $this->resolveSortAndApply($query, $request, ['title', 'meeting_date', 'created_at'], 'created_at', 'id', [], 'desc');
+
+        $perPage = $this->resolvePerPage($request);
+        $paginated = $query->paginate($perPage);
+
+        return $this->paginatedResponse($paginated);
+    }
+
+    /**
+     * All meetings, unpaginated, with the SAME query as the pre-migration
+     * index() -- preserved byte-for-byte for 4 pre-existing bare-array
+     * consumers (the meeting_details/uat_meeting create/edit "which
+     * meeting" dropdowns).
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
     {
         return response()->json(
             Meeting::with('customer')->latest()->get()
         );
+    }
+
+    /**
+     * Whole-table statistics, unaffected by the list's active filters --
+     * matches the pre-migration client-side calculateStatistics(), which
+     * always ran over the full unfiltered dataset.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function statistics()
+    {
+        $total = Meeting::count();
+
+        $thisMonth = Meeting::whereMonth('meeting_date', now()->month)
+            ->whereYear('meeting_date', now()->year)
+            ->count();
+
+        $withDocuments = Meeting::whereNotNull('document')
+            ->where('document', '!=', '')
+            ->count();
+
+        $last7Days = Meeting::whereBetween('meeting_date', [
+            now()->subDays(7)->toDateString(),
+            now()->toDateString(),
+        ])->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => $total,
+                'thisMonth' => $thisMonth,
+                'withDocuments' => $withDocuments,
+                'last7Days' => $last7Days,
+            ],
+        ]);
+    }
+
+    /**
+     * Distinct filter option values computed across the whole table.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filterOptions()
+    {
+        $availableYears = Meeting::selectRaw('DISTINCT YEAR(meeting_date) as year')
+            ->whereNotNull('meeting_date')
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'available_years' => $availableYears,
+            ],
+        ]);
     }
 
     public function store(Request $request)

@@ -14653,7 +14653,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   methods: {
     fetchMeetings: function fetchMeetings() {
       var _this = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings').then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/all').then(function (res) {
         _this.meetings = res.data;
       })["catch"](function (error) {
         console.error('Error fetching meetings:', error);
@@ -14816,7 +14816,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   methods: {
     fetchMeetings: function fetchMeetings() {
       var _this = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings').then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/all').then(function (res) {
         _this.meetings = res.data;
       })["catch"](function (error) {
         console.error('Error fetching meetings:', error);
@@ -35919,7 +35919,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   methods: {
     fetchMeetings: function fetchMeetings() {
       var _this = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings').then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/all').then(function (res) {
         _this.meetings = res.data;
       })["catch"](function (error) {
         console.error('Error fetching meetings:', error);
@@ -36082,7 +36082,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
   methods: {
     fetchMeetings: function fetchMeetings() {
       var _this = this;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings').then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/all').then(function (res) {
         _this.meetings = res.data;
       })["catch"](function (error) {
         console.error('Error fetching meetings:', error);

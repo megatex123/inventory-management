@@ -314,7 +314,7 @@ export default {
   },
   methods: {
     fetchMeetings() {
-      axios.get('/api/meetings')
+      axios.get('/api/meetings/all')
         .then(res => {
           this.meetings = res.data;
         })

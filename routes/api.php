@@ -214,6 +214,9 @@ Route::get('/today/stock', 'PosController@todaystock');
 |--------------------------------------------------------------------------
 */
 Route::get('/meetings', 'MeetingController@index');
+Route::get('/meetings/all', 'MeetingController@all');
+Route::get('/meetings/statistics', 'MeetingController@statistics');
+Route::get('/meetings/filter-options', 'MeetingController@filterOptions');
 Route::get('/meetings/{meeting}', 'MeetingController@show');
 Route::post('/meetings', 'MeetingController@store');
 Route::put('/meetings/{meeting}', 'MeetingController@update');
