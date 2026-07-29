@@ -39,11 +39,19 @@ class MeetingDetailsController extends Controller
                 if ($keyword !== '' && strpos('gaming', $keyword) !== false) {
                     $q->orWhere('reason', 2);
                 }
+                // The old JS only tested play_mode text when reason==2
+                // (play mode is only shown/meaningful for Gaming rows) --
+                // replicate that guard so a Work row with a stray
+                // play_mode value can't match via this path.
                 if ($keyword !== '' && strpos('multiplayer', $keyword) !== false) {
-                    $q->orWhere('play_mode', 1);
+                    $q->orWhere(function ($sq) {
+                        $sq->where('reason', 2)->where('play_mode', 1);
+                    });
                 }
                 if ($keyword !== '' && strpos('singleplayer', $keyword) !== false) {
-                    $q->orWhere('play_mode', 2);
+                    $q->orWhere(function ($sq) {
+                        $sq->where('reason', 2)->where('play_mode', 2);
+                    });
                 }
             });
         }
