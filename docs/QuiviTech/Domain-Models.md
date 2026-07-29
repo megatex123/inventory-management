@@ -23,12 +23,14 @@ Confirmed live via `information_schema.COLUMNS` (2026-07-29) — these columns h
 | `expenses` | `amount` |
 | `products` | `price` |
 | `salaries` | `amount`, `salary_date`, `salary_month`, `salary_year` |
+| `serves` | `fee` |
+| `care_data` | `price` |
 
 **The recipe (apply identically wherever one of these columns needs sorting or range filtering):**
 - Sorting requires `CAST(column AS DECIMAL(10,2))` via `orderByRaw()` — never a plain `orderBy()`, which does lexicographic string comparison (e.g. `"9.99"` would sort after `"600.00"`).
 - Range/min-max filtering requires the same `CAST` via `whereRaw()` with bound parameters — never raw string interpolation.
 
-`craft.fee` was the first of these handled, in `CraftController::index()`'s `sort_by=fee` and `min_fee`/`max_fee` filters (see [[API-Routes]]). `care`, `expens`, `product`, and `salary` are all list pages still pending migration in this same initiative — when each is migrated, its numeric-typed-as-`varchar` column(s) above will need the same treatment.
+`craft.fee` was the first of these handled (Batch 3), followed by `care.fee` (Batch 7) — both in their respective controllers' `sort_by=fee` and `min_fee`/`max_fee` filters (see [[API-Routes]]). `expenses`, `products`, `salaries`, `serves`, and `care_data` are all still pending migration in this same initiative — when each is migrated, its numeric-typed-as-`varchar` column(s) above will need the same treatment. (`serves.fee` and `care_data.price` confirmed live via `information_schema.COLUMNS` on 2026-07-29, appended to this table after the original 5-row catalogue undercounted them.)
 
 ## Orders / POS
 - `Order` — central hub: belongsTo `Customers`, `Craft`, `Serves`, `Care`; hasMany `ServeData` (`order_id`), hasMany `CareData` (`order_id`)
