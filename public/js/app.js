@@ -9335,7 +9335,12 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -9343,22 +9348,41 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
+
+
+
+
+var EMPTY_FILTERS = {
+  customer_id: '',
+  full_name: '',
+  email_phone: '',
+  feedback: '',
+  contact_method: '',
+  consent: '',
+  approve: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
       customers: [],
+      loading: true,
       showFilters: false,
-      filters: {
-        customer_id: '',
-        full_name: '',
-        email_phone: '',
-        feedback: '',
-        contact_method: '',
-        consent: '',
-        approve: ''
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
       },
       filterColumns: [{
         key: 'customer_id',
@@ -9414,55 +9438,20 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     };
   },
   computed: {
-    filteredCustomers: function filteredCustomers() {
-      var _this = this;
-      var filtered = this.customers;
-      if (this.filters.customer_id) {
-        var kw = this.filters.customer_id.toLowerCase();
-        filtered = filtered.filter(function (c) {
-          return c.customer_id && c.customer_id.toLowerCase().includes(kw);
-        });
-      }
-      if (this.filters.full_name) {
-        var _kw = this.filters.full_name.toLowerCase();
-        filtered = filtered.filter(function (c) {
-          return c.full_name && c.full_name.toLowerCase().includes(_kw);
-        });
-      }
-      if (this.filters.email_phone) {
-        var _kw2 = this.filters.email_phone.toLowerCase();
-        filtered = filtered.filter(function (c) {
-          return c.email && c.email.toLowerCase().includes(_kw2) || c.phone && c.phone.toLowerCase().includes(_kw2);
-        });
-      }
-      if (this.filters.feedback) {
-        var _kw3 = this.filters.feedback.toLowerCase();
-        filtered = filtered.filter(function (c) {
-          return c.feedback && c.feedback.toLowerCase().includes(_kw3);
-        });
-      }
-      if (this.filters.contact_method) {
-        filtered = filtered.filter(function (c) {
-          return c.contact_method === _this.filters.contact_method;
-        });
-      }
-      if (this.filters.consent !== '') {
-        var wantConsent = this.filters.consent === '1';
-        filtered = filtered.filter(function (c) {
-          return Boolean(c.consent) === wantConsent;
-        });
-      }
-      if (this.filters.approve) {
-        filtered = filtered.filter(function (c) {
-          return c.approve === _this.filters.approve;
-        });
-      }
-      return filtered;
-    },
     hasActiveFilters: function hasActiveFilters() {
       return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
+    },
+    activeFilters: function activeFilters() {
+      var _this = this;
+      var active = {};
+      Object.keys(this.filters).forEach(function (key) {
+        if (_this.filters[key] !== '') {
+          active[key] = _this.filters[key];
+        }
+      });
+      return active;
     }
   },
   methods: {
@@ -9475,32 +9464,70 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       }
       return 'badge-success';
     },
-    clearFilters: function clearFilters() {
-      this.filters = {
-        customer_id: '',
-        full_name: '',
-        email_phone: '',
-        feedback: '',
-        contact_method: '',
-        consent: '',
-        approve: ''
+    getFilterLabel: function getFilterLabel(key, value) {
+      var labels = {
+        contact_method: {},
+        consent: {
+          '1': 'Yes',
+          '0': 'No'
+        },
+        approve: {
+          'Approved': 'Approved',
+          'Rejected': 'Rejected'
+        }
       };
+      if (key === 'customer_id') return "Customer ID: \"".concat(value, "\"");
+      if (key === 'full_name') return "Full Name: \"".concat(value, "\"");
+      if (key === 'email_phone') return "Email/Phone: \"".concat(value, "\"");
+      if (key === 'feedback') return "Feedback: \"".concat(value, "\"");
+      if (key === 'contact_method') return "Contact Method: ".concat(value);
+      return labels[key] && labels[key][value] ? "".concat(key.replace('_', ' '), ": ").concat(labels[key][value]) : "".concat(key, ": ").concat(value);
     },
-    getCustomers: function getCustomers() {
+    clearFilters: function clearFilters() {
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
+    },
+    removeFilter: function removeFilter(filterKey) {
+      if (this.filters[filterKey] !== undefined) {
+        this.filters[filterKey] = '';
+      }
+    },
+    fetchList: function fetchList() {
       var _this2 = this;
-      axios.get('/api/customer').then(function (res) {
-        _this2.customers = res.data.map(function (c) {
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        customer_id: this.filters.customer_id,
+        full_name: this.filters.full_name,
+        email_phone: this.filters.email_phone,
+        feedback: this.filters.feedback,
+        contact_method: this.filters.contact_method,
+        consent: this.filters.consent,
+        approve: this.filters.approve
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer', {
+        params: params
+      }).then(function (res) {
+        _this2.customers = res.data.data.map(function (c) {
           return _objectSpread(_objectSpread({}, c), {}, {
             approve: c.approve == 1 ? 'Approved' : 'Rejected'
           });
         });
+        _this2.meta = res.data.meta;
       })["catch"](function (err) {
         console.error(err);
         alert('Failed to load customers');
+      })["finally"](function () {
+        _this2.loading = false;
       });
     },
     copyUpdateLink: function copyUpdateLink(customerId) {
-      axios.post("/api/customer/".concat(customerId, "/generate-update-link")).then(function (res) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/customer/".concat(customerId, "/generate-update-link")).then(function (res) {
         var link = res.data.update_link;
         navigator.clipboard.writeText(link);
         Swal.fire({
@@ -9515,7 +9542,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       });
     },
     updateApprove: function updateApprove(customer) {
-      axios.put("/api/customer/".concat(customer.id, "/approve"), {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/customer/".concat(customer.id, "/approve"), {
         approve: customer.approve
       }).then(function () {
         Swal.fire({
@@ -9541,10 +9568,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.isConfirmed) {
-          axios["delete"]("/api/customer/".concat(id)).then(function () {
-            _this3.customers = _this3.customers.filter(function (c) {
-              return c.id !== id;
-            });
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/customer/".concat(id)).then(function () {
+            if (_this3.customers.length === 1 && _this3.meta.current_page > 1) {
+              _this3.meta.current_page -= 1;
+            }
+            _this3.fetchList();
             Swal.fire('Deleted!', 'Customer has been deleted.', 'success');
           })["catch"](function () {
             Swal.fire('Error!', 'Failed to delete customer.', 'error');
@@ -9561,13 +9589,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return "".concat(day, "-").concat(month, "-").concat(year);
     }
   },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    }
+  },
   created: function created() {
     if (!User.loggedIn()) {
       this.$router.push({
         name: 'login'
       });
     } else {
-      this.getCustomers();
+      this.fetchList();
     }
   }
 });
@@ -46334,11 +46371,54 @@ var render = function render() {
       },
       expression: "filters"
     }
-  })], 1)])]) : _vm._e()])], 1)])])]), _vm._v(" "), _c("div", {
+  })], 1)]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+    staticClass: "row mt-2"
+  }, [_c("div", {
+    staticClass: "col-12"
+  }, [_c("div", {
+    staticClass: "d-flex flex-wrap gap-2"
+  }, _vm._l(_vm.activeFilters, function (value, key) {
+    return _c("span", {
+      key: key,
+      staticClass: "badge badge-info"
+    }, [_vm._v("\n                      " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                      "), _c("button", {
+      staticClass: "badge badge-light ml-1 p-0 border-0",
+      staticStyle: {
+        background: "transparent"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.removeFilter(key);
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fas fa-times"
+    })])]);
+  }), 0)])]) : _vm._e()]) : _vm._e()])], 1)])])]), _vm._v(" "), _c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredCustomers, function (customer) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Customer ID",
+      "sort-key": "customer_id",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Full Name",
+      "sort-key": "full_name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare Membership")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.customers, function (customer) {
     return _c("tr", {
       key: customer.id
     }, [_c("td", [_vm._v(_vm._s(customer.customer_id))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(customer.full_name) + " "), _c("br"), _vm._v(" "), _c("span", {
@@ -46435,12 +46515,22 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-copy"
     })]) : _vm._e()], 1)])]);
-  }), _vm._v(" "), _vm.filteredCustomers.length === 0 ? _c("tr", [_c("td", {
+  }), _vm._v(" "), _vm.customers.length === 0 ? _c("tr", [_c("td", {
     staticClass: "text-center text-muted",
     attrs: {
-      colspan: "10"
+      colspan: "9"
     }
-  }, [_vm._v("\n              No customers found.\n              ")])]) : _vm._e()], 2)])])])]);
+  }, [_vm._v("\n              No customers found.\n              ")])]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -46455,9 +46545,17 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Customer ID")]), _vm._v(" "), _c("th", [_vm._v("Full Name")]), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare Membership")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
+  return _c("tr", [_c("td", {
+    staticClass: "text-center py-4",
+    attrs: {
+      colspan: "9"
+    }
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    attrs: {
+      role: "status"
+    }
+  })])]);
 }];
 render._withStripped = true;
 
@@ -98303,7 +98401,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\nimg[data-v-2418a5ec] {\n    -o-object-fit: cover;\n       object-fit: cover;\n}\n.bg-highlight-purple[data-v-2418a5ec] {\n    background: rgba(111, 66, 193, 0.15);\n    padding: 6px 12px;\n    border-radius: 6px;\n    display: inline-block;\n}\n", ""]);
+exports.push([module.i, "\nimg[data-v-2418a5ec] {\n    -o-object-fit: cover;\n       object-fit: cover;\n}\n.bg-highlight-purple[data-v-2418a5ec] {\n    background: rgba(111, 66, 193, 0.15);\n    padding: 6px 12px;\n    border-radius: 6px;\n    display: inline-block;\n}\n.badge-info[data-v-2418a5ec] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-2418a5ec] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-2418a5ec]:last-child {\n    margin-right: 0;\n}\n.filter-panel-enter-active[data-v-2418a5ec],\n.filter-panel-leave-active[data-v-2418a5ec] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-2418a5ec],\n.filter-panel-leave-to[data-v-2418a5ec] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 

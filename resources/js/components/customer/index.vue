@@ -44,6 +44,19 @@
                     />
                   </div>
                 </div>
+
+                <div class="row mt-2" v-if="hasActiveFilters">
+                  <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2">
+                      <span v-for="(value, key) in activeFilters" :key="key" class="badge badge-info">
+                        {{ getFilterLabel(key, value) }}
+                        <button @click="removeFilter(key)" class="badge badge-light ml-1 p-0 border-0" style="background: transparent;">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
               </transition>
             </div>
@@ -56,8 +69,8 @@
         <table class="table align-items-center table-flush">
           <thead class="thead-light">
             <tr>
-                <th>Customer ID</th>
-                <th>Full Name</th>
+                <sortable-th label="Customer ID" sort-key="customer_id" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Full Name" sort-key="full_name" :current-sort="sortState" @sort="onSort" />
                 <th>Email/Phone</th>
                 <th>Feedback</th>
                 <th>Contact Method/Hear About</th>
@@ -68,8 +81,11 @@
             </tr>
           </thead>
 
-          <tbody>
-            <tr v-for="customer in filteredCustomers" :key="customer.id">
+          <tbody v-if="loading">
+            <tr><td colspan="9" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+          </tbody>
+          <tbody v-else>
+            <tr v-for="customer in customers" :key="customer.id">
                 <td>{{ customer.customer_id }}</td>
                 <td>{{ customer.full_name }} <br> <span class="mb-3 bg-highlight-purple">Preferred Name: {{ customer.preferred_name }}</span></td>
                 <td>{{ customer.email }}<br>{{ customer.phone }}</td>
@@ -145,36 +161,49 @@
                 </td>
             </tr>
 
-            <tr v-if="filteredCustomers.length === 0">
-                <td colspan="10" class="text-center text-muted">
+            <tr v-if="customers.length === 0">
+                <td colspan="9" class="text-center text-muted">
                 No customers found.
                 </td>
             </tr>
           </tbody>
         </table>
       </div>
+      <div class="card-footer">
+        <pagination-control :meta="meta" @page-change="onPageChange" @per-page-change="onPerPageChange" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = {
+  customer_id: '',
+  full_name: '',
+  email_phone: '',
+  feedback: '',
+  contact_method: '',
+  consent: '',
+  approve: '',
+};
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       customers: [],
+      loading: true,
       showFilters: false,
-      filters: {
-        customer_id: '',
-        full_name: '',
-        email_phone: '',
-        feedback: '',
-        contact_method: '',
-        consent: '',
-        approve: '',
-      },
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
       filterColumns: [
         { key: 'customer_id', label: 'Customer ID', type: 'text' },
         { key: 'full_name', label: 'Full Name', type: 'text' },
@@ -206,41 +235,17 @@ export default {
   },
 
   computed: {
-    filteredCustomers() {
-      let filtered = this.customers;
-      if (this.filters.customer_id) {
-        const kw = this.filters.customer_id.toLowerCase();
-        filtered = filtered.filter(c => c.customer_id && c.customer_id.toLowerCase().includes(kw));
-      }
-      if (this.filters.full_name) {
-        const kw = this.filters.full_name.toLowerCase();
-        filtered = filtered.filter(c => c.full_name && c.full_name.toLowerCase().includes(kw));
-      }
-      if (this.filters.email_phone) {
-        const kw = this.filters.email_phone.toLowerCase();
-        filtered = filtered.filter(c =>
-          (c.email && c.email.toLowerCase().includes(kw)) ||
-          (c.phone && c.phone.toLowerCase().includes(kw))
-        );
-      }
-      if (this.filters.feedback) {
-        const kw = this.filters.feedback.toLowerCase();
-        filtered = filtered.filter(c => c.feedback && c.feedback.toLowerCase().includes(kw));
-      }
-      if (this.filters.contact_method) {
-        filtered = filtered.filter(c => c.contact_method === this.filters.contact_method);
-      }
-      if (this.filters.consent !== '') {
-        const wantConsent = this.filters.consent === '1';
-        filtered = filtered.filter(c => Boolean(c.consent) === wantConsent);
-      }
-      if (this.filters.approve) {
-        filtered = filtered.filter(c => c.approve === this.filters.approve);
-      }
-      return filtered;
-    },
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '');
+    },
+    activeFilters() {
+      const active = {};
+      Object.keys(this.filters).forEach(key => {
+        if (this.filters[key] !== '') {
+          active[key] = this.filters[key];
+        }
+      });
+      return active;
     }
   },
 
@@ -254,28 +259,62 @@ export default {
         }
         return 'badge-success';
     },
-    clearFilters() {
-      this.filters = {
-        customer_id: '',
-        full_name: '',
-        email_phone: '',
-        feedback: '',
-        contact_method: '',
-        consent: '',
-        approve: '',
+    getFilterLabel(key, value) {
+      const labels = {
+        contact_method: {},
+        consent: { '1': 'Yes', '0': 'No' },
+        approve: { 'Approved': 'Approved', 'Rejected': 'Rejected' },
       };
+      if (key === 'customer_id') return `Customer ID: "${value}"`;
+      if (key === 'full_name') return `Full Name: "${value}"`;
+      if (key === 'email_phone') return `Email/Phone: "${value}"`;
+      if (key === 'feedback') return `Feedback: "${value}"`;
+      if (key === 'contact_method') return `Contact Method: ${value}`;
+      return labels[key] && labels[key][value]
+        ? `${key.replace('_', ' ')}: ${labels[key][value]}`
+        : `${key}: ${value}`;
     },
-    getCustomers() {
-      axios.get('/api/customer')
+    clearFilters() {
+      this.filters = { ...EMPTY_FILTERS };
+    },
+    removeFilter(filterKey) {
+      if (this.filters[filterKey] !== undefined) {
+        this.filters[filterKey] = '';
+      }
+    },
+    fetchList() {
+      this.loading = true;
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        customer_id: this.filters.customer_id,
+        full_name: this.filters.full_name,
+        email_phone: this.filters.email_phone,
+        feedback: this.filters.feedback,
+        contact_method: this.filters.contact_method,
+        consent: this.filters.consent,
+        approve: this.filters.approve,
+      };
+      Object.keys(params).forEach(key => {
+        if (params[key] === '') delete params[key];
+      });
+
+      axios.get('/api/customer', { params })
         .then(res => {
-            this.customers = res.data.map(c => ({
-                ...c,
-                approve: c.approve == 1 ? 'Approved' : 'Rejected'
-            }));
+          this.customers = res.data.data.map(c => ({
+            ...c,
+            approve: c.approve == 1 ? 'Approved' : 'Rejected'
+          }));
+          this.meta = res.data.meta;
         })
         .catch(err => {
           console.error(err);
           alert('Failed to load customers');
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     copyUpdateLink(customerId) {
@@ -326,7 +365,10 @@ export default {
         if (result.isConfirmed) {
           axios.delete(`/api/customer/${id}`)
             .then(() => {
-              this.customers = this.customers.filter(c => c.id !== id);
+              if (this.customers.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               Swal.fire('Deleted!', 'Customer has been deleted.', 'success');
             })
             .catch(() => {
@@ -345,11 +387,21 @@ export default {
     },
   },
 
+  watch: {
+    filters: {
+      handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    },
+  },
+
   created() {
     if (!User.loggedIn()) {
       this.$router.push({ name: 'login' });
     } else {
-      this.getCustomers();
+      this.fetchList();
     }
   },
 };
@@ -364,5 +416,26 @@ export default {
         padding: 6px 12px;
         border-radius: 6px;
         display: inline-block;
+    }
+    .badge-info {
+        background-color: #36b9cc !important;
+        font-size: 0.75em;
+        padding: 0.4em 0.8em;
+    }
+    .d-flex.flex-wrap.gap-2 > * {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .d-flex.flex-wrap.gap-2 > *:last-child {
+        margin-right: 0;
+    }
+    .filter-panel-enter-active,
+    .filter-panel-leave-active {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .filter-panel-enter,
+    .filter-panel-leave-to {
+      opacity: 0;
+      transform: translateY(-8px);
     }
 </style>
