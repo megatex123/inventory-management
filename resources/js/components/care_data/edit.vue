@@ -516,7 +516,7 @@ export default {
     async fetchCustomers() {
       this.loadingCustomers = true;
       try {
-        const response = await axios.get('/api/customer');
+        const response = await axios.get('/api/customer/all');
         this.customers = response.data.data || response.data;
       } catch (error) {
         console.error('Error fetching customers:', error);

@@ -52,6 +52,7 @@ Route::get('/product/all', 'ProductsController@all');
 Route::get('/product/filter-options', 'ProductsController@filterOptions');
 Route::apiResource('/product', 'ProductsController');
 Route::apiResource('/expens', 'ExpensesController');
+Route::get('/customer/all', 'CustomersController@all');
 Route::apiResource('/customer', 'CustomersController');
 Route::get('/brand/filter-options', 'BrandController@filterOptions');
 Route::apiResource('/brand', 'BrandController');

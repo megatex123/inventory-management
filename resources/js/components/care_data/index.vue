@@ -1192,7 +1192,7 @@ export default {
 
     async fetchCustomers() {
       try {
-        const response = await axios.get('/api/customer');
+        const response = await axios.get('/api/customer/all');
         // Handle different response structures
         if (response.data && response.data.success) {
           this.customers = response.data.data || response.data;

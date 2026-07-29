@@ -56,7 +56,7 @@ export default {
     };
   },
   mounted() {
-    axios.get('/api/customer').then(res => {
+    axios.get('/api/customer/all').then(res => {
         this.customers = res.data;
         console.log(this.customers);
     });

@@ -590,7 +590,7 @@ export default {
         });
 
       // Load customers
-      axios.get('/api/customer')
+      axios.get('/api/customer/all')
         .then(res => {
           this.customers = res.data;
           console.log('Customers loaded:', this.customers.length);

@@ -9,13 +9,90 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Image;
 use Carbon\Carbon;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class CustomersController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display all customers
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $query = Customers::query();
+
+        $this->applyLikeFilter($query, $request, 'customer_id', 'customer_id');
+        $this->applyLikeFilter($query, $request, 'full_name', 'full_name');
+        $this->applyLikeFilter($query, $request, 'feedback', 'feedback');
+
+        $emailPhone = $request->input('email_phone');
+        if (is_scalar($emailPhone) && $emailPhone !== '') {
+            $escaped = addcslashes((string) $emailPhone, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('email', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $escaped . '%');
+            });
+        }
+
+        $this->applyEqualsFilter($query, $request, 'contact_method', 'contact_method');
+
+        $consent = $request->input('consent');
+        if (is_scalar($consent) && $consent !== '') {
+            $query->where('consent', $consent === '1' ? 1 : 0);
+        }
+
+        $approve = $request->input('approve');
+        if (is_scalar($approve) && $approve !== '') {
+            $query->where('approve', $approve === 'Approved' ? 1 : 0);
+        }
+
+        $this->resolveSortAndApply($query, $request, ['full_name', 'customer_id', 'created_at'], 'created_at');
+
+        $perPage = $this->resolvePerPage($request);
+        $paginated = $query->with(['careData.care', 'careData.order'])->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($customer) {
+            if ($customer->approved_at) {
+                $today = Carbon::now();
+                $approvedAt = Carbon::parse($customer->approved_at);
+                $expiryDate = $approvedAt->copy()->addMonths(6);
+
+                if ($today->gt($expiryDate)) {
+                    $customer->time_remaining = "Expired";
+                    $customer->months_remaining = 0;
+                    $customer->days_remaining = 0;
+                } else {
+                    $diff = $today->diff($expiryDate);
+
+                    $customer->months_remaining = $diff->m;
+                    $customer->days_remaining = $diff->d;
+
+                    $customer->time_remaining = $diff->m . " Months " . $diff->d . " Days";
+                }
+
+                $customer->range_start = $today->toDateTimeString();
+                $customer->range_end = $expiryDate->toDateTimeString();
+            }
+
+            $this->attachLongestCareMembership($customer);
+
+            return $customer;
+        });
+
+        return $this->paginatedResponse($paginated);
+    }
+
+    /**
+     * All customers, unpaginated, with the SAME query and membership
+     * computation as the pre-pagination index() -- preserved byte-for-byte
+     * since this endpoint has by far the largest external-consumer surface
+     * in this initiative (12 call sites across 10 files as of Batch 10),
+     * all of which expect a bare array of fully-computed customer objects.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
     {
         $customers = Customers::with(['careData.care', 'careData.order'])
             ->latest()

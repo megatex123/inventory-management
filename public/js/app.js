@@ -3014,7 +3014,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this2.loadingCustomers = true;
               _context.p = 1;
               _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 2:
               res = _context.v;
               _this2.customers = res.data.data || res.data;
@@ -3772,7 +3772,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this6.loadingCustomers = true;
               _context3.p = 1;
               _context3.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 2:
               response = _context3.v;
               _this6.customers = response.data.data || response.data;
@@ -4699,7 +4699,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context3.p = 0;
               _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 1:
               response = _context3.v;
               // Handle different response structures
@@ -9635,7 +9635,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.p = 0;
               _context.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 1:
               res = _context.v;
               _this2.customers = res.data.data || res.data || [];
@@ -9811,7 +9811,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.p = 0;
               _context.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 1:
               res = _context.v;
               _this2.customers = res.data.data || res.data || [];
@@ -14119,7 +14119,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var _this = this;
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer').then(function (res) {
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all').then(function (res) {
       _this.customers = res.data;
       console.log(_this.customers);
     });
@@ -14178,7 +14178,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     var _this = this;
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer').then(function (res) {
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all').then(function (res) {
       _this.customers = res.data;
       console.log(_this.customers);
     });
@@ -20612,7 +20612,7 @@ __webpack_require__.r(__webpack_exports__);
       });
 
       // Load customers
-      axios.get('/api/customer').then(function (res) {
+      axios.get('/api/customer/all').then(function (res) {
         _this6.customers = res.data;
         console.log('Customers loaded:', _this6.customers.length);
       })["catch"](function (err) {
@@ -25221,7 +25221,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     getCustomer: function getCustomer() {
       var _this11 = this;
-      axios.get('/api/customer').then(function (res) {
+      axios.get('/api/customer/all').then(function (res) {
         _this11.Customers = res.data;
       })["catch"](function (err) {
         console.error('Error loading customers:', err);
@@ -28166,7 +28166,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this2.loadingCustomers = true;
               _context.p = 1;
               _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 2:
               res = _context.v;
               _this2.customers = res.data.data || res.data;
@@ -28860,7 +28860,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this3.loadingCustomers = true;
               _context2.p = 1;
               _context2.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 2:
               res = _context2.v;
               _this3.customers = res.data.data || res.data;
@@ -29630,7 +29630,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context3.p = 0;
               _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 1:
               res = _context3.v;
               _this7.customers = res.data.data || res.data;

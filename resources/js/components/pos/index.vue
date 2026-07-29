@@ -822,7 +822,7 @@ export default {
     },
 
     getCustomer() {
-      axios.get('/api/customer')
+      axios.get('/api/customer/all')
         .then(res => {
           this.Customers = res.data;
         })
