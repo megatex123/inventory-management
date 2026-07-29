@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\SubCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SubCategoriesController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,33 +20,12 @@ class SubCategoriesController extends Controller
     {
         $query = SubCategories::with('category');
 
-        if ($request->filled('name')) {
-            $query->where('sub_categories.name', 'LIKE', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('code')) {
-            $query->where('sub_categories.code', 'LIKE', '%' . $request->code . '%');
-        }
-
-        if ($request->filled('name_starts_with')) {
-            $query->where('sub_categories.name', 'LIKE', $request->name_starts_with . '%');
-        }
-
-        if ($request->filled('code_starts_with')) {
-            $query->where('sub_categories.code', 'LIKE', $request->code_starts_with . '%');
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('sub_categories.cat_id', $request->category_id);
-        }
-
-        if ($request->filled('year')) {
-            $query->whereYear('sub_categories.created_at', $request->year);
-
-            if ($request->filled('month')) {
-                $query->whereMonth('sub_categories.created_at', $request->month);
-            }
-        }
+        $this->applyLikeFilter($query, $request, 'name', 'sub_categories.name');
+        $this->applyLikeFilter($query, $request, 'code', 'sub_categories.code');
+        $this->applyStartsWithFilter($query, $request, 'name_starts_with', 'sub_categories.name');
+        $this->applyStartsWithFilter($query, $request, 'code_starts_with', 'sub_categories.code');
+        $this->applyEqualsFilter($query, $request, 'category_id', 'sub_categories.cat_id');
+        $this->applyYearMonthFilter($query, $request, 'sub_categories.created_at');
 
         $sortBy = $request->get('sort_by', 'name');
         $sortDir = $request->get('sort_dir', 'asc');
@@ -72,19 +54,10 @@ class SubCategoriesController extends Controller
             $query->orderBy('sub_categories.id', $sortDir);
         }
 
-        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $perPage = $this->resolvePerPage($request);
         $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     /**

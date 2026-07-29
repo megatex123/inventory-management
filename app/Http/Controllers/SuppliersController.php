@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,64 +10,24 @@ use Image;
 
 class SuppliersController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
         $query = DB::table('suppliers');
 
-        if ($request->filled('name')) {
-            $query->where('name', 'LIKE', '%' . $request->name . '%');
-        }
+        $this->applyLikeFilter($query, $request, 'name', 'name');
+        $this->applyLikeFilter($query, $request, 'shopname', 'shopname');
+        $this->applyLikeFilter($query, $request, 'phone', 'phone');
+        $this->applyStartsWithFilter($query, $request, 'name_starts_with', 'name');
+        $this->applyStartsWithFilter($query, $request, 'shop_starts_with', 'shopname');
+        $this->applyYearMonthFilter($query, $request);
+        $this->resolveSortAndApply($query, $request, ['name', 'shopname', 'created_at'], 'name');
 
-        if ($request->filled('shopname')) {
-            $query->where('shopname', 'LIKE', '%' . $request->shopname . '%');
-        }
-
-        if ($request->filled('phone')) {
-            $query->where('phone', 'LIKE', '%' . $request->phone . '%');
-        }
-
-        if ($request->filled('name_starts_with')) {
-            $query->where('name', 'LIKE', $request->name_starts_with . '%');
-        }
-
-        if ($request->filled('shop_starts_with')) {
-            $query->where('shopname', 'LIKE', $request->shop_starts_with . '%');
-        }
-
-        if ($request->filled('year')) {
-            $query->whereYear('created_at', $request->year);
-
-            if ($request->filled('month')) {
-                $query->whereMonth('created_at', $request->month);
-            }
-        }
-
-        $sortBy = $request->get('sort_by', 'name');
-        $sortDir = $request->get('sort_dir', 'asc');
-
-        if (!in_array($sortBy, ['name', 'shopname', 'created_at'], true)) {
-            $sortBy = 'name';
-        }
-        if (!in_array($sortDir, ['asc', 'desc'], true)) {
-            $sortDir = 'asc';
-        }
-
-        $query->orderBy($sortBy, $sortDir);
-        $query->orderBy('id', $sortDir);
-
-        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $perPage = $this->resolvePerPage($request);
         $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     /**

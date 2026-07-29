@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Craft;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CraftController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,72 +20,19 @@ class CraftController extends Controller
     {
         $query = Craft::query();
 
-        if ($request->filled('name')) {
-            $query->where('name', 'LIKE', '%' . $request->name . '%');
-        }
+        $this->applyLikeFilter($query, $request, 'name', 'name');
+        $this->applyLikeFilter($query, $request, 'code', 'code');
+        $this->applyLikeFilter($query, $request, 'fee', 'fee');
+        $this->applyStartsWithFilter($query, $request, 'name_starts_with', 'name');
+        $this->applyStartsWithFilter($query, $request, 'code_starts_with', 'code');
+        $this->applyYearMonthFilter($query, $request);
+        $this->applyNumericRangeFilter($query, $request, 'fee', 'min_fee', 'max_fee');
+        $this->resolveSortAndApply($query, $request, ['name', 'code', 'fee', 'created_at'], 'name', 'id', ['fee']);
 
-        if ($request->filled('code')) {
-            $query->where('code', 'LIKE', '%' . $request->code . '%');
-        }
-
-        if ($request->filled('fee')) {
-            $query->where('fee', 'LIKE', '%' . $request->fee . '%');
-        }
-
-        if ($request->filled('name_starts_with')) {
-            $query->where('name', 'LIKE', $request->name_starts_with . '%');
-        }
-
-        if ($request->filled('code_starts_with')) {
-            $query->where('code', 'LIKE', $request->code_starts_with . '%');
-        }
-
-        if ($request->filled('year')) {
-            $query->whereYear('created_at', $request->year);
-
-            if ($request->filled('month')) {
-                $query->whereMonth('created_at', $request->month);
-            }
-        }
-
-        if ($request->filled('min_fee')) {
-            $query->whereRaw('CAST(fee AS DECIMAL(10,2)) >= ?', [(float) $request->min_fee]);
-        }
-
-        if ($request->filled('max_fee')) {
-            $query->whereRaw('CAST(fee AS DECIMAL(10,2)) <= ?', [(float) $request->max_fee]);
-        }
-
-        $sortBy = $request->get('sort_by', 'name');
-        $sortDir = $request->get('sort_dir', 'asc');
-
-        if (!in_array($sortBy, ['name', 'code', 'fee', 'created_at'], true)) {
-            $sortBy = 'name';
-        }
-        if (!in_array($sortDir, ['asc', 'desc'], true)) {
-            $sortDir = 'asc';
-        }
-
-        if ($sortBy === 'fee') {
-            $query->orderByRaw('CAST(fee AS DECIMAL(10,2)) ' . $sortDir);
-        } else {
-            $query->orderBy($sortBy, $sortDir);
-        }
-        $query->orderBy('id', $sortDir);
-
-        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $perPage = $this->resolvePerPage($request);
         $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     /**

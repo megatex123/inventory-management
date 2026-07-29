@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BrandController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,50 +20,15 @@ class BrandController extends Controller
     {
         $query = Brand::query();
 
-        if ($request->filled('name')) {
-            $query->where('name', 'LIKE', '%' . $request->name . '%');
-        }
+        $this->applyLikeFilter($query, $request, 'name', 'name');
+        $this->applyStartsWithFilter($query, $request, 'name_starts_with', 'name');
+        $this->applyYearMonthFilter($query, $request);
+        $this->resolveSortAndApply($query, $request, ['name', 'created_at'], 'name');
 
-        if ($request->filled('name_starts_with')) {
-            $query->where('name', 'LIKE', $request->name_starts_with . '%');
-        }
-
-        if ($request->filled('year')) {
-            $query->whereYear('created_at', $request->year);
-
-            if ($request->filled('month')) {
-                $query->whereMonth('created_at', $request->month);
-            }
-        }
-
-        $sortBy = $request->get('sort_by', 'name');
-        $sortDir = $request->get('sort_dir', 'asc');
-
-        if (!in_array($sortBy, ['name', 'created_at'], true)) {
-            $sortBy = 'name';
-        }
-        if (!in_array($sortDir, ['asc', 'desc'], true)) {
-            $sortDir = 'asc';
-        }
-
-        $query->orderBy($sortBy, $sortDir);
-        if ($sortBy !== 'id') {
-            $query->orderBy('id', $sortDir);
-        }
-
-        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $perPage = $this->resolvePerPage($request);
         $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     /**
