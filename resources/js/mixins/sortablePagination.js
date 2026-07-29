@@ -13,6 +13,7 @@ export default {
       } else {
         this.sortState = { key, dir: 'asc' };
       }
+      this.meta.current_page = 1;
       this.fetchList();
     },
     onPageChange(page) {

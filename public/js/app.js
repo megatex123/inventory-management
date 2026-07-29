@@ -174457,6 +174457,7 @@ __webpack_require__.r(__webpack_exports__);
           dir: 'asc'
         };
       }
+      this.meta.current_page = 1;
       this.fetchList();
     },
     onPageChange: function onPageChange(page) {
