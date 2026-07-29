@@ -4,25 +4,132 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use App\Models\Categories;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
 class ProductsController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-       $products=DB::table('products')
-                ->join('categories', 'products.cat_id','categories.id')
-                ->join('suppliers', 'products.supplier_id','suppliers.id')
-                ->select('categories.name as cat_name','suppliers.name as sup_name','products.*')
-                ->orderBy('products.id','DESC')
-                ->get();
-                return response()->json($products);
+        $query = DB::table('products')
+            ->leftJoin('categories', 'products.cat_id', '=', 'categories.id')
+            ->select('products.*', 'categories.name as cat_name');
+
+        $this->applyLikeFilter($query, $request, 'name', 'products.product_name');
+        $this->applyLikeFilter($query, $request, 'code', 'products.product_code');
+        $this->applyStartsWithFilter($query, $request, 'name_starts_with', 'products.product_name');
+        $this->applyStartsWithFilter($query, $request, 'code_starts_with', 'products.product_code');
+        $this->applyEqualsFilter($query, $request, 'category_id', 'products.cat_id');
+        $this->applyYearMonthFilter($query, $request, 'products.created_at');
+        $this->applyNumericRangeFilter($query, $request, 'products.price', 'min_price', 'max_price');
+
+        $status = $request->input('status');
+        if (is_scalar($status) && $status !== '') {
+            if ($status === 'available') {
+                $query->where('products.product_qty', '>=', 1);
+            } elseif ($status === 'out') {
+                $query->where(function ($q) {
+                    $q->where('products.product_qty', '<', 1)->orWhereNull('products.product_qty');
+                });
+            }
+        }
+
+        $sortBy = $request->get('sort_by', 'product_name');
+        $sortDir = $request->get('sort_dir', 'asc');
+
+        if (!in_array($sortBy, ['product_name', 'product_code', 'category', 'price', 'product_qty', 'created_at'], true)) {
+            $sortBy = 'product_name';
+        }
+        if (!in_array($sortDir, ['asc', 'desc'], true)) {
+            $sortDir = 'asc';
+        }
+
+        if ($sortBy === 'category') {
+            // Sorting by the RELATED category's name requires the join --
+            // cat_id on products is just a foreign id, not a name. leftJoin
+            // (not innerJoin) so a product with a null/orphaned cat_id still
+            // appears in results (0 such rows exist live today, but the
+            // old query's innerJoin would have silently DROPPED them
+            // entirely -- this is a proactive correctness improvement, not
+            // just a refactor, matching the leftJoin pattern already
+            // established for sub_category in Batch 5).
+            $query->orderBy('categories.name', $sortDir);
+        } elseif ($sortBy === 'price') {
+            $query->orderByRaw('CAST(products.price AS DECIMAL(10,2)) ' . $sortDir);
+        } else {
+            $query->orderBy('products.' . $sortBy, $sortDir);
+        }
+        $query->orderBy('products.id', $sortDir);
+
+        $perPage = $this->resolvePerPage($request);
+        $results = $query->paginate($perPage);
+
+        return $this->paginatedResponse($results);
+    }
+
+    /**
+     * All products, unpaginated, with the SAME query shape (both joins,
+     * cat_name/sup_name fields, unfiltered, id DESC) as the pre-pagination
+     * index() -- preserved byte-for-byte so existing bare-array consumers
+     * (stock/index.vue, pos/index.vue, order/edit.vue) need zero logic
+     * changes, only a URL change.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
+    {
+        return response()->json(
+            DB::table('products')
+                ->join('categories', 'products.cat_id', '=', 'categories.id')
+                ->join('suppliers', 'products.supplier_id', '=', 'suppliers.id')
+                ->select('categories.name as cat_name', 'suppliers.name as sup_name', 'products.*')
+                ->orderBy('products.id', 'DESC')
+                ->get()
+        );
+    }
+
+    /**
+     * Distinct filter option values computed across the whole table.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filterOptions()
+    {
+        $nameStartingLetters = DB::table('products')
+            ->selectRaw('DISTINCT UPPER(LEFT(product_name, 1)) as letter')
+            ->whereNotNull('product_name')
+            ->where('product_name', '!=', '')
+            ->orderBy('letter')
+            ->pluck('letter');
+
+        $codeStartingLetters = DB::table('products')
+            ->selectRaw('DISTINCT UPPER(LEFT(product_code, 1)) as letter')
+            ->whereNotNull('product_code')
+            ->where('product_code', '!=', '')
+            ->orderBy('letter')
+            ->pluck('letter');
+
+        $availableYears = DB::table('products')
+            ->selectRaw('DISTINCT YEAR(created_at) as year')
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'name_starting_letters' => $nameStartingLetters,
+                'code_starting_letters' => $codeStartingLetters,
+                'available_years' => $availableYears,
+            ],
+        ]);
     }
 
     /**

@@ -20399,7 +20399,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     loadProducts: function loadProducts() {
       var _this4 = this;
-      axios.get('/api/product').then(function (res) {
+      axios.get('/api/product/all').then(function (res) {
         console.log('Products loaded:', res.data.length);
         _this4.products = res.data;
       })["catch"](function (err) {
@@ -25229,7 +25229,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     getEmp: function getEmp() {
       var _this12 = this;
-      axios.get('/api/product').then(function (res) {
+      axios.get('/api/product/all').then(function (res) {
         _this12.suppliers = res.data;
         _this12.CatProduct = res.data;
       })["catch"](function (err) {
@@ -33649,7 +33649,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     getEmp: function getEmp() {
       var _this = this;
-      axios.get('/api/product').then(function (res) {
+      axios.get('/api/product/all').then(function (res) {
         _this.suppliers = res.data;
         // console.log(res.data)
       })["catch"](function (err) {

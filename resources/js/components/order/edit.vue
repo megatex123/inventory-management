@@ -349,7 +349,7 @@ export default {
     },
 
     loadProducts() {
-      axios.get('/api/product')
+      axios.get('/api/product/all')
         .then(res => {
           console.log('Products loaded:', res.data.length);
           this.products = res.data;

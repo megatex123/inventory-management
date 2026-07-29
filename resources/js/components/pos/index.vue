@@ -832,7 +832,7 @@ export default {
     },
 
     getEmp() {
-      axios.get('/api/product')
+      axios.get('/api/product/all')
         .then(res => {
           this.suppliers = res.data;
           this.CatProduct = res.data;

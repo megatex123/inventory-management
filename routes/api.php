@@ -48,6 +48,8 @@ Route::get('/care/all', 'CaresController@all');
 Route::get('/care/filter-options', 'CaresController@filterOptions');
 Route::apiResource('/care', 'CaresController');
 Route::apiResource('/serves', 'ServesController');
+Route::get('/product/all', 'ProductsController@all');
+Route::get('/product/filter-options', 'ProductsController@filterOptions');
 Route::apiResource('/product', 'ProductsController');
 Route::apiResource('/expens', 'ExpensesController');
 Route::apiResource('/customer', 'CustomersController');
