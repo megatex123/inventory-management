@@ -56088,16 +56088,9 @@ var render = function render() {
     staticClass: "table align-items-center table-flush"
   }, [_c("thead", {
     staticClass: "thead-light"
-  }, [_c("tr", [_c("sortable-th", {
-    attrs: {
-      label: "Meeting ID",
-      "sort-key": "title",
-      "current-sort": _vm.sortState
-    },
-    on: {
-      sort: _vm.onSort
-    }
-  }), _vm._v(" "), _c("th", {
+  }, [_c("tr", [_c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
     staticClass: "align-top"
   }, [_vm._v("Customer")]), _vm._v(" "), _c("sortable-th", {
     attrs: {

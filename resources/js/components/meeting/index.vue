@@ -186,7 +186,7 @@
         <table class="table align-items-center table-flush">
           <thead class="thead-light">
             <tr>
-              <sortable-th label="Meeting ID" sort-key="title" :current-sort="sortState" @sort="onSort" />
+              <th class="align-top">Meeting ID</th>
               <th class="align-top">Customer</th>
               <sortable-th label="Title" sort-key="title" :current-sort="sortState" @sort="onSort" />
               <sortable-th label="Date" sort-key="meeting_date" :current-sort="sortState" @sort="onSort" />
