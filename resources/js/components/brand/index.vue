@@ -193,8 +193,10 @@ import axios from 'axios';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 import PaginationControl from '../shared/PaginationControl.vue';
 import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 export default {
+    mixins: [sortablePaginationMixin],
     components: { ColumnSearchPanel, PaginationControl, SortableTh },
     data() {
         return {
@@ -221,7 +223,7 @@ export default {
         }
     },
     methods: {
-        fetchBrands() {
+        fetchList() {
             this.loading = true;
             const params = {
                 page: this.meta.current_page,
@@ -281,7 +283,7 @@ export default {
                         if (this.brands.length === 1 && this.meta.current_page > 1) {
                             this.meta.current_page -= 1;
                         }
-                        this.fetchBrands();
+                        this.fetchList();
                         this.fetchFilterOptions();
                     })
                     .catch(() => {
@@ -334,23 +336,6 @@ export default {
             }
             return `${key}: ${value}`;
         },
-        onSort(key) {
-            if (this.sortState.key === key) {
-                this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-            } else {
-                this.sortState = { key, dir: 'asc' };
-            }
-            this.fetchBrands();
-        },
-        onPageChange(page) {
-            this.meta.current_page = page;
-            this.fetchBrands();
-        },
-        onPerPageChange(perPage) {
-            this.meta.per_page = perPage;
-            this.meta.current_page = 1;
-            this.fetchBrands();
-        },
     },
     computed: {
         hasActiveFilters() {
@@ -380,7 +365,7 @@ export default {
         filters: {
             handler() {
                 this.meta.current_page = 1;
-                this.fetchBrands();
+                this.fetchList();
             },
             deep: true
         },
@@ -403,7 +388,7 @@ export default {
             })
         };
         this.fetchFilterOptions();
-        this.fetchBrands();
+        this.fetchList();
     },
 }
 </script>

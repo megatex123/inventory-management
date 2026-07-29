@@ -2342,11 +2342,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 /* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
 /* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
     ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -2384,7 +2387,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    fetchBrands: function fetchBrands() {
+    fetchList: function fetchList() {
       var _this = this;
       this.loading = true;
       var params = {
@@ -2438,7 +2441,7 @@ __webpack_require__.r(__webpack_exports__);
             if (_this3.brands.length === 1 && _this3.meta.current_page > 1) {
               _this3.meta.current_page -= 1;
             }
-            _this3.fetchBrands();
+            _this3.fetchList();
             _this3.fetchFilterOptions();
           })["catch"](function () {
             _this3.$router.push({
@@ -2500,26 +2503,6 @@ __webpack_require__.r(__webpack_exports__);
         return "Month: ".concat(labels[value] || value);
       }
       return "".concat(key, ": ").concat(value);
-    },
-    onSort: function onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = {
-          key: key,
-          dir: 'asc'
-        };
-      }
-      this.fetchBrands();
-    },
-    onPageChange: function onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchBrands();
-    },
-    onPerPageChange: function onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchBrands();
     }
   },
   computed: {
@@ -2553,7 +2536,7 @@ __webpack_require__.r(__webpack_exports__);
     filters: {
       handler: function handler() {
         this.meta.current_page = 1;
-        this.fetchBrands();
+        this.fetchList();
       },
       deep: true
     },
@@ -2577,7 +2560,7 @@ __webpack_require__.r(__webpack_exports__);
     }
     ;
     this.fetchFilterOptions();
-    this.fetchBrands();
+    this.fetchList();
   }
 });
 
@@ -7659,12 +7642,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 /* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
 /* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 
 
@@ -7678,6 +7663,7 @@ var EMPTY_FILTERS = {
   month: ''
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
     ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -7715,7 +7701,7 @@ var EMPTY_FILTERS = {
     };
   },
   methods: {
-    fetchCategories: function fetchCategories() {
+    fetchList: function fetchList() {
       var _this = this;
       this.loading = true;
       var params = {
@@ -7772,7 +7758,7 @@ var EMPTY_FILTERS = {
             if (_this3.categories.length === 1 && _this3.meta.current_page > 1) {
               _this3.meta.current_page -= 1;
             }
-            _this3.fetchCategories();
+            _this3.fetchList();
             _this3.fetchFilterOptions();
           })["catch"](function () {
             _this3.$router.push({
@@ -7809,26 +7795,6 @@ var EMPTY_FILTERS = {
       if (key === 'year') return "Year: ".concat(value);
       if (key === 'month') return "Month: ".concat(this.monthNames[value - 1] || value);
       return "".concat(key, ": ").concat(value);
-    },
-    onSort: function onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = {
-          key: key,
-          dir: 'asc'
-        };
-      }
-      this.fetchCategories();
-    },
-    onPageChange: function onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchCategories();
-    },
-    onPerPageChange: function onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchCategories();
     }
   },
   computed: {
@@ -7856,7 +7822,7 @@ var EMPTY_FILTERS = {
     filters: {
       handler: function handler() {
         this.meta.current_page = 1;
-        this.fetchCategories();
+        this.fetchList();
       },
       deep: true
     },
@@ -7874,7 +7840,7 @@ var EMPTY_FILTERS = {
     }
     ;
     this.fetchFilterOptions();
-    this.fetchCategories();
+    this.fetchList();
   }
 });
 
@@ -8010,12 +7976,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 /* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
 /* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 
 
@@ -8032,6 +8000,7 @@ var EMPTY_FILTERS = {
   maxFee: ''
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
     ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -8073,7 +8042,7 @@ var EMPTY_FILTERS = {
     };
   },
   methods: {
-    fetchCrafts: function fetchCrafts() {
+    fetchList: function fetchList() {
       var _this = this;
       this.loading = true;
       var params = {
@@ -8133,7 +8102,7 @@ var EMPTY_FILTERS = {
             if (_this3.crafts.length === 1 && _this3.meta.current_page > 1) {
               _this3.meta.current_page -= 1;
             }
-            _this3.fetchCrafts();
+            _this3.fetchList();
             _this3.fetchFilterOptions();
           })["catch"](function () {
             _this3.$router.push({
@@ -8173,26 +8142,6 @@ var EMPTY_FILTERS = {
       if (key === 'minFee') return "Min Fee: RM ".concat(parseFloat(value).toFixed(2));
       if (key === 'maxFee') return "Max Fee: RM ".concat(parseFloat(value).toFixed(2));
       return "".concat(key, ": ").concat(value);
-    },
-    onSort: function onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = {
-          key: key,
-          dir: 'asc'
-        };
-      }
-      this.fetchCrafts();
-    },
-    onPageChange: function onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchCrafts();
-    },
-    onPerPageChange: function onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchCrafts();
     }
   },
   computed: {
@@ -8220,7 +8169,7 @@ var EMPTY_FILTERS = {
     filters: {
       handler: function handler() {
         this.meta.current_page = 1;
-        this.fetchCrafts();
+        this.fetchList();
       },
       deep: true
     },
@@ -8238,7 +8187,7 @@ var EMPTY_FILTERS = {
     }
     ;
     this.fetchFilterOptions();
-    this.fetchCrafts();
+    this.fetchList();
   }
 });
 
@@ -33758,12 +33707,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
 /* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
 /* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 
 
@@ -33778,6 +33729,7 @@ var EMPTY_FILTERS = {
   month: ''
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
     ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -33816,7 +33768,7 @@ var EMPTY_FILTERS = {
     };
   },
   methods: {
-    fetchSubCategories: function fetchSubCategories() {
+    fetchList: function fetchList() {
       var _this = this;
       this.loading = true;
       var params = {
@@ -33882,7 +33834,7 @@ var EMPTY_FILTERS = {
             if (_this4.subCategories.length === 1 && _this4.meta.current_page > 1) {
               _this4.meta.current_page -= 1;
             }
-            _this4.fetchSubCategories();
+            _this4.fetchList();
             _this4.fetchFilterOptions();
           })["catch"](function () {
             _this4.$router.push({
@@ -33925,26 +33877,6 @@ var EMPTY_FILTERS = {
       if (key === 'year') return "Year: ".concat(value);
       if (key === 'month') return "Month: ".concat(this.monthNames[value - 1] || value);
       return "".concat(key, ": ").concat(value);
-    },
-    onSort: function onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = {
-          key: key,
-          dir: 'asc'
-        };
-      }
-      this.fetchSubCategories();
-    },
-    onPageChange: function onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchSubCategories();
-    },
-    onPerPageChange: function onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchSubCategories();
     }
   },
   computed: {
@@ -33972,7 +33904,7 @@ var EMPTY_FILTERS = {
     filters: {
       handler: function handler() {
         this.meta.current_page = 1;
-        this.fetchSubCategories();
+        this.fetchList();
       },
       deep: true
     },
@@ -33991,7 +33923,7 @@ var EMPTY_FILTERS = {
     ;
     this.fetchFilterOptions();
     this.fetchAllCategories();
-    this.fetchSubCategories();
+    this.fetchList();
   }
 });
 
@@ -173619,6 +173551,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_12d35da8_scoped_true__WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/mixins/sortablePagination.js":
+/*!***************************************************!*\
+  !*** ./resources/js/mixins/sortablePagination.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// resources/js/mixins/sortablePagination.js
+//
+// Shared onSort/onPageChange/onPerPageChange handlers for any list page
+// using the SortableTh + PaginationControl pattern. A consuming component
+// must define, in its own data(): `sortState: { key, dir }`, `meta: {
+// current_page, per_page, ... }`, and a `fetchList()` method that reads
+// both of those to issue the actual API call.
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    onSort: function onSort(key) {
+      if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortState = {
+          key: key,
+          dir: 'asc'
+        };
+      }
+      this.fetchList();
+    },
+    onPageChange: function onPageChange(page) {
+      this.meta.current_page = page;
+      this.fetchList();
+    },
+    onPerPageChange: function onPerPageChange(perPage) {
+      this.meta.per_page = perPage;
+      this.meta.current_page = 1;
+      this.fetchList();
+    }
+  }
+});
 
 /***/ }),
 

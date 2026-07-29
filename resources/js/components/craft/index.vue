@@ -245,6 +245,7 @@ import axios from 'axios';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 import PaginationControl from '../shared/PaginationControl.vue';
 import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 const EMPTY_FILTERS = {
   name: '',
@@ -259,6 +260,7 @@ const EMPTY_FILTERS = {
 };
 
 export default {
+  mixins: [sortablePaginationMixin],
   components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
@@ -283,7 +285,7 @@ export default {
     }
   },
   methods: {
-    fetchCrafts() {
+    fetchList() {
       this.loading = true;
       const params = {
         page: this.meta.current_page,
@@ -349,7 +351,7 @@ export default {
             if (this.crafts.length === 1 && this.meta.current_page > 1) {
               this.meta.current_page -= 1;
             }
-            this.fetchCrafts();
+            this.fetchList();
             this.fetchFilterOptions();
           })
           .catch(() => {
@@ -389,23 +391,6 @@ export default {
       if (key === 'maxFee') return `Max Fee: RM ${parseFloat(value).toFixed(2)}`;
       return `${key}: ${value}`;
     },
-    onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = { key, dir: 'asc' };
-      }
-      this.fetchCrafts();
-    },
-    onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchCrafts();
-    },
-    onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchCrafts();
-    },
   },
   computed: {
     hasActiveFilters() {
@@ -429,7 +414,7 @@ export default {
     filters: {
       handler() {
         this.meta.current_page = 1;
-        this.fetchCrafts();
+        this.fetchList();
       },
       deep: true
     },
@@ -446,7 +431,7 @@ export default {
       })
     };
     this.fetchFilterOptions();
-    this.fetchCrafts();
+    this.fetchList();
   },
 }
 </script>

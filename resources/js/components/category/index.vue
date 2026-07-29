@@ -215,6 +215,7 @@ import axios from 'axios';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 import PaginationControl from '../shared/PaginationControl.vue';
 import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 const EMPTY_FILTERS = {
   name: '',
@@ -226,6 +227,7 @@ const EMPTY_FILTERS = {
 };
 
 export default {
+  mixins: [sortablePaginationMixin],
   components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
@@ -249,7 +251,7 @@ export default {
     }
   },
   methods: {
-    fetchCategories() {
+    fetchList() {
       this.loading = true;
       const params = {
         page: this.meta.current_page,
@@ -312,7 +314,7 @@ export default {
             if (this.categories.length === 1 && this.meta.current_page > 1) {
               this.meta.current_page -= 1;
             }
-            this.fetchCategories();
+            this.fetchList();
             this.fetchFilterOptions();
           })
           .catch(() => {
@@ -349,23 +351,6 @@ export default {
       if (key === 'month') return `Month: ${this.monthNames[value - 1] || value}`;
       return `${key}: ${value}`;
     },
-    onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = { key, dir: 'asc' };
-      }
-      this.fetchCategories();
-    },
-    onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchCategories();
-    },
-    onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchCategories();
-    },
   },
   computed: {
     hasActiveFilters() {
@@ -389,7 +374,7 @@ export default {
     filters: {
       handler() {
         this.meta.current_page = 1;
-        this.fetchCategories();
+        this.fetchList();
       },
       deep: true
     },
@@ -406,7 +391,7 @@ export default {
       })
     };
     this.fetchFilterOptions();
-    this.fetchCategories();
+    this.fetchList();
   },
 }
 </script>

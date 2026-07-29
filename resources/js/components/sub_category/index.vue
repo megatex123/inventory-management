@@ -240,6 +240,7 @@ import axios from 'axios';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
 import PaginationControl from '../shared/PaginationControl.vue';
 import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 const EMPTY_FILTERS = {
   name: '',
@@ -252,6 +253,7 @@ const EMPTY_FILTERS = {
 };
 
 export default {
+  mixins: [sortablePaginationMixin],
   components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
@@ -276,7 +278,7 @@ export default {
     }
   },
   methods: {
-    fetchSubCategories() {
+    fetchList() {
       this.loading = true;
       const params = {
         page: this.meta.current_page,
@@ -349,7 +351,7 @@ export default {
             if (this.subCategories.length === 1 && this.meta.current_page > 1) {
               this.meta.current_page -= 1;
             }
-            this.fetchSubCategories();
+            this.fetchList();
             this.fetchFilterOptions();
           })
           .catch(() => {
@@ -390,23 +392,6 @@ export default {
       if (key === 'month') return `Month: ${this.monthNames[value - 1] || value}`;
       return `${key}: ${value}`;
     },
-    onSort(key) {
-      if (this.sortState.key === key) {
-        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
-      } else {
-        this.sortState = { key, dir: 'asc' };
-      }
-      this.fetchSubCategories();
-    },
-    onPageChange(page) {
-      this.meta.current_page = page;
-      this.fetchSubCategories();
-    },
-    onPerPageChange(perPage) {
-      this.meta.per_page = perPage;
-      this.meta.current_page = 1;
-      this.fetchSubCategories();
-    },
   },
   computed: {
     hasActiveFilters() {
@@ -430,7 +415,7 @@ export default {
     filters: {
       handler() {
         this.meta.current_page = 1;
-        this.fetchSubCategories();
+        this.fetchList();
       },
       deep: true
     },
@@ -448,7 +433,7 @@ export default {
     };
     this.fetchFilterOptions();
     this.fetchAllCategories();
-    this.fetchSubCategories();
+    this.fetchList();
   },
 }
 </script>
