@@ -79,8 +79,11 @@ Shared code: `resources/js/Helpers` (likely Axios instance / formatting utilitie
     this.fetchItems(); // or whatever the page's own fetch method is called
   },
   ```
+  Superseded 2026-07-29 by the shared `sortablePaginationMixin` documented just below — don't hand-copy this snippet into new pages anymore, register the mixin instead.
 
 Batch 2+ (wiring both components into the ~37 real list pages) is a follow-up initiative — see [[Work-In-Progress]]. **`brand/index.vue`** (rewired 2026-07-29) is the first completed end-to-end example and the reference template for the remaining pages: it pairs `BrandController@index`'s server-side pagination/filtering/sorting (`page`/`per_page`/`sort_by`/`sort_dir`/`name`/`name_starts_with`/`year`/`month` query params, `{success, data, meta}` response) with both shared components, keeps `sortState: { key, dir }` as its own `data()` property separate from `filters`, and demonstrates the delete-with-page-clamping pattern (decrement `meta.current_page` before refetching when the deleted row was the last one on a non-first page). Its outer wrapper was also flattened from the old 6-level nested layout to the standardized `row.justify-content-center > card` shape (matching `meeting.vue`) as part of the same rewrite — worth doing for every page in this initiative, not just the ones already using these two components.
+
+**`resources/js/mixins/sortablePagination.js`** (added 2026-07-29, extracted from `brand`/`craft`/`category`/`sub_category` after 4 pages had hand-copied the identical `onSort`/`onPageChange`/`onPerPageChange` trio) — a Vue 2 mixin providing those 3 handlers. Any page using `SortableTh`/`PaginationControl` should register `mixins: [sortablePaginationMixin]` (imported from `../../mixins/sortablePagination`) and define its own `sortState: {key, dir}`, `meta: {...}`, and a `fetchList()` method — the mixin's handlers call `this.fetchList()` by convention, so the consuming component's per-page data-fetch method must be named exactly that, not `fetchBrand`/`fetchProduct`/etc. This is now the standard for every subsequent List Page Standardization batch (Batch 6 onward) — new pages should adopt the mixin from the start rather than hand-copying the trio again.
 
 ## Section Components
 
