@@ -51,6 +51,12 @@ Introduced in Phase 1/2 (the `saveForm()`/`performanceTest = res.data.data` patt
 
 `database/seeds/MenuItemsTableSeeder.php`'s `run()` starts with `MenuItem::query()->delete()` and rebuilds the entire sidebar from its own hardcoded `$tree` array — but that array has no `Stock` top-level group at all, while the live `menu_items` table does (with an icon fix and items moved out of `Inventory`, shipped directly via `quivi.sql`/DB in commit `1945073` — "Stock menu icon fix + reorg" — which never touched this seeder file). Re-running `php artisan db:seed --class=MenuItemsTableSeeder` today would silently revert that reorg. Found while adding the [[QuiviRefund]] sidebar entry, which was done as a standalone additive migration (`2026_07_28_160000_add_refunds_menu_item.php`) instead of editing this seeder, specifically to avoid the same trap. Not yet fixed — fixing it means back-porting the live `Stock` group's actual shape (query `menu_items` for its current `parent_id`/children) into the seeder's `$tree` array, which nobody has done.
 
+## List Page Standardization initiative — in progress (started 2026-07-29)
+
+Rolling out standardized pagination/filtering/sorting (shared `PaginationControl`/`SortableTh`/`sortablePaginationMixin` components, `FiltersSortsAndPaginates` backend trait) across all list pages. See [[API-Routes]] for the per-page deviation notes this references. Shipped so far: shared components + mixin + hardening trait (interstitial infra batches), `brand`, `craft`, `category`, `sub_category`, `suppliers`, `care`, `product`. In progress/next: `customer`, then the meeting family (`meeting`/`meeting_details`/`uat_meeting`). Still pending: `employees`/`salaries` (currently empty tables in the dev DB), `expenses`, `serves`, `care_data`, and the remainder of the ~37-page inventory.
+
+**Known deferred item:** `resources/js/components/stock/index.vue` — a second, separately-routed list page (`/product/stock`, "Stock List") discovered during the `product` batch, sharing `GET /api/product`'s old bare-array shape. It was repointed to the new `GET /product/all` endpoint (so it still works) but was deliberately NOT migrated to pagination itself — that would be a second list-page redesign, out of scope for the `product` batch. Revisit if/when this page's own turn comes up in the inventory.
+
 ## Related
 - [[Domain-Models]]
 - [[API-Routes]]
