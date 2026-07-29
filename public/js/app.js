@@ -36099,18 +36099,44 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
+
+
+
+
+var EMPTY_FILTERS = {
+  search: '',
+  reason: '',
+  budgetRange: '',
+  caseSize: '',
+  features: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
       uatMeetings: [],
+      loading: true,
       showFilters: false,
       filterColumns: [{
         key: 'search',
@@ -36173,109 +36199,31 @@ __webpack_require__.r(__webpack_exports__);
           label: 'RGB Needed'
         }]
       }],
-      statistics: {
-        total: 0,
-        gaming: 0,
-        work: 0,
-        avgBudget: 0,
-        futureProof: 0,
-        withMonitor: 0
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
       },
-      filters: {
-        search: '',
-        reason: '',
-        budgetRange: '',
-        caseSize: '',
-        features: ''
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
       }
     };
   },
-  mounted: function mounted() {
-    this.fetchUatMeetings();
-  },
   computed: {
-    filteredMeetings: function filteredMeetings() {
-      var _this = this;
-      var filtered = this.uatMeetings;
-
-      // Apply text search
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(function (detail) {
-          // Existing search logic
-          if (detail.meeting && detail.meeting.meeting_id && detail.meeting.meeting_id.toLowerCase().includes(keyword)) {
-            return true;
-          }
-          if (detail.meeting_id && detail.meeting_id.toString().includes(keyword)) {
-            return true;
-          }
-          if (detail.reason) {
-            var reasonText = detail.reason == 1 ? 'work' : 'gaming';
-            if (reasonText.includes(keyword)) return true;
-          }
-          if (detail.reason == 2 && detail.play_mode) {
-            var playModeText = detail.play_mode == 1 ? 'multiplayer' : 'singleplayer';
-            if (playModeText.includes(keyword)) return true;
-          }
-          return detail.theme_style && detail.theme_style.toLowerCase().includes(keyword) || detail.preference && detail.preference.toLowerCase().includes(keyword) || detail.exemption && detail.exemption.toLowerCase().includes(keyword) || detail.target_location && detail.target_location.toLowerCase().includes(keyword);
-        });
-      }
-
-      // Apply advanced filters
-      if (this.filters.reason) {
-        filtered = filtered.filter(function (detail) {
-          return detail.reason == _this.filters.reason;
-        });
-      }
-      if (this.filters.budgetRange) {
-        filtered = filtered.filter(function (detail) {
-          var budget = detail.initial_budget || 0;
-          switch (_this.filters.budgetRange) {
-            case 'low':
-              return budget < 7000;
-            case 'medium':
-              return budget >= 7000 && budget <= 10000;
-            case 'high':
-              return budget > 10000;
-            default:
-              return true;
-          }
-        });
-      }
-      if (this.filters.caseSize) {
-        filtered = filtered.filter(function (detail) {
-          return detail.case_size == _this.filters.caseSize;
-        });
-      }
-      if (this.filters.features) {
-        filtered = filtered.filter(function (detail) {
-          switch (_this.filters.features) {
-            case 'future_proof':
-              return detail.future_proof == 1;
-            case 'aio':
-              return detail.okay_with_aio == 1;
-            case 'gpu_sag':
-              return detail.gpu_sag == 1;
-            case 'rgb':
-              return detail.need_rgb == 1;
-            default:
-              return true;
-          }
-        });
-      }
-      return filtered;
-    },
     hasActiveFilters: function hasActiveFilters() {
       return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
     },
     activeFilters: function activeFilters() {
-      var _this2 = this;
+      var _this = this;
       var active = {};
       Object.keys(this.filters).forEach(function (key) {
-        if (_this2.filters[key] !== '') {
-          active[key] = _this2.filters[key];
+        if (_this.filters[key] !== '') {
+          active[key] = _this.filters[key];
         }
       });
       return active;
@@ -36301,82 +36249,41 @@ __webpack_require__.r(__webpack_exports__);
         return date;
       }
     },
-    fetchUatMeetings: function fetchUatMeetings() {
-      var _this3 = this;
-      axios.get('/api/uat-meeting').then(function (res) {
-        console.log('Fetched UAT meeting:', res.data);
-        _this3.uatMeetings = res.data;
-        _this3.calculateStatistics();
+    fetchList: function fetchList() {
+      var _this2 = this;
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search,
+        reason: this.filters.reason,
+        budgetRange: this.filters.budgetRange,
+        caseSize: this.filters.caseSize,
+        features: this.filters.features
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/uat-meeting', {
+        params: params
+      }).then(function (res) {
+        _this2.uatMeetings = res.data.data;
+        _this2.meta = res.data.meta;
       })["catch"](function (error) {
         console.error('Error fetching UAT meeting:', error);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
           icon: 'error',
           title: 'Error',
           text: 'Failed to load UAT meeting'
         });
+      })["finally"](function () {
+        _this2.loading = false;
       });
-    },
-    calculateStatistics: function calculateStatistics() {
-      if (this.uatMeetings.length === 0) {
-        this.statistics = {
-          total: 0,
-          gaming: 0,
-          work: 0,
-          avgBudget: 0,
-          futureProof: 0,
-          withMonitor: 0
-        };
-        return;
-      }
-
-      // Total count
-      this.statistics.total = this.uatMeetings.length;
-
-      // Gaming vs Work count
-      this.statistics.gaming = this.uatMeetings.filter(function (d) {
-        return d.reason == 2;
-      }).length;
-      this.statistics.work = this.uatMeetings.filter(function (d) {
-        return d.reason == 1;
-      }).length;
-
-      // Average budget
-      var budgets = this.uatMeetings.filter(function (d) {
-        return d.initial_budget && d.initial_budget > 0;
-      }).map(function (d) {
-        return Number(d.initial_budget);
-      });
-      if (budgets.length > 0) {
-        var sum = budgets.reduce(function (a, b) {
-          return a + b;
-        }, 0);
-        this.statistics.avgBudget = Math.round(sum / budgets.length);
-      } else {
-        this.statistics.avgBudget = 0;
-      }
-
-      // Future proof count
-      this.statistics.futureProof = this.uatMeetings.filter(function (d) {
-        return d.future_proof == 1;
-      }).length;
-
-      // With monitor count
-      this.statistics.withMonitor = this.uatMeetings.filter(function (d) {
-        return d.include_monitor == 1;
-      }).length;
-    },
-    applyFilters: function applyFilters() {
-      // Filters are applied automatically through computed property
-      // This method is triggered by filter change events
     },
     clearFilters: function clearFilters() {
-      this.filters = {
-        search: '',
-        reason: '',
-        budgetRange: '',
-        caseSize: '',
-        features: ''
-      };
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
     },
     removeFilter: function removeFilter(filterKey) {
       if (this.filters[filterKey] !== undefined) {
@@ -36412,8 +36319,8 @@ __webpack_require__.r(__webpack_exports__);
       return labels[key] && labels[key][value] ? "".concat(key.replace(/_/g, ' ').toUpperCase(), ": ").concat(labels[key][value]) : "".concat(key, ": ").concat(value);
     },
     deleteMeeting: function deleteMeeting(id) {
-      var _this4 = this;
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+      var _this3 = this;
+      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
         icon: 'warning',
@@ -36424,17 +36331,15 @@ __webpack_require__.r(__webpack_exports__);
         cancelButtonText: 'Cancel'
       }).then(function (result) {
         if (result.isConfirmed) {
-          axios["delete"]("/api/uat-meeting/".concat(id)).then(function () {
-            // Remove from local array
-            _this4.uatMeetings = _this4.uatMeetings.filter(function (detail) {
-              return detail.id !== id;
-            });
-            // Recalculate statistics
-            _this4.calculateStatistics();
-            sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Deleted!', 'UAT meeting has been deleted.', 'success');
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/uat-meeting/".concat(id)).then(function () {
+            if (_this3.uatMeetings.length === 1 && _this3.meta.current_page > 1) {
+              _this3.meta.current_page -= 1;
+            }
+            _this3.fetchList();
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'UAT meeting has been deleted.', 'success');
           })["catch"](function (error) {
             console.error('Error deleting:', error);
-            sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Error!', 'Failed to delete UAT meeting.', 'error');
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete UAT meeting.', 'error');
           });
         }
       });
@@ -36448,6 +36353,18 @@ __webpack_require__.r(__webpack_exports__);
       }
       return 'Not Specified';
     }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    }
+  },
+  created: function created() {
+    this.fetchList();
   }
 });
 
@@ -93089,64 +93006,6 @@ var render = function render() {
       to: "/uat-meeting/create"
     }
   }, [_vm._v("\n        UAT Meeting\n      ")])], 1), _vm._v(" "), _c("div", {
-    staticClass: "row mt-3 px-3"
-  }, [_c("div", {
-    staticClass: "col-xl-3 col-md-6 mb-4"
-  }, [_c("div", {
-    staticClass: "card border-left-primary shadow-sm h-100 py-2"
-  }, [_c("div", {
-    staticClass: "card-body"
-  }, [_c("div", {
-    staticClass: "row no-gutters align-items-center"
-  }, [_c("div", {
-    staticClass: "col mr-2"
-  }, [_c("div", {
-    staticClass: "text-xs font-weight-bold text-primary text-uppercase mb-1"
-  }, [_vm._v("\n                  Total Meetings\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.total) + "\n                ")])]), _vm._v(" "), _vm._m(0)])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-3 col-md-6 mb-4"
-  }, [_c("div", {
-    staticClass: "card border-left-success shadow-sm h-100 py-2"
-  }, [_c("div", {
-    staticClass: "card-body"
-  }, [_c("div", {
-    staticClass: "row no-gutters align-items-center"
-  }, [_c("div", {
-    staticClass: "col mr-2"
-  }, [_c("div", {
-    staticClass: "text-xs font-weight-bold text-success text-uppercase mb-1"
-  }, [_vm._v("\n                  Gaming Meetings\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.gaming) + "\n                ")])]), _vm._v(" "), _vm._m(1)])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-3 col-md-6 mb-4"
-  }, [_c("div", {
-    staticClass: "card border-left-info shadow-sm h-100 py-2"
-  }, [_c("div", {
-    staticClass: "card-body"
-  }, [_c("div", {
-    staticClass: "row no-gutters align-items-center"
-  }, [_c("div", {
-    staticClass: "col mr-2"
-  }, [_c("div", {
-    staticClass: "text-xs font-weight-bold text-info text-uppercase mb-1"
-  }, [_vm._v("\n                  Work Meetings\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                  " + _vm._s(_vm.statistics.work) + "\n                ")])]), _vm._v(" "), _vm._m(2)])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-xl-3 col-md-6 mb-4"
-  }, [_c("div", {
-    staticClass: "card border-left-warning shadow-sm h-100 py-2"
-  }, [_c("div", {
-    staticClass: "card-body"
-  }, [_c("div", {
-    staticClass: "row no-gutters align-items-center"
-  }, [_c("div", {
-    staticClass: "col mr-2"
-  }, [_c("div", {
-    staticClass: "text-xs font-weight-bold text-warning text-uppercase mb-1"
-  }, [_vm._v("\n                  Avg Budget\n                ")]), _vm._v(" "), _c("div", {
-    staticClass: "h5 mb-0 font-weight-bold text-gray-800"
-  }, [_vm._v("\n                  RM " + _vm._s(_vm.formatPrice(_vm.statistics.avgBudget)) + "\n                ")])]), _vm._v(" "), _vm._m(3)])])])])]), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mb-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -93156,7 +93015,7 @@ var render = function render() {
     staticClass: "card-body py-2"
   }, [_c("div", {
     staticClass: "row align-items-center"
-  }, [_vm._m(4), _vm._v(" "), _c("div", {
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "col-md-6 text-right"
   }, [_c("button", {
     staticClass: "btn btn-sm btn-outline-secondary",
@@ -93227,7 +93086,47 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(5), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredMeetings, function (detail) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Budget (RM)",
+      "sort-key": "initial_budget",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Reason & Play Mode")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Include Peripheral")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Theme Style")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Preference")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Exemption")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Features")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("QV")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Target Date",
+      "sort-key": "target_build_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Target Location")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.uatMeetings, function (detail) {
     return _c("tr", {
       key: detail.id
     }, [_c("td", {
@@ -93293,13 +93192,13 @@ var render = function render() {
       staticClass: "features-table"
     }, [_c("div", {
       staticClass: "feature-row d-flex justify-content-between mb-2"
-    }, [_vm._m(6, true), _vm._v(" "), _c("div", {
+    }, [_vm._m(2, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.future_proof == 1 ? "badge badge-success" : "badge badge-danger"
     }, [_vm._v("\n                      " + _vm._s(detail.future_proof == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between mb-2"
-    }, [_vm._m(7, true), _vm._v(" "), _c("div", {
+    }, [_vm._m(3, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [detail.case_size == 1 ? _c("span", {
       staticClass: "badge badge-info"
@@ -93313,13 +93212,13 @@ var render = function render() {
       staticClass: "badge badge-secondary"
     }, [_vm._v("-")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between mb-2"
-    }, [_vm._m(8, true), _vm._v(" "), _c("div", {
+    }, [_vm._m(4, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.okay_with_aio == 1 ? "badge badge-success" : "badge badge-danger"
     }, [_vm._v("\n                      " + _vm._s(detail.okay_with_aio == 1 ? "Yes" : "No") + "\n                    ")])])]), _vm._v(" "), _c("div", {
       staticClass: "feature-row d-flex justify-content-between"
-    }, [_vm._m(9, true), _vm._v(" "), _c("div", {
+    }, [_vm._m(5, true), _vm._v(" "), _c("div", {
       staticClass: "feature-value"
     }, [_c("span", {
       "class": detail.gpu_sag == 1 ? "badge badge-success" : "badge badge-danger"
@@ -93381,41 +93280,19 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(10)]) : _vm._e()], 2)])])])]);
+  }), _vm._v(" "), _vm.uatMeetings.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-auto"
-  }, [_c("i", {
-    staticClass: "fas fa-calendar-alt fa-2x text-gray-300"
-  })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-auto"
-  }, [_c("i", {
-    staticClass: "fas fa-gamepad fa-2x text-gray-300"
-  })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-auto"
-  }, [_c("i", {
-    staticClass: "fas fa-briefcase fa-2x text-gray-300"
-  })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "col-auto"
-  }, [_c("i", {
-    staticClass: "fas fa-money-bill-wave fa-2x text-gray-300"
-  })]);
-}, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
@@ -93428,33 +93305,17 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Budget (RM)")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Reason & Play Mode")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Include Peripheral")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Theme Style")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Preference")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Exemption")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Features")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("QV")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Target Date")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Target Location")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Actions")])])]);
+  return _c("tr", [_c("td", {
+    staticClass: "text-center py-4",
+    attrs: {
+      colspan: "12"
+    }
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    attrs: {
+      role: "status"
+    }
+  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -100588,7 +100449,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-12d35da8], .table td[data-v-12d35da8] {\n  vertical-align: middle !important;\n}\n.badge[data-v-12d35da8] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-12d35da8] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-12d35da8] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-12d35da8] {\n  color: #28a745 !important;\n}\n.text-info[data-v-12d35da8] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-12d35da8] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-12d35da8] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-12d35da8] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-12d35da8] {\n  font-size: 0.9em;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-12d35da8] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-12d35da8] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-12d35da8] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-12d35da8] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Filter Section */\n.filter-card[data-v-12d35da8] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-12d35da8] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-12d35da8] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-12d35da8] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-12d35da8] {\n    font-size: 0.8rem;\n}\n.badge[data-v-12d35da8] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-12d35da8] {\n    margin-bottom: 10px;\n}\n.statistics-cards .col-xl-3[data-v-12d35da8] {\n    margin-bottom: 15px;\n}\n}\n.filter-panel-enter-active[data-v-12d35da8],\n.filter-panel-leave-active[data-v-12d35da8] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-12d35da8],\n.filter-panel-leave-to[data-v-12d35da8] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-12d35da8], .table td[data-v-12d35da8] {\n  vertical-align: middle !important;\n}\n.badge[data-v-12d35da8] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.badge-sm[data-v-12d35da8] {\n  font-size: 0.65em;\n  padding: 0.2em 0.5em;\n}\n.btn-sm[data-v-12d35da8] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n.text-success[data-v-12d35da8] {\n  color: #28a745 !important;\n}\n.text-info[data-v-12d35da8] {\n  color: #17a2b8 !important;\n}\n.text-warning[data-v-12d35da8] {\n  color: #ffc107 !important;\n}\n.text-danger[data-v-12d35da8] {\n  color: #dc3545 !important;\n}\n.text-muted[data-v-12d35da8] {\n  color: #6c757d !important;\n}\n\n/* Ensure icons are properly sized */\n.fas[data-v-12d35da8] {\n  font-size: 0.9em;\n}\n\n/* Filter Section */\n.filter-card[data-v-12d35da8] {\n  background-color: #f8f9fc;\n  border: 1px solid #e3e6f0;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-12d35da8] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-12d35da8] {\n  gap: 0.5rem;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-12d35da8] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-12d35da8] {\n    font-size: 0.8rem;\n}\n.badge[data-v-12d35da8] {\n    font-size: 0.7em;\n}\n.filter-card .col-md-3[data-v-12d35da8] {\n    margin-bottom: 10px;\n}\n}\n.filter-panel-enter-active[data-v-12d35da8],\n.filter-panel-leave-active[data-v-12d35da8] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-12d35da8],\n.filter-panel-leave-to[data-v-12d35da8] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 

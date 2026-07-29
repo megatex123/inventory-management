@@ -9,89 +9,6 @@
         </router-link>
       </div>
 
-      <!-- Statistics Cards -->
-      <div class="row mt-3 px-3">
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-primary shadow-sm h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                    Total Meetings
-                  </div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    {{ statistics.total }}
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-success shadow-sm h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                    Gaming Meetings
-                  </div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    {{ statistics.gaming }}
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-gamepad fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-info shadow-sm h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                    Work Meetings
-                  </div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    {{ statistics.work }}
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-briefcase fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-warning shadow-sm h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                    Avg Budget
-                  </div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                    RM {{ formatPrice(statistics.avgBudget) }}
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Filter Section -->
       <div class="row px-3 mb-3">
         <div class="col-12">
@@ -169,7 +86,7 @@
           <thead class="thead-light">
             <tr>
               <th class="text-center align-top">Meeting ID</th>
-              <th class="text-center align-top">Budget (RM)</th>
+              <sortable-th label="Budget (RM)" sort-key="initial_budget" :current-sort="sortState" @sort="onSort" />
               <th class="text-center align-top">Reason & Play Mode</th>
               <th class="text-center align-top">Include Peripheral</th>
               <th class="text-center align-top">Theme Style</th>
@@ -177,14 +94,17 @@
               <th class="text-center align-top">Exemption</th>
               <th class="text-center align-top">Features</th>
               <th class="text-center align-top">QV</th>
-              <th class="text-center align-top">Target Date</th>
+              <sortable-th label="Target Date" sort-key="target_build_date" :current-sort="sortState" @sort="onSort" />
               <th class="text-center align-top">Target Location</th>
               <th class="text-center align-top">Actions</th>
             </tr>
           </thead>
 
-          <tbody>
-            <tr v-for="detail in filteredMeetings" :key="detail.id">
+          <tbody v-if="loading">
+            <tr><td colspan="12" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+          </tbody>
+          <tbody v-else>
+            <tr v-for="detail in uatMeetings" :key="detail.id">
               <!-- Meeting ID -->
               <td class="text-center">
                 <span v-if="detail.meeting && detail.meeting.meeting_id">
@@ -383,7 +303,7 @@
               </td>
             </tr>
 
-            <tr v-if="filteredMeetings.length === 0">
+            <tr v-if="uatMeetings.length === 0">
               <td colspan="12" class="text-center text-muted py-4">
                 <i class="fas fa-inbox fa-2x mb-2"></i><br>
                 No UAT meetings found.
@@ -392,19 +312,36 @@
           </tbody>
         </table>
       </div>
+      <div class="card-footer">
+        <pagination-control :meta="meta" @page-change="onPageChange" @per-page-change="onPerPageChange" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = {
+  search: '',
+  reason: '',
+  budgetRange: '',
+  caseSize: '',
+  features: ''
+};
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       uatMeetings: [],
+      loading: true,
       showFilters: false,
       filterColumns: [
         { key: 'search', label: 'Meeting ID / Theme / Preference / Exemption / Location', type: 'text' },
@@ -429,94 +366,12 @@ export default {
           { value: 'rgb', label: 'RGB Needed' },
         ] },
       ],
-      statistics: {
-        total: 0,
-        gaming: 0,
-        work: 0,
-        avgBudget: 0,
-        futureProof: 0,
-        withMonitor: 0
-      },
-      filters: {
-        search: '',
-        reason: '',
-        budgetRange: '',
-        caseSize: '',
-        features: ''
-      }
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 }
     };
   },
-  mounted() {
-    this.fetchUatMeetings();
-  },
   computed: {
-    filteredMeetings() {
-      let filtered = this.uatMeetings;
-
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(detail => {
-          // Existing search logic
-          if (detail.meeting && detail.meeting.meeting_id &&
-              detail.meeting.meeting_id.toLowerCase().includes(keyword)) {
-            return true;
-          }
-          if (detail.meeting_id && detail.meeting_id.toString().includes(keyword)) {
-            return true;
-          }
-          if (detail.reason) {
-            const reasonText = detail.reason == 1 ? 'work' : 'gaming';
-            if (reasonText.includes(keyword)) return true;
-          }
-          if (detail.reason == 2 && detail.play_mode) {
-            const playModeText = detail.play_mode == 1 ? 'multiplayer' : 'singleplayer';
-            if (playModeText.includes(keyword)) return true;
-          }
-          return (
-            (detail.theme_style && detail.theme_style.toLowerCase().includes(keyword)) ||
-            (detail.preference && detail.preference.toLowerCase().includes(keyword)) ||
-            (detail.exemption && detail.exemption.toLowerCase().includes(keyword)) ||
-            (detail.target_location && detail.target_location.toLowerCase().includes(keyword))
-          );
-        });
-      }
-
-      // Apply advanced filters
-      if (this.filters.reason) {
-        filtered = filtered.filter(detail => detail.reason == this.filters.reason);
-      }
-
-      if (this.filters.budgetRange) {
-        filtered = filtered.filter(detail => {
-          const budget = detail.initial_budget || 0;
-          switch (this.filters.budgetRange) {
-            case 'low': return budget < 7000;
-            case 'medium': return budget >= 7000 && budget <= 10000;
-            case 'high': return budget > 10000;
-            default: return true;
-          }
-        });
-      }
-
-      if (this.filters.caseSize) {
-        filtered = filtered.filter(detail => detail.case_size == this.filters.caseSize);
-      }
-
-      if (this.filters.features) {
-        filtered = filtered.filter(detail => {
-          switch (this.filters.features) {
-            case 'future_proof': return detail.future_proof == 1;
-            case 'aio': return detail.okay_with_aio == 1;
-            case 'gpu_sag': return detail.gpu_sag == 1;
-            case 'rgb': return detail.need_rgb == 1;
-            default: return true;
-          }
-        });
-      }
-
-      return filtered;
-    },
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '');
     },
@@ -552,12 +407,27 @@ export default {
         return date;
       }
     },
-    fetchUatMeetings() {
-      axios.get('/api/uat-meeting')
+    fetchList() {
+      this.loading = true;
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search,
+        reason: this.filters.reason,
+        budgetRange: this.filters.budgetRange,
+        caseSize: this.filters.caseSize,
+        features: this.filters.features,
+      };
+      Object.keys(params).forEach(key => {
+        if (params[key] === '') delete params[key];
+      });
+
+      axios.get('/api/uat-meeting', { params })
         .then(res => {
-          console.log('Fetched UAT meeting:', res.data);
-          this.uatMeetings = res.data;
-          this.calculateStatistics();
+          this.uatMeetings = res.data.data;
+          this.meta = res.data.meta;
         })
         .catch(error => {
           console.error('Error fetching UAT meeting:', error);
@@ -566,51 +436,13 @@ export default {
             title: 'Error',
             text: 'Failed to load UAT meeting'
           });
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
-    calculateStatistics() {
-      if (this.uatMeetings.length === 0) {
-        this.statistics = { total: 0, gaming: 0, work: 0, avgBudget: 0, futureProof: 0, withMonitor: 0 };
-        return;
-      }
-
-      // Total count
-      this.statistics.total = this.uatMeetings.length;
-
-      // Gaming vs Work count
-      this.statistics.gaming = this.uatMeetings.filter(d => d.reason == 2).length;
-      this.statistics.work = this.uatMeetings.filter(d => d.reason == 1).length;
-
-      // Average budget
-      const budgets = this.uatMeetings
-        .filter(d => d.initial_budget && d.initial_budget > 0)
-        .map(d => Number(d.initial_budget));
-
-      if (budgets.length > 0) {
-        const sum = budgets.reduce((a, b) => a + b, 0);
-        this.statistics.avgBudget = Math.round(sum / budgets.length);
-      } else {
-        this.statistics.avgBudget = 0;
-      }
-
-      // Future proof count
-      this.statistics.futureProof = this.uatMeetings.filter(d => d.future_proof == 1).length;
-
-      // With monitor count
-      this.statistics.withMonitor = this.uatMeetings.filter(d => d.include_monitor == 1).length;
-    },
-    applyFilters() {
-      // Filters are applied automatically through computed property
-      // This method is triggered by filter change events
-    },
     clearFilters() {
-      this.filters = {
-        search: '',
-        reason: '',
-        budgetRange: '',
-        caseSize: '',
-        features: ''
-      };
+      this.filters = { ...EMPTY_FILTERS };
     },
     removeFilter(filterKey) {
       if (this.filters[filterKey] !== undefined) {
@@ -663,10 +495,10 @@ export default {
         if (result.isConfirmed) {
           axios.delete(`/api/uat-meeting/${id}`)
             .then(() => {
-              // Remove from local array
-              this.uatMeetings = this.uatMeetings.filter(detail => detail.id !== id);
-              // Recalculate statistics
-              this.calculateStatistics();
+              if (this.uatMeetings.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
 
               Swal.fire(
                 'Deleted!',
@@ -695,7 +527,19 @@ export default {
       }
       return 'Not Specified';
     }
-  }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    },
+  },
+  created() {
+    this.fetchList();
+  },
 };
 </script>
 
@@ -744,20 +588,6 @@ export default {
   font-size: 0.9em;
 }
 
-/* Statistics Cards */
-.card.border-left-primary {
-  border-left: 0.25rem solid #4e73df !important;
-}
-.card.border-left-success {
-  border-left: 0.25rem solid #1cc88a !important;
-}
-.card.border-left-info {
-  border-left: 0.25rem solid #36b9cc !important;
-}
-.card.border-left-warning {
-  border-left: 0.25rem solid #f6c23e !important;
-}
-
 /* Filter Section */
 .filter-card {
   background-color: #f8f9fc;
@@ -793,10 +623,6 @@ export default {
 
   .filter-card .col-md-3 {
     margin-bottom: 10px;
-  }
-
-  .statistics-cards .col-xl-3 {
-    margin-bottom: 15px;
   }
 }
 
