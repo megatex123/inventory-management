@@ -33753,16 +33753,41 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
+
+
+
+var EMPTY_FILTERS = {
+  name: '',
+  code: '',
+  nameStartsWith: '',
+  codeStartsWith: '',
+  categoryId: '',
+  year: '',
+  month: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
       subCategories: [],
       allCategories: [],
+      loading: true,
       showFilters: false,
       filterColumns: [{
         key: 'name',
@@ -33773,41 +33798,75 @@ __webpack_require__.r(__webpack_exports__);
         label: 'Code',
         type: 'text'
       }],
-      filters: {
-        name: '',
-        code: '',
-        sortBy: 'name_asc',
-        nameStartsWith: '',
-        categoryId: '',
-        year: '',
-        month: ''
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'name',
+        dir: 'asc'
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
       },
       nameStartingLetters: [],
+      codeStartingLetters: [],
       availableYears: [],
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     };
   },
   methods: {
-    getEmp: function getEmp() {
+    fetchSubCategories: function fetchSubCategories() {
       var _this = this;
-      axios.get('/api/sub-categories').then(function (res) {
-        _this.subCategories = res.data;
-        _this.extractFilterOptions();
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        name: this.filters.name,
+        code: this.filters.code,
+        name_starts_with: this.filters.nameStartsWith,
+        code_starts_with: this.filters.codeStartsWith,
+        category_id: this.filters.categoryId,
+        year: this.filters.year,
+        month: this.filters.month
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/sub-categories', {
+        params: params
+      }).then(function (res) {
+        _this.subCategories = res.data.data;
+        _this.meta = res.data.meta;
       })["catch"](function (err) {
         console.error('Error fetching sub categories:', err);
         notification.error();
+      })["finally"](function () {
+        _this.loading = false;
+      });
+    },
+    fetchFilterOptions: function fetchFilterOptions() {
+      var _this2 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/sub-categories/filter-options').then(function (res) {
+        _this2.nameStartingLetters = res.data.data.name_starting_letters;
+        _this2.codeStartingLetters = res.data.data.code_starting_letters;
+        _this2.availableYears = res.data.data.available_years;
+      })["catch"](function (err) {
+        console.error('Error fetching filter options:', err);
       });
     },
     fetchAllCategories: function fetchAllCategories() {
-      var _this2 = this;
-      axios.get('/api/categories/all').then(function (res) {
-        _this2.allCategories = res.data;
+      var _this3 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/categories/all').then(function (res) {
+        _this3.allCategories = res.data;
       })["catch"](function (err) {
         console.error('Error fetching categories:', err);
       });
     },
     deleteCat: function deleteCat(id) {
-      var _this3 = this;
+      var _this4 = this;
       Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -33818,14 +33877,15 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.isConfirmed) {
-          axios["delete"]("/api/sub-categories/" + id).then(function () {
-            _this3.subCategories = _this3.subCategories.filter(function (data) {
-              return data.id !== id;
-            });
-            _this3.extractFilterOptions();
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/sub-categories/" + id).then(function () {
             Swal.fire('Deleted!', 'Sub Category has been deleted.', 'success');
+            if (_this4.subCategories.length === 1 && _this4.meta.current_page > 1) {
+              _this4.meta.current_page -= 1;
+            }
+            _this4.fetchSubCategories();
+            _this4.fetchFilterOptions();
           })["catch"](function () {
-            _this3.$router.push({
+            _this4.$router.push({
               name: 'categories'
             });
           });
@@ -33840,236 +33900,66 @@ __webpack_require__.r(__webpack_exports__);
       var year = d.getFullYear();
       return "".concat(day, "-").concat(month, "-").concat(year);
     },
-    extractFilterOptions: function extractFilterOptions() {
-      // Extract unique starting letters for names
-      var nameLetters = new Set();
-      var years = new Set();
-      this.subCategories.forEach(function (subCat) {
-        if (subCat.name && subCat.name.length > 0) {
-          var firstLetter = subCat.name.charAt(0).toUpperCase();
-          if (/[A-Z0-9]/.test(firstLetter)) {
-            nameLetters.add(firstLetter);
-          }
-        }
-
-        // Extract years from created_at
-        if (subCat.created_at) {
-          var date = new Date(subCat.created_at);
-          years.add(date.getFullYear());
-        }
-      });
-      this.nameStartingLetters = Array.from(nameLetters).sort();
-      this.availableYears = Array.from(years).sort(function (a, b) {
-        return b - a;
-      }); // Descending order (newest first)
-    },
-    applyFilters: function applyFilters() {
-      // Filters are applied automatically through computed property
-    },
     clearFilters: function clearFilters() {
-      this.filters = {
-        name: '',
-        code: '',
-        sortBy: 'name_asc',
-        nameStartsWith: '',
-        categoryId: '',
-        year: '',
-        month: ''
-      };
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'name' || filterKey === 'code') {
+      if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
-      } else if (this.filters[filterKey] !== undefined) {
-        this.filters[filterKey] = '';
-        // If year is removed, also clear month
         if (filterKey === 'year') {
           this.filters.month = '';
         }
       }
     },
     getFilterLabel: function getFilterLabel(key, value) {
-      var labels = {
-        sortBy: {
-          'name_asc': 'Name A-Z',
-          'name_desc': 'Name Z-A',
-          'code_asc': 'Code A-Z',
-          'code_desc': 'Code Z-A',
-          'category_asc': 'Category A-Z',
-          'category_desc': 'Category Z-A',
-          'date_asc': 'Date (Oldest)',
-          'date_desc': 'Date (Newest)'
-        },
-        month: {
-          1: 'January',
-          2: 'February',
-          3: 'March',
-          4: 'April',
-          5: 'May',
-          6: 'June',
-          7: 'July',
-          8: 'August',
-          9: 'September',
-          10: 'October',
-          11: 'November',
-          12: 'December'
-        }
-      };
-      if (key === 'name') {
-        return "Name: \"".concat(value, "\"");
-      }
-      if (key === 'code') {
-        return "Code: \"".concat(value, "\"");
-      }
-      if (key === 'nameStartsWith') {
-        return "Name: ".concat(value);
-      }
+      if (key === 'name') return "Name: \"".concat(value, "\"");
+      if (key === 'code') return "Code: \"".concat(value, "\"");
+      if (key === 'nameStartsWith') return "Name: ".concat(value);
+      if (key === 'codeStartsWith') return "Code: ".concat(value);
       if (key === 'categoryId') {
         var category = this.allCategories.find(function (c) {
           return c.id == value;
         });
         return "Category: ".concat(category ? category.name : value);
       }
-      if (key === 'year') {
-        return "Year: ".concat(value);
-      }
-      if (key === 'month') {
-        return "Month: ".concat(labels.month[value] || value);
-      }
-      return labels[key] && labels[key][value] ? "Sort: ".concat(labels[key][value]) : "".concat(key, ": ").concat(value);
+      if (key === 'year') return "Year: ".concat(value);
+      if (key === 'month') return "Month: ".concat(this.monthNames[value - 1] || value);
+      return "".concat(key, ": ").concat(value);
     },
-    sortSubCategories: function sortSubCategories(subCategories) {
-      switch (this.filters.sortBy) {
-        case 'name_desc':
-          return subCategories.slice().sort(function (a, b) {
-            return (b.name || '').localeCompare(a.name || '');
-          });
-        case 'code_asc':
-          return subCategories.slice().sort(function (a, b) {
-            return (a.code || '').localeCompare(b.code || '');
-          });
-        case 'code_desc':
-          return subCategories.slice().sort(function (a, b) {
-            return (b.code || '').localeCompare(a.code || '');
-          });
-        case 'category_asc':
-          return subCategories.slice().sort(function (a, b) {
-            var catA = a.category ? a.category.name : '';
-            var catB = b.category ? b.category.name : '';
-            return catA.localeCompare(catB);
-          });
-        case 'category_desc':
-          return subCategories.slice().sort(function (a, b) {
-            var catA = a.category ? a.category.name : '';
-            var catB = b.category ? b.category.name : '';
-            return catB.localeCompare(catA);
-          });
-        case 'date_asc':
-          return subCategories.slice().sort(function (a, b) {
-            var dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-            var dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-            return dateA - dateB;
-          });
-        case 'date_desc':
-          return subCategories.slice().sort(function (a, b) {
-            var dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-            var dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-            return dateB - dateA;
-          });
-        case 'name_asc':
-        default:
-          return subCategories.slice().sort(function (a, b) {
-            return (a.name || '').localeCompare(b.name || '');
-          });
+    onSort: function onSort(key) {
+      if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortState = {
+          key: key,
+          dir: 'asc'
+        };
       }
+      this.fetchSubCategories();
     },
-    getYearMonthFromDate: function getYearMonthFromDate(dateString) {
-      if (!dateString) return {
-        year: null,
-        month: null
-      };
-      var date = new Date(dateString);
-      return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1 // Month is 0-indexed, so add 1
-      };
+    onPageChange: function onPageChange(page) {
+      this.meta.current_page = page;
+      this.fetchSubCategories();
+    },
+    onPerPageChange: function onPerPageChange(perPage) {
+      this.meta.per_page = perPage;
+      this.meta.current_page = 1;
+      this.fetchSubCategories();
     }
   },
   computed: {
-    filteredSubCategories: function filteredSubCategories() {
-      var _this4 = this;
-      var filtered = this.subCategories;
-      if (this.filters.name) {
-        var keyword = this.filters.name.toLowerCase();
-        filtered = filtered.filter(function (subCat) {
-          return subCat.name && subCat.name.toLowerCase().includes(keyword);
-        });
-      }
-      if (this.filters.code) {
-        var _keyword = this.filters.code.toLowerCase();
-        filtered = filtered.filter(function (subCat) {
-          return subCat.code && subCat.code.toLowerCase().includes(_keyword);
-        });
-      }
-
-      // Apply name starts with filter
-      if (this.filters.nameStartsWith) {
-        filtered = filtered.filter(function (subCat) {
-          return subCat.name && subCat.name.charAt(0).toUpperCase() === _this4.filters.nameStartsWith;
-        });
-      }
-
-      // Apply category filter
-      if (this.filters.categoryId) {
-        filtered = filtered.filter(function (subCat) {
-          return subCat.category && subCat.category.id == _this4.filters.categoryId;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(function (subCat) {
-          if (!subCat.created_at) return false;
-          var _this4$getYearMonthFr = _this4.getYearMonthFromDate(subCat.created_at),
-            year = _this4$getYearMonthFr.year;
-          return year === parseInt(_this4.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(function (subCat) {
-          if (!subCat.created_at) return false;
-          var _this4$getYearMonthFr2 = _this4.getYearMonthFromDate(subCat.created_at),
-            month = _this4$getYearMonthFr2.month;
-          return month === parseInt(_this4.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortSubCategories(filtered);
-      return filtered;
-    },
     hasActiveFilters: function hasActiveFilters() {
-      var _this5 = this;
-      return Object.values(this.filters).some(function (value, index) {
-        var key = Object.keys(_this5.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'name_asc'; // Only show if not default
-        }
+      return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
     },
     activeFilters: function activeFilters() {
-      var _this6 = this;
+      var _this5 = this;
       var active = {};
-
-      // Add filters that have values
       Object.keys(this.filters).forEach(function (key) {
-        var value = _this6.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'name_asc')) {
-          // Don't show month as active if no year is selected
-          if (key === 'month' && !_this6.filters.year) {
+        var value = _this5.filters[key];
+        if (value !== '') {
+          if (key === 'month' && !_this5.filters.year) {
             return;
           }
           active[key] = value;
@@ -34079,8 +33969,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
+    filters: {
+      handler: function handler() {
+        this.meta.current_page = 1;
+        this.fetchSubCategories();
+      },
+      deep: true
+    },
     'filters.year': function filtersYear(newYear) {
-      // Clear month when year changes to empty
       if (!newYear) {
         this.filters.month = '';
       }
@@ -34093,8 +33989,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
     ;
-    this.getEmp();
+    this.fetchFilterOptions();
     this.fetchAllCategories();
+    this.fetchSubCategories();
   }
 });
 
@@ -87224,33 +87121,17 @@ var render = function render() {
   return _c("div", {
     staticClass: "row justify-content-center"
   }, [_c("div", {
-    staticClass: "col-xl-12 col-lg-12 col-md-12"
-  }, [_c("div", {
-    staticClass: "card shadow-sm my-5"
-  }, [_c("div", {
-    staticClass: "card-body p-0"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-lg-12"
-  }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
-    staticClass: "card-header py-3"
-  }, [_c("div", {
-    staticClass: "d-flex justify-content-between align-items-center"
-  }, [_c("router-link", {
-    staticClass: "btn btn-primary",
+    staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
+  }, [_c("h2", {
+    staticClass: "mb-1 font-weight-bold text-primary"
+  }, [_vm._v("Sub Category List")]), _vm._v(" "), _c("router-link", {
+    staticClass: "btn btn-primary m-0",
     attrs: {
       to: "/sub-category/create"
     }
-  }, [_vm._v("Add Sub Category")]), _vm._v(" "), _c("h5", {
-    staticClass: "m-0 font-weight-bold text-primary text-center flex-grow-1"
-  }, [_vm._v("Sub Category List")]), _vm._v(" "), _c("div", {
-    staticStyle: {
-      width: "120px"
-    }
-  })], 1)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Add Sub Category")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mt-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -87272,7 +87153,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                        " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                    ")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n                  " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -87288,7 +87169,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                    ")])]), _vm._v(" "), _c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -87306,61 +87187,6 @@ var render = function render() {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Sort By")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.sortBy,
-      expression: "filters.sortBy"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "sortBy", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "name_asc"
-    }
-  }, [_vm._v("Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "name_desc"
-    }
-  }, [_vm._v("Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "code_asc"
-    }
-  }, [_vm._v("Code (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "code_desc"
-    }
-  }, [_vm._v("Code (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "category_asc"
-    }
-  }, [_vm._v("Category (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "category_desc"
-    }
-  }, [_vm._v("Category (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "date_asc"
-    }
-  }, [_vm._v("Date Created (Oldest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "date_desc"
-    }
-  }, [_vm._v("Date Created (Newest)")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Name Starts With")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
@@ -87370,7 +87196,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -87378,7 +87204,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "nameStartsWith", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -87390,7 +87216,41 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                                " + _vm._s(letter) + "\n                                                            ")]);
+    }, [_vm._v("\n                      " + _vm._s(letter) + "\n                    ")]);
+  })], 2)]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-3 mb-2"
+  }, [_c("label", {
+    staticClass: "small font-weight-bold text-muted"
+  }, [_vm._v("Code Starts With")]), _vm._v(" "), _c("select", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.filters.codeStartsWith,
+      expression: "filters.codeStartsWith"
+    }],
+    staticClass: "form-control form-control-sm",
+    on: {
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.filters, "codeStartsWith", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+      }
+    }
+  }, [_c("option", {
+    attrs: {
+      value: ""
+    }
+  }, [_vm._v("All")]), _vm._v(" "), _vm._l(_vm.codeStartingLetters, function (letter) {
+    return _c("option", {
+      key: letter,
+      domProps: {
+        value: letter
+      }
+    }, [_vm._v("\n                      " + _vm._s(letter) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -87404,7 +87264,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -87412,7 +87272,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "categoryId", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -87424,9 +87284,9 @@ var render = function render() {
       domProps: {
         value: category.id
       }
-    }, [_vm._v("\n                                                                " + _vm._s(category.name) + "\n                                                            ")]);
+    }, [_vm._v("\n                      " + _vm._s(category.name) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-1.5 mb-2"
+    staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Year")]), _vm._v(" "), _c("select", {
@@ -87438,7 +87298,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -87446,7 +87306,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "year", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -87458,9 +87318,9 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                                " + _vm._s(year) + "\n                                                            ")]);
+    }, [_vm._v("\n                      " + _vm._s(year) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-1.5 mb-2"
+    staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Month")]), _vm._v(" "), _c("select", {
@@ -87475,7 +87335,7 @@ var render = function render() {
       disabled: !_vm.filters.year
     },
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -87483,7 +87343,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "month", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -87495,7 +87355,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                                " + _vm._s(monthName) + "\n                                                            ")]);
+    }, [_vm._v("\n                      " + _vm._s(monthName) + "\n                    ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -87506,7 +87366,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                                " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                "), _c("button", {
+    }, [_vm._v("\n                      " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                      "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -87523,12 +87383,50 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSubCategories, function (data, index) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Category",
+      "sort-key": "category",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Code",
+      "sort-key": "code",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Created At",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Action")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.subCategories, function (data, index) {
     return _c("tr", {
       key: data.id
-    }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [data.category ? _c("span", {
+    }, [_c("td", [_vm._v(_vm._s((_vm.meta.current_page - 1) * _vm.meta.per_page + index + 1))]), _vm._v(" "), _c("td", [data.category ? _c("span", {
       staticClass: "badge badge-primary"
-    }, [_vm._v("\n                                                    " + _vm._s(data.category.name) + "\n                                                ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(data.category.name) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.name))]), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge badge-secondary"
@@ -87565,7 +87463,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredSubCategories.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.subCategories.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -87576,13 +87484,21 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters\n                                                    ")])]);
+  }), _vm._v("Filters\n                ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("Category")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Code")]), _vm._v(" "), _c("th", [_vm._v("Created At")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
+  return _c("tr", [_c("td", {
+    staticClass: "text-center py-4",
+    attrs: {
+      colspan: "6"
+    }
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    attrs: {
+      role: "status"
+    }
+  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -87593,7 +87509,7 @@ var staticRenderFns = [function () {
     }
   }, [_c("i", {
     staticClass: "fas fa-folder fa-2x mb-2"
-  }), _c("br"), _vm._v("\n                                                No sub categories found.\n                                            ")]);
+  }), _c("br"), _vm._v("\n              No sub categories found.\n            ")]);
 }];
 render._withStripped = true;
 
@@ -99777,7 +99693,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-e3f02c2a], .table td[data-v-e3f02c2a] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-e3f02c2a] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n.badge-primary[data-v-e3f02c2a] {\n    background-color: #4e73df !important;\n}\n.badge-secondary[data-v-e3f02c2a] {\n    background-color: #6c757d !important;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a]:last-child {\n    margin-right: 0;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-e3f02c2a] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-e3f02c2a] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-e3f02c2a] {\n        display: none;\n}\n.table-responsive[data-v-e3f02c2a] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-e3f02c2a], .col-md-1.5[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-e3f02c2a] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-e3f02c2a] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-e3f02c2a]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-e3f02c2a] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-e3f02c2a] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-e3f02c2a]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n.filter-panel-enter-active[data-v-e3f02c2a],\n.filter-panel-leave-active[data-v-e3f02c2a] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-e3f02c2a],\n.filter-panel-leave-to[data-v-e3f02c2a] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-e3f02c2a], .table td[data-v-e3f02c2a] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-e3f02c2a] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n.badge-primary[data-v-e3f02c2a] {\n    background-color: #4e73df !important;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-e3f02c2a]:last-child {\n    margin-right: 0;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-e3f02c2a] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-e3f02c2a] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.table-responsive[data-v-e3f02c2a] {\n        font-size: 0.8rem;\n}\n.btn-sm[data-v-e3f02c2a] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\n}\n\n/* Search field focus */\n.form-control[data-v-e3f02c2a]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Code badge styling */\n.badge-secondary[data-v-e3f02c2a] {\n    background-color: #6c757d !important;\n    color: white;\n    font-family: monospace;\n    font-size: 0.9em;\n}\n\n/* Disabled month select styling */\nselect[data-v-e3f02c2a]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n.filter-panel-enter-active[data-v-e3f02c2a],\n.filter-panel-leave-active[data-v-e3f02c2a] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-e3f02c2a],\n.filter-panel-leave-to[data-v-e3f02c2a] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
