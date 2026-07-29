@@ -47,7 +47,7 @@ class CustomersController extends Controller
             $query->where('approve', $approve === 'Approved' ? 1 : 0);
         }
 
-        $this->resolveSortAndApply($query, $request, ['full_name', 'customer_id', 'created_at'], 'created_at');
+        $this->resolveSortAndApply($query, $request, ['full_name', 'customer_id', 'created_at'], 'created_at', 'id', [], 'desc');
 
         $perPage = $this->resolvePerPage($request);
         $paginated = $query->with(['careData.care', 'careData.order'])->paginate($perPage);

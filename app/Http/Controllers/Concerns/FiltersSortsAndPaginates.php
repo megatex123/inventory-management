@@ -106,11 +106,19 @@ trait FiltersSortsAndPaginates
      * $castNumericColumns lists which of $allowedColumns store numeric
      * data as a varchar and need CAST(col AS DECIMAL(10,2)) instead of a
      * plain orderBy() -- see applyNumericRangeFilter's docblock.
+     *
+     * $defaultDir is the sort_dir used when the request omits sort_dir
+     * entirely (defaults to 'asc', matching every controller migrated
+     * before this parameter existed). Pass 'desc' for a page whose natural
+     * default order is newest-first (e.g. a CRM-style registry preserving
+     * a pre-migration ->latest() default) -- found missing when Batch 10
+     * (customer) documented a created_at/desc default that this method
+     * silently didn't honor for a bare request with no explicit sort_dir.
      */
-    protected function resolveSortAndApply($query, $request, array $allowedColumns, string $defaultColumn, string $tiebreakerColumn = 'id', array $castNumericColumns = [])
+    protected function resolveSortAndApply($query, $request, array $allowedColumns, string $defaultColumn, string $tiebreakerColumn = 'id', array $castNumericColumns = [], string $defaultDir = 'asc')
     {
         $sortBy = $request->get('sort_by', $defaultColumn);
-        $sortDir = $request->get('sort_dir', 'asc');
+        $sortDir = $request->get('sort_dir', $defaultDir);
 
         if (!in_array($sortBy, $allowedColumns, true)) {
             $sortBy = $defaultColumn;
