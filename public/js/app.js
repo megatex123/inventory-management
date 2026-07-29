@@ -14260,18 +14260,44 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
+
+
+
+
+var EMPTY_FILTERS = {
+  search: '',
+  dateRange: '',
+  month: '',
+  year: '',
+  hasDocument: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
       meetings: [],
+      loading: true,
       showFilters: false,
       filterColumns: [{
         key: 'search',
@@ -14321,101 +14347,34 @@ __webpack_require__.r(__webpack_exports__);
         withDocuments: 0,
         last7Days: 0
       },
-      filters: {
-        search: '',
-        dateRange: '',
-        month: '',
-        year: '',
-        hasDocument: ''
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
       },
       expandedNotes: [],
-      availableYears: []
+      availableYears: [],
+      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     };
   },
-  mounted: function mounted() {
-    this.fetchMeetings();
-  },
   computed: {
-    filteredMeetings: function filteredMeetings() {
-      var _this = this;
-      var filtered = this.meetings;
-
-      // Apply text search
-      if (this.filters.search) {
-        var keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(function (m) {
-          var _m$customer, _m$customer2;
-          return ((_m$customer = m.customer) === null || _m$customer === void 0 ? void 0 : _m$customer.full_name) && m.customer.full_name.toLowerCase().includes(keyword) || ((_m$customer2 = m.customer) === null || _m$customer2 === void 0 ? void 0 : _m$customer2.phone) && m.customer.phone.toLowerCase().includes(keyword) || m.meeting_date && m.meeting_date.toLowerCase().includes(keyword) || m.title && m.title.toLowerCase().includes(keyword) || m.meeting_id && m.meeting_id.toLowerCase().includes(keyword) || m.meeting_notes && m.meeting_notes.toLowerCase().includes(keyword);
-        });
-      }
-
-      // Apply advanced filters
-      if (this.filters.dateRange) {
-        var today = new Date();
-        filtered = filtered.filter(function (meeting) {
-          var meetingDate = new Date(meeting.meeting_date);
-          switch (_this.filters.dateRange) {
-            case 'today':
-              return _this.isSameDay(meetingDate, today);
-            case 'yesterday':
-              var yesterday = new Date(today);
-              yesterday.setDate(yesterday.getDate() - 1);
-              return _this.isSameDay(meetingDate, yesterday);
-            case 'thisWeek':
-              var startOfWeek = new Date(today);
-              startOfWeek.setDate(today.getDate() - today.getDay());
-              return meetingDate >= startOfWeek && meetingDate <= today;
-            case 'lastWeek':
-              var lastWeekStart = new Date(today);
-              lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
-              var lastWeekEnd = new Date(today);
-              lastWeekEnd.setDate(today.getDate() - today.getDay());
-              return meetingDate >= lastWeekStart && meetingDate < lastWeekEnd;
-            case 'thisMonth':
-              return meetingDate.getMonth() === today.getMonth() && meetingDate.getFullYear() === today.getFullYear();
-            case 'lastMonth':
-              var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-              var endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-              return meetingDate >= lastMonth && meetingDate <= endOfLastMonth;
-            case 'thisYear':
-              return meetingDate.getFullYear() === today.getFullYear();
-            default:
-              return true;
-          }
-        });
-      }
-      if (this.filters.month) {
-        filtered = filtered.filter(function (meeting) {
-          var meetingDate = new Date(meeting.meeting_date);
-          return meetingDate.getMonth() + 1 === parseInt(_this.filters.month);
-        });
-      }
-      if (this.filters.year) {
-        filtered = filtered.filter(function (meeting) {
-          var meetingDate = new Date(meeting.meeting_date);
-          return meetingDate.getFullYear() === parseInt(_this.filters.year);
-        });
-      }
-      if (this.filters.hasDocument) {
-        filtered = filtered.filter(function (meeting) {
-          if (_this.filters.hasDocument === 'yes') return meeting.document;
-          if (_this.filters.hasDocument === 'no') return !meeting.document;
-          return true;
-        });
-      }
-      return filtered;
-    },
     hasActiveFilters: function hasActiveFilters() {
       return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
     },
     activeFilters: function activeFilters() {
-      var _this2 = this;
+      var _this = this;
       var active = {};
       Object.keys(this.filters).forEach(function (key) {
-        if (_this2.filters[key] !== '') {
-          active[key] = _this2.filters[key];
+        if (_this.filters[key] !== '') {
+          active[key] = _this.filters[key];
         }
       });
       return active;
@@ -14436,76 +14395,52 @@ __webpack_require__.r(__webpack_exports__);
       var d = new Date(date);
       return days[d.getDay()];
     },
-    fetchMeetings: function fetchMeetings() {
+    fetchList: function fetchList() {
+      var _this2 = this;
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search,
+        dateRange: this.filters.dateRange,
+        month: this.filters.month,
+        year: this.filters.year,
+        hasDocument: this.filters.hasDocument
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings', {
+        params: params
+      }).then(function (res) {
+        _this2.meetings = res.data.data;
+        _this2.meta = res.data.meta;
+      })["catch"](function (err) {
+        console.error('Error fetching meetings:', err);
+      })["finally"](function () {
+        _this2.loading = false;
+      });
+    },
+    fetchStatistics: function fetchStatistics() {
       var _this3 = this;
-      axios.get('/api/meetings').then(function (res) {
-        _this3.meetings = res.data;
-        _this3.calculateStatistics();
-        _this3.extractYears();
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/statistics').then(function (res) {
+        _this3.statistics = res.data.data;
+      })["catch"](function (err) {
+        console.error('Error fetching statistics:', err);
       });
     },
-    calculateStatistics: function calculateStatistics() {
-      if (this.meetings.length === 0) {
-        this.statistics = {
-          total: 0,
-          thisMonth: 0,
-          withDocuments: 0,
-          last7Days: 0
-        };
-        return;
-      }
-      var today = new Date();
-      var currentMonth = today.getMonth();
-      var currentYear = today.getFullYear();
-      var sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(today.getDate() - 7);
-
-      // Total count
-      this.statistics.total = this.meetings.length;
-
-      // This month count
-      this.statistics.thisMonth = this.meetings.filter(function (meeting) {
-        var meetingDate = new Date(meeting.meeting_date);
-        return meetingDate.getMonth() === currentMonth && meetingDate.getFullYear() === currentYear;
-      }).length;
-
-      // With documents count
-      this.statistics.withDocuments = this.meetings.filter(function (meeting) {
-        return meeting.document;
-      }).length;
-
-      // Last 7 days count
-      this.statistics.last7Days = this.meetings.filter(function (meeting) {
-        var meetingDate = new Date(meeting.meeting_date);
-        return meetingDate >= sevenDaysAgo && meetingDate <= today;
-      }).length;
-    },
-    extractYears: function extractYears() {
-      var years = new Set();
-      this.meetings.forEach(function (meeting) {
-        if (meeting.meeting_date) {
-          var year = new Date(meeting.meeting_date).getFullYear();
-          years.add(year);
-        }
+    fetchFilterOptions: function fetchFilterOptions() {
+      var _this4 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/meetings/filter-options').then(function (res) {
+        _this4.availableYears = res.data.data.available_years;
+      })["catch"](function (err) {
+        console.error('Error fetching filter options:', err);
       });
-      this.availableYears = Array.from(years).sort(function (a, b) {
-        return b - a;
-      });
-    },
-    isSameDay: function isSameDay(date1, date2) {
-      return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
-    },
-    applyFilters: function applyFilters() {
-      // Filters are applied automatically through computed property
     },
     clearFilters: function clearFilters() {
-      this.filters = {
-        search: '',
-        dateRange: '',
-        month: '',
-        year: '',
-        hasDocument: ''
-      };
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
     },
     removeFilter: function removeFilter(filterKey) {
       if (this.filters[filterKey] !== undefined) {
@@ -14559,8 +14494,8 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     deleteMeeting: function deleteMeeting(id) {
-      var _this4 = this;
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+      var _this5 = this;
+      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure?',
         icon: 'warning',
         showCancelButton: true,
@@ -14569,21 +14504,33 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.isConfirmed) {
-          axios["delete"]("/api/meetings/".concat(id)).then(function () {
-            // Remove from local array
-            _this4.meetings = _this4.meetings.filter(function (c) {
-              return c.id !== id;
-            });
-            // Recalculate statistics
-            _this4.calculateStatistics();
-            _this4.extractYears();
-            sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Deleted!', 'Meeting has been deleted.', 'success');
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/meetings/".concat(id)).then(function () {
+            if (_this5.meetings.length === 1 && _this5.meta.current_page > 1) {
+              _this5.meta.current_page -= 1;
+            }
+            _this5.fetchList();
+            _this5.fetchStatistics();
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Meeting has been deleted.', 'success');
           })["catch"](function () {
-            sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Error!', 'Failed to delete meeting.', 'error');
+            sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete meeting.', 'error');
           });
         }
       });
     }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    }
+  },
+  created: function created() {
+    this.fetchStatistics();
+    this.fetchFilterOptions();
+    this.fetchList();
   }
 });
 
@@ -56057,7 +56004,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -56065,61 +56012,20 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "month", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
       value: ""
     }
-  }, [_vm._v("All Months")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("January")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "2"
-    }
-  }, [_vm._v("February")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "3"
-    }
-  }, [_vm._v("March")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "4"
-    }
-  }, [_vm._v("April")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "5"
-    }
-  }, [_vm._v("May")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "6"
-    }
-  }, [_vm._v("June")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "7"
-    }
-  }, [_vm._v("July")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "8"
-    }
-  }, [_vm._v("August")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "9"
-    }
-  }, [_vm._v("September")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "10"
-    }
-  }, [_vm._v("October")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "11"
-    }
-  }, [_vm._v("November")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "12"
-    }
-  }, [_vm._v("December")])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("All Months")]), _vm._v(" "), _vm._l(_vm.monthNames, function (monthName, index) {
+    return _c("option", {
+      key: index,
+      domProps: {
+        value: index + 1
+      }
+    }, [_vm._v(_vm._s(monthName))]);
+  })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
@@ -56132,7 +56038,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -56140,7 +56046,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "year", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -56180,7 +56086,44 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(5), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredMeetings, function (meeting) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Meeting ID",
+      "sort-key": "title",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Customer")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Title",
+      "sort-key": "title",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Date",
+      "sort-key": "meeting_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Notes")]), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Document")]), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Action")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(5)]) : _c("tbody", [_vm._l(_vm.meetings, function (meeting) {
     return _c("tr", {
       key: meeting.id
     }, [_c("td", [_c("span", {
@@ -56242,7 +56185,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredMeetings.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])])])]);
+  }), _vm._v(" "), _vm.meetings.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -56289,23 +56242,17 @@ var staticRenderFns = [function () {
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Customer")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Title")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Date")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Notes")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Document")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Action")])])]);
+  return _c("tr", [_c("td", {
+    staticClass: "text-center py-4",
+    attrs: {
+      colspan: "7"
+    }
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    attrs: {
+      role: "status"
+    }
+  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -98952,7 +98899,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-4771e67a], .table td[data-v-4771e67a] {\n  vertical-align: middle !important;\n}\n.badge[data-v-4771e67a] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.btn-sm[data-v-4771e67a] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-4771e67a] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-4771e67a] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-4771e67a] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-4771e67a] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-4771e67a] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-4771e67a] {\n  gap: 0.5rem;\n}\n\n/* Read More button */\n.btn-link[data-v-4771e67a] {\n  text-decoration: none;\n  font-size: 0.8em;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-4771e67a] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-4771e67a] {\n    font-size: 0.8rem;\n}\n.badge[data-v-4771e67a] {\n    font-size: 0.7em;\n}\n.col-md-3[data-v-4771e67a] {\n    margin-bottom: 10px;\n}\n.col-xl-3[data-v-4771e67a] {\n    margin-bottom: 15px;\n}\n}\nimg[data-v-4771e67a] {\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.bg-highlight-purple[data-v-4771e67a] {\n  background: rgba(111, 66, 193, 0.15);\n  padding: 6px 12px;\n  border-radius: 6px;\n  display: inline-block;\n}\n.filter-panel-enter-active[data-v-4771e67a],\n.filter-panel-leave-active[data-v-4771e67a] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-4771e67a],\n.filter-panel-leave-to[data-v-4771e67a] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-4771e67a], .table td[data-v-4771e67a] {\n  vertical-align: middle !important;\n}\n.badge[data-v-4771e67a] {\n  font-size: 0.75em;\n  padding: 0.25em 0.6em;\n}\n.btn-sm[data-v-4771e67a] {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n}\n\n/* Statistics Cards */\n.card.border-left-primary[data-v-4771e67a] {\n  border-left: 0.25rem solid #4e73df !important;\n}\n.card.border-left-success[data-v-4771e67a] {\n  border-left: 0.25rem solid #1cc88a !important;\n}\n.card.border-left-info[data-v-4771e67a] {\n  border-left: 0.25rem solid #36b9cc !important;\n}\n.card.border-left-warning[data-v-4771e67a] {\n  border-left: 0.25rem solid #f6c23e !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-4771e67a] {\n  background-color: #36b9cc !important;\n  font-size: 0.75em;\n  padding: 0.4em 0.8em;\n}\n.gap-2[data-v-4771e67a] {\n  gap: 0.5rem;\n}\n.btn-link[data-v-4771e67a] {\n  text-decoration: none;\n  font-size: 0.8em;\n}\n@media (max-width: 768px) {\n.card-header[data-v-4771e67a] {\n    flex-direction: column;\n    align-items: flex-start !important;\n}\n.table-responsive[data-v-4771e67a] {\n    font-size: 0.8rem;\n}\n.badge[data-v-4771e67a] {\n    font-size: 0.7em;\n}\n.col-md-3[data-v-4771e67a] {\n    margin-bottom: 10px;\n}\n.col-xl-3[data-v-4771e67a] {\n    margin-bottom: 15px;\n}\n}\n.filter-panel-enter-active[data-v-4771e67a],\n.filter-panel-leave-active[data-v-4771e67a] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-4771e67a],\n.filter-panel-leave-to[data-v-4771e67a] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 

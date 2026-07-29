@@ -135,35 +135,16 @@
                 <!-- Month Filter -->
                 <div class="col-md-3 mb-2">
                   <label class="small font-weight-bold text-muted">Month</label>
-                  <select
-                    v-model="filters.month"
-                    class="form-control form-control-sm"
-                    @change="applyFilters"
-                  >
+                  <select v-model="filters.month" class="form-control form-control-sm">
                     <option value="">All Months</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
+                    <option v-for="(monthName, index) in monthNames" :key="index" :value="index + 1">{{ monthName }}</option>
                   </select>
                 </div>
 
                 <!-- Year Filter -->
                 <div class="col-md-3 mb-2">
                   <label class="small font-weight-bold text-muted">Year</label>
-                  <select
-                    v-model="filters.year"
-                    class="form-control form-control-sm"
-                    @change="applyFilters"
-                  >
+                  <select v-model="filters.year" class="form-control form-control-sm">
                     <option value="">All Years</option>
                     <option v-for="year in availableYears" :value="year" :key="year">
                       {{ year }}
@@ -205,18 +186,21 @@
         <table class="table align-items-center table-flush">
           <thead class="thead-light">
             <tr>
-              <th class="align-top">Meeting ID</th>
+              <sortable-th label="Meeting ID" sort-key="title" :current-sort="sortState" @sort="onSort" />
               <th class="align-top">Customer</th>
-              <th class="align-top">Title</th>
-              <th class="align-top">Date</th>
+              <sortable-th label="Title" sort-key="title" :current-sort="sortState" @sort="onSort" />
+              <sortable-th label="Date" sort-key="meeting_date" :current-sort="sortState" @sort="onSort" />
               <th class="align-top">Notes</th>
               <th class="align-top">Document</th>
               <th class="align-top">Action</th>
             </tr>
           </thead>
 
-          <tbody>
-            <tr v-for="meeting in filteredMeetings" :key="meeting.id">
+          <tbody v-if="loading">
+            <tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+          </tbody>
+          <tbody v-else>
+            <tr v-for="meeting in meetings" :key="meeting.id">
               <td>
                 <span class="font-weight-bold">{{ meeting.meeting_id }}</span>
               </td>
@@ -282,7 +266,7 @@
               </td>
             </tr>
 
-            <tr v-if="filteredMeetings.length === 0">
+            <tr v-if="meetings.length === 0">
               <td colspan="7" class="text-center text-muted py-4">
                 <i class="fas fa-inbox fa-2x mb-2"></i><br>
                 No meetings found.
@@ -291,19 +275,36 @@
           </tbody>
         </table>
       </div>
+      <div class="card-footer">
+        <pagination-control :meta="meta" @page-change="onPageChange" @per-page-change="onPerPageChange" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = {
+  search: '',
+  dateRange: '',
+  month: '',
+  year: '',
+  hasDocument: ''
+};
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       meetings: [],
+      loading: true,
       showFilters: false,
       filterColumns: [
         { key: 'search', label: 'Customer / Title / Meeting ID / Notes', type: 'text' },
@@ -327,98 +328,18 @@ export default {
         withDocuments: 0,
         last7Days: 0
       },
-      filters: {
-        search: '',
-        dateRange: '',
-        month: '',
-        year: '',
-        hasDocument: ''
-      },
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
       expandedNotes: [],
-      availableYears: []
+      availableYears: [],
+      monthNames: [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ]
     };
   },
-  mounted() {
-    this.fetchMeetings();
-  },
   computed: {
-    filteredMeetings() {
-      let filtered = this.meetings;
-
-      // Apply text search
-      if (this.filters.search) {
-        const keyword = this.filters.search.toLowerCase();
-        filtered = filtered.filter(m =>
-          (m.customer?.full_name && m.customer.full_name.toLowerCase().includes(keyword)) ||
-          (m.customer?.phone && m.customer.phone.toLowerCase().includes(keyword)) ||
-          (m.meeting_date && m.meeting_date.toLowerCase().includes(keyword)) ||
-          (m.title && m.title.toLowerCase().includes(keyword)) ||
-          (m.meeting_id && m.meeting_id.toLowerCase().includes(keyword)) ||
-          (m.meeting_notes && m.meeting_notes.toLowerCase().includes(keyword))
-        );
-      }
-
-      // Apply advanced filters
-      if (this.filters.dateRange) {
-        const today = new Date();
-        filtered = filtered.filter(meeting => {
-          const meetingDate = new Date(meeting.meeting_date);
-          switch (this.filters.dateRange) {
-            case 'today':
-              return this.isSameDay(meetingDate, today);
-            case 'yesterday':
-              const yesterday = new Date(today);
-              yesterday.setDate(yesterday.getDate() - 1);
-              return this.isSameDay(meetingDate, yesterday);
-            case 'thisWeek':
-              const startOfWeek = new Date(today);
-              startOfWeek.setDate(today.getDate() - today.getDay());
-              return meetingDate >= startOfWeek && meetingDate <= today;
-            case 'lastWeek':
-              const lastWeekStart = new Date(today);
-              lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
-              const lastWeekEnd = new Date(today);
-              lastWeekEnd.setDate(today.getDate() - today.getDay());
-              return meetingDate >= lastWeekStart && meetingDate < lastWeekEnd;
-            case 'thisMonth':
-              return meetingDate.getMonth() === today.getMonth() &&
-                     meetingDate.getFullYear() === today.getFullYear();
-            case 'lastMonth':
-              const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-              const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-              return meetingDate >= lastMonth && meetingDate <= endOfLastMonth;
-            case 'thisYear':
-              return meetingDate.getFullYear() === today.getFullYear();
-            default:
-              return true;
-          }
-        });
-      }
-
-      if (this.filters.month) {
-        filtered = filtered.filter(meeting => {
-          const meetingDate = new Date(meeting.meeting_date);
-          return meetingDate.getMonth() + 1 === parseInt(this.filters.month);
-        });
-      }
-
-      if (this.filters.year) {
-        filtered = filtered.filter(meeting => {
-          const meetingDate = new Date(meeting.meeting_date);
-          return meetingDate.getFullYear() === parseInt(this.filters.year);
-        });
-      }
-
-      if (this.filters.hasDocument) {
-        filtered = filtered.filter(meeting => {
-          if (this.filters.hasDocument === 'yes') return meeting.document;
-          if (this.filters.hasDocument === 'no') return !meeting.document;
-          return true;
-        });
-      }
-
-      return filtered;
-    },
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '');
     },
@@ -447,70 +368,55 @@ export default {
       const d = new Date(date);
       return days[d.getDay()];
     },
-    fetchMeetings() {
-      axios.get('/api/meetings').then(res => {
-        this.meetings = res.data;
-        this.calculateStatistics();
-        this.extractYears();
+    fetchList() {
+      this.loading = true;
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search,
+        dateRange: this.filters.dateRange,
+        month: this.filters.month,
+        year: this.filters.year,
+        hasDocument: this.filters.hasDocument,
+      };
+      Object.keys(params).forEach(key => {
+        if (params[key] === '') delete params[key];
       });
+
+      axios.get('/api/meetings', { params })
+        .then(res => {
+          this.meetings = res.data.data;
+          this.meta = res.data.meta;
+        })
+        .catch(err => {
+          console.error('Error fetching meetings:', err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    calculateStatistics() {
-      if (this.meetings.length === 0) {
-        this.statistics = { total: 0, thisMonth: 0, withDocuments: 0, last7Days: 0 };
-        return;
-      }
-
-      const today = new Date();
-      const currentMonth = today.getMonth();
-      const currentYear = today.getFullYear();
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(today.getDate() - 7);
-
-      // Total count
-      this.statistics.total = this.meetings.length;
-
-      // This month count
-      this.statistics.thisMonth = this.meetings.filter(meeting => {
-        const meetingDate = new Date(meeting.meeting_date);
-        return meetingDate.getMonth() === currentMonth &&
-               meetingDate.getFullYear() === currentYear;
-      }).length;
-
-      // With documents count
-      this.statistics.withDocuments = this.meetings.filter(meeting => meeting.document).length;
-
-      // Last 7 days count
-      this.statistics.last7Days = this.meetings.filter(meeting => {
-        const meetingDate = new Date(meeting.meeting_date);
-        return meetingDate >= sevenDaysAgo && meetingDate <= today;
-      }).length;
+    fetchStatistics() {
+      axios.get('/api/meetings/statistics')
+        .then(res => {
+          this.statistics = res.data.data;
+        })
+        .catch(err => {
+          console.error('Error fetching statistics:', err);
+        });
     },
-    extractYears() {
-      const years = new Set();
-      this.meetings.forEach(meeting => {
-        if (meeting.meeting_date) {
-          const year = new Date(meeting.meeting_date).getFullYear();
-          years.add(year);
-        }
-      });
-      this.availableYears = Array.from(years).sort((a, b) => b - a);
-    },
-    isSameDay(date1, date2) {
-      return date1.getDate() === date2.getDate() &&
-             date1.getMonth() === date2.getMonth() &&
-             date1.getFullYear() === date2.getFullYear();
-    },
-    applyFilters() {
-      // Filters are applied automatically through computed property
+    fetchFilterOptions() {
+      axios.get('/api/meetings/filter-options')
+        .then(res => {
+          this.availableYears = res.data.data.available_years;
+        })
+        .catch(err => {
+          console.error('Error fetching filter options:', err);
+        });
     },
     clearFilters() {
-      this.filters = {
-        search: '',
-        dateRange: '',
-        month: '',
-        year: '',
-        hasDocument: ''
-      };
+      this.filters = { ...EMPTY_FILTERS };
     },
     removeFilter(filterKey) {
       if (this.filters[filterKey] !== undefined) {
@@ -529,18 +435,9 @@ export default {
           'thisYear': 'This Year'
         },
         month: {
-          '1': 'January',
-          '2': 'February',
-          '3': 'March',
-          '4': 'April',
-          '5': 'May',
-          '6': 'June',
-          '7': 'July',
-          '8': 'August',
-          '9': 'September',
-          '10': 'October',
-          '11': 'November',
-          '12': 'December'
+          '1': 'January', '2': 'February', '3': 'March', '4': 'April',
+          '5': 'May', '6': 'June', '7': 'July', '8': 'August',
+          '9': 'September', '10': 'October', '11': 'November', '12': 'December'
         },
         hasDocument: {
           'yes': 'With Document',
@@ -580,11 +477,11 @@ export default {
         if (result.isConfirmed) {
           axios.delete(`/api/meetings/${id}`)
             .then(() => {
-              // Remove from local array
-              this.meetings = this.meetings.filter(c => c.id !== id);
-              // Recalculate statistics
-              this.calculateStatistics();
-              this.extractYears();
+              if (this.meetings.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
+              this.fetchStatistics();
 
               Swal.fire('Deleted!', 'Meeting has been deleted.', 'success');
             })
@@ -594,7 +491,21 @@ export default {
         }
       });
     }
-  }
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    },
+  },
+  created() {
+    this.fetchStatistics();
+    this.fetchFilterOptions();
+    this.fetchList();
+  },
 };
 </script>
 
@@ -634,18 +545,15 @@ export default {
   padding: 0.4em 0.8em;
 }
 
-/* Gap utility for badges */
 .gap-2 {
   gap: 0.5rem;
 }
 
-/* Read More button */
 .btn-link {
   text-decoration: none;
   font-size: 0.8em;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .card-header {
     flex-direction: column;
@@ -667,17 +575,6 @@ export default {
   .col-xl-3 {
     margin-bottom: 15px;
   }
-}
-
-img {
-  object-fit: cover;
-}
-
-.bg-highlight-purple {
-  background: rgba(111, 66, 193, 0.15);
-  padding: 6px 12px;
-  border-radius: 6px;
-  display: inline-block;
 }
 
 .filter-panel-enter-active,
