@@ -579,7 +579,7 @@ export default {
         });
 
       // Load sub-categories
-      axios.get('/api/sub-categories')
+      axios.get('/api/sub-categories/all')
         .then(res => {
           this.subCategoriesOptions = res.data;
           console.log('Sub-categories loaded:', this.subCategoriesOptions.length);

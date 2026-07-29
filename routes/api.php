@@ -37,6 +37,8 @@ Route::apiResource('/suppliers', 'SuppliersController');
 Route::get('/categories/all', 'CategoriesController@all');
 Route::get('/categories/filter-options', 'CategoriesController@filterOptions');
 Route::apiResource('/categories', 'CategoriesController');
+Route::get('/sub-categories/all', 'SubCategoriesController@all');
+Route::get('/sub-categories/filter-options', 'SubCategoriesController@filterOptions');
 Route::apiResource('/sub-categories', 'SubCategoriesController');
 Route::get('/craft/filter-options', 'CraftController@filterOptions');
 Route::apiResource('/craft', 'CraftController');

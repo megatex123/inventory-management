@@ -20522,7 +20522,7 @@ __webpack_require__.r(__webpack_exports__);
       });
 
       // Load sub-categories
-      axios.get('/api/sub-categories').then(function (res) {
+      axios.get('/api/sub-categories/all').then(function (res) {
         _this6.subCategoriesOptions = res.data;
         console.log('Sub-categories loaded:', _this6.subCategoriesOptions.length);
       })["catch"](function (err) {
@@ -25165,7 +25165,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     getSubCategoriesOptions: function getSubCategoriesOptions() {
       var _this14 = this;
-      axios.get('/api/sub-categories').then(function (res) {
+      axios.get('/api/sub-categories/all').then(function (res) {
         _this14.subCategoriesOptions = res.data;
       })["catch"](function (err) {
         console.error('Error loading subcategories:', err);
