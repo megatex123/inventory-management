@@ -33,6 +33,8 @@ Route::post('/customer/public/{token}', 'CustomersController@publicUpdate');
 |--------------------------------------------------------------------------
 */
 Route::apiResource('/employee', 'EmployeesController');
+Route::get('/suppliers/all', 'SuppliersController@all');
+Route::get('/suppliers/filter-options', 'SuppliersController@filterOptions');
 Route::apiResource('/suppliers', 'SuppliersController');
 Route::get('/categories/all', 'CategoriesController@all');
 Route::get('/categories/filter-options', 'CategoriesController@filterOptions');

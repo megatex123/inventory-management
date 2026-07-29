@@ -9,10 +9,112 @@ use Image;
 
 class SuppliersController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = DB::table('suppliers')->get();
-        return response()->json($suppliers);
+        $query = DB::table('suppliers');
+
+        if ($request->filled('name')) {
+            $query->where('name', 'LIKE', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('shopname')) {
+            $query->where('shopname', 'LIKE', '%' . $request->shopname . '%');
+        }
+
+        if ($request->filled('phone')) {
+            $query->where('phone', 'LIKE', '%' . $request->phone . '%');
+        }
+
+        if ($request->filled('name_starts_with')) {
+            $query->where('name', 'LIKE', $request->name_starts_with . '%');
+        }
+
+        if ($request->filled('shop_starts_with')) {
+            $query->where('shopname', 'LIKE', $request->shop_starts_with . '%');
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+
+            if ($request->filled('month')) {
+                $query->whereMonth('created_at', $request->month);
+            }
+        }
+
+        $sortBy = $request->get('sort_by', 'name');
+        $sortDir = $request->get('sort_dir', 'asc');
+
+        if (!in_array($sortBy, ['name', 'shopname', 'created_at'], true)) {
+            $sortBy = 'name';
+        }
+        if (!in_array($sortDir, ['asc', 'desc'], true)) {
+            $sortDir = 'asc';
+        }
+
+        $query->orderBy($sortBy, $sortDir);
+        $query->orderBy('id', $sortDir);
+
+        $perPage = min(max((int) $request->get('per_page', 10), 1), 100);
+        $results = $query->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => $results->items(),
+            'meta' => [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * All suppliers, unpaginated, for dropdown/lookup consumers.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
+    {
+        return response()->json(
+            DB::table('suppliers')->orderBy('name')->get()
+        );
+    }
+
+    /**
+     * Distinct filter option values computed across the whole table.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filterOptions()
+    {
+        $nameStartingLetters = DB::table('suppliers')
+            ->selectRaw('DISTINCT UPPER(LEFT(name, 1)) as letter')
+            ->whereNotNull('name')
+            ->where('name', '!=', '')
+            ->orderBy('letter')
+            ->pluck('letter');
+
+        $shopStartingLetters = DB::table('suppliers')
+            ->selectRaw('DISTINCT UPPER(LEFT(shopname, 1)) as letter')
+            ->whereNotNull('shopname')
+            ->where('shopname', '!=', '')
+            ->orderBy('letter')
+            ->pluck('letter');
+
+        $availableYears = DB::table('suppliers')
+            ->selectRaw('DISTINCT YEAR(created_at) as year')
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'name_starting_letters' => $nameStartingLetters,
+                'shop_starting_letters' => $shopStartingLetters,
+                'available_years' => $availableYears,
+            ],
+        ]);
     }
 
     public function store(Request $request)

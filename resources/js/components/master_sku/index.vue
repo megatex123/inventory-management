@@ -275,8 +275,8 @@ export default {
     },
     async fetchSuppliers() {
       try {
-        const res = await axios.get('/api/suppliers');
-        this.suppliers = res.data.data || res.data;
+        const res = await axios.get('/api/suppliers/all');
+        this.suppliers = res.data;
       } catch (error) {
         console.error('Error fetching suppliers:', error);
       }

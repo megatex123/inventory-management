@@ -211,12 +211,12 @@ export default {
                 this.categories = res.data
             })
 
-        axios.get('/api/suppliers')
+        axios.get('/api/suppliers/all')
             .then(res => {
                 this.suppliers = res.data
             })
 
-        axios.get('/api/suppliers')
+        axios.get('/api/suppliers/all')
             .then(res => {
                 this.suppliers = res.data
             })

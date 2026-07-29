@@ -13466,10 +13466,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.p = 0;
               _context.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers/all');
             case 1:
               res = _context.v;
-              _this.suppliers = res.data.data || res.data;
+              _this.suppliers = res.data;
               _context.n = 3;
               break;
             case 2:
@@ -13876,10 +13876,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context2.p = 0;
               _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers/all');
             case 1:
               res = _context2.v;
-              _this3.suppliers = res.data.data || res.data;
+              _this3.suppliers = res.data;
               _context2.n = 3;
               break;
             case 2:
@@ -25193,7 +25193,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/categories/all').then(function (res) {
       _this.categories = res.data;
     });
-    axios.get('/api/suppliers').then(function (res) {
+    axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
   },
@@ -25285,10 +25285,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     axios.get('/api/categories/all').then(function (res) {
       _this.categories = res.data;
     });
-    axios.get('/api/suppliers').then(function (res) {
+    axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
-    axios.get('/api/suppliers').then(function (res) {
+    axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
   },
