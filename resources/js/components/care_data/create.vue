@@ -537,7 +537,7 @@ export default {
 
     async fetchCares() {
       try {
-        const res = await axios.get('/api/care');
+        const res = await axios.get('/api/care/all');
         this.cares = res.data.data || res.data;
       } catch (error) {
         console.error('Error fetching cares:', error);

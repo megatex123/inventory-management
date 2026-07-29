@@ -2938,7 +2938,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context3.p = 0;
               _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care/all');
             case 1:
               res = _context3.v;
               _this4.cares = res.data.data || res.data;
@@ -3694,7 +3694,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context5.p = 0;
               _context5.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care/all');
             case 1:
               response = _context5.v;
               _this8.cares = response.data.data || response.data;
@@ -4603,7 +4603,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context4.p = 0;
               _context4.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care/all');
             case 1:
               response = _context4.v;
               // Handle different response structures

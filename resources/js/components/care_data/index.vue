@@ -1212,7 +1212,7 @@ export default {
 
     async fetchCares() {
       try {
-        const response = await axios.get('/api/care');
+        const response = await axios.get('/api/care/all');
         // Handle different response structures
         if (response.data && response.data.success) {
           this.cares = response.data.data || response.data;

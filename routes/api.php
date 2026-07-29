@@ -44,6 +44,8 @@ Route::get('/sub-categories/filter-options', 'SubCategoriesController@filterOpti
 Route::apiResource('/sub-categories', 'SubCategoriesController');
 Route::get('/craft/filter-options', 'CraftController@filterOptions');
 Route::apiResource('/craft', 'CraftController');
+Route::get('/care/all', 'CaresController@all');
+Route::get('/care/filter-options', 'CaresController@filterOptions');
 Route::apiResource('/care', 'CaresController');
 Route::apiResource('/serves', 'ServesController');
 Route::apiResource('/product', 'ProductsController');
