@@ -34217,15 +34217,43 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
+
+
+
+
+var EMPTY_FILTERS = {
+  name: '',
+  shopname: '',
+  phone: '',
+  nameStartsWith: '',
+  shopStartsWith: '',
+  year: '',
+  month: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
       suppliers: [],
+      loading: true,
       showFilters: false,
       filterColumns: [{
         key: 'name',
@@ -34240,15 +34268,16 @@ __webpack_require__.r(__webpack_exports__);
         label: 'Phone',
         type: 'text'
       }],
-      filters: {
-        name: '',
-        shopname: '',
-        phone: '',
-        sortBy: 'name_asc',
-        nameStartsWith: '',
-        shopStartsWith: '',
-        year: '',
-        month: ''
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'name',
+        dir: 'asc'
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
       },
       nameStartingLetters: [],
       shopStartingLetters: [],
@@ -34265,18 +34294,49 @@ __webpack_require__.r(__webpack_exports__);
       var year = d.getFullYear();
       return "".concat(day, "-").concat(month, "-").concat(year);
     },
-    fetchSuppliers: function fetchSuppliers() {
+    fetchList: function fetchList() {
       var _this = this;
-      axios.get('/api/suppliers').then(function (res) {
-        _this.suppliers = res.data;
-        _this.extractFilterOptions();
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        name: this.filters.name,
+        shopname: this.filters.shopname,
+        phone: this.filters.phone,
+        name_starts_with: this.filters.nameStartsWith,
+        shop_starts_with: this.filters.shopStartsWith,
+        year: this.filters.year,
+        month: this.filters.month
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers', {
+        params: params
+      }).then(function (res) {
+        _this.suppliers = res.data.data;
+        _this.meta = res.data.meta;
       })["catch"](function (err) {
         console.error('Error fetching suppliers:', err);
         notification.error();
+      })["finally"](function () {
+        _this.loading = false;
+      });
+    },
+    fetchFilterOptions: function fetchFilterOptions() {
+      var _this2 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/suppliers/filter-options').then(function (res) {
+        _this2.nameStartingLetters = res.data.data.name_starting_letters;
+        _this2.shopStartingLetters = res.data.data.shop_starting_letters;
+        _this2.availableYears = res.data.data.available_years;
+      })["catch"](function (err) {
+        console.error('Error fetching filter options:', err);
       });
     },
     deleteSupplier: function deleteSupplier(id) {
-      var _this2 = this;
+      var _this3 = this;
       Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -34287,14 +34347,15 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.isConfirmed) {
-          axios["delete"]("/api/suppliers/" + id).then(function () {
-            _this2.suppliers = _this2.suppliers.filter(function (supplier) {
-              return supplier.id !== id;
-            });
-            _this2.extractFilterOptions();
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/suppliers/" + id).then(function () {
             Swal.fire('Deleted!', 'Supplier has been deleted.', 'success');
+            if (_this3.suppliers.length === 1 && _this3.meta.current_page > 1) {
+              _this3.meta.current_page -= 1;
+            }
+            _this3.fetchList();
+            _this3.fetchFilterOptions();
           })["catch"](function () {
-            _this2.$router.push({
+            _this3.$router.push({
               name: 'suppliers'
             });
             Swal.fire('Error!', 'Failed to delete supplier.', 'error');
@@ -34302,237 +34363,41 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    extractFilterOptions: function extractFilterOptions() {
-      // Extract unique starting letters for names
-      var nameLetters = new Set();
-      var shopLetters = new Set();
-      var years = new Set();
-      this.suppliers.forEach(function (supplier) {
-        if (supplier.name && supplier.name.length > 0) {
-          var firstLetter = supplier.name.charAt(0).toUpperCase();
-          if (/[A-Z]/.test(firstLetter)) {
-            nameLetters.add(firstLetter);
-          }
-        }
-        if (supplier.shopname && supplier.shopname.length > 0) {
-          var _firstLetter = supplier.shopname.charAt(0).toUpperCase();
-          if (/[A-Z]/.test(_firstLetter)) {
-            shopLetters.add(_firstLetter);
-          }
-        }
-
-        // Extract years from created_at
-        if (supplier.created_at) {
-          var date = new Date(supplier.created_at);
-          years.add(date.getFullYear());
-        }
-      });
-      this.nameStartingLetters = Array.from(nameLetters).sort();
-      this.shopStartingLetters = Array.from(shopLetters).sort();
-      this.availableYears = Array.from(years).sort(function (a, b) {
-        return b - a;
-      }); // Descending order (newest first)
-    },
-    applyFilters: function applyFilters() {
-      // Filters are applied automatically through computed property
-    },
     clearFilters: function clearFilters() {
-      this.filters = {
-        name: '',
-        shopname: '',
-        phone: '',
-        sortBy: 'name_asc',
-        nameStartsWith: '',
-        shopStartsWith: '',
-        year: '',
-        month: ''
-      };
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
     },
     removeFilter: function removeFilter(filterKey) {
-      if (filterKey === 'name' || filterKey === 'shopname' || filterKey === 'phone') {
+      if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
-      } else if (this.filters[filterKey] !== undefined) {
-        this.filters[filterKey] = '';
-        // If year is removed, also clear month
         if (filterKey === 'year') {
           this.filters.month = '';
         }
       }
     },
     getFilterLabel: function getFilterLabel(key, value) {
-      var labels = {
-        sortBy: {
-          'name_asc': 'Name A-Z',
-          'name_desc': 'Name Z-A',
-          'shop_asc': 'Shop A-Z',
-          'shop_desc': 'Shop Z-A',
-          'date_asc': 'Date (Oldest)',
-          'date_desc': 'Date (Newest)'
-        },
-        month: {
-          1: 'January',
-          2: 'February',
-          3: 'March',
-          4: 'April',
-          5: 'May',
-          6: 'June',
-          7: 'July',
-          8: 'August',
-          9: 'September',
-          10: 'October',
-          11: 'November',
-          12: 'December'
-        }
-      };
-      if (key === 'name') {
-        return "Name: \"".concat(value, "\"");
-      }
-      if (key === 'shopname') {
-        return "Shop Name: \"".concat(value, "\"");
-      }
-      if (key === 'phone') {
-        return "Phone: \"".concat(value, "\"");
-      }
-      if (key === 'nameStartsWith') {
-        return "Name: ".concat(value);
-      }
-      if (key === 'shopStartsWith') {
-        return "Shop: ".concat(value);
-      }
-      if (key === 'year') {
-        return "Year: ".concat(value);
-      }
-      if (key === 'month') {
-        return "Month: ".concat(labels.month[value] || value);
-      }
-      return labels[key] && labels[key][value] ? "".concat(key.replace('_', ' '), ": ").concat(labels[key][value]) : "".concat(key, ": ").concat(value);
-    },
-    sortSuppliers: function sortSuppliers(suppliers) {
-      switch (this.filters.sortBy) {
-        case 'name_desc':
-          return suppliers.slice().sort(function (a, b) {
-            return (b.name || '').localeCompare(a.name || '');
-          });
-        case 'shop_asc':
-          return suppliers.slice().sort(function (a, b) {
-            return (a.shopname || '').localeCompare(b.shopname || '');
-          });
-        case 'shop_desc':
-          return suppliers.slice().sort(function (a, b) {
-            return (b.shopname || '').localeCompare(b.shopname || '');
-          });
-        case 'date_asc':
-          return suppliers.slice().sort(function (a, b) {
-            var dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-            var dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-            return dateA - dateB;
-          });
-        case 'date_desc':
-          return suppliers.slice().sort(function (a, b) {
-            var dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-            var dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-            return dateB - dateA;
-          });
-        case 'name_asc':
-        default:
-          return suppliers.slice().sort(function (a, b) {
-            return (a.name || '').localeCompare(b.name || '');
-          });
-      }
-    },
-    getYearMonthFromDate: function getYearMonthFromDate(dateString) {
-      if (!dateString) return {
-        year: null,
-        month: null
-      };
-      var date = new Date(dateString);
-      return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1 // Month is 0-indexed, so add 1
-      };
+      if (key === 'name') return "Name: \"".concat(value, "\"");
+      if (key === 'shopname') return "Shop Name: \"".concat(value, "\"");
+      if (key === 'phone') return "Phone: \"".concat(value, "\"");
+      if (key === 'nameStartsWith') return "Name: ".concat(value);
+      if (key === 'shopStartsWith') return "Shop: ".concat(value);
+      if (key === 'year') return "Year: ".concat(value);
+      if (key === 'month') return "Month: ".concat(this.monthNames[value - 1] || value);
+      return "".concat(key, ": ").concat(value);
     }
   },
   computed: {
-    filteredSuppliers: function filteredSuppliers() {
-      var _this3 = this;
-      var filtered = this.suppliers;
-      if (this.filters.name) {
-        var keyword = this.filters.name.toLowerCase();
-        filtered = filtered.filter(function (supplier) {
-          return supplier.name && supplier.name.toLowerCase().includes(keyword);
-        });
-      }
-      if (this.filters.shopname) {
-        var _keyword = this.filters.shopname.toLowerCase();
-        filtered = filtered.filter(function (supplier) {
-          return supplier.shopname && supplier.shopname.toLowerCase().includes(_keyword);
-        });
-      }
-      if (this.filters.phone) {
-        var _keyword2 = this.filters.phone.toLowerCase();
-        filtered = filtered.filter(function (supplier) {
-          return supplier.phone && supplier.phone.toLowerCase().includes(_keyword2);
-        });
-      }
-
-      // Apply name starts with filter (only if nameStartsWith is selected)
-      if (this.filters.nameStartsWith) {
-        filtered = filtered.filter(function (supplier) {
-          return supplier.name && supplier.name.charAt(0).toUpperCase() === _this3.filters.nameStartsWith;
-        });
-      }
-
-      // Apply shop starts with filter (only if shopStartsWith is selected)
-      if (this.filters.shopStartsWith) {
-        filtered = filtered.filter(function (supplier) {
-          return supplier.shopname && supplier.shopname.charAt(0).toUpperCase() === _this3.filters.shopStartsWith;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(function (supplier) {
-          if (!supplier.created_at) return false;
-          var _this3$getYearMonthFr = _this3.getYearMonthFromDate(supplier.created_at),
-            year = _this3$getYearMonthFr.year;
-          return year === parseInt(_this3.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(function (supplier) {
-          if (!supplier.created_at) return false;
-          var _this3$getYearMonthFr2 = _this3.getYearMonthFromDate(supplier.created_at),
-            month = _this3$getYearMonthFr2.month;
-          return month === parseInt(_this3.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortSuppliers(filtered);
-      return filtered;
-    },
     hasActiveFilters: function hasActiveFilters() {
-      var _this4 = this;
-      return Object.values(this.filters).some(function (value, index) {
-        var key = Object.keys(_this4.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'name_asc'; // Only show if not default
-        }
+      return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
     },
     activeFilters: function activeFilters() {
-      var _this5 = this;
+      var _this4 = this;
       var active = {};
-
-      // Add filters that have values
       Object.keys(this.filters).forEach(function (key) {
-        var value = _this5.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'name_asc')) {
-          // Don't show month as active if no year is selected
-          if (key === 'month' && !_this5.filters.year) {
+        var value = _this4.filters[key];
+        if (value !== '') {
+          if (key === 'month' && !_this4.filters.year) {
             return;
           }
           active[key] = value;
@@ -34542,8 +34407,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   watch: {
+    filters: {
+      handler: function handler() {
+        this.meta.current_page = 1;
+        this.fetchList();
+      },
+      deep: true
+    },
     'filters.year': function filtersYear(newYear) {
-      // Clear month when year changes to empty
       if (!newYear) {
         this.filters.month = '';
       }
@@ -34555,7 +34426,8 @@ __webpack_require__.r(__webpack_exports__);
         name: 'login'
       });
     }
-    this.fetchSuppliers();
+    this.fetchFilterOptions();
+    this.fetchList();
   }
 });
 
@@ -88004,36 +87876,20 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("div", {
+  return _c("div", {
     staticClass: "row justify-content-center"
-  }, [_c("div", {
-    staticClass: "col-xl-12 col-lg-12 col-md-12"
-  }, [_c("div", {
-    staticClass: "card shadow-sm my-5"
-  }, [_c("div", {
-    staticClass: "card-body p-0"
-  }, [_c("div", {
-    staticClass: "row"
-  }, [_c("div", {
-    staticClass: "col-lg-12"
   }, [_c("div", {
     staticClass: "card"
   }, [_c("div", {
-    staticClass: "card-header py-3"
-  }, [_c("div", {
-    staticClass: "d-flex justify-content-between align-items-center"
-  }, [_c("router-link", {
-    staticClass: "btn btn-primary",
+    staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
+  }, [_c("h2", {
+    staticClass: "mb-1 font-weight-bold text-primary"
+  }, [_vm._v("Supplier List")]), _vm._v(" "), _c("router-link", {
+    staticClass: "btn btn-primary m-0",
     attrs: {
       to: "/supplier/create"
     }
-  }, [_vm._v("Add Supplier")]), _vm._v(" "), _c("h5", {
-    staticClass: "m-0 font-weight-bold text-primary text-center flex-grow-1"
-  }, [_vm._v("Supplier List")]), _vm._v(" "), _c("div", {
-    staticStyle: {
-      width: "120px"
-    }
-  })], 1)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Add Supplier")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row px-3 mt-3"
   }, [_c("div", {
     staticClass: "col-12"
@@ -88055,7 +87911,7 @@ var render = function render() {
   }, [_c("i", {
     staticClass: "fas",
     "class": _vm.showFilters ? "fa-chevron-up" : "fa-filter"
-  }), _vm._v("\n                                                            " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                                                        ")])])]), _vm._v(" "), _c("transition", {
+  }), _vm._v("\n                  " + _vm._s(_vm.showFilters ? "Hide Filters" : "Show Filters") + "\n                ")])])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "filter-panel"
     }
@@ -88071,7 +87927,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times mr-1"
-  }), _vm._v("Clear Filters\n                                                        ")])]), _vm._v(" "), _c("column-search-panel", {
+  }), _vm._v("Clear Filters\n                ")])]), _vm._v(" "), _c("column-search-panel", {
     attrs: {
       columns: _vm.filterColumns,
       visible: true
@@ -88089,53 +87945,6 @@ var render = function render() {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Sort By")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.sortBy,
-      expression: "filters.sortBy"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "sortBy", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "name_asc"
-    }
-  }, [_vm._v("Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "name_desc"
-    }
-  }, [_vm._v("Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "shop_asc"
-    }
-  }, [_vm._v("Shop Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "shop_desc"
-    }
-  }, [_vm._v("Shop Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "date_asc"
-    }
-  }, [_vm._v("Date Created (Oldest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "date_desc"
-    }
-  }, [_vm._v("Date Created (Newest)")])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Name Starts With")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
@@ -88145,7 +87954,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -88153,7 +87962,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "nameStartsWith", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -88165,7 +87974,7 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                                    " + _vm._s(letter) + "\n                                                                ")]);
+    }, [_vm._v("\n                      " + _vm._s(letter) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 mb-2"
   }, [_c("label", {
@@ -88179,7 +87988,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -88187,7 +87996,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "shopStartsWith", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -88199,9 +88008,9 @@ var render = function render() {
       domProps: {
         value: letter
       }
-    }, [_vm._v("\n                                                                    " + _vm._s(letter) + "\n                                                                ")]);
+    }, [_vm._v("\n                      " + _vm._s(letter) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-1.5 mb-2"
+    staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Year")]), _vm._v(" "), _c("select", {
@@ -88213,7 +88022,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -88221,7 +88030,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "year", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -88233,9 +88042,9 @@ var render = function render() {
       domProps: {
         value: year
       }
-    }, [_vm._v("\n                                                                    " + _vm._s(year) + "\n                                                                ")]);
+    }, [_vm._v("\n                      " + _vm._s(year) + "\n                    ")]);
   })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-1.5 mb-2"
+    staticClass: "col-md-3 mb-2"
   }, [_c("label", {
     staticClass: "small font-weight-bold text-muted"
   }, [_vm._v("Month")]), _vm._v(" "), _c("select", {
@@ -88250,7 +88059,7 @@ var render = function render() {
       disabled: !_vm.filters.year
     },
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -88258,7 +88067,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "month", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -88270,7 +88079,7 @@ var render = function render() {
       domProps: {
         value: index + 1
       }
-    }, [_vm._v("\n                                                                    " + _vm._s(monthName) + "\n                                                                ")]);
+    }, [_vm._v("\n                      " + _vm._s(monthName) + "\n                    ")]);
   })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
@@ -88281,7 +88090,7 @@ var render = function render() {
     return _c("span", {
       key: key,
       staticClass: "badge badge-info"
-    }, [_vm._v("\n                                                                    " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                                                                    "), _c("button", {
+    }, [_vm._v("\n                      " + _vm._s(_vm.getFilterLabel(key, value)) + "\n                      "), _c("button", {
       staticClass: "badge badge-light ml-1 p-0 border-0",
       staticStyle: {
         background: "transparent"
@@ -88298,7 +88107,44 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredSuppliers, function (supplier) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Photo")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Shop Name",
+      "sort-key": "shopname",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Country")]), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Phone")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Created At",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Action")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.suppliers, function (supplier) {
     return _c("tr", {
       key: supplier.id
     }, [_c("td", [_c("img", {
@@ -88320,18 +88166,18 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(supplier.email))])]), _vm._v(" "), _c("td", [supplier.shopname ? _c("span", {
       staticClass: "badge badge-secondary"
-    }, [_vm._v("\n                                                        " + _vm._s(supplier.shopname) + "\n                                                    ")]) : _c("span", {
+    }, [_vm._v("\n                " + _vm._s(supplier.shopname) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("-")])]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "font-weight-bold"
-    }, [_vm._v("\n                                                        " + _vm._s(supplier.address) + "\n                                                    ")])]), _vm._v(" "), _c("td", [_c("a", {
+    }, [_vm._v("\n                " + _vm._s(supplier.address) + "\n              ")])]), _vm._v(" "), _c("td", [_c("a", {
       staticClass: "text-primary",
       attrs: {
         href: "tel:".concat(supplier.phone)
       }
     }, [_c("i", {
       staticClass: "fas fa-phone mr-1"
-    }), _vm._v(_vm._s(supplier.phone) + "\n                                                    ")])]), _vm._v(" "), _c("td", [_vm._v("\n                                                    " + _vm._s(_vm.formatDate(supplier.created_at)) + "\n                                                ")]), _vm._v(" "), _c("td", [_c("div", {
+    }), _vm._v(_vm._s(supplier.phone) + "\n              ")])]), _vm._v(" "), _c("td", [_vm._v("\n              " + _vm._s(_vm.formatDate(supplier.created_at)) + "\n            ")]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "btn-group",
       attrs: {
         role: "group"
@@ -88362,7 +88208,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredSuppliers.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])])])])])])])])]);
+  }), _vm._v(" "), _vm.suppliers.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -88373,38 +88229,32 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filters\n                                                        ")])]);
+  }), _vm._v("Filters\n                ")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Photo")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Name")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Shop Name")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Country")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Phone")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Created At")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Action")])])]);
+  return _c("tr", [_c("td", {
+    staticClass: "text-center py-4",
+    attrs: {
+      colspan: "7"
+    }
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    attrs: {
+      role: "status"
+    }
+  })])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("td", {
     staticClass: "text-center text-muted py-4",
     attrs: {
-      colspan: "6"
+      colspan: "7"
     }
   }, [_c("i", {
     staticClass: "fas fa-users fa-2x mb-2"
-  }), _c("br"), _vm._v("\n                                                    No suppliers found.\n                                                ")]);
+  }), _c("br"), _vm._v("\n              No suppliers found.\n            ")]);
 }];
 render._withStripped = true;
 
@@ -99682,7 +99532,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-3884f46f], .table td[data-v-3884f46f] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-3884f46f] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f]:last-child {\n    margin-right: 0;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-3884f46f] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-3884f46f] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.card-header h5[data-v-3884f46f] {\n        order: 1;\n        margin-bottom: 10px;\n        width: 100%;\n}\n.card-header .empty-div[data-v-3884f46f] {\n        display: none;\n}\n.table-responsive[data-v-3884f46f] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-3884f46f], .col-md-1.5[data-v-3884f46f] {\n        margin-bottom: 10px;\n}\n.btn-sm[data-v-3884f46f] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\nimg[data-v-3884f46f] {\n        width: 40px !important;\n        height: 40px !important;\n}\n}\n\n/* Make phone number clickable */\na[href^=\"tel:\"][data-v-3884f46f] {\n    text-decoration: none;\n}\na[href^=\"tel:\"][data-v-3884f46f]:hover {\n    text-decoration: underline;\n}\n\n/* Default avatar image styling */\nimg[src*=\"default-avatar\"][data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #dee2e6;\n}\n\n/* Filter card styling */\n.filter-card .card-body[data-v-3884f46f] {\n    padding: 1rem !important;\n}\n\n/* Search field focus */\n.form-control[data-v-3884f46f]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Center title styling */\n.text-center[data-v-3884f46f] {\n    text-align: center !important;\n}\n.flex-grow-1[data-v-3884f46f] {\n    flex-grow: 1 !important;\n}\n\n/* Disabled month select styling */\nselect[data-v-3884f46f]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n.filter-panel-enter-active[data-v-3884f46f],\n.filter-panel-leave-active[data-v-3884f46f] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-3884f46f],\n.filter-panel-leave-to[data-v-3884f46f] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-3884f46f], .table td[data-v-3884f46f] {\n    vertical-align: middle !important;\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-3884f46f] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges - Vue 2 compatible */\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f] {\n    margin-right: 0.5rem;\n    margin-bottom: 0.5rem;\n}\n.d-flex.flex-wrap.gap-2 > *[data-v-3884f46f]:last-child {\n    margin-right: 0;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-3884f46f] {\n        flex-direction: column;\n        align-items: center !important;\n        text-align: center;\n}\n.card-header .btn-primary[data-v-3884f46f] {\n        margin-bottom: 10px;\n        margin-left: 0 !important;\n        order: 2;\n}\n.table-responsive[data-v-3884f46f] {\n        font-size: 0.8rem;\n}\n.btn-sm[data-v-3884f46f] {\n        padding: 0.25rem 0.4rem;\n        font-size: 0.75rem;\n}\nimg[data-v-3884f46f] {\n        width: 40px !important;\n        height: 40px !important;\n}\n}\n\n/* Make phone number clickable */\na[href^=\"tel:\"][data-v-3884f46f] {\n    text-decoration: none;\n}\na[href^=\"tel:\"][data-v-3884f46f]:hover {\n    text-decoration: underline;\n}\n\n/* Default avatar image styling */\nimg[src*=\"default-avatar\"][data-v-3884f46f] {\n    background-color: #f8f9fa;\n    border: 1px solid #dee2e6;\n}\n\n/* Search field focus */\n.form-control[data-v-3884f46f]:focus {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n/* Disabled month select styling */\nselect[data-v-3884f46f]:disabled {\n    background-color: #e9ecef;\n    cursor: not-allowed;\n    opacity: 0.7;\n}\n.filter-panel-enter-active[data-v-3884f46f],\n.filter-panel-leave-active[data-v-3884f46f] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-3884f46f],\n.filter-panel-leave-to[data-v-3884f46f] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
