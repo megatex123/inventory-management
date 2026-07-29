@@ -778,12 +778,13 @@ class CareDataController extends Controller
             $withMembership = $membershipRecords->filter->membership_active->count();
             $withoutMembership = $membershipRecords->count() - $withMembership;
 
-            // Status statistics
-            $statusStats = CareData::whereNull('deleted_at')
-                ->select('status', DB::raw('COUNT(*) as count'))
-                ->groupBy('status')
-                ->get()
-                ->pluck('count', 'status');
+            // Status statistics -- care_data has no `status` column (confirmed
+            // live via SHOW COLUMNS), so this can never be a real per-status
+            // breakdown. Left as an empty collection (rather than querying a
+            // nonexistent column, which throws and 500s the whole endpoint)
+            // so the CSV export's "STATUS DISTRIBUTION" section below simply
+            // renders no rows instead of crashing.
+            $statusStats = collect();
 
             // Monthly statistics
             $monthlyStats = CareData::whereNull('deleted_at')
@@ -801,33 +802,41 @@ class CareDataController extends Controller
                 ->take(12)
                 ->get();
 
-            // Care type statistics
+            // Care type statistics. The lookup table is named `care`
+            // (singular) in the live DB, not `cares` -- confirmed live via
+            // SHOW TABLES; this previously threw "Base table or view not
+            // found: cares" and 500'd the whole endpoint.
             $careTypeStats = CareData::whereNull('care_data.deleted_at')
-                ->join('cares', 'care_data.lkp_care_id', '=', 'cares.id')
+                ->join('care', 'care_data.lkp_care_id', '=', 'care.id')
                 ->select(
-                    'cares.id as care_id',
-                    'cares.name as care_name',
-                    'cares.code as care_code',
+                    'care.id as care_id',
+                    'care.name as care_name',
+                    'care.code as care_code',
                     DB::raw('COUNT(care_data.id) as count'),
                     DB::raw('SUM(CAST(care_data.price AS DECIMAL(10,2))) as total_price'),
                     DB::raw('SUM(CAST(care_data.total_part AS DECIMAL(10,2))) as total_part'),
                     DB::raw('AVG(CAST(care_data.price AS DECIMAL(10,2))) as avg_price')
                 )
-                ->groupBy('cares.id', 'cares.name', 'cares.code')
+                ->groupBy('care.id', 'care.name', 'care.code')
                 ->orderBy('count', 'desc')
                 ->get();
 
-            // Top customers by care count
+            // Top customers by care count. customers has no `name` column
+            // (it's full_name/preferred_name) -- confirmed live via SHOW
+            // COLUMNS, this previously threw "Unknown column 'name'" and
+            // 500'd the whole endpoint. Aliased back to `name` in the SELECT
+            // so downstream consumers ($customer->name in the CSV export
+            // below) don't need to change.
             $topCustomers = CareData::whereNull('care_data.deleted_at')
                 ->join('customers', 'care_data.customer_id', '=', 'customers.id')
                 ->select(
                     'customers.id',
-                    'customers.name',
+                    'customers.full_name as name',
                     'customers.customer_id as customer_code',
                     DB::raw('COUNT(care_data.id) as care_count'),
                     DB::raw('SUM(CAST(care_data.price AS DECIMAL(10,2))) as total_spent')
                 )
-                ->groupBy('customers.id', 'customers.name', 'customers.customer_id')
+                ->groupBy('customers.id', 'customers.full_name', 'customers.customer_id')
                 ->orderBy('care_count', 'desc')
                 ->take(10)
                 ->get();
@@ -839,26 +848,19 @@ class CareDataController extends Controller
                 ->take(10)
                 ->get();
 
-            // Appointment statistics
+            // Appointment statistics -- care_data has neither a `status` nor
+            // an `appointment_date` column (confirmed live via SHOW
+            // COLUMNS); this scheduling/appointment concept was never built
+            // for this table. Left as static zeros (rather than querying
+            // nonexistent columns, which threw and 500'd the whole
+            // endpoint) so the CSV export's "APPOINTMENT STATISTICS"
+            // section below renders zeroes instead of crashing.
             $appointmentStats = [
-                'upcoming' => CareData::whereNull('deleted_at')
-                    ->where('status', 'scheduled')
-                    ->where('appointment_date', '>=', now())
-                    ->count(),
-                'today' => CareData::whereNull('deleted_at')
-                    ->where('status', 'scheduled')
-                    ->whereDate('appointment_date', now()->toDateString())
-                    ->count(),
-                'overdue' => CareData::whereNull('deleted_at')
-                    ->where('status', 'scheduled')
-                    ->where('appointment_date', '<', now())
-                    ->count(),
-                'completed' => CareData::whereNull('deleted_at')
-                    ->where('status', 'completed')
-                    ->count(),
-                'cancelled' => CareData::whereNull('deleted_at')
-                    ->where('status', 'cancelled')
-                    ->count()
+                'upcoming' => 0,
+                'today' => 0,
+                'overdue' => 0,
+                'completed' => 0,
+                'cancelled' => 0,
             ];
 
             $statistics = [
