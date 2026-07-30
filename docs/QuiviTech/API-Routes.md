@@ -124,6 +124,10 @@ All business codes above are generated the same way: `Model::count() + 1`, zero-
 - The serve/care/warranty controllers are the most recently developed (see route-comment cruft: "Corrected - no duplicate routes", "Updated to match Vue component", "Removed duplicate, corrected") — treat these as the actively-evolving part of the API surface.
 - `master-sku`, `inv-care`, `inv-excl-serve` routes exist and are wired to Vue (see [[Frontend-Components]]); their underlying tables were created directly in the DB without migration files until 2026-07-08 — see [[Domain-Models]] for the audit. `product-raw` and `inv-move` still have models and DB tables but no routes/controller — intentionally out of scope, see [[Work-In-Progress]].
 
+## Frontend consumer changes
+
+**`stock/index.vue` (route `/product/stock`) switched from `GET /product/all` to the already-paginated `GET /product` as of 2026-07-30** (Batch 14 of the List Page Standardization initiative — see [[Work-In-Progress]]). No backend changes: `ProductsController@index` already supported everything this page needs (search by name, category filter, status filter, sort by `product_name`/`product_code`/`category`/`price`/`product_qty`/`created_at`) since the earlier `product` batch. `GET /categories/all` (already existing) supplies the category filter dropdown. `SortableTh` on Name/Code/Category/Price/Product Quantity; Photo/Status/Action stay plain columns. This closes out the sidebar's "Stock" menu group (`stock`, `brand`, `category`, `sub_category` — all now migrated) and resolves the `stock/index.vue` deferred item noted after the `product` batch.
+
 ## Related
 - [[Domain-Models]]
 - [[Architecture]]

@@ -34,18 +34,23 @@
                     <thead class="thead-light">
                       <tr>
                         <th>Photo</th>
-                        <th>Name</th>
-                        <th>Code</th>
-                        <th>Category</th>
-                        <th>Price (RM)</th>
+                        <sortable-th label="Name" sort-key="product_name" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Code" sort-key="product_code" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Category" sort-key="category" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Price (RM)" sort-key="price" :current-sort="sortState" @sort="onSort" />
                         <th>Status</th>
-                        <th>Product Quantity</th>
+                        <sortable-th label="Product Quantity" sort-key="product_qty" :current-sort="sortState" @sort="onSort" />
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-
-                      <tr v-for='data in filterSearch' :key="data.id" >
+                      <tr v-if="loading">
+                        <td colspan="8" class="text-center py-4">Loading...</td>
+                      </tr>
+                      <tr v-else-if="products.length === 0">
+                        <td colspan="8" class="text-center py-4">No products found.</td>
+                      </tr>
+                      <tr v-for='data in products' :key="data.id" v-else>
                         <td><img :src="data.image" class="img-fluid" width='40px' height='40px' /></td>
                         <td>{{data.product_name}}</td>
                         <td>{{data.product_code}}</td>
@@ -60,10 +65,15 @@
                             <router-link :to="{name:'stockedit', params:{id:data.id}}" class="btn btn-sm   btn-primary">Edit </router-link>
                         </td>
                       </tr>
-
-
                     </tbody>
                   </table>
+                </div>
+                <div class="card-footer">
+                    <pagination-control
+                        :meta="meta"
+                        @page-change="onPageChange"
+                        @per-page-change="onPerPageChange"
+                    />
                 </div>
                 </div>
                                     <div class="text-center">
@@ -79,51 +89,101 @@
 </template>
 <script>
     import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+    import PaginationControl from '../shared/PaginationControl.vue';
+    import SortableTh from '../shared/SortableTh.vue';
+    import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+    const EMPTY_FILTERS = {
+        product_name: '',
+        category_id: '',
+        status: '',
+    };
 
     export default {
-        components: { ColumnSearchPanel },
+        mixins: [sortablePaginationMixin],
+        components: { ColumnSearchPanel, PaginationControl, SortableTh },
         data() {
             return {
-suppliers: [],
-showFilters: false,
-filterColumns: [
-    { key: 'product_name', label: 'Name', type: 'text' },
-],
-filters: {
-    product_name: '',
-},
+                products: [],
+                categories: [],
+                loading: true,
+                showFilters: false,
+                filterColumns: [
+                    { key: 'product_name', label: 'Name', type: 'text' },
+                    {
+                        key: 'category_id',
+                        label: 'Category',
+                        type: 'select',
+                        options: [],
+                    },
+                    {
+                        key: 'status',
+                        label: 'Status',
+                        type: 'select',
+                        options: [
+                            { value: 'available', label: 'Stock Available' },
+                            { value: 'out', label: 'Stock Out' },
+                        ],
+                    },
+                ],
+                filters: { ...EMPTY_FILTERS },
+                sortState: { key: 'product_name', dir: 'asc' },
+                meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
             }
         },
         methods: {
-getEmp(){
-    axios.get('/api/product/all')
-.then(res => {
-    this.suppliers=res.data;
-    // console.log(res.data)
-})
-.catch(err => {
-    // console.error(err);
-       notification.error();
-
-})
-},
-
+            fetchList() {
+                this.loading = true;
+                axios.get('/api/product', {
+                    params: {
+                        page: this.meta.current_page,
+                        per_page: this.meta.per_page,
+                        sort_by: this.sortState.key,
+                        sort_dir: this.sortState.dir,
+                        name: this.filters.product_name,
+                        category_id: this.filters.category_id,
+                        status: this.filters.status,
+                    },
+                })
+                .then(res => {
+                    this.products = res.data.data;
+                    this.meta = res.data.meta;
+                    this.loading = false;
+                })
+                .catch(err => {
+                    this.loading = false;
+                    notification.error();
+                });
+            },
+            fetchCategories() {
+                axios.get('/api/categories/all')
+                .then(res => {
+                    this.categories = res.data;
+                    this.filterColumns.find(c => c.key === 'category_id').options =
+                        this.categories.map(c => ({ value: c.id, label: c.name }));
+                })
+                .catch(err => {
+                    notification.error();
+                });
+            },
         },
-        computed: {
-filterSearch(){
-    return this.suppliers.filter(data=>{
-        return data.product_name.match(this.filters.product_name)
-    })
-}
+        watch: {
+            filters: {
+                handler() {
+                    this.meta.current_page = 1;
+                    this.fetchList();
+                },
+                deep: true,
+            },
         },
-       created() {
+        created() {
             if (!User.loggedIn()) {
                 this.$router.push({
                     name: 'login'
                 })
             };
-             this.getEmp();
-
+            this.fetchCategories();
+            this.fetchList();
         },
     }
 </script>
