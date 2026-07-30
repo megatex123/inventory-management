@@ -4,47 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\MerchItem;
 use App\Models\MasterSku;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MerchItemController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
         $query = MerchItem::with(['masterSku']);
 
-        if ($request->filled('is_exclusive')) {
-            $query->where('is_exclusive', $request->boolean('is_exclusive'));
+        $this->applyEqualsFilter($query, $request, 'status', 'status');
+
+        $isExclusive = $request->input('is_exclusive');
+        if (is_scalar($isExclusive) && $isExclusive !== '') {
+            $query->where('is_exclusive', (bool) $isExclusive);
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('sku_code', 'LIKE', "%{$search}%")
-                    ->orWhere('item_code', 'LIKE', "%{$search}%");
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('name', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('sku_code', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('item_code', 'LIKE', '%' . $escaped . '%');
             });
         }
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
+        $this->resolveSortAndApply($query, $request, ['item_code', 'name', 'sku_code', 'retail_price', 'member_discount_price', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        $results = $query->paginate($request->get('per_page', 15));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function search(Request $request)
