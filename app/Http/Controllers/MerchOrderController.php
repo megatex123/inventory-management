@@ -7,42 +7,29 @@ use App\Models\MerchOrderItem;
 use App\Models\MerchItem;
 use App\Models\Customers;
 use App\Models\Order;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MerchOrderController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
         $query = MerchOrder::with(['customer', 'order', 'items.merchItem']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+        $this->applyEqualsFilter($query, $request, 'status', 'status');
+        $this->applyEqualsFilter($query, $request, 'customer_id', 'customer_id');
+        $this->applyLikeFilter($query, $request, 'search', 'merch_order_id');
 
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
+        $this->resolveSortAndApply($query, $request, ['merch_order_id', 'status', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        if ($request->filled('search')) {
-            $query->where('merch_order_id', 'LIKE', "%{$request->search}%");
-        }
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
-
-        $results = $query->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function search(Request $request)
