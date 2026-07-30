@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\ThreadBomHeader;
 use App\Models\ThreadBomLine;
 use App\Models\MasterSku;
@@ -11,34 +12,23 @@ use Illuminate\Support\Facades\Validator;
 
 class ThreadBomController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     const CABLE_TYPES = ['24pin', '8eps', '8pcie', '12v2x6pcie'];
 
     public function index(Request $request)
     {
         $query = ThreadBomHeader::with(['lines']);
 
-        if ($request->filled('psu_brand')) {
-            $query->where('psu_brand', $request->psu_brand);
-        }
+        $this->applyEqualsFilter($query, $request, 'psu_brand', 'psu_brand');
+        $this->applyEqualsFilter($query, $request, 'cable_type', 'cable_type');
 
-        if ($request->filled('cable_type')) {
-            $query->where('cable_type', $request->cable_type);
-        }
+        $this->resolveSortAndApply($query, $request, ['psu_brand', 'cable_type', 'colour_variant', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        $results = $query->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function search(Request $request)
