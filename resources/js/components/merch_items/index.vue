@@ -97,7 +97,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Item List</h5>
-        <span class="text-muted">Total: {{ total }} records</span>
+        <span class="text-muted">Total: {{ meta.total }} records</span>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -105,11 +105,11 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center">#</th>
-                <th>Item Code</th>
-                <th>Name</th>
-                <th>SKU Code</th>
-                <th class="text-right">Retail Price</th>
-                <th class="text-right">Member Price</th>
+                <sortable-th label="Item Code" sort-key="item_code" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Name" sort-key="name" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="SKU Code" sort-key="sku_code" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Retail Price" sort-key="retail_price" :current-sort="sortState" @sort="onSort" class="text-right" />
+                <sortable-th label="Member Price" sort-key="member_discount_price" :current-sort="sortState" @sort="onSort" class="text-right" />
                 <th class="text-center">Type</th>
                 <th class="text-center">Actions</th>
               </tr>
@@ -122,7 +122,7 @@
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle">{{ item.item_code }}</td>
                 <td class="align-middle font-weight-bold">{{ item.name }}</td>
                 <td class="align-middle">{{ item.sku_code }}</td>
@@ -142,15 +142,12 @@
           </table>
         </div>
       </div>
-      <div v-if="total > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <small class="text-muted">Page {{ currentPage }} of {{ lastPage }}</small>
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }"><button class="page-link" @click="changePage(currentPage - 1)">&laquo;</button></li>
-            <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }"><button class="page-link" @click="changePage(page)">{{ page }}</button></li>
-            <li class="page-item" :class="{ disabled: currentPage === lastPage }"><button class="page-link" @click="changePage(currentPage + 1)">&raquo;</button></li>
-          </ul>
-        </nav>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -160,9 +157,15 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = { search: '', is_exclusive: '', status: '' };
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -176,34 +179,22 @@ export default {
           { value: '0', label: 'General Only' },
         ] },
       ],
-      filters: { search: '', is_exclusive: '' },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
     };
-  },
-  computed: {
-    lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages() {
-      const pages = [];
-      let start = Math.max(1, this.currentPage - 2);
-      let end = Math.min(this.lastPage, this.currentPage + 2);
-      for (let i = start; i <= end; i++) pages.push(i);
-      return pages;
-    }
   },
   watch: {
     filters: {
       handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted() {
-    this.fetchItems();
+  created() {
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -211,40 +202,37 @@ export default {
       const num = parseFloat(value) || 0;
       return num.toFixed(2);
     },
-    async fetchItems() {
+    fetchList() {
       this.loading = true;
-      try {
-        const params = { page: this.currentPage, per_page: this.perPage, ...this.filters };
-        Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
-        const res = await axios.get('/api/merch-items', { params });
-        this.items = res.data.data || [];
-        this.total = res.data.meta ? res.data.meta.total : this.items.length;
-      } catch (error) {
-        console.error('Error fetching merch items:', error);
-        Swal.fire('Error!', 'Failed to load merch items', 'error');
-      } finally {
-        this.loading = false;
-      }
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.filters,
+      };
+      Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
+      axios.get('/api/merch-items', { params })
+        .then(res => {
+          this.items = res.data.data || [];
+          this.meta = res.data.meta;
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Failed to load merch items', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    async fetchStatistics() {
-      try {
-        const res = await axios.get('/api/merch-items/statistics');
-        this.stats = res.data.data || {};
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+    fetchStatistics() {
+      axios.get('/api/merch-items/statistics')
+        .then(res => {
+          this.stats = res.data.data || {};
+        })
+        .catch(() => {});
     },
     resetFilters() {
-      this.filters = { search: '', is_exclusive: '' };
-    },
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = { ...EMPTY_FILTERS };
     },
     deleteItem(id) {
       Swal.fire({
@@ -259,7 +247,10 @@ export default {
           axios.delete(`/api/merch-items/${id}`)
             .then(() => {
               Swal.fire('Deleted!', 'Merch item has been deleted.', 'success');
-              this.fetchItems();
+              if (this.items.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               this.fetchStatistics();
             })
             .catch(() => Swal.fire('Error!', 'Failed to delete merch item', 'error'));
