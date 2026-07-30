@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\PlusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,38 +10,28 @@ use Illuminate\Support\Facades\Validator;
 
 class PlusServiceController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     const CATEGORIES = ['installation', 'upgrade', 'onsite', 'cable_mgmt', 'cleaning', 'thermal_paste', 'combo', 'distance_fee'];
 
     public function index(Request $request)
     {
         $query = PlusService::query();
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
+        $this->applyEqualsFilter($query, $request, 'category', 'category');
+        $this->applyLikeFilter($query, $request, 'search', 'name');
+
+        $isActive = $request->input('is_active');
+        if (is_scalar($isActive) && $isActive !== '') {
+            $query->where('is_active', (bool) $isActive);
         }
 
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
+        $this->resolveSortAndApply($query, $request, ['service_code', 'name', 'category', 'price', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        if ($request->filled('search')) {
-            $query->where('name', 'LIKE', "%{$request->search}%");
-        }
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
-
-        $results = $query->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function search(Request $request)
