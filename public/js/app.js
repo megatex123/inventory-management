@@ -24138,22 +24138,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
 
+
+
+
+var EMPTY_FILTERS = {
+  search: '',
+  category: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   data: function data() {
     return {
@@ -24162,26 +24171,20 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       categories: ['installation', 'upgrade', 'onsite', 'cable_mgmt', 'cleaning', 'thermal_paste', 'combo', 'distance_fee'],
       loading: true,
       showFilters: false,
-      filters: {
-        search: '',
-        category: ''
+      filters: _objectSpread({}, EMPTY_FILTERS),
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
       },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      meta: {
+        total: 0,
+        per_page: 15,
+        current_page: 1,
+        last_page: 1
+      }
     };
   },
   computed: {
-    lastPage: function lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages: function pages() {
-      var pages = [];
-      var start = Math.max(1, this.currentPage - 2);
-      var end = Math.min(this.lastPage, this.currentPage + 2);
-      for (var i = start; i <= end; i++) pages.push(i);
-      return pages;
-    },
     filterColumns: function filterColumns() {
       var _this = this;
       return [{
@@ -24204,13 +24207,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   watch: {
     filters: {
       handler: function handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted: function mounted() {
-    this.fetchItems();
+  created: function created() {
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -24223,86 +24227,37 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return c.toUpperCase();
       });
     },
-    fetchItems: function fetchItems() {
+    fetchList: function fetchList() {
       var _this2 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var params, res, _t;
-        return _regenerator().w(function (_context) {
-          while (1) switch (_context.p = _context.n) {
-            case 0:
-              _this2.loading = true;
-              _context.p = 1;
-              params = _objectSpread({
-                page: _this2.currentPage,
-                per_page: _this2.perPage
-              }, _this2.filters);
-              Object.keys(params).forEach(function (key) {
-                if (params[key] === '') delete params[key];
-              });
-              _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/plus-services', {
-                params: params
-              });
-            case 2:
-              res = _context.v;
-              _this2.items = res.data.data || [];
-              _this2.total = res.data.meta ? res.data.meta.total : _this2.items.length;
-              _context.n = 4;
-              break;
-            case 3:
-              _context.p = 3;
-              _t = _context.v;
-              console.error('Error fetching services:', _t);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load services', 'error');
-            case 4:
-              _context.p = 4;
-              _this2.loading = false;
-              return _context.f(4);
-            case 5:
-              return _context.a(2);
-          }
-        }, _callee, null, [[1, 3, 4, 5]]);
-      }))();
+      this.loading = true;
+      var params = _objectSpread({
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir
+      }, this.filters);
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '') delete params[key];
+      });
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/plus-services', {
+        params: params
+      }).then(function (res) {
+        _this2.items = res.data.data || [];
+        _this2.meta = res.data.meta;
+      })["catch"](function () {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load services', 'error');
+      })["finally"](function () {
+        _this2.loading = false;
+      });
     },
     fetchStatistics: function fetchStatistics() {
       var _this3 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var res, _t2;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              _context2.p = 0;
-              _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/plus-services/statistics');
-            case 1:
-              res = _context2.v;
-              _this3.stats = res.data.data || {};
-              _context2.n = 3;
-              break;
-            case 2:
-              _context2.p = 2;
-              _t2 = _context2.v;
-              console.error('Error fetching statistics:', _t2);
-            case 3:
-              return _context2.a(2);
-          }
-        }, _callee2, null, [[0, 2]]);
-      }))();
-    },
-    applyFilters: function applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/plus-services/statistics').then(function (res) {
+        _this3.stats = res.data.data || {};
+      })["catch"](function () {});
     },
     resetFilters: function resetFilters() {
-      this.filters = {
-        search: '',
-        category: ''
-      };
-    },
-    changePage: function changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
     },
     deleteItem: function deleteItem(id) {
       var _this4 = this;
@@ -24317,7 +24272,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (result.isConfirmed) {
           axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/plus-services/".concat(id)).then(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Service has been deleted.', 'success');
-            _this4.fetchItems();
+            if (_this4.items.length === 1 && _this4.meta.current_page > 1) {
+              _this4.meta.current_page -= 1;
+            }
+            _this4.fetchList();
             _this4.fetchStatistics();
           })["catch"](function () {
             return sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete service', 'error');
@@ -72464,18 +72422,63 @@ var render = function render() {
     staticClass: "card-header d-flex justify-content-between align-items-center"
   }, [_vm._m(4), _vm._v(" "), _c("span", {
     staticClass: "text-muted"
-  }, [_vm._v("Total: " + _vm._s(_vm.total) + " records")])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Total: " + _vm._s(_vm.meta.total) + " records")])]), _vm._v(" "), _c("div", {
     staticClass: "card-body p-0"
   }, [_c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(5), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(6)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(7)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("#")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Service Code",
+      "sort-key": "service_code",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Category",
+      "sort-key": "category",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    staticClass: "text-right",
+    attrs: {
+      label: "Price",
+      "sort-key": "price",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Status")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center"
+  }, [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(5)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(6)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
     return _c("tr", {
       key: item.id
     }, [_c("td", {
       staticClass: "text-center align-middle"
-    }, [_vm._v(_vm._s((_vm.currentPage - 1) * _vm.perPage + index + 1))]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s((_vm.meta.current_page - 1) * _vm.meta.per_page + index + 1))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_vm._v(_vm._s(item.service_code))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle font-weight-bold"
@@ -72512,52 +72515,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), 0)])])]), _vm._v(" "), _vm.total > 0 ? _c("div", {
-    staticClass: "card-footer d-flex justify-content-between align-items-center"
-  }, [_c("small", {
-    staticClass: "text-muted"
-  }, [_vm._v("Page " + _vm._s(_vm.currentPage) + " of " + _vm._s(_vm.lastPage))]), _vm._v(" "), _c("nav", [_c("ul", {
-    staticClass: "pagination pagination-sm mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
+  }), 0)])])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
     on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage - 1);
-      }
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_vm._v("«")])]), _vm._v(" "), _vm._l(_vm.pages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.changePage(page);
-        }
-      }
-    }, [_vm._v(_vm._s(page))])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.lastPage
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage + 1);
-      }
-    }
-  }, [_vm._v("»")])])], 2)])]) : _vm._e()])]);
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -72601,20 +72569,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-table mr-2"
   }), _vm._v("Service List")]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "text-center"
-  }, [_vm._v("#")]), _vm._v(" "), _c("th", [_vm._v("Service Code")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Category")]), _vm._v(" "), _c("th", {
-    staticClass: "text-right"
-  }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
-  }, [_vm._v("Status")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center"
-  }, [_vm._v("Actions")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;

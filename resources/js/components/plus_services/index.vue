@@ -71,7 +71,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Service List</h5>
-        <span class="text-muted">Total: {{ total }} records</span>
+        <span class="text-muted">Total: {{ meta.total }} records</span>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -79,10 +79,10 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center">#</th>
-                <th>Service Code</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th class="text-right">Price</th>
+                <sortable-th label="Service Code" sort-key="service_code" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Name" sort-key="name" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Category" sort-key="category" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Price" sort-key="price" :current-sort="sortState" @sort="onSort" class="text-right" />
                 <th class="text-center">Status</th>
                 <th class="text-center">Actions</th>
               </tr>
@@ -95,7 +95,7 @@
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle">{{ item.service_code }}</td>
                 <td class="align-middle font-weight-bold">{{ item.name }}</td>
                 <td class="align-middle">{{ categoryLabel(item.category) }}</td>
@@ -114,15 +114,12 @@
           </table>
         </div>
       </div>
-      <div v-if="total > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <small class="text-muted">Page {{ currentPage }} of {{ lastPage }}</small>
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }"><button class="page-link" @click="changePage(currentPage - 1)">&laquo;</button></li>
-            <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }"><button class="page-link" @click="changePage(page)">{{ page }}</button></li>
-            <li class="page-item" :class="{ disabled: currentPage === lastPage }"><button class="page-link" @click="changePage(currentPage + 1)">&raquo;</button></li>
-          </ul>
-        </nav>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -132,9 +129,15 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = { search: '', category: '' };
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -142,23 +145,12 @@ export default {
       categories: ['installation', 'upgrade', 'onsite', 'cable_mgmt', 'cleaning', 'thermal_paste', 'combo', 'distance_fee'],
       loading: true,
       showFilters: false,
-      filters: { search: '', category: '' },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
     };
   },
   computed: {
-    lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages() {
-      const pages = [];
-      let start = Math.max(1, this.currentPage - 2);
-      let end = Math.min(this.lastPage, this.currentPage + 2);
-      for (let i = start; i <= end; i++) pages.push(i);
-      return pages;
-    },
     filterColumns() {
       return [
         { key: 'search', label: 'Name', type: 'text' },
@@ -169,13 +161,14 @@ export default {
   watch: {
     filters: {
       handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted() {
-    this.fetchItems();
+  created() {
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -186,40 +179,37 @@ export default {
     categoryLabel(cat) {
       return (cat || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     },
-    async fetchItems() {
+    fetchList() {
       this.loading = true;
-      try {
-        const params = { page: this.currentPage, per_page: this.perPage, ...this.filters };
-        Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
-        const res = await axios.get('/api/plus-services', { params });
-        this.items = res.data.data || [];
-        this.total = res.data.meta ? res.data.meta.total : this.items.length;
-      } catch (error) {
-        console.error('Error fetching services:', error);
-        Swal.fire('Error!', 'Failed to load services', 'error');
-      } finally {
-        this.loading = false;
-      }
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.filters,
+      };
+      Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
+      axios.get('/api/plus-services', { params })
+        .then(res => {
+          this.items = res.data.data || [];
+          this.meta = res.data.meta;
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Failed to load services', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    async fetchStatistics() {
-      try {
-        const res = await axios.get('/api/plus-services/statistics');
-        this.stats = res.data.data || {};
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+    fetchStatistics() {
+      axios.get('/api/plus-services/statistics')
+        .then(res => {
+          this.stats = res.data.data || {};
+        })
+        .catch(() => {});
     },
     resetFilters() {
-      this.filters = { search: '', category: '' };
-    },
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = { ...EMPTY_FILTERS };
     },
     deleteItem(id) {
       Swal.fire({
@@ -234,7 +224,10 @@ export default {
           axios.delete(`/api/plus-services/${id}`)
             .then(() => {
               Swal.fire('Deleted!', 'Service has been deleted.', 'success');
-              this.fetchItems();
+              if (this.items.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               this.fetchStatistics();
             })
             .catch(() => Swal.fire('Error!', 'Failed to delete service', 'error'));
