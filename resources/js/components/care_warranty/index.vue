@@ -108,19 +108,9 @@
 
     <!-- Search and Per Page -->
     <div class="table-toolbar">
-      <div class="per-page">
-        <label>Show</label>
-        <select class="form-control" v-model="perPage" @change="fetchData">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-        <label>entries</label>
-        <span class="ml-3 text-muted">
-          Showing {{ items.length }} of {{ meta.total || 0 }} records
-        </span>
-      </div>
+      <span class="text-muted">
+        Showing {{ items.length }} of {{ meta.total || 0 }} records
+      </span>
     </div>
 
     <!-- Data Table -->
@@ -128,19 +118,10 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th @click="sort('care_warranty_id')" width="10%">
-              Warranty ID
-              <i v-if="sortField === 'care_warranty_id'" :class="sortIcon"></i>
-            </th>
-            <th @click="sort('care_invoice_id')" width="10%">
-              Invoice ID
-              <i v-if="sortField === 'care_invoice_id'" :class="sortIcon"></i>
-            </th>
+            <sortable-th label="Warranty ID" sort-key="care_warranty_id" :current-sort="sortState" @sort="onSort" width="10%" />
+            <sortable-th label="Invoice ID" sort-key="care_invoice_id" :current-sort="sortState" @sort="onSort" width="10%" />
             <th width="10%">Customer ID</th>
-            <th @click="sort('product_id')" width="30%">
-              Item Name
-              <i v-if="sortField === 'product_id'" :class="sortIcon"></i>
-            </th>
+            <sortable-th label="Item Name" sort-key="product_id" :current-sort="sortState" @sort="onSort" width="30%" />
             <th width="15%">Date</th>
             <th width="5%">Reset Status</th>
             <th width="10%">Actions</th>
@@ -229,35 +210,11 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-wrapper" v-if="meta && meta.last_page > 1">
-      <nav>
-        <ul class="pagination">
-          <li class="page-item" :class="{ disabled: meta.current_page === 1 }">
-            <a class="page-link" href="#" @click.prevent="changePage(meta.current_page - 1)">
-              Previous
-            </a>
-          </li>
-          <li
-            v-for="page in pages"
-            :key="page"
-            class="page-item"
-            :class="{ active: meta.current_page === page }"
-          >
-            <a class="page-link" href="#" @click.prevent="changePage(page)">
-              {{ page }}
-            </a>
-          </li>
-          <li class="page-item" :class="{ disabled: meta.current_page === meta.last_page }">
-            <a class="page-link" href="#" @click.prevent="changePage(meta.current_page + 1)">
-              Next
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div class="pagination-info">
-        Showing {{ meta.from || 0 }} to {{ meta.to || 0 }} of {{ meta.total || 0 }} entries
-      </div>
-    </div>
+    <pagination-control
+        :meta="meta"
+        @page-change="onPageChange"
+        @per-page-change="onPerPageChange"
+    />
 
     <!-- View Details Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1" ref="viewModal">
@@ -388,10 +345,25 @@ import axios from 'axios'
 import $ from 'jquery'
 import Swal from 'sweetalert2'
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
+import PaginationControl from '../shared/PaginationControl.vue'
+import SortableTh from '../shared/SortableTh.vue'
+import sortablePaginationMixin from '../../mixins/sortablePagination'
+
+const EMPTY_FILTERS = {
+  search: '',
+  care_warranty_id: '',
+  care_invoice_id: '',
+  product_id: '',
+  warranty_status: '',
+  reset_status: '',
+  date_start_from: '',
+  date_start_to: ''
+}
 
 export default {
   name: 'CareWarrantyIndex',
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -413,19 +385,8 @@ export default {
           { value: '0', label: 'No' },
         ] },
       ],
-      filters: {
-        search: '',
-        care_warranty_id: '',
-        care_invoice_id: '',
-        product_id: '',
-        warranty_status: '',
-        reset_status: '',
-        date_start_from: '',
-        date_start_to: ''
-      },
-      sortField: 'created_at',
-      sortDirection: 'desc',
-      perPage: 10,
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
       meta: {
         total: 0,
         per_page: 10,
@@ -438,39 +399,6 @@ export default {
       deleteItem: null
     }
   },
-  computed: {
-    sortIcon() {
-      return this.sortDirection === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'
-    },
-    pages() {
-      const pages = []
-      if (!this.meta) return pages
-
-      const current = this.meta.current_page
-      const last = this.meta.last_page
-
-      if (last <= 7) {
-        for (let i = 1; i <= last; i++) pages.push(i)
-      } else {
-        if (current <= 4) {
-          for (let i = 1; i <= 5; i++) pages.push(i)
-          pages.push('...')
-          pages.push(last)
-        } else if (current >= last - 3) {
-          pages.push(1)
-          pages.push('...')
-          for (let i = last - 4; i <= last; i++) pages.push(i)
-        } else {
-          pages.push(1)
-          pages.push('...')
-          for (let i = current - 2; i <= current + 2; i++) pages.push(i)
-          pages.push('...')
-          pages.push(last)
-        }
-      }
-      return pages
-    }
-  },
   watch: {
     filters: {
       handler() {
@@ -479,8 +407,8 @@ export default {
       deep: true
     }
   },
-  mounted() {
-    this.fetchData()
+  created() {
+    this.fetchList()
     this.fetchStatistics()
   },
   methods: {
@@ -501,14 +429,14 @@ export default {
       return category
     },
 
-    async fetchData() {
+    async fetchList() {
         this.loading = true
         try {
             const params = {
                 page: this.meta.current_page,
-                per_page: this.perPage,
-                sort_field: this.sortField,
-                sort_direction: this.sortDirection
+                per_page: this.meta.per_page,
+                sort_by: this.sortState.key,
+                sort_dir: this.sortState.dir
             }
 
             Object.keys(this.filters).forEach(key => {
@@ -525,7 +453,7 @@ export default {
                 if (response.data.meta) {
                     this.meta = {
                         total: response.data.meta.total || 0,
-                        per_page: response.data.meta.per_page || this.perPage,
+                        per_page: response.data.meta.per_page || this.meta.per_page,
                         current_page: response.data.meta.current_page || 1,
                         last_page: response.data.meta.last_page || 1,
                         from: response.data.meta.from || 0,
@@ -818,10 +746,8 @@ export default {
       try {
         const params = {
           ...this.filters,
-          per_page: 10000,
-          page: 1,
-          sort_field: this.sortField,
-          sort_direction: this.sortDirection
+          sort_by: this.sortState.key,
+          sort_dir: this.sortState.dir
         }
 
         Object.keys(params).forEach(key => {
@@ -935,7 +861,7 @@ export default {
         ...rows.map(row => row.join(','))
       ].join('\n')
 
-      const BOM = '\uFEFF'
+      const BOM = '﻿'
       const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -986,37 +912,11 @@ export default {
 
     applyFilters() {
       this.meta.current_page = 1
-      this.fetchData()
+      this.fetchList()
     },
 
     resetFilters() {
-      this.filters = {
-        search: '',
-        care_warranty_id: '',
-        care_invoice_id: '',
-        product_id: '',
-        warranty_status: '',
-        reset_status: '',
-        date_start_from: '',
-        date_start_to: ''
-      }
-    },
-
-    sort(field) {
-      if (this.sortField === field) {
-        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc'
-      } else {
-        this.sortField = field
-        this.sortDirection = 'asc'
-      }
-      this.fetchData()
-    },
-
-    changePage(page) {
-      if (page >= 1 && page <= this.meta.last_page) {
-        this.meta.current_page = page
-        this.fetchData()
-      }
+      this.filters = { ...EMPTY_FILTERS }
     },
 
     goToCreate() {
@@ -1047,7 +947,10 @@ export default {
         if (this.$toast) {
           this.$toast.success('Warranty deleted successfully')
         }
-        this.fetchData()
+        if (this.items.length === 1 && this.meta.current_page > 1) {
+          this.meta.current_page -= 1
+        }
+        this.fetchList()
         this.fetchStatistics()
       } catch (error) {
         console.error('Delete error:', error)
@@ -1178,17 +1081,6 @@ export default {
   margin-bottom: 15px;
 }
 
-.per-page {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.per-page select {
-  width: 80px;
-}
-
 .table {
   background: white;
   border-radius: 8px;
@@ -1198,12 +1090,7 @@ export default {
 
 .table thead th {
   background: #f8f9fa;
-  cursor: pointer;
   white-space: nowrap;
-}
-
-.table thead th:hover {
-  background: #e9ecef;
 }
 
 .table td {
@@ -1226,21 +1113,6 @@ export default {
 
 .ml-3 {
   margin-left: 1rem;
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.pagination {
-  margin-bottom: 0;
-}
-
-.pagination-info {
-  color: #6c757d;
 }
 
 /* Modal styles */
@@ -1273,12 +1145,6 @@ export default {
   .table-toolbar {
     flex-direction: column;
     gap: 10px;
-  }
-
-  .pagination-wrapper {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
   }
 }
 
