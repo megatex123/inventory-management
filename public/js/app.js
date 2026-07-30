@@ -7474,7 +7474,7 @@ var EMPTY_FILTERS = {
       var csvContent = [headers.join(',')].concat(_toConsumableArray(rows.map(function (row) {
         return row.join(',');
       }))).join('\n');
-      var BOM = '﻿';
+      var BOM = "\uFEFF";
       var blob = new Blob([BOM + csvContent], {
         type: 'text/csv;charset=utf-8;'
       });

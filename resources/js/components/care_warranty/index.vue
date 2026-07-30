@@ -861,7 +861,7 @@ export default {
         ...rows.map(row => row.join(','))
       ].join('\n')
 
-      const BOM = '﻿'
+      const BOM = '\uFEFF'
       const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
