@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CareWarranty;
 use App\Models\CareData;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,64 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CareWarrantyController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
+    {
+        $query = $this->buildCareWarrantyQuery($request);
+
+        $this->resolveSortAndApply($query, $request, ['care_warranty_id', 'care_invoice_id', 'product_id', 'created_at'], 'created_at', 'id', [], 'desc');
+
+        $perPage = $this->resolvePerPage($request, 10);
+        $careWarranties = $query->paginate($perPage);
+
+        $transformedData = collect($careWarranties->items())->map(function ($item) {
+            return $this->formatCareWarantyItem($item);
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $transformedData,
+            'meta' => [
+                'total' => $careWarranties->total(),
+                'per_page' => $careWarranties->perPage(),
+                'current_page' => $careWarranties->currentPage(),
+                'last_page' => $careWarranties->lastPage(),
+                'from' => $careWarranties->firstItem(),
+                'to' => $careWarranties->lastItem(),
+            ]
+        ]);
+    }
+
+    /**
+     * All care warranties matching the same filters as index(), unpaginated,
+     * for the export feature. Added in the List Page Standardization
+     * initiative (Batch 18) -- this route previously did not exist, so
+     * "Export All" and "Export Filtered" (Excel format) silently 404'd via
+     * the {id} wildcard treating "all" as an id.
+     */
+    public function all(Request $request)
+    {
+        $query = $this->buildCareWarrantyQuery($request);
+        $query->orderBy('created_at', 'desc');
+
+        $items = $query->get()->map(function ($item) {
+            return $this->formatCareWarantyItem($item);
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $items,
+        ]);
+    }
+
+    /**
+     * Shared filter-building logic for index() and all() -- extracted
+     * during Batch 18 of the List Page Standardization initiative so the
+     * two endpoints' filter semantics cannot drift apart. Sorting and
+     * pagination are NOT applied here; each caller adds its own.
+     */
+    private function buildCareWarrantyQuery(Request $request)
     {
         $query = CareWarranty::with([
             'careData.customer' => function ($q) {
@@ -78,32 +136,7 @@ class CareWarrantyController extends Controller
             });
         }
 
-        // Sorting
-        $sortField = $request->get('sort_field', 'created_at');
-        $sortDirection = $request->get('sort_direction', 'desc');
-        $query->orderBy($sortField, $sortDirection);
-
-        // Pagination
-        $perPage = $request->get('per_page', 15);
-        $careWarranties = $query->paginate($perPage);
-
-        // Transform data
-        $transformedData = collect($careWarranties->items())->map(function ($item) {
-            return $this->formatCareWarantyItem($item);
-        });
-
-        return response()->json([
-            'success' => true,
-            'data' => $transformedData,
-            'meta' => [
-                'total' => $careWarranties->total(),
-                'per_page' => $careWarranties->perPage(),
-                'current_page' => $careWarranties->currentPage(),
-                'last_page' => $careWarranties->lastPage(),
-                'from' => $careWarranties->firstItem(),
-                'to' => $careWarranties->lastItem(),
-            ]
-        ]);
+        return $query;
     }
 
     /**
