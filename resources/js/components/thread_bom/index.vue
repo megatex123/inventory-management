@@ -58,7 +58,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>BOM List</h5>
-        <span class="text-muted">Total: {{ total }} records</span>
+        <span class="text-muted">Total: {{ meta.total }} records</span>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -66,9 +66,9 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center">#</th>
-                <th>PSU Brand</th>
-                <th>Cable Type</th>
-                <th>Colour Variant</th>
+                <sortable-th label="PSU Brand" sort-key="psu_brand" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Cable Type" sort-key="cable_type" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Colour Variant" sort-key="colour_variant" :current-sort="sortState" @sort="onSort" />
                 <th class="text-center">Components</th>
                 <th class="text-right">Total Cost</th>
                 <th class="text-center">Actions</th>
@@ -82,7 +82,7 @@
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle font-weight-bold">{{ item.psu_brand }}</td>
                 <td class="align-middle">{{ cableTypeLabel(item.cable_type) }}</td>
                 <td class="align-middle">{{ item.colour_variant || 'Default' }}</td>
@@ -99,15 +99,12 @@
           </table>
         </div>
       </div>
-      <div v-if="total > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <small class="text-muted">Page {{ currentPage }} of {{ lastPage }}</small>
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }"><button class="page-link" @click="changePage(currentPage - 1)">&laquo;</button></li>
-            <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }"><button class="page-link" @click="changePage(page)">{{ page }}</button></li>
-            <li class="page-item" :class="{ disabled: currentPage === lastPage }"><button class="page-link" @click="changePage(currentPage + 1)">&raquo;</button></li>
-          </ul>
-        </nav>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -117,9 +114,15 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = { psu_brand: '', cable_type: '' };
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -128,23 +131,12 @@ export default {
       cableTypeStats: [],
       loading: true,
       showFilters: false,
-      filters: { psu_brand: '', cable_type: '' },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
     };
   },
   computed: {
-    lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages() {
-      const pages = [];
-      let start = Math.max(1, this.currentPage - 2);
-      let end = Math.min(this.lastPage, this.currentPage + 2);
-      for (let i = start; i <= end; i++) pages.push(i);
-      return pages;
-    },
     filterColumns() {
       return [
         { key: 'psu_brand', label: 'PSU Brand', type: 'select', options: this.brands.map(b => ({ value: b.psu_brand, label: `${b.psu_brand} (${b.count})` })) },
@@ -155,13 +147,14 @@ export default {
   watch: {
     filters: {
       handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted() {
-    this.fetchItems();
+  created() {
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -173,42 +166,39 @@ export default {
       if (!item.lines) return '0.00';
       return item.lines.reduce((sum, l) => sum + (parseFloat(l.unit_cost) * l.qty_per_cable), 0).toFixed(2);
     },
-    async fetchItems() {
+    fetchList() {
       this.loading = true;
-      try {
-        const params = { page: this.currentPage, per_page: this.perPage, ...this.filters };
-        Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
-        const res = await axios.get('/api/thread-bom', { params });
-        this.items = res.data.data || [];
-        this.total = res.data.meta ? res.data.meta.total : this.items.length;
-      } catch (error) {
-        console.error('Error fetching BOMs:', error);
-        Swal.fire('Error!', 'Failed to load BOMs', 'error');
-      } finally {
-        this.loading = false;
-      }
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.filters,
+      };
+      Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
+      axios.get('/api/thread-bom', { params })
+        .then(res => {
+          this.items = res.data.data || [];
+          this.meta = res.data.meta;
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Failed to load BOMs', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    async fetchStatistics() {
-      try {
-        const res = await axios.get('/api/thread-bom/statistics');
-        this.stats = res.data.data || {};
-        this.brands = this.stats.by_brand || [];
-        this.cableTypeStats = this.stats.by_cable_type || [];
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+    fetchStatistics() {
+      axios.get('/api/thread-bom/statistics')
+        .then(res => {
+          this.stats = res.data.data || {};
+          this.brands = this.stats.by_brand || [];
+          this.cableTypeStats = this.stats.by_cable_type || [];
+        })
+        .catch(() => {});
     },
     resetFilters() {
-      this.filters = { psu_brand: '', cable_type: '' };
-    },
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = { ...EMPTY_FILTERS };
     },
     deleteItem(id) {
       Swal.fire({
@@ -223,7 +213,10 @@ export default {
           axios.delete(`/api/thread-bom/${id}`)
             .then(() => {
               Swal.fire('Deleted!', 'BOM has been deleted.', 'success');
-              this.fetchItems();
+              if (this.items.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               this.fetchStatistics();
             })
             .catch(() => Swal.fire('Error!', 'Failed to delete BOM', 'error'));
