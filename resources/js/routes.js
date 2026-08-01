@@ -154,10 +154,6 @@ let invmerch = require('./components/inv_merch/index.vue').default;
 let invmerchcreate = require('./components/inv_merch/create.vue').default;
 let invmerchedit = require('./components/inv_merch/edit.vue').default;
 
-//inv excl merch
-let invexclmerch = require('./components/inv_excl_merch/index.vue').default;
-let invexclmerchcreate = require('./components/inv_excl_merch/create.vue').default;
-let invexclmerchedit = require('./components/inv_excl_merch/edit.vue').default;
 
 //merch orders
 let merchorders = require('./components/merch_orders/index.vue').default;
@@ -366,10 +362,6 @@ export const routes=[
       { path: '/inv-merch/create', component: invmerchcreate, name: 'invmerchcreate', meta: { layout: 'app' } },
       { path: '/inv-merch/edit/:id', component: invmerchedit, name: 'invmerchedit', meta: { layout: 'app' } },
 
-      // inv-excl-merch
-      { path: '/inv-excl-merch', component: invexclmerch, name: 'invexclmerch', meta: { layout: 'app' } },
-      { path: '/inv-excl-merch/create', component: invexclmerchcreate, name: 'invexclmerchcreate', meta: { layout: 'app' } },
-      { path: '/inv-excl-merch/edit/:id', component: invexclmerchedit, name: 'invexclmerchedit', meta: { layout: 'app' } },
 
       // merch-orders
       { path: '/merch-orders', component: merchorders, name: 'merchorders', meta: { layout: 'app' } },

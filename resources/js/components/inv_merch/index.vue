@@ -95,16 +95,17 @@
                 <th>Inv. ID</th>
                 <th>Item Name</th>
                 <th>SKU Code</th>
+                <th class="text-center">Type</th>
                 <th class="text-right">Unit Cost</th>
                 <th class="text-right">Current / Max Stock</th>
                 <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody v-if="loading">
-              <tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></td></tr>
+              <tr><td colspan="8" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></td></tr>
             </tbody>
             <tbody v-else-if="items.length === 0">
-              <tr><td colspan="7" class="text-center py-5"><i class="fas fa-database fa-3x text-muted mb-3"></i><h5 class="text-muted">No inventory items found</h5></td></tr>
+              <tr><td colspan="8" class="text-center py-5"><i class="fas fa-database fa-3x text-muted mb-3"></i><h5 class="text-muted">No inventory items found</h5></td></tr>
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
@@ -112,6 +113,9 @@
                 <td class="align-middle">{{ item.inv_merch_id }}</td>
                 <td class="align-middle font-weight-bold">{{ item.item_name }}</td>
                 <td class="align-middle">{{ item.sku_code }}</td>
+                <td class="align-middle text-center">
+                  <span :class="item.is_exclusive ? 'badge badge-warning' : 'badge badge-secondary'">{{ item.is_exclusive ? 'Exclusive' : 'General' }}</span>
+                </td>
                 <td class="align-middle text-right">RM{{ item.unit_cost }}</td>
                 <td class="align-middle text-right">
                   <span :class="item.current_stock < item.to_restock ? 'badge badge-danger' : 'badge badge-success'">{{ item.current_stock }} / {{ item.max_stock }}</span>
@@ -156,8 +160,12 @@ export default {
       showFilters: false,
       filterColumns: [
         { key: 'search', label: 'Item Name / SKU Code', type: 'text' },
+        { key: 'is_exclusive', label: 'Type', type: 'select', options: [
+            { value: '1', label: 'Exclusive Only' },
+            { value: '0', label: 'General Only' },
+        ] },
       ],
-      filters: { search: '' },
+      filters: { search: '', is_exclusive: '' },
       currentPage: 1,
       perPage: 15,
       total: 0
@@ -216,7 +224,7 @@ export default {
       this.fetchItems();
     },
     resetFilters() {
-      this.filters = { search: '' };
+      this.filters = { search: '', is_exclusive: '' };
     },
     changePage(page) {
       if (page < 1 || page > this.lastPage) return;

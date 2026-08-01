@@ -40,6 +40,10 @@
                 <label class="form-label">Restock Threshold</label>
                 <input type="number" min="0" v-model="form.to_restock" class="form-control">
               </div>
+              <div class="form-group form-check mt-2">
+                <input type="checkbox" class="form-check-input" id="isExclusive" v-model="form.is_exclusive">
+                <label class="form-check-label" for="isExclusive">Exclusive item</label>
+              </div>
             </div>
           </div>
 
@@ -67,7 +71,7 @@ export default {
   data() {
     return {
       masterSkus: [],
-      form: { sku_code: '', item_name: '', unit_cost: '', current_stock: '', max_stock: '', to_restock: '' },
+      form: { sku_code: '', item_name: '', unit_cost: '', current_stock: '', max_stock: '', to_restock: '', is_exclusive: false },
       loading: false,
       errors: []
     };
