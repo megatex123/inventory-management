@@ -117,7 +117,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Membership Status</label>
-              <select v-model="filters.membership_status" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.membership_status" class="form-control form-control-sm">
                 <option value="">All Status</option>
                 <option value="active">Active</option>
                 <option value="expired">Expired</option>
@@ -129,10 +129,10 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Customer</label>
-              <select v-model="filters.customer_id" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.customer_id" class="form-control form-control-sm">
                 <option value="">All Customers</option>
                 <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-                  {{ customer.name }} ({{ customer.customer_id || customer.id }})
+                  {{ customer.full_name }} ({{ customer.customer_id || customer.id }})
                 </option>
               </select>
             </div>
@@ -142,7 +142,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Care Tier</label>
-              <select v-model="filters.lkp_care_id" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.lkp_care_id" class="form-control form-control-sm">
                 <option value="">All Tiers</option>
                 <option v-for="care in cares" :key="care.id" :value="care.id">
                   {{ care.name }} ({{ care.code }})
@@ -155,7 +155,7 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Date From</label>
-              <input type="date" v-model="filters.date_from" class="form-control form-control-sm" @change="applyFilters">
+              <input type="date" v-model="filters.created_from" class="form-control form-control-sm">
             </div>
           </div>
         </div>
@@ -165,7 +165,7 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Year</label>
-              <select v-model="filters.year" class="form-control form-control-sm" @change="applyFilters">
+              <select v-model="filters.year" class="form-control form-control-sm">
                 <option value="">All Years</option>
                 <option v-for="year in availableYears" :key="year" :value="year">
                   {{ year }}
@@ -177,7 +177,7 @@
           <div class="col-md-2">
             <div class="form-group">
               <label class="small font-weight-bold text-muted">Month</label>
-              <select v-model="filters.month" class="form-control form-control-sm" @change="applyFilters" :disabled="!filters.year">
+              <select v-model="filters.month" class="form-control form-control-sm" :disabled="!filters.year">
                 <option value="">All Months</option>
                 <option v-for="(monthName, index) in monthNames" :key="index" :value="index + 1">
                   {{ monthName }}
@@ -186,45 +186,13 @@
             </div>
           </div>
 
-          <!-- Sort By Filter -->
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Sort By</label>
-              <select v-model="filters.sortBy" class="form-control form-control-sm" @change="applyFilters">
-                <option value="created_at_desc">Date (Newest)</option>
-                <option value="created_at_asc">Date (Oldest)</option>
-                <option value="customer_name_asc">Customer Name (A-Z)</option>
-                <option value="customer_name_desc">Customer Name (Z-A)</option>
-                <option value="care_id_asc">Care ID (A-Z)</option>
-                <option value="care_id_desc">Care ID (Z-A)</option>
-                <option value="price_desc">Price (High to Low)</option>
-                <option value="price_asc">Price (Low to High)</option>
-                <option value="total_part_desc">Parts Value (High to Low)</option>
-                <option value="total_part_asc">Parts Value (Low to High)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Results Per Page -->
-          <div class="col-md-2">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Results</label>
-              <select v-model="perPage" class="form-control form-control-sm" @change="applyFilters">
-                <option value="10">10 per page</option>
-                <option value="25">25 per page</option>
-                <option value="50">50 per page</option>
-                <option value="100">100 per page</option>
-              </select>
-            </div>
-          </div>
-
           <!-- Action Buttons -->
-          <div class="col-md-3 d-flex align-items-end">
+          <div class="col-md-4 d-flex align-items-end">
             <div class="btn-group w-100">
               <button class="btn btn-outline-secondary btn-sm" @click="resetFilters">
                 <i class="fas fa-redo mr-1"></i> Clear Filters
               </button>
-              <button class="btn btn-primary btn-sm ml-2" @click="fetchCareData">
+              <button class="btn btn-primary btn-sm ml-2" @click="applyFilters">
                 <i class="fas fa-sync-alt mr-1"></i> Apply
               </button>
             </div>
@@ -257,7 +225,7 @@
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Care Data List</h5>
         <div class="d-flex align-items-center">
           <span class="text-muted mr-3">
-            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} records
+            {{ meta.total }} record{{ meta.total === 1 ? '' : 's' }}
           </span>
           <div class="btn-group">
             <button class="btn btn-outline-info btn-sm" @click="exportToCSV">
@@ -278,13 +246,37 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center align-top">#</th>
-                <th class="align-top">Care Details /<br> Customer</th>
+                <sortable-th
+                  class="align-top"
+                  label="Care Details / Customer"
+                  sort-key="care_data.care_id"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
                 <th class="align-top">Order</th>
                 <th class="text-center align-top">Care Tier</th>
-                <th class="text-center align-top">Parts Value</th>
-                <th class="text-center align-top">Price</th>
+                <sortable-th
+                  class="text-center align-top"
+                  label="Parts Value"
+                  sort-key="care_data.total_part"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
+                <sortable-th
+                  class="text-center align-top"
+                  label="Price"
+                  sort-key="care_data.price"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
                 <th class="text-center align-top">Update Membership?</th>
-                <th class="text-center align-top">Date</th>
+                <sortable-th
+                  class="text-center align-top"
+                  label="Date"
+                  sort-key="care_data.created_at"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
                 <th class="text-center align-top">Actions</th>
               </tr>
             </thead>
@@ -298,7 +290,7 @@
                 </td>
               </tr>
             </tbody>
-            <tbody v-else-if="filteredCareData.length === 0">
+            <tbody v-else-if="careData.length === 0">
               <tr>
                 <td colspan="10" class="text-center py-5">
                   <i class="fas fa-database fa-3x text-muted mb-3"></i>
@@ -311,8 +303,8 @@
               </tr>
             </tbody>
             <tbody v-else>
-              <tr v-for="(care, index) in filteredCareData" :key="care.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+              <tr v-for="(care, index) in careData" :key="care.id">
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle">
                   <div class="d-flex align-items-center">
                     <!-- <div class="avatar-sm mr-2">
@@ -330,8 +322,6 @@
                       <div v-if="care.customer && care.customer.phone" class="small">
                         <i class="fas fa-phone text-muted mr-1"></i>{{ care.customer.phone }}
                       </div>
-                      {{ care.orderItems }}
-                      {{ care.directOrderDetails }}
                     </div>
                   </div>
                 </td>
@@ -397,31 +387,12 @@
           </table>
         </div>
       </div>
-      <div v-if="filteredCareData.length > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <div>
-          <small class="text-muted">
-            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} entries
-          </small>
-        </div>
-        <div>
-          <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm mb-0">
-              <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <button class="page-link" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-              </li>
-              <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }">
-                <button class="page-link" @click="changePage(page)">{{ page }}</button>
-              </li>
-              <li class="page-item" :class="{ disabled: currentPage === lastPage }">
-                <button class="page-link" @click="changePage(currentPage + 1)" :disabled="currentPage === lastPage">
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+      <div v-if="careData.length > 0" class="card-footer">
+        <pagination-control
+          :meta="meta"
+          @page-change="onPageChange"
+          @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
 
@@ -622,10 +593,28 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+// Filter keys here are the API's own query-parameter names (see
+// CareDataController@index) -- the page sends them straight through, so the
+// server does all filtering/sorting/paginating and the client just renders
+// whatever page it gets back.
+const EMPTY_FILTERS = {
+  search: '',
+  membership_status: '',
+  customer_id: '',
+  lkp_care_id: '',
+  created_from: '',
+  year: '',
+  month: '',
+};
 
 export default {
   name: 'CareDataIndex',
-  components: { ColumnSearchPanel },
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
+  mixins: [sortablePaginationMixin],
   data() {
     return {
       careData: [],
@@ -636,33 +625,17 @@ export default {
       loading: true,
       showFilters: false,
       filterColumns: [
-        { key: 'care_customer', label: 'Care Details/Customer', type: 'text' },
-        { key: 'order', label: 'Order', type: 'text' },
-        { key: 'total_part', label: 'Parts Value', type: 'text' },
-        { key: 'price', label: 'Price', type: 'text' },
+        { key: 'search', label: 'Care ID / Customer / Order / Value', type: 'text' },
       ],
-      filters: {
-        care_customer: '',
-        order: '',
-        total_part: '',
-        price: '',
-        membership_status: '',
-        customer_id: '',
-        lkp_care_id: '',
-        date_from: '',
-        year: '',
-        month: '',
-        sortBy: 'created_at_desc'
-      },
+      filters: { ...EMPTY_FILTERS },
       availableYears: [],
       monthNames: [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
-      currentPage: 1,
-      perPage: 10,
-      total: 0,
-      filteredCount: 0,
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
+      sortState: { key: 'care_data.created_at', dir: 'desc' },
+      summary: {},
       showStatistics: false,
       showDeleteModal: false,
       statistics: {},
@@ -676,42 +649,14 @@ export default {
       const totalPart = this.stats.total_part || 0;
       return ((totalPart / totalPrice) * 100).toFixed(1);
     },
-    lastPage() {
-      return Math.ceil(this.filteredCount / this.perPage);
-    },
-    pages() {
-      const pages = [];
-      const totalPages = this.lastPage;
-      let startPage = Math.max(1, this.currentPage - 2);
-      let endPage = Math.min(totalPages, this.currentPage + 2);
-
-      if (totalPages > 5) {
-        if (this.currentPage <= 3) {
-          endPage = 5;
-        } else if (this.currentPage >= totalPages - 2) {
-          startPage = totalPages - 4;
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      return pages;
-    },
     hasActiveFilters() {
-      return Object.values(this.filters).some((value, index) => {
-        const key = Object.keys(this.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'created_at_desc';
-        }
-        return value !== '';
-      });
+      return Object.keys(this.activeFilters).length > 0;
     },
     activeFilters() {
       const active = {};
       Object.keys(this.filters).forEach(key => {
         const value = this.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'created_at_desc')) {
+        if (value !== '') {
           if (key === 'month' && !this.filters.year) {
             return;
           }
@@ -720,84 +665,6 @@ export default {
       });
       return active;
     },
-    filteredCareData() {
-      let filtered = this.careData;
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        const keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(care =>
-          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
-        );
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        const keyword = this.filters.order.toLowerCase();
-        filtered = filtered.filter(care =>
-          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
-        );
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        const wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
-      }
-
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(care => care.customer && care.customer.id == this.filters.customer_id);
-      }
-
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(care => care.care && care.care.id == this.filters.lkp_care_id);
-      }
-
-      if (this.filters.date_from) {
-        const dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(care => {
-          const careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(this.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(this.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-
-      this.filteredCount = filtered.length;
-      return filtered.slice((this.currentPage - 1) * this.perPage, this.currentPage * this.perPage);
-    }
   },
   watch: {
     'filters.year': function(newYear) {
@@ -805,15 +672,15 @@ export default {
         this.filters.month = '';
       }
     },
-    filteredCareData: {
-      handler(newFilteredData) {
-        this.updateStatistics(newFilteredData);
+    filters: {
+      handler() {
+        this.applyFilters();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
-    this.fetchCareData();
+    this.fetchList();
     this.fetchCustomers();
     this.fetchCares();
     this.fetchOverallStatistics();
@@ -898,240 +765,90 @@ export default {
     },
 
     getFilterLabel(key, value) {
-      const labels = {
-        membership_status: {
-          active: 'Membership: Active',
-          expired: 'Membership: Expired'
-        },
-        customer_id: () => {
-          const customer = this.customers.find(c => c.id == value);
-          return `Customer: ${customer ? customer.name : value}`;
-        },
-        lkp_care_id: () => {
-          const care = this.cares.find(c => c.id == value);
-          return `Care Tier: ${care ? care.name : value}`;
-        },
-        date_from: `From: ${value}`,
-        year: `Year: ${value}`,
-        month: () => {
-          const monthName = this.monthNames[value - 1] || value;
-          return `Month: ${monthName}`;
-        },
-        sortBy: {
-          'created_at_desc': 'Sort: Date (Newest)',
-          'created_at_asc': 'Sort: Date (Oldest)',
-          'customer_name_asc': 'Sort: Customer A-Z',
-          'customer_name_desc': 'Sort: Customer Z-A',
-          'care_id_asc': 'Sort: Care ID A-Z',
-          'care_id_desc': 'Sort: Care ID Z-A',
-          'price_desc': 'Sort: Price High-Low',
-          'price_asc': 'Sort: Price Low-High',
-          'total_part_desc': 'Sort: Parts High-Low',
-          'total_part_asc': 'Sort: Parts Low-High'
-        }
-      };
+      if (key === 'search') return `Search: "${value}"`;
+      if (key === 'created_from') return `From: ${value}`;
+      if (key === 'year') return `Year: ${value}`;
+      if (key === 'month') return `Month: ${this.monthNames[value - 1] || value}`;
 
-      if (key === 'care_customer') return `Care/Customer: "${value}"`;
-      if (key === 'order') return `Order: "${value}"`;
-      if (key === 'total_part') return `Parts Value: "${value}"`;
-      if (key === 'price') return `Price: "${value}"`;
-      if (key === 'date_from') return labels.date_from;
-      if (key === 'year') return labels.year;
-
-      if (key === 'month' && labels.month) {
-        return typeof labels.month === 'function' ? labels.month(value) : labels.month[value] || `${key}: ${value}`;
+      if (key === 'membership_status') {
+        return `Membership: ${value === 'active' ? 'Active' : 'Expired'}`;
       }
 
-      if (key === 'customer_id' && labels.customer_id) {
-        return labels.customer_id(value);
+      if (key === 'customer_id') {
+        const customer = this.customers.find(c => c.id == value);
+        return `Customer: ${customer ? customer.full_name : value}`;
       }
 
-      if (key === 'lkp_care_id' && labels.lkp_care_id) {
-        return labels.lkp_care_id(value);
-      }
-
-      if (labels[key] && labels[key][value]) {
-        return labels[key][value];
+      if (key === 'lkp_care_id') {
+        const care = this.cares.find(c => c.id == value);
+        return `Care Tier: ${care ? care.name : value}`;
       }
 
       return `${key}: ${value}`;
     },
 
-    async fetchCareData() {
+    // Server-driven list fetch. Every filter/sort/page decision is made by
+    // the API (see CareDataController@index); this method only forwards the
+    // current UI state and renders whatever page comes back. It deliberately
+    // does NOT re-filter/re-sort/re-slice the response -- doing so was the
+    // cause of the page-2+ corruption this page used to have.
+    fetchList() {
       this.loading = true;
-      try {
-        const params = {
-          page: this.currentPage,
-          per_page: this.perPage,
-          ...this.filters
-        };
 
-        // Remove empty parameters
-        Object.keys(params).forEach(key => {
-          if (params[key] === '' || params[key] === null || params[key] === undefined) {
-            delete params[key];
-          }
-        });
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.buildFilterParams(),
+      };
 
-        console.log('Fetching care data with params:', params);
-
-        const response = await axios.get('/api/care-data', { params });
-
-        // Log full response for debugging
-        console.log('Full API response:', response);
-
-        // Handle different response structures
-        if (response.data) {
-          // Check for success flag (your controller returns this)
-          if (response.data.success !== undefined) {
-            if (response.data.success) {
-              this.careData = response.data.data || [];
-              if (response.data.meta) {
-                this.total = response.data.meta.total || 0;
-                this.filteredCount = this.total;
-              } else {
-                this.total = response.data.total || this.careData.length;
-                this.filteredCount = this.total;
-              }
-            } else {
-              console.error('API returned error:', response.data.message);
-              this.careData = [];
-              this.total = 0;
-              this.filteredCount = 0;
-            }
-          }
-          // Check if data is directly in response
-          else if (response.data.data) {
-            this.careData = response.data.data;
-            this.total = response.data.total || response.data.data.length;
-            this.filteredCount = this.total;
-          }
-          // Check if response is already an array
-          else if (Array.isArray(response.data)) {
-            this.careData = response.data;
-            this.total = response.data.length;
-            this.filteredCount = this.total;
-          }
-          // Default case
-          else {
-            console.warn('Unexpected response structure:', response.data);
-            this.careData = [];
-            this.total = 0;
-            this.filteredCount = 0;
-          }
-        } else {
-          console.error('Empty API response');
+      return axios.get('/api/care-data', { params })
+        .then(res => {
+          this.careData = res.data.data || [];
+          this.meta = res.data.meta || this.meta;
+          this.summary = res.data.summary || {};
+          this.updateStatistics();
+        })
+        .catch(error => {
+          console.error('Error fetching care data:', error);
           this.careData = [];
-          this.total = 0;
-          this.filteredCount = 0;
-        }
+          this.meta = { total: 0, per_page: this.meta.per_page, current_page: 1, last_page: 1 };
+          Swal.fire('Error!', 'Failed to load care data', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
 
-        console.log('Loaded care data:', this.careData.length, 'items');
-        if (this.careData.length > 0) {
-          console.log('Sample data:', this.careData[0]);
-        }
+    // Translates the UI filter state into the API's query parameters. `year`
+    // and `month` have no direct API equivalent, so they are expanded into
+    // the start_date/end_date range the controller understands.
+    buildFilterParams() {
+      const params = {
+        search: this.filters.search,
+        membership_status: this.filters.membership_status,
+        customer_id: this.filters.customer_id,
+        lkp_care_id: this.filters.lkp_care_id,
+        created_from: this.filters.created_from,
+      };
 
-        this.updateStatistics(this.careData);
-      } catch (error) {
-        console.error('Error fetching care data:', error);
-        if (error.response) {
-          console.error('Response status:', error.response.status);
-          console.error('Response data:', error.response.data);
-          console.error('Response headers:', error.response.headers);
-        } else if (error.request) {
-          console.error('No response received:', error.request);
-        } else {
-          console.error('Request setup error:', error.message);
-        }
-
-        // Try alternative API endpoint structure
-        try {
-          console.log('Trying alternative API endpoint...');
-          const altResponse = await axios.get('/api/care-data/index');
-          if (altResponse.data) {
-            this.careData = altResponse.data.data || altResponse.data;
-            this.total = this.careData.length;
-            this.filteredCount = this.total;
-            this.updateStatistics(this.careData);
-            console.log('Alternative API successful, loaded:', this.careData.length, 'items');
-          }
-        } catch (altError) {
-          console.error('Alternative API also failed:', altError);
-
-          // TEMPORARY: Show dummy data for debugging
-          console.log('Using dummy data for debugging');
-          this.careData = [
-            {
-              id: 1,
-              care_id: 'VIS-2712-0001',
-              customer_id: 1,
-              order_id: 1,
-              lkp_care_id: 1,
-              total_part: 100.50,
-              price: 150.00,
-              membership_active: true,
-              membership_remaining: '2 Years 0 Months 0 Days',
-              created_at: '2024-01-15T10:30:00',
-              customer: {
-                id: 1,
-                name: 'John Doe',
-                email: 'john@example.com',
-                customer_id: 'CUST001'
-              },
-              order: {
-                id: 1,
-                order_number: 'ORD001',
-                total: 250.50
-              },
-              care: {
-                id: 1,
-                name: 'Vision Care',
-                code: 'VIS'
-              }
-            },
-            {
-              id: 2,
-              care_id: 'PRM-2712-0002',
-              customer_id: 2,
-              order_id: 2,
-              lkp_care_id: 2,
-              total_part: 250.75,
-              price: 300.00,
-              membership_active: false,
-              membership_remaining: 'Expired',
-              created_at: '2024-01-16T14:45:00',
-              customer: {
-                id: 2,
-                name: 'Jane Smith',
-                email: 'jane@example.com',
-                customer_id: 'CUST002'
-              },
-              order: {
-                id: 2,
-                order_number: 'ORD002',
-                total: 550.75
-              },
-              care: {
-                id: 2,
-                name: 'Premium Care',
-                code: 'PRM'
-              }
-            }
-          ];
-          this.total = this.careData.length;
-          this.filteredCount = this.total;
-          this.updateStatistics(this.careData);
-
-          Swal.fire({
-            icon: 'warning',
-            title: 'API Connection Issue',
-            text: 'Using dummy data. Please check API configuration.',
-            timer: 5000
-          });
-        }
-      } finally {
-        this.loading = false;
+      if (this.filters.year) {
+        const year = parseInt(this.filters.year, 10);
+        const month = this.filters.month ? parseInt(this.filters.month, 10) : null;
+        const start = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
+        const end = month ? new Date(year, month, 0) : new Date(year, 11, 31);
+        params.start_date = start.toISOString().split('T')[0];
+        params.end_date = end.toISOString().split('T')[0];
       }
+
+      Object.keys(params).forEach(key => {
+        if (params[key] === '' || params[key] === null || params[key] === undefined) {
+          delete params[key];
+        }
+      });
+
+      return params;
     },
 
     async fetchOverallStatistics() {
@@ -1160,33 +877,26 @@ export default {
       }
     },
 
-    updateStatistics(filteredData) {
-      if (!filteredData || filteredData.length === 0) {
+    // Header stat cards. With no filters active these show the unfiltered
+    // /statistics figures; with filters active they show the server's
+    // `summary` block, which is computed across ALL matching rows -- not
+    // just the current page, which is what the old client-side version did.
+    updateStatistics() {
+      if (!this.hasActiveFilters) {
         this.stats = { ...this.allStats };
         return;
       }
 
-      const totalCareData = filteredData.length;
-      const totalPrice = filteredData.reduce((sum, care) => sum + (parseFloat(care.price) || 0), 0);
-      const totalPart = filteredData.reduce((sum, care) => sum + (parseFloat(care.total_part) || 0), 0);
-      const withMembership = filteredData.filter(care => care.membership_active).length;
-      const withoutMembership = totalCareData - withMembership;
-
-      const today = new Date().toISOString().split('T')[0];
-      const todayCareData = filteredData.filter(care => {
-        if (!care.created_at) return false;
-        const careDate = new Date(care.created_at).toISOString().split('T')[0];
-        return careDate === today;
-      }).length;
+      const summary = this.summary || {};
+      const totalCount = summary.total_count != null ? summary.total_count : (this.meta.total || 0);
+      const totalPrice = parseFloat(summary.total_price) || 0;
 
       this.stats = {
-        total_care_data: totalCareData,
-        today_care_data: todayCareData,
+        ...this.allStats,
+        total_care_data: totalCount,
         total_price: totalPrice,
-        total_part: totalPart,
-        average_price: totalCareData > 0 ? totalPrice / totalCareData : 0,
-        with_membership: withMembership,
-        without_membership: withoutMembership
+        total_part: parseFloat(summary.total_part) || 0,
+        average_price: totalCount > 0 ? totalPrice / totalCount : 0
       };
     },
 
@@ -1238,62 +948,14 @@ export default {
       }
     },
 
-    sortCareData(careData) {
-      switch (this.filters.sortBy) {
-        case 'created_at_asc':
-          return careData.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-        case 'customer_name_asc':
-          return careData.slice().sort((a, b) => {
-            const nameA = a.customer ? a.customer.name || '' : '';
-            const nameB = b.customer ? b.customer.name || '' : '';
-            return nameA.localeCompare(nameB);
-          });
-        case 'customer_name_desc':
-          return careData.slice().sort((a, b) => {
-            const nameA = a.customer ? a.customer.name || '' : '';
-            const nameB = b.customer ? b.customer.name || '' : '';
-            return nameB.localeCompare(nameA);
-          });
-        case 'care_id_asc':
-          return careData.slice().sort((a, b) => (a.care_id || '').localeCompare(b.care_id || ''));
-        case 'care_id_desc':
-          return careData.slice().sort((a, b) => (b.care_id || '').localeCompare(a.care_id || ''));
-        case 'price_desc':
-          return careData.slice().sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
-        case 'price_asc':
-          return careData.slice().sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
-        case 'total_part_desc':
-          return careData.slice().sort((a, b) => (parseFloat(b.total_part) || 0) - (parseFloat(a.total_part) || 0));
-        case 'total_part_asc':
-          return careData.slice().sort((a, b) => (parseFloat(a.total_part) || 0) - (parseFloat(b.total_part) || 0));
-        case 'created_at_desc':
-        default:
-          return careData.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-    },
-
     applyFilters() {
-      this.currentPage = 1;
-      this.fetchCareData();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
 
     resetFilters() {
-      this.filters = {
-        care_customer: '',
-        order: '',
-        total_part: '',
-        price: '',
-        membership_status: '',
-        customer_id: '',
-        lkp_care_id: '',
-        date_from: '',
-        year: '',
-        month: '',
-        sortBy: 'created_at_desc'
-      };
-      this.perPage = 10;
-      this.currentPage = 1;
-      this.fetchCareData();
+      // The deep `filters` watcher picks this up and re-fetches.
+      this.filters = { ...EMPTY_FILTERS };
       this.stats = { ...this.allStats };
     },
 
@@ -1303,18 +965,11 @@ export default {
         if (filterKey === 'year') {
           this.filters.month = '';
         }
-        this.applyFilters();
       }
     },
 
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchCareData();
-    },
-
     refreshData() {
-      this.fetchCareData();
+      this.fetchList();
       this.fetchOverallStatistics();
       Swal.fire({
         title: 'Refreshed!',
@@ -1366,7 +1021,7 @@ export default {
       try {
         await axios.delete(`/api/care-data/${this.itemToDelete}`);
         Swal.fire('Deleted!', 'Care data has been deleted.', 'success');
-        this.fetchCareData();
+        this.fetchList();
         this.fetchOverallStatistics();
       } catch (error) {
         console.error('Error deleting care data:', error);
@@ -1400,13 +1055,13 @@ export default {
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
               <label class="form-check-label" for="exportFiltered">
-                Export filtered data (${this.filteredCount} records)
+                Export filtered data (${this.meta.total} records)
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exportScope" id="exportAll" value="all">
               <label class="form-check-label" for="exportAll">
-                Export all data (${this.total} records)
+                Export all data (${this.allStats.total_care_data || 0} records)
               </label>
             </div>
           </div>
@@ -1448,13 +1103,7 @@ export default {
         // Fetch data based on scope
         let dataToExport;
         if (scope === 'filtered') {
-          // For filtered data, use the getFilteredDataForExport method
-          dataToExport = this.getFilteredDataForExport();
-
-          // If no data from client-side filtering, try API call
-          if (!dataToExport || dataToExport.length === 0) {
-            dataToExport = await this.getAllFilteredData();
-          }
+          dataToExport = await this.getAllFilteredData();
         } else {
           // Fetch all data without any filters
           const params = { per_page: 10000 }; // Large number to get all records
@@ -1699,7 +1348,7 @@ export default {
                 <tr>
                     <td class="text-center">${index + 1}</td>
                     <td class="text-center">${this.escapeHtml(care.care_id || 'N/A')}</td>
-                    <td class="text-left">${this.escapeHtml(care.customer?.name || 'N/A')}</td>
+                    <td class="text-left">${this.escapeHtml(care.customer?.full_name || 'N/A')}</td>
                     <td class="text-center">${this.escapeHtml(this.getCustomerCode(care.customer))}</td>
                     <td class="text-center">${this.escapeHtml(care.customer?.email || 'N/A')}</td>
                     <td class="text-center">${this.escapeHtml(this.getOrderCode(care.order))}</td>
@@ -1767,131 +1416,22 @@ export default {
       }
     },
 
+    // Pulls every row matching the CURRENT filters from the API in one go.
+    // Previously this re-filtered/re-sorted the already-server-filtered
+    // response client-side, which meant an export could silently drop rows
+    // the server had legitimately matched. The server is now the single
+    // source of truth for which rows are "filtered".
     async getAllFilteredData() {
-      try {
-        // First try to use the already filtered data from client-side
-        const clientSideFiltered = this.getFilteredDataForExport();
+      const params = {
+        ...this.buildFilterParams(),
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        per_page: 10000,
+        page: 1
+      };
 
-        if (clientSideFiltered.length > 0) {
-          return clientSideFiltered;
-        }
-
-        // Fallback to API call
-        const params = {
-          ...this.filters,
-          per_page: 10000,
-          page: 1
-        };
-
-        // Remove empty filters
-        Object.keys(params).forEach(key => {
-          if (params[key] === '' || params[key] === null || params[key] === undefined) {
-            delete params[key];
-          }
-        });
-
-        const res = await axios.get('/api/care-data', { params });
-
-        // Handle response structure
-        let data = [];
-        if (res.data) {
-          if (res.data.success) {
-            data = res.data.data || [];
-          } else if (Array.isArray(res.data)) {
-            data = res.data;
-          } else if (res.data.data) {
-            data = res.data.data;
-          }
-        }
-
-        // Apply client-side filters as well to ensure consistency
-        if (data && data.length > 0) {
-          return this.applyClientSideFilters(data);
-        }
-
-        return data;
-
-      } catch (error) {
-        console.error('Error fetching filtered data:', error);
-        return this.getFilteredDataForExport();
-      }
-    },
-
-    // Helper method to apply the same filters as the table
-    applyClientSideFilters(data) {
-      let filtered = [...data];
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        const keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(care =>
-          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
-        );
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        const keyword = this.filters.order.toLowerCase();
-        filtered = filtered.filter(care =>
-          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
-        );
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        const wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
-      }
-
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(care => care.customer && care.customer.id == this.filters.customer_id);
-      }
-
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(care => care.care && care.care.id == this.filters.lkp_care_id);
-      }
-
-      if (this.filters.date_from) {
-        const dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(care => {
-          const careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-
-      if (this.filters.year) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(this.filters.year);
-        });
-      }
-
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(this.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-
-      return filtered;
+      const res = await axios.get('/api/care-data', { params });
+      return (res.data && res.data.data) || [];
     },
 
     escapeHtml(text) {
@@ -1909,17 +1449,8 @@ export default {
     generateFilterInfo() {
       const filterParts = [];
 
-      if (this.filters.care_customer) {
-        filterParts.push(`Care/Customer: "${this.filters.care_customer}"`);
-      }
-      if (this.filters.order) {
-        filterParts.push(`Order: "${this.filters.order}"`);
-      }
-      if (this.filters.total_part) {
-        filterParts.push(`Parts Value: "${this.filters.total_part}"`);
-      }
-      if (this.filters.price) {
-        filterParts.push(`Price: "${this.filters.price}"`);
+      if (this.filters.search) {
+        filterParts.push(`Search: "${this.filters.search}"`);
       }
 
       if (this.filters.membership_status !== '') {
@@ -1928,7 +1459,7 @@ export default {
 
       if (this.filters.customer_id) {
         const customer = this.customers.find(c => c.id == this.filters.customer_id);
-        filterParts.push(`Customer: ${customer ? customer.name : this.filters.customer_id}`);
+        filterParts.push(`Customer: ${customer ? customer.full_name : this.filters.customer_id}`);
       }
 
       if (this.filters.lkp_care_id) {
@@ -1936,8 +1467,8 @@ export default {
         filterParts.push(`Care Tier: ${care ? care.name : this.filters.lkp_care_id}`);
       }
 
-      if (this.filters.date_from) {
-        filterParts.push(`From Date: ${this.filters.date_from}`);
+      if (this.filters.created_from) {
+        filterParts.push(`From Date: ${this.filters.created_from}`);
       }
 
       if (this.filters.year) {
@@ -1951,7 +1482,7 @@ export default {
       return filterParts.length > 0 ? filterParts.join(' | ') : 'No active filters';
     },
 
-    generateSimpleCSV(scope) {
+    async generateSimpleCSV(scope) {
       Swal.fire({
         title: 'Generating CSV...',
         text: 'Please wait while we prepare your export',
@@ -1966,18 +1497,10 @@ export default {
         // Get data based on scope
         let dataToExport;
         if (scope === 'filtered') {
-          // Use client-side filtered data
-          dataToExport = this.getFilteredDataForExport();
-
-          // If no data from client-side, try to fetch from API
-          if (!dataToExport || dataToExport.length === 0) {
-            dataToExport = this.careData.filter(care => {
-              return this.matchesFilters(care);
-            });
-          }
+          dataToExport = await this.getAllFilteredData();
         } else {
-          // For all data, use all careData
-          dataToExport = this.careData;
+          const res = await axios.get('/api/care-data', { params: { per_page: 10000 } });
+          dataToExport = (res.data && res.data.data) || [];
         }
 
         if (!dataToExport || dataToExport.length === 0) {
@@ -2007,7 +1530,7 @@ export default {
           return [
             index + 1,
             care.care_id || '',
-            care.customer?.name || '',
+            care.customer?.full_name || '',
             this.getCustomerCode(care.customer),
             care.customer?.email || '',
             this.getOrderCode(care.order),
@@ -2065,171 +1588,10 @@ export default {
       }
     },
 
-    getFilteredDataForExport() {
-      // First, try to filter from the currently loaded careData
-      let filtered = this.careData.filter(care => this.matchesFilters(care));
-
-      // If we have filtered data, apply sorting
-      if (filtered.length > 0) {
-        return this.sortCareData(filtered);
-      }
-
-      // Fallback: apply filters manually
-      filtered = [...this.careData];
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        const keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(care =>
-          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
-        );
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        const keyword = this.filters.order.toLowerCase();
-        filtered = filtered.filter(care =>
-          care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword)
-        );
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(care => care.total_part && care.total_part.toString().includes(this.filters.total_part));
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(care => care.price && care.price.toString().includes(this.filters.price));
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        const wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(care => Boolean(care.membership_active) === wantActive);
-      }
-
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(care => care.customer && care.customer.id == this.filters.customer_id);
-      }
-
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(care => care.care && care.care.id == this.filters.lkp_care_id);
-      }
-
-      if (this.filters.date_from) {
-        const dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(care => {
-          const careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(this.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(care => {
-          if (!care.created_at) return false;
-          const careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(this.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-
-      return filtered;
-    },
-
-    // Helper method to check if a single care matches all filters
-    matchesFilters(care) {
-      // Check Care Details/Customer filter
-      if (this.filters.care_customer) {
-        const keyword = this.filters.care_customer.toLowerCase();
-        const matches = (
-          (care.care_id && care.care_id.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword)) ||
-          (care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword)) ||
-          (care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword))
-        );
-        if (!matches) return false;
-      }
-
-      // Check Order filter
-      if (this.filters.order) {
-        const keyword = this.filters.order.toLowerCase();
-        if (!(care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(keyword))) {
-          return false;
-        }
-      }
-
-      // Check Parts Value filter
-      if (this.filters.total_part) {
-        if (!(care.total_part && care.total_part.toString().includes(this.filters.total_part))) {
-          return false;
-        }
-      }
-
-      // Check Price filter
-      if (this.filters.price) {
-        if (!(care.price && care.price.toString().includes(this.filters.price))) {
-          return false;
-        }
-      }
-
-      // Check membership filter
-      if (this.filters.membership_status !== '') {
-        const wantActive = this.filters.membership_status === 'active';
-        if (Boolean(care.membership_active) !== wantActive) {
-          return false;
-        }
-      }
-
-      // Check other filters...
-      if (this.filters.customer_id && care.customer && care.customer.id != this.filters.customer_id) {
-        return false;
-      }
-
-      if (this.filters.lkp_care_id && care.care && care.care.id != this.filters.lkp_care_id) {
-        return false;
-      }
-
-      if (this.filters.date_from) {
-        const careDate = new Date(care.created_at);
-        const dateFrom = new Date(this.filters.date_from);
-        if (careDate < dateFrom) return false;
-      }
-
-      if (this.filters.year) {
-        if (!care.created_at) return false;
-        const careDate = new Date(care.created_at);
-        if (careDate.getFullYear() !== parseInt(this.filters.year)) return false;
-      }
-
-      if (this.filters.year && this.filters.month) {
-        if (!care.created_at) return false;
-        const careDate = new Date(care.created_at);
-        if (careDate.getMonth() + 1 !== parseInt(this.filters.month)) return false;
-      }
-
-      return true;
-    },
-
     exportStatistics() {
       const params = {
-        start_date: this.filters.date_from,
-        end_date: this.filters.date_to,
+        start_date: this.filters.created_from,
+        end_date: '',
         export: 'csv'
       };
 

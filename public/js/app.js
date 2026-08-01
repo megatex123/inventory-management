@@ -4068,6 +4068,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4077,21 +4080,41 @@ function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
 
+
+
+
+
+// Filter keys here are the API's own query-parameter names (see
+// CareDataController@index) -- the page sends them straight through, so the
+// server does all filtering/sorting/paginating and the client just renders
+// whatever page it gets back.
+var EMPTY_FILTERS = {
+  search: '',
+  membership_status: '',
+  customer_id: '',
+  lkp_care_id: '',
+  created_from: '',
+  year: '',
+  month: ''
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'CareDataIndex',
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       careData: [],
@@ -4102,41 +4125,24 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       loading: true,
       showFilters: false,
       filterColumns: [{
-        key: 'care_customer',
-        label: 'Care Details/Customer',
-        type: 'text'
-      }, {
-        key: 'order',
-        label: 'Order',
-        type: 'text'
-      }, {
-        key: 'total_part',
-        label: 'Parts Value',
-        type: 'text'
-      }, {
-        key: 'price',
-        label: 'Price',
+        key: 'search',
+        label: 'Care ID / Customer / Order / Value',
         type: 'text'
       }],
-      filters: {
-        care_customer: '',
-        order: '',
-        total_part: '',
-        price: '',
-        membership_status: '',
-        customer_id: '',
-        lkp_care_id: '',
-        date_from: '',
-        year: '',
-        month: '',
-        sortBy: 'created_at_desc'
-      },
+      filters: _objectSpread({}, EMPTY_FILTERS),
       availableYears: [],
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-      currentPage: 1,
-      perPage: 10,
-      total: 0,
-      filteredCount: 0,
+      meta: {
+        total: 0,
+        per_page: 15,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'care_data.created_at',
+        dir: 'desc'
+      },
+      summary: {},
       showStatistics: false,
       showDeleteModal: false,
       statistics: {},
@@ -4150,131 +4156,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var totalPart = this.stats.total_part || 0;
       return (totalPart / totalPrice * 100).toFixed(1);
     },
-    lastPage: function lastPage() {
-      return Math.ceil(this.filteredCount / this.perPage);
-    },
-    pages: function pages() {
-      var pages = [];
-      var totalPages = this.lastPage;
-      var startPage = Math.max(1, this.currentPage - 2);
-      var endPage = Math.min(totalPages, this.currentPage + 2);
-      if (totalPages > 5) {
-        if (this.currentPage <= 3) {
-          endPage = 5;
-        } else if (this.currentPage >= totalPages - 2) {
-          startPage = totalPages - 4;
-        }
-      }
-      for (var i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      return pages;
-    },
     hasActiveFilters: function hasActiveFilters() {
-      var _this = this;
-      return Object.values(this.filters).some(function (value, index) {
-        var key = Object.keys(_this.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'created_at_desc';
-        }
-        return value !== '';
-      });
+      return Object.keys(this.activeFilters).length > 0;
     },
     activeFilters: function activeFilters() {
-      var _this2 = this;
+      var _this = this;
       var active = {};
       Object.keys(this.filters).forEach(function (key) {
-        var value = _this2.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'created_at_desc')) {
-          if (key === 'month' && !_this2.filters.year) {
+        var value = _this.filters[key];
+        if (value !== '') {
+          if (key === 'month' && !_this.filters.year) {
             return;
           }
           active[key] = value;
         }
       });
       return active;
-    },
-    filteredCareData: function filteredCareData() {
-      var _this3 = this;
-      var filtered = this.careData;
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        var keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.care_id && care.care_id.toLowerCase().includes(keyword) || care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword) || care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword) || care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword);
-        });
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        var _keyword = this.filters.order.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(_keyword);
-        });
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(function (care) {
-          return care.total_part && care.total_part.toString().includes(_this3.filters.total_part);
-        });
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(function (care) {
-          return care.price && care.price.toString().includes(_this3.filters.price);
-        });
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        var wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(function (care) {
-          return Boolean(care.membership_active) === wantActive;
-        });
-      }
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(function (care) {
-          return care.customer && care.customer.id == _this3.filters.customer_id;
-        });
-      }
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(function (care) {
-          return care.care && care.care.id == _this3.filters.lkp_care_id;
-        });
-      }
-      if (this.filters.date_from) {
-        var dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(function (care) {
-          var careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(_this3.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(_this3.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-      this.filteredCount = filtered.length;
-      return filtered.slice((this.currentPage - 1) * this.perPage, this.currentPage * this.perPage);
     }
   },
   watch: {
@@ -4283,15 +4180,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         this.filters.month = '';
       }
     },
-    filteredCareData: {
-      handler: function handler(newFilteredData) {
-        this.updateStatistics(newFilteredData);
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
       },
       deep: true
     }
   },
   mounted: function mounted() {
-    this.fetchCareData();
+    this.fetchList();
     this.fetchCustomers();
     this.fetchCares();
     this.fetchOverallStatistics();
@@ -4367,282 +4264,116 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return 'badge-secondary';
     },
     getFilterLabel: function getFilterLabel(key, value) {
-      var _this4 = this;
-      var labels = {
-        membership_status: {
-          active: 'Membership: Active',
-          expired: 'Membership: Expired'
-        },
-        customer_id: function customer_id() {
-          var customer = _this4.customers.find(function (c) {
-            return c.id == value;
-          });
-          return "Customer: ".concat(customer ? customer.name : value);
-        },
-        lkp_care_id: function lkp_care_id() {
-          var care = _this4.cares.find(function (c) {
-            return c.id == value;
-          });
-          return "Care Tier: ".concat(care ? care.name : value);
-        },
-        date_from: "From: ".concat(value),
-        year: "Year: ".concat(value),
-        month: function month() {
-          var monthName = _this4.monthNames[value - 1] || value;
-          return "Month: ".concat(monthName);
-        },
-        sortBy: {
-          'created_at_desc': 'Sort: Date (Newest)',
-          'created_at_asc': 'Sort: Date (Oldest)',
-          'customer_name_asc': 'Sort: Customer A-Z',
-          'customer_name_desc': 'Sort: Customer Z-A',
-          'care_id_asc': 'Sort: Care ID A-Z',
-          'care_id_desc': 'Sort: Care ID Z-A',
-          'price_desc': 'Sort: Price High-Low',
-          'price_asc': 'Sort: Price Low-High',
-          'total_part_desc': 'Sort: Parts High-Low',
-          'total_part_asc': 'Sort: Parts Low-High'
-        }
-      };
-      if (key === 'care_customer') return "Care/Customer: \"".concat(value, "\"");
-      if (key === 'order') return "Order: \"".concat(value, "\"");
-      if (key === 'total_part') return "Parts Value: \"".concat(value, "\"");
-      if (key === 'price') return "Price: \"".concat(value, "\"");
-      if (key === 'date_from') return labels.date_from;
-      if (key === 'year') return labels.year;
-      if (key === 'month' && labels.month) {
-        return typeof labels.month === 'function' ? labels.month(value) : labels.month[value] || "".concat(key, ": ").concat(value);
+      if (key === 'search') return "Search: \"".concat(value, "\"");
+      if (key === 'created_from') return "From: ".concat(value);
+      if (key === 'year') return "Year: ".concat(value);
+      if (key === 'month') return "Month: ".concat(this.monthNames[value - 1] || value);
+      if (key === 'membership_status') {
+        return "Membership: ".concat(value === 'active' ? 'Active' : 'Expired');
       }
-      if (key === 'customer_id' && labels.customer_id) {
-        return labels.customer_id(value);
+      if (key === 'customer_id') {
+        var customer = this.customers.find(function (c) {
+          return c.id == value;
+        });
+        return "Customer: ".concat(customer ? customer.full_name : value);
       }
-      if (key === 'lkp_care_id' && labels.lkp_care_id) {
-        return labels.lkp_care_id(value);
-      }
-      if (labels[key] && labels[key][value]) {
-        return labels[key][value];
+      if (key === 'lkp_care_id') {
+        var care = this.cares.find(function (c) {
+          return c.id == value;
+        });
+        return "Care Tier: ".concat(care ? care.name : value);
       }
       return "".concat(key, ": ").concat(value);
     },
-    fetchCareData: function fetchCareData() {
-      var _this5 = this;
+    // Server-driven list fetch. Every filter/sort/page decision is made by
+    // the API (see CareDataController@index); this method only forwards the
+    // current UI state and renders whatever page comes back. It deliberately
+    // does NOT re-filter/re-sort/re-slice the response -- doing so was the
+    // cause of the page-2+ corruption this page used to have.
+    fetchList: function fetchList() {
+      var _this2 = this;
+      this.loading = true;
+      var params = _objectSpread({
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir
+      }, this.buildFilterParams());
+      return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data', {
+        params: params
+      }).then(function (res) {
+        _this2.careData = res.data.data || [];
+        _this2.meta = res.data.meta || _this2.meta;
+        _this2.summary = res.data.summary || {};
+        _this2.updateStatistics();
+      })["catch"](function (error) {
+        console.error('Error fetching care data:', error);
+        _this2.careData = [];
+        _this2.meta = {
+          total: 0,
+          per_page: _this2.meta.per_page,
+          current_page: 1,
+          last_page: 1
+        };
+        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load care data', 'error');
+      })["finally"](function () {
+        _this2.loading = false;
+      });
+    },
+    // Translates the UI filter state into the API's query parameters. `year`
+    // and `month` have no direct API equivalent, so they are expanded into
+    // the start_date/end_date range the controller understands.
+    buildFilterParams: function buildFilterParams() {
+      var params = {
+        search: this.filters.search,
+        membership_status: this.filters.membership_status,
+        customer_id: this.filters.customer_id,
+        lkp_care_id: this.filters.lkp_care_id,
+        created_from: this.filters.created_from
+      };
+      if (this.filters.year) {
+        var year = parseInt(this.filters.year, 10);
+        var month = this.filters.month ? parseInt(this.filters.month, 10) : null;
+        var start = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
+        var end = month ? new Date(year, month, 0) : new Date(year, 11, 31);
+        params.start_date = start.toISOString().split('T')[0];
+        params.end_date = end.toISOString().split('T')[0];
+      }
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '' || params[key] === null || params[key] === undefined) {
+          delete params[key];
+        }
+      });
+      return params;
+    },
+    fetchOverallStatistics: function fetchOverallStatistics() {
+      var _this3 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var params, response, altResponse, _t, _t2;
+        var response, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _this5.loading = true;
-              _context.p = 1;
-              params = _objectSpread({
-                page: _this5.currentPage,
-                per_page: _this5.perPage
-              }, _this5.filters); // Remove empty parameters
-              Object.keys(params).forEach(function (key) {
-                if (params[key] === '' || params[key] === null || params[key] === undefined) {
-                  delete params[key];
-                }
-              });
-              console.log('Fetching care data with params:', params);
-              _context.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data', {
-                params: params
-              });
-            case 2:
-              response = _context.v;
-              // Log full response for debugging
-              console.log('Full API response:', response);
-
-              // Handle different response structures
-              if (response.data) {
-                // Check for success flag (your controller returns this)
-                if (response.data.success !== undefined) {
-                  if (response.data.success) {
-                    _this5.careData = response.data.data || [];
-                    if (response.data.meta) {
-                      _this5.total = response.data.meta.total || 0;
-                      _this5.filteredCount = _this5.total;
-                    } else {
-                      _this5.total = response.data.total || _this5.careData.length;
-                      _this5.filteredCount = _this5.total;
-                    }
-                  } else {
-                    console.error('API returned error:', response.data.message);
-                    _this5.careData = [];
-                    _this5.total = 0;
-                    _this5.filteredCount = 0;
-                  }
-                }
-                // Check if data is directly in response
-                else if (response.data.data) {
-                  _this5.careData = response.data.data;
-                  _this5.total = response.data.total || response.data.data.length;
-                  _this5.filteredCount = _this5.total;
-                }
-                // Check if response is already an array
-                else if (Array.isArray(response.data)) {
-                  _this5.careData = response.data;
-                  _this5.total = response.data.length;
-                  _this5.filteredCount = _this5.total;
-                }
-                // Default case
-                else {
-                  console.warn('Unexpected response structure:', response.data);
-                  _this5.careData = [];
-                  _this5.total = 0;
-                  _this5.filteredCount = 0;
-                }
-              } else {
-                console.error('Empty API response');
-                _this5.careData = [];
-                _this5.total = 0;
-                _this5.filteredCount = 0;
-              }
-              console.log('Loaded care data:', _this5.careData.length, 'items');
-              if (_this5.careData.length > 0) {
-                console.log('Sample data:', _this5.careData[0]);
-              }
-              _this5.updateStatistics(_this5.careData);
-              _context.n = 7;
-              break;
-            case 3:
-              _context.p = 3;
-              _t = _context.v;
-              console.error('Error fetching care data:', _t);
-              if (_t.response) {
-                console.error('Response status:', _t.response.status);
-                console.error('Response data:', _t.response.data);
-                console.error('Response headers:', _t.response.headers);
-              } else if (_t.request) {
-                console.error('No response received:', _t.request);
-              } else {
-                console.error('Request setup error:', _t.message);
-              }
-
-              // Try alternative API endpoint structure
-              _context.p = 4;
-              console.log('Trying alternative API endpoint...');
-              _context.n = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data/index');
-            case 5:
-              altResponse = _context.v;
-              if (altResponse.data) {
-                _this5.careData = altResponse.data.data || altResponse.data;
-                _this5.total = _this5.careData.length;
-                _this5.filteredCount = _this5.total;
-                _this5.updateStatistics(_this5.careData);
-                console.log('Alternative API successful, loaded:', _this5.careData.length, 'items');
-              }
-              _context.n = 7;
-              break;
-            case 6:
-              _context.p = 6;
-              _t2 = _context.v;
-              console.error('Alternative API also failed:', _t2);
-
-              // TEMPORARY: Show dummy data for debugging
-              console.log('Using dummy data for debugging');
-              _this5.careData = [{
-                id: 1,
-                care_id: 'VIS-2712-0001',
-                customer_id: 1,
-                order_id: 1,
-                lkp_care_id: 1,
-                total_part: 100.50,
-                price: 150.00,
-                membership_active: true,
-                membership_remaining: '2 Years 0 Months 0 Days',
-                created_at: '2024-01-15T10:30:00',
-                customer: {
-                  id: 1,
-                  name: 'John Doe',
-                  email: 'john@example.com',
-                  customer_id: 'CUST001'
-                },
-                order: {
-                  id: 1,
-                  order_number: 'ORD001',
-                  total: 250.50
-                },
-                care: {
-                  id: 1,
-                  name: 'Vision Care',
-                  code: 'VIS'
-                }
-              }, {
-                id: 2,
-                care_id: 'PRM-2712-0002',
-                customer_id: 2,
-                order_id: 2,
-                lkp_care_id: 2,
-                total_part: 250.75,
-                price: 300.00,
-                membership_active: false,
-                membership_remaining: 'Expired',
-                created_at: '2024-01-16T14:45:00',
-                customer: {
-                  id: 2,
-                  name: 'Jane Smith',
-                  email: 'jane@example.com',
-                  customer_id: 'CUST002'
-                },
-                order: {
-                  id: 2,
-                  order_number: 'ORD002',
-                  total: 550.75
-                },
-                care: {
-                  id: 2,
-                  name: 'Premium Care',
-                  code: 'PRM'
-                }
-              }];
-              _this5.total = _this5.careData.length;
-              _this5.filteredCount = _this5.total;
-              _this5.updateStatistics(_this5.careData);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-                icon: 'warning',
-                title: 'API Connection Issue',
-                text: 'Using dummy data. Please check API configuration.',
-                timer: 5000
-              });
-            case 7:
-              _context.p = 7;
-              _this5.loading = false;
-              return _context.f(7);
-            case 8:
-              return _context.a(2);
-          }
-        }, _callee, null, [[4, 6], [1, 3, 7, 8]]);
-      }))();
-    },
-    fetchOverallStatistics: function fetchOverallStatistics() {
-      var _this6 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var response, _t3;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              _context2.p = 0;
-              _context2.n = 1;
+              _context.p = 0;
+              _context.n = 1;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data/statistics');
             case 1:
-              response = _context2.v;
+              response = _context.v;
               if (response.data && response.data.success) {
-                _this6.allStats = response.data.data || {};
-                _this6.stats = _objectSpread({}, _this6.allStats);
+                _this3.allStats = response.data.data || {};
+                _this3.stats = _objectSpread({}, _this3.allStats);
               } else if (response.data) {
                 // Handle direct data response
-                _this6.allStats = response.data;
-                _this6.stats = _objectSpread({}, _this6.allStats);
+                _this3.allStats = response.data;
+                _this3.stats = _objectSpread({}, _this3.allStats);
               }
-              _context2.n = 3;
+              _context.n = 3;
               break;
             case 2:
-              _context2.p = 2;
-              _t3 = _context2.v;
-              console.error('Error fetching overall statistics:', _t3);
+              _context.p = 2;
+              _t = _context.v;
+              console.error('Error fetching overall statistics:', _t);
               // Set default stats
-              _this6.allStats = {
+              _this3.allStats = {
                 total_care_data: 0,
                 total_price: 0,
                 total_part: 0,
@@ -4650,115 +4381,102 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 with_membership: 0,
                 without_membership: 0
               };
-              _this6.stats = _objectSpread({}, _this6.allStats);
+              _this3.stats = _objectSpread({}, _this3.allStats);
+            case 3:
+              return _context.a(2);
+          }
+        }, _callee, null, [[0, 2]]);
+      }))();
+    },
+    // Header stat cards. With no filters active these show the unfiltered
+    // /statistics figures; with filters active they show the server's
+    // `summary` block, which is computed across ALL matching rows -- not
+    // just the current page, which is what the old client-side version did.
+    updateStatistics: function updateStatistics() {
+      if (!this.hasActiveFilters) {
+        this.stats = _objectSpread({}, this.allStats);
+        return;
+      }
+      var summary = this.summary || {};
+      var totalCount = summary.total_count != null ? summary.total_count : this.meta.total || 0;
+      var totalPrice = parseFloat(summary.total_price) || 0;
+      this.stats = _objectSpread(_objectSpread({}, this.allStats), {}, {
+        total_care_data: totalCount,
+        total_price: totalPrice,
+        total_part: parseFloat(summary.total_part) || 0,
+        average_price: totalCount > 0 ? totalPrice / totalCount : 0
+      });
+    },
+    fetchCustomers: function fetchCustomers() {
+      var _this4 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var response, _t2;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              _context2.p = 0;
+              _context2.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
+            case 1:
+              response = _context2.v;
+              // Handle different response structures
+              if (response.data && response.data.success) {
+                _this4.customers = response.data.data || response.data;
+              } else if (Array.isArray(response.data)) {
+                _this4.customers = response.data;
+              } else if (response.data && response.data.data) {
+                _this4.customers = response.data.data;
+              } else {
+                _this4.customers = [];
+              }
+              console.log('Loaded customers:', _this4.customers.length);
+              _context2.n = 3;
+              break;
+            case 2:
+              _context2.p = 2;
+              _t2 = _context2.v;
+              console.error('Error fetching customers:', _t2);
+              _this4.customers = [];
             case 3:
               return _context2.a(2);
           }
         }, _callee2, null, [[0, 2]]);
       }))();
     },
-    updateStatistics: function updateStatistics(filteredData) {
-      if (!filteredData || filteredData.length === 0) {
-        this.stats = _objectSpread({}, this.allStats);
-        return;
-      }
-      var totalCareData = filteredData.length;
-      var totalPrice = filteredData.reduce(function (sum, care) {
-        return sum + (parseFloat(care.price) || 0);
-      }, 0);
-      var totalPart = filteredData.reduce(function (sum, care) {
-        return sum + (parseFloat(care.total_part) || 0);
-      }, 0);
-      var withMembership = filteredData.filter(function (care) {
-        return care.membership_active;
-      }).length;
-      var withoutMembership = totalCareData - withMembership;
-      var today = new Date().toISOString().split('T')[0];
-      var todayCareData = filteredData.filter(function (care) {
-        if (!care.created_at) return false;
-        var careDate = new Date(care.created_at).toISOString().split('T')[0];
-        return careDate === today;
-      }).length;
-      this.stats = {
-        total_care_data: totalCareData,
-        today_care_data: todayCareData,
-        total_price: totalPrice,
-        total_part: totalPart,
-        average_price: totalCareData > 0 ? totalPrice / totalCareData : 0,
-        with_membership: withMembership,
-        without_membership: withoutMembership
-      };
-    },
-    fetchCustomers: function fetchCustomers() {
-      var _this7 = this;
+    fetchCares: function fetchCares() {
+      var _this5 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var response, _t4;
+        var response, _t3;
         return _regenerator().w(function (_context3) {
           while (1) switch (_context3.p = _context3.n) {
             case 0:
               _context3.p = 0;
               _context3.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care/all');
             case 1:
               response = _context3.v;
               // Handle different response structures
               if (response.data && response.data.success) {
-                _this7.customers = response.data.data || response.data;
+                _this5.cares = response.data.data || response.data;
               } else if (Array.isArray(response.data)) {
-                _this7.customers = response.data;
+                _this5.cares = response.data;
               } else if (response.data && response.data.data) {
-                _this7.customers = response.data.data;
+                _this5.cares = response.data.data;
               } else {
-                _this7.customers = [];
+                _this5.cares = [];
               }
-              console.log('Loaded customers:', _this7.customers.length);
+              console.log('Loaded cares:', _this5.cares.length);
               _context3.n = 3;
               break;
             case 2:
               _context3.p = 2;
-              _t4 = _context3.v;
-              console.error('Error fetching customers:', _t4);
-              _this7.customers = [];
+              _t3 = _context3.v;
+              console.error('Error fetching cares:', _t3);
+              _this5.cares = [];
             case 3:
               return _context3.a(2);
           }
         }, _callee3, null, [[0, 2]]);
-      }))();
-    },
-    fetchCares: function fetchCares() {
-      var _this8 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-        var response, _t5;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
-            case 0:
-              _context4.p = 0;
-              _context4.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care/all');
-            case 1:
-              response = _context4.v;
-              // Handle different response structures
-              if (response.data && response.data.success) {
-                _this8.cares = response.data.data || response.data;
-              } else if (Array.isArray(response.data)) {
-                _this8.cares = response.data;
-              } else if (response.data && response.data.data) {
-                _this8.cares = response.data.data;
-              } else {
-                _this8.cares = [];
-              }
-              console.log('Loaded cares:', _this8.cares.length);
-              _context4.n = 3;
-              break;
-            case 2:
-              _context4.p = 2;
-              _t5 = _context4.v;
-              console.error('Error fetching cares:', _t5);
-              _this8.cares = [];
-            case 3:
-              return _context4.a(2);
-          }
-        }, _callee4, null, [[0, 2]]);
       }))();
     },
     extractAvailableYears: function extractAvailableYears() {
@@ -4768,76 +4486,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         this.availableYears.push(year);
       }
     },
-    sortCareData: function sortCareData(careData) {
-      switch (this.filters.sortBy) {
-        case 'created_at_asc':
-          return careData.slice().sort(function (a, b) {
-            return new Date(a.created_at) - new Date(b.created_at);
-          });
-        case 'customer_name_asc':
-          return careData.slice().sort(function (a, b) {
-            var nameA = a.customer ? a.customer.name || '' : '';
-            var nameB = b.customer ? b.customer.name || '' : '';
-            return nameA.localeCompare(nameB);
-          });
-        case 'customer_name_desc':
-          return careData.slice().sort(function (a, b) {
-            var nameA = a.customer ? a.customer.name || '' : '';
-            var nameB = b.customer ? b.customer.name || '' : '';
-            return nameB.localeCompare(nameA);
-          });
-        case 'care_id_asc':
-          return careData.slice().sort(function (a, b) {
-            return (a.care_id || '').localeCompare(b.care_id || '');
-          });
-        case 'care_id_desc':
-          return careData.slice().sort(function (a, b) {
-            return (b.care_id || '').localeCompare(a.care_id || '');
-          });
-        case 'price_desc':
-          return careData.slice().sort(function (a, b) {
-            return (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0);
-          });
-        case 'price_asc':
-          return careData.slice().sort(function (a, b) {
-            return (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0);
-          });
-        case 'total_part_desc':
-          return careData.slice().sort(function (a, b) {
-            return (parseFloat(b.total_part) || 0) - (parseFloat(a.total_part) || 0);
-          });
-        case 'total_part_asc':
-          return careData.slice().sort(function (a, b) {
-            return (parseFloat(a.total_part) || 0) - (parseFloat(b.total_part) || 0);
-          });
-        case 'created_at_desc':
-        default:
-          return careData.slice().sort(function (a, b) {
-            return new Date(b.created_at) - new Date(a.created_at);
-          });
-      }
-    },
     applyFilters: function applyFilters() {
-      this.currentPage = 1;
-      this.fetchCareData();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     resetFilters: function resetFilters() {
-      this.filters = {
-        care_customer: '',
-        order: '',
-        total_part: '',
-        price: '',
-        membership_status: '',
-        customer_id: '',
-        lkp_care_id: '',
-        date_from: '',
-        year: '',
-        month: '',
-        sortBy: 'created_at_desc'
-      };
-      this.perPage = 10;
-      this.currentPage = 1;
-      this.fetchCareData();
+      // The deep `filters` watcher picks this up and re-fetches.
+      this.filters = _objectSpread({}, EMPTY_FILTERS);
       this.stats = _objectSpread({}, this.allStats);
     },
     removeFilter: function removeFilter(filterKey) {
@@ -4846,16 +4501,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (filterKey === 'year') {
           this.filters.month = '';
         }
-        this.applyFilters();
       }
     },
-    changePage: function changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchCareData();
-    },
     refreshData: function refreshData() {
-      this.fetchCareData();
+      this.fetchList();
       this.fetchOverallStatistics();
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Refreshed!',
@@ -4870,32 +4519,32 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.fetchDetailedStatistics();
     },
     fetchDetailedStatistics: function fetchDetailedStatistics() {
-      var _this9 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        var response, _t6;
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.p = _context5.n) {
+      var _this6 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+        var response, _t4;
+        return _regenerator().w(function (_context4) {
+          while (1) switch (_context4.p = _context4.n) {
             case 0:
-              _this9.statisticsLoading = true;
-              _context5.p = 1;
-              _context5.n = 2;
+              _this6.statisticsLoading = true;
+              _context4.p = 1;
+              _context4.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data/statistics');
             case 2:
-              response = _context5.v;
+              response = _context4.v;
               if (response.data && response.data.success) {
-                _this9.statistics = response.data.data || {};
+                _this6.statistics = response.data.data || {};
               } else {
-                _this9.statistics = response.data || {};
+                _this6.statistics = response.data || {};
               }
-              _context5.n = 4;
+              _context4.n = 4;
               break;
             case 3:
-              _context5.p = 3;
-              _t6 = _context5.v;
-              console.error('Error fetching statistics:', _t6);
+              _context4.p = 3;
+              _t4 = _context4.v;
+              console.error('Error fetching statistics:', _t4);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load statistics', 'error');
               // Set empty statistics
-              _this9.statistics = {
+              _this6.statistics = {
                 total_care_data: 0,
                 total_price: 0,
                 total_part: 0,
@@ -4908,13 +4557,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 care_type_stats: []
               };
             case 4:
-              _context5.p = 4;
-              _this9.statisticsLoading = false;
-              return _context5.f(4);
+              _context4.p = 4;
+              _this6.statisticsLoading = false;
+              return _context4.f(4);
             case 5:
-              return _context5.a(2);
+              return _context4.a(2);
           }
-        }, _callee5, null, [[1, 3, 4, 5]]);
+        }, _callee4, null, [[1, 3, 4, 5]]);
       }))();
     },
     deleteCareData: function deleteCareData(id) {
@@ -4922,42 +4571,42 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.showDeleteModal = true;
     },
     confirmDelete: function confirmDelete() {
-      var _this0 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var _t7;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.p = _context6.n) {
+      var _this7 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+        var _t5;
+        return _regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
             case 0:
-              _context6.p = 0;
-              _context6.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/care-data/".concat(_this0.itemToDelete));
+              _context5.p = 0;
+              _context5.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/care-data/".concat(_this7.itemToDelete));
             case 1:
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Care data has been deleted.', 'success');
-              _this0.fetchCareData();
-              _this0.fetchOverallStatistics();
-              _context6.n = 3;
+              _this7.fetchList();
+              _this7.fetchOverallStatistics();
+              _context5.n = 3;
               break;
             case 2:
-              _context6.p = 2;
-              _t7 = _context6.v;
-              console.error('Error deleting care data:', _t7);
+              _context5.p = 2;
+              _t5 = _context5.v;
+              console.error('Error deleting care data:', _t5);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete care data', 'error');
             case 3:
-              _context6.p = 3;
-              _this0.showDeleteModal = false;
-              _this0.itemToDelete = null;
-              return _context6.f(3);
+              _context5.p = 3;
+              _this7.showDeleteModal = false;
+              _this7.itemToDelete = null;
+              return _context5.f(3);
             case 4:
-              return _context6.a(2);
+              return _context5.a(2);
           }
-        }, _callee6, null, [[0, 2, 3, 4]]);
+        }, _callee5, null, [[0, 2, 3, 4]]);
       }))();
     },
     exportToCSV: function exportToCSV() {
-      var _this1 = this;
+      var _this8 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Export Options',
-        html: "\n          <div class=\"text-left\">\n            <p>Choose export format:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n              <label class=\"form-check-label\" for=\"formatExcel\">\n                Excel/HTML Format (Styled Report)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n              <label class=\"form-check-label\" for=\"formatCSV\">\n                Simple CSV Format\n              </label>\n            </div>\n            <br>\n            <p>Choose what to export:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n              <label class=\"form-check-label\" for=\"exportFiltered\">\n                Export filtered data (".concat(this.filteredCount, " records)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n              <label class=\"form-check-label\" for=\"exportAll\">\n                Export all data (").concat(this.total, " records)\n              </label>\n            </div>\n          </div>\n        "),
+        html: "\n          <div class=\"text-left\">\n            <p>Choose export format:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n              <label class=\"form-check-label\" for=\"formatExcel\">\n                Excel/HTML Format (Styled Report)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n              <label class=\"form-check-label\" for=\"formatCSV\">\n                Simple CSV Format\n              </label>\n            </div>\n            <br>\n            <p>Choose what to export:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n              <label class=\"form-check-label\" for=\"exportFiltered\">\n                Export filtered data (".concat(this.meta.total, " records)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n              <label class=\"form-check-label\" for=\"exportAll\">\n                Export all data (").concat(this.allStats.total_care_data || 0, " records)\n              </label>\n            </div>\n          </div>\n        "),
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
@@ -4976,19 +4625,19 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             format = _result$value.format,
             scope = _result$value.scope;
           if (format === 'excel') {
-            _this1.generateStyledExcelReport(scope);
+            _this8.generateStyledExcelReport(scope);
           } else {
-            _this1.generateSimpleCSV(scope);
+            _this8.generateSimpleCSV(scope);
           }
         }
       });
     },
     generateStyledExcelReport: function generateStyledExcelReport(scope) {
-      var _this10 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
-        var dataToExport, params, res, exportDate, totalRecords, totalPrice, totalPart, withMembership, withoutMembership, filterInfo, htmlContent, blob, url, link, date, filename, _error$response, _t8;
-        return _regenerator().w(function (_context7) {
-          while (1) switch (_context7.p = _context7.n) {
+      var _this9 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+        var dataToExport, params, res, exportDate, totalRecords, totalPrice, totalPart, withMembership, withoutMembership, filterInfo, htmlContent, blob, url, link, date, filename, _error$response, _t6;
+        return _regenerator().w(function (_context6) {
+          while (1) switch (_context6.p = _context6.n) {
             case 0:
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Generating Report...',
@@ -4999,47 +4648,38 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                   sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.showLoading();
                 }
               });
-              _context7.p = 1;
+              _context6.p = 1;
               if (!(scope === 'filtered')) {
-                _context7.n = 4;
+                _context6.n = 3;
                 break;
               }
-              // For filtered data, use the getFilteredDataForExport method
-              dataToExport = _this10.getFilteredDataForExport();
-
-              // If no data from client-side filtering, try API call
-              if (!(!dataToExport || dataToExport.length === 0)) {
-                _context7.n = 3;
-                break;
-              }
-              _context7.n = 2;
-              return _this10.getAllFilteredData();
+              _context6.n = 2;
+              return _this9.getAllFilteredData();
             case 2:
-              dataToExport = _context7.v;
-            case 3:
-              _context7.n = 6;
+              dataToExport = _context6.v;
+              _context6.n = 5;
               break;
-            case 4:
+            case 3:
               // Fetch all data without any filters
               params = {
                 per_page: 10000
               }; // Large number to get all records
-              _context7.n = 5;
+              _context6.n = 4;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data', {
                 params: params
               });
-            case 5:
-              res = _context7.v;
+            case 4:
+              res = _context6.v;
               dataToExport = res.data.data || [];
-            case 6:
+            case 5:
               if (!(!dataToExport || dataToExport.length === 0)) {
-                _context7.n = 7;
+                _context6.n = 6;
                 break;
               }
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('No Data', 'There is no data to export', 'warning');
-              return _context7.a(2);
-            case 7:
+              return _context6.a(2);
+            case 6:
               // Generate HTML content with styling
               exportDate = new Date().toLocaleString('en-MY', {
                 year: 'numeric',
@@ -5059,10 +4699,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 return care.membership_active;
               }).length;
               withoutMembership = totalRecords - withMembership; // Generate filter info string
-              filterInfo = _this10.generateFilterInfo(); // Create HTML content
+              filterInfo = _this9.generateFilterInfo(); // Create HTML content
               htmlContent = "\n<!DOCTYPE html>\n<html>\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\" />\n    <title>QuiviCare Report</title>\n    <style type=\"text/css\">\n        body {\n            font-family: Arial, Helvetica, sans-serif;\n            margin: 20px;\n        }\n\n        .report-title {\n            text-align: center;\n            font-size: 24px;\n            font-weight: bold;\n            color: #2c3e50;\n            margin-bottom: 10px;\n        }\n\n        .report-subtitle {\n            text-align: center;\n            font-size: 16px;\n            color: #7f8c8d;\n            margin-bottom: 20px;\n        }\n\n        .report-info {\n            background-color: #f8f9fa;\n            border: 1px solid #dee2e6;\n            border-radius: 5px;\n            padding: 15px;\n            margin-bottom: 20px;\n        }\n\n        .info-row {\n            display: flex;\n            justify-content: space-between;\n            margin-bottom: 5px;\n        }\n\n        .info-label {\n            font-weight: bold;\n            color: #495057;\n        }\n\n        .info-value {\n            color: #6c757d;\n        }\n\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n            font-size: 12px;\n        }\n\n        td, th {\n            border: 1px solid #ddd;\n            padding: 8px;\n            text-align: center;\n        }\n\n        tr:nth-child(even) {\n            background-color: #f2f2f2;\n        }\n\n        tr:hover {\n            background-color: #ddd;\n        }\n\n        th {\n            padding-top: 12px;\n            padding-bottom: 12px;\n            background-color: #b0e0e6;\n            color: black;\n            font-weight: bold;\n        }\n\n        .header-title {\n            text-align: center;\n            font-size: 16px;\n            font-weight: bold;\n            background-color: #e8ec7e;\n            color: black;\n            padding: 10px;\n        }\n\n        .subtitle {\n            font-size: 11px;\n            text-align: center;\n            padding: 8px;\n            background-color: #f0f0f0;\n        }\n\n        .total-row {\n            font-weight: bold;\n            background-color: #b0e0e6;\n        }\n\n        .text-center {\n            text-align: center;\n        }\n\n        .text-right {\n            text-align: right;\n        }\n\n        .text-left {\n            text-align: left;\n        }\n\n        .summary-section {\n            background-color: #e8f4f8;\n            border: 1px solid #b0e0e6;\n            border-radius: 5px;\n            padding: 15px;\n            margin: 20px 0;\n        }\n\n        .summary-title {\n            font-size: 18px;\n            font-weight: bold;\n            color: #2c3e50;\n            margin-bottom: 10px;\n            text-align: center;\n        }\n\n        .summary-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 15px;\n        }\n\n        .summary-item {\n            background-color: white;\n            border: 1px solid #dee2e6;\n            border-radius: 5px;\n            padding: 10px;\n            text-align: center;\n        }\n\n        .summary-value {\n            font-size: 24px;\n            font-weight: bold;\n            color: #3498db;\n        }\n\n        .summary-label {\n            font-size: 12px;\n            color: #7f8c8d;\n            text-transform: uppercase;\n            margin-top: 5px;\n        }\n\n        .membership-yes {\n            color: #28a745;\n            font-weight: bold;\n        }\n\n        .membership-no {\n            color: #6c757d;\n        }\n\n        .footer {\n            text-align: center;\n            font-size: 10px;\n            color: #95a5a6;\n            margin-top: 30px;\n            padding-top: 10px;\n            border-top: 1px solid #ecf0f1;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"book\">\n        <div class=\"page\">\n            <h1 class=\"report-title\">QUIVICARE REPORT</h1>\n            <h4 class=\"report-subtitle\"></h4>\n\n            <table>\n                <tr>\n                    <th colspan=\"11\" class=\"header-title\">\n                        CARE DATA DETAILED LIST\n                    </th>\n                </tr>\n                <tr>\n                    <td colspan=\"11\" class=\"subtitle\">\n                        Records: ".concat(totalRecords, " | Export Date: ").concat(exportDate, " |\n                        ").concat(scope === 'filtered' ? 'Filtered Data' : 'All Data', "\n                    </td>\n                </tr>\n                <tr class=\"total-row\">\n                    <th>No.</th>\n                    <th>Care ID</th>\n                    <th>Customer Name</th>\n                    <th>Customer ID</th>\n                    <th>Email</th>\n                    <th>Order Number</th>\n                    <th>Care Tier</th>\n                    <th>Parts Value</th>\n                    <th>Price</th>\n                    <th>Membership Update</th>\n                    <th>Created Date</th>\n                </tr>\n                ").concat(dataToExport.map(function (care, index) {
                 var _care$customer, _care$customer2, _care$care;
-                return "\n                <tr>\n                    <td class=\"text-center\">".concat(index + 1, "</td>\n                    <td class=\"text-center\">").concat(_this10.escapeHtml(care.care_id || 'N/A'), "</td>\n                    <td class=\"text-left\">").concat(_this10.escapeHtml(((_care$customer = care.customer) === null || _care$customer === void 0 ? void 0 : _care$customer.name) || 'N/A'), "</td>\n                    <td class=\"text-center\">").concat(_this10.escapeHtml(_this10.getCustomerCode(care.customer)), "</td>\n                    <td class=\"text-center\">").concat(_this10.escapeHtml(((_care$customer2 = care.customer) === null || _care$customer2 === void 0 ? void 0 : _care$customer2.email) || 'N/A'), "</td>\n                    <td class=\"text-center\">").concat(_this10.escapeHtml(_this10.getOrderCode(care.order)), "</td>\n                    <td class=\"text-center\">").concat(_this10.escapeHtml(((_care$care = care.care) === null || _care$care === void 0 ? void 0 : _care$care.name) || 'N/A'), "</td>\n                    <td class=\"text-right\">RM").concat(parseFloat(care.total_part || 0).toFixed(2), "</td>\n                    <td class=\"text-right\">RM").concat(parseFloat(care.price || 0).toFixed(2), "</td>\n                    <td class=\"text-center ").concat(care.membership_active ? 'membership-yes' : 'membership-no', "\">\n                        ").concat(care.membership_active ? 'Yes' : 'No', "\n                    </td>\n                    <td class=\"text-center\">").concat(_this10.formatDate(care.created_at), "</td>\n                </tr>\n                ");
+                return "\n                <tr>\n                    <td class=\"text-center\">".concat(index + 1, "</td>\n                    <td class=\"text-center\">").concat(_this9.escapeHtml(care.care_id || 'N/A'), "</td>\n                    <td class=\"text-left\">").concat(_this9.escapeHtml(((_care$customer = care.customer) === null || _care$customer === void 0 ? void 0 : _care$customer.full_name) || 'N/A'), "</td>\n                    <td class=\"text-center\">").concat(_this9.escapeHtml(_this9.getCustomerCode(care.customer)), "</td>\n                    <td class=\"text-center\">").concat(_this9.escapeHtml(((_care$customer2 = care.customer) === null || _care$customer2 === void 0 ? void 0 : _care$customer2.email) || 'N/A'), "</td>\n                    <td class=\"text-center\">").concat(_this9.escapeHtml(_this9.getOrderCode(care.order)), "</td>\n                    <td class=\"text-center\">").concat(_this9.escapeHtml(((_care$care = care.care) === null || _care$care === void 0 ? void 0 : _care$care.name) || 'N/A'), "</td>\n                    <td class=\"text-right\">RM").concat(parseFloat(care.total_part || 0).toFixed(2), "</td>\n                    <td class=\"text-right\">RM").concat(parseFloat(care.price || 0).toFixed(2), "</td>\n                    <td class=\"text-center ").concat(care.membership_active ? 'membership-yes' : 'membership-no', "\">\n                        ").concat(care.membership_active ? 'Yes' : 'No', "\n                    </td>\n                    <td class=\"text-center\">").concat(_this9.formatDate(care.created_at), "</td>\n                </tr>\n                ");
               }).join(''), "\n\n                <tr class=\"total-row\">\n                    <td colspan=\"7\" class=\"text-center\">TOTAL</td>\n                    <td class=\"text-right\">RM").concat(totalPart.toFixed(2), "</td>\n                    <td class=\"text-right\">RM").concat(totalPrice.toFixed(2), "</td>\n                    <td class=\"text-center\">").concat(withMembership, " / ").concat(withoutMembership, "</td>\n                    <td colspan=\"1\"></td>\n                </tr>\n            </table>\n\n            <div class=\"footer\">\n                <p>Generated by QuiviCare Management System | ").concat(exportDate, "</p>\n                <p>This is a computer-generated report. No signature is required.</p>\n            </div>\n        </div>\n    </div>\n</body>\n</html>"); // Create and download the file
               blob = new Blob([htmlContent], {
                 type: 'application/vnd.ms-excel'
@@ -5087,161 +4727,51 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 timer: 2000,
                 showConfirmButton: false
               });
-              _context7.n = 9;
+              _context6.n = 8;
               break;
-            case 8:
-              _context7.p = 8;
-              _t8 = _context7.v;
-              console.error('Export error:', _t8);
+            case 7:
+              _context6.p = 7;
+              _t6 = _context6.v;
+              console.error('Export error:', _t6);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Export Failed!',
-                text: ((_error$response = _t8.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || _t8.message || 'Failed to generate report',
+                text: ((_error$response = _t6.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || _t6.message || 'Failed to generate report',
                 icon: 'error'
               });
-            case 9:
-              return _context7.a(2);
+            case 8:
+              return _context6.a(2);
           }
-        }, _callee7, null, [[1, 8]]);
+        }, _callee6, null, [[1, 7]]);
       }))();
     },
+    // Pulls every row matching the CURRENT filters from the API in one go.
+    // Previously this re-filtered/re-sorted the already-server-filtered
+    // response client-side, which meant an export could silently drop rows
+    // the server had legitimately matched. The server is now the single
+    // source of truth for which rows are "filtered".
     getAllFilteredData: function getAllFilteredData() {
-      var _this11 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-        var clientSideFiltered, params, res, data, _t9;
-        return _regenerator().w(function (_context8) {
-          while (1) switch (_context8.p = _context8.n) {
+      var _this0 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+        var params, res;
+        return _regenerator().w(function (_context7) {
+          while (1) switch (_context7.n) {
             case 0:
-              _context8.p = 0;
-              // First try to use the already filtered data from client-side
-              clientSideFiltered = _this11.getFilteredDataForExport();
-              if (!(clientSideFiltered.length > 0)) {
-                _context8.n = 1;
-                break;
-              }
-              return _context8.a(2, clientSideFiltered);
-            case 1:
-              // Fallback to API call
-              params = _objectSpread(_objectSpread({}, _this11.filters), {}, {
+              params = _objectSpread(_objectSpread({}, _this0.buildFilterParams()), {}, {
+                sort_by: _this0.sortState.key,
+                sort_dir: _this0.sortState.dir,
                 per_page: 10000,
                 page: 1
-              }); // Remove empty filters
-              Object.keys(params).forEach(function (key) {
-                if (params[key] === '' || params[key] === null || params[key] === undefined) {
-                  delete params[key];
-                }
               });
-              _context8.n = 2;
+              _context7.n = 1;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data', {
                 params: params
               });
-            case 2:
-              res = _context8.v;
-              // Handle response structure
-              data = [];
-              if (res.data) {
-                if (res.data.success) {
-                  data = res.data.data || [];
-                } else if (Array.isArray(res.data)) {
-                  data = res.data;
-                } else if (res.data.data) {
-                  data = res.data.data;
-                }
-              }
-
-              // Apply client-side filters as well to ensure consistency
-              if (!(data && data.length > 0)) {
-                _context8.n = 3;
-                break;
-              }
-              return _context8.a(2, _this11.applyClientSideFilters(data));
-            case 3:
-              return _context8.a(2, data);
-            case 4:
-              _context8.p = 4;
-              _t9 = _context8.v;
-              console.error('Error fetching filtered data:', _t9);
-              return _context8.a(2, _this11.getFilteredDataForExport());
+            case 1:
+              res = _context7.v;
+              return _context7.a(2, res.data && res.data.data || []);
           }
-        }, _callee8, null, [[0, 4]]);
+        }, _callee7);
       }))();
-    },
-    // Helper method to apply the same filters as the table
-    applyClientSideFilters: function applyClientSideFilters(data) {
-      var _this12 = this;
-      var filtered = _toConsumableArray(data);
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        var keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.care_id && care.care_id.toLowerCase().includes(keyword) || care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword) || care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword) || care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword);
-        });
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        var _keyword2 = this.filters.order.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(_keyword2);
-        });
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(function (care) {
-          return care.total_part && care.total_part.toString().includes(_this12.filters.total_part);
-        });
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(function (care) {
-          return care.price && care.price.toString().includes(_this12.filters.price);
-        });
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        var wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(function (care) {
-          return Boolean(care.membership_active) === wantActive;
-        });
-      }
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(function (care) {
-          return care.customer && care.customer.id == _this12.filters.customer_id;
-        });
-      }
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(function (care) {
-          return care.care && care.care.id == _this12.filters.lkp_care_id;
-        });
-      }
-      if (this.filters.date_from) {
-        var dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(function (care) {
-          var careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-      if (this.filters.year) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(_this12.filters.year);
-        });
-      }
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(_this12.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-      return filtered;
     },
     escapeHtml: function escapeHtml(text) {
       if (!text) return '';
@@ -5257,37 +4787,28 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     generateFilterInfo: function generateFilterInfo() {
-      var _this13 = this;
+      var _this1 = this;
       var filterParts = [];
-      if (this.filters.care_customer) {
-        filterParts.push("Care/Customer: \"".concat(this.filters.care_customer, "\""));
-      }
-      if (this.filters.order) {
-        filterParts.push("Order: \"".concat(this.filters.order, "\""));
-      }
-      if (this.filters.total_part) {
-        filterParts.push("Parts Value: \"".concat(this.filters.total_part, "\""));
-      }
-      if (this.filters.price) {
-        filterParts.push("Price: \"".concat(this.filters.price, "\""));
+      if (this.filters.search) {
+        filterParts.push("Search: \"".concat(this.filters.search, "\""));
       }
       if (this.filters.membership_status !== '') {
         filterParts.push("Membership: ".concat(this.filters.membership_status === 'active' ? 'Active' : 'Expired'));
       }
       if (this.filters.customer_id) {
         var customer = this.customers.find(function (c) {
-          return c.id == _this13.filters.customer_id;
+          return c.id == _this1.filters.customer_id;
         });
-        filterParts.push("Customer: ".concat(customer ? customer.name : this.filters.customer_id));
+        filterParts.push("Customer: ".concat(customer ? customer.full_name : this.filters.customer_id));
       }
       if (this.filters.lkp_care_id) {
         var care = this.cares.find(function (c) {
-          return c.id == _this13.filters.lkp_care_id;
+          return c.id == _this1.filters.lkp_care_id;
         });
         filterParts.push("Care Tier: ".concat(care ? care.name : this.filters.lkp_care_id));
       }
-      if (this.filters.date_from) {
-        filterParts.push("From Date: ".concat(this.filters.date_from));
+      if (this.filters.created_from) {
+        filterParts.push("From Date: ".concat(this.filters.created_from));
       }
       if (this.filters.year) {
         var yearFilter = "Year: ".concat(this.filters.year);
@@ -5299,249 +4820,108 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return filterParts.length > 0 ? filterParts.join(' | ') : 'No active filters';
     },
     generateSimpleCSV: function generateSimpleCSV(scope) {
-      var _this14 = this;
-      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-        title: 'Generating CSV...',
-        text: 'Please wait while we prepare your export',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: function didOpen() {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.showLoading();
-        }
-      });
-      try {
-        // Get data based on scope
-        var dataToExport;
-        if (scope === 'filtered') {
-          // Use client-side filtered data
-          dataToExport = this.getFilteredDataForExport();
+      var _this10 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+        var dataToExport, res, headers, rows, csvContent, BOM, blob, url, link, date, filename, _t7;
+        return _regenerator().w(function (_context8) {
+          while (1) switch (_context8.p = _context8.n) {
+            case 0:
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+                title: 'Generating CSV...',
+                text: 'Please wait while we prepare your export',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: function didOpen() {
+                  sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.showLoading();
+                }
+              });
+              _context8.p = 1;
+              if (!(scope === 'filtered')) {
+                _context8.n = 3;
+                break;
+              }
+              _context8.n = 2;
+              return _this10.getAllFilteredData();
+            case 2:
+              dataToExport = _context8.v;
+              _context8.n = 5;
+              break;
+            case 3:
+              _context8.n = 4;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/care-data', {
+                params: {
+                  per_page: 10000
+                }
+              });
+            case 4:
+              res = _context8.v;
+              dataToExport = res.data && res.data.data || [];
+            case 5:
+              if (!(!dataToExport || dataToExport.length === 0)) {
+                _context8.n = 6;
+                break;
+              }
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('No Data', 'There is no data to export', 'warning');
+              return _context8.a(2);
+            case 6:
+              // Define CSV headers
+              headers = ['No.', 'Care ID', 'Customer Name', 'Customer ID', 'Email', 'Order Number', 'Order Total', 'Care Tier', 'Parts Value', 'Price', 'Membership Update', 'Created Date']; // Prepare CSV rows
+              rows = dataToExport.map(function (care, index) {
+                var _care$customer3, _care$customer4, _care$order, _care$care2;
+                return [index + 1, care.care_id || '', ((_care$customer3 = care.customer) === null || _care$customer3 === void 0 ? void 0 : _care$customer3.full_name) || '', _this10.getCustomerCode(care.customer), ((_care$customer4 = care.customer) === null || _care$customer4 === void 0 ? void 0 : _care$customer4.email) || '', _this10.getOrderCode(care.order), ((_care$order = care.order) === null || _care$order === void 0 ? void 0 : _care$order.total) || '0', ((_care$care2 = care.care) === null || _care$care2 === void 0 ? void 0 : _care$care2.name) || '', care.total_part || '0', care.price || '0', care.membership_active ? 'Yes' : 'No', new Date(care.created_at).toISOString()].map(function (cell) {
+                  return "\"".concat(cell, "\"");
+                }); // Wrap all cells in quotes
+              }); // Combine headers and rows
+              csvContent = [headers.join(',')].concat(_toConsumableArray(rows.map(function (row) {
+                return row.join(',');
+              }))).join('\n'); // Add UTF-8 BOM for Excel compatibility
+              BOM = "\uFEFF";
+              blob = new Blob([BOM + csvContent], {
+                type: 'text/csv;charset=utf-8;'
+              });
+              url = URL.createObjectURL(blob);
+              link = document.createElement('a');
+              date = new Date().toISOString().split('T')[0];
+              filename = "care-data-".concat(date, "-").concat(scope, ".csv");
+              link.setAttribute('href', url);
+              link.setAttribute('download', filename);
+              link.style.visibility = 'hidden';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
 
-          // If no data from client-side, try to fetch from API
-          if (!dataToExport || dataToExport.length === 0) {
-            dataToExport = this.careData.filter(function (care) {
-              return _this14.matchesFilters(care);
-            });
+              // Clean up URL
+              URL.revokeObjectURL(url);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+                title: 'Export Complete!',
+                text: 'CSV file has been generated and downloaded',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+              });
+              _context8.n = 8;
+              break;
+            case 7:
+              _context8.p = 7;
+              _t7 = _context8.v;
+              console.error('CSV export error:', _t7);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
+                title: 'Export Failed!',
+                text: _t7.message || 'Failed to generate CSV',
+                icon: 'error'
+              });
+            case 8:
+              return _context8.a(2);
           }
-        } else {
-          // For all data, use all careData
-          dataToExport = this.careData;
-        }
-        if (!dataToExport || dataToExport.length === 0) {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
-          sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('No Data', 'There is no data to export', 'warning');
-          return;
-        }
-
-        // Define CSV headers
-        var headers = ['No.', 'Care ID', 'Customer Name', 'Customer ID', 'Email', 'Order Number', 'Order Total', 'Care Tier', 'Parts Value', 'Price', 'Membership Update', 'Created Date'];
-
-        // Prepare CSV rows
-        var rows = dataToExport.map(function (care, index) {
-          var _care$customer3, _care$customer4, _care$order, _care$care2;
-          return [index + 1, care.care_id || '', ((_care$customer3 = care.customer) === null || _care$customer3 === void 0 ? void 0 : _care$customer3.name) || '', _this14.getCustomerCode(care.customer), ((_care$customer4 = care.customer) === null || _care$customer4 === void 0 ? void 0 : _care$customer4.email) || '', _this14.getOrderCode(care.order), ((_care$order = care.order) === null || _care$order === void 0 ? void 0 : _care$order.total) || '0', ((_care$care2 = care.care) === null || _care$care2 === void 0 ? void 0 : _care$care2.name) || '', care.total_part || '0', care.price || '0', care.membership_active ? 'Yes' : 'No', new Date(care.created_at).toISOString()].map(function (cell) {
-            return "\"".concat(cell, "\"");
-          }); // Wrap all cells in quotes
-        });
-
-        // Combine headers and rows
-        var csvContent = [headers.join(',')].concat(_toConsumableArray(rows.map(function (row) {
-          return row.join(',');
-        }))).join('\n');
-
-        // Add UTF-8 BOM for Excel compatibility
-        var BOM = "\uFEFF";
-        var blob = new Blob([BOM + csvContent], {
-          type: 'text/csv;charset=utf-8;'
-        });
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement('a');
-        var date = new Date().toISOString().split('T')[0];
-        var filename = "care-data-".concat(date, "-").concat(scope, ".csv");
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Clean up URL
-        URL.revokeObjectURL(url);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
-        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-          title: 'Export Complete!',
-          text: 'CSV file has been generated and downloaded',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        console.error('CSV export error:', error);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
-          title: 'Export Failed!',
-          text: error.message || 'Failed to generate CSV',
-          icon: 'error'
-        });
-      }
-    },
-    getFilteredDataForExport: function getFilteredDataForExport() {
-      var _this15 = this;
-      // First, try to filter from the currently loaded careData
-      var filtered = this.careData.filter(function (care) {
-        return _this15.matchesFilters(care);
-      });
-
-      // If we have filtered data, apply sorting
-      if (filtered.length > 0) {
-        return this.sortCareData(filtered);
-      }
-
-      // Fallback: apply filters manually
-      filtered = _toConsumableArray(this.careData);
-
-      // Care Details/Customer filter
-      if (this.filters.care_customer) {
-        var keyword = this.filters.care_customer.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.care_id && care.care_id.toLowerCase().includes(keyword) || care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword) || care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword) || care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword);
-        });
-      }
-
-      // Order filter
-      if (this.filters.order) {
-        var _keyword3 = this.filters.order.toLowerCase();
-        filtered = filtered.filter(function (care) {
-          return care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(_keyword3);
-        });
-      }
-
-      // Parts Value filter
-      if (this.filters.total_part) {
-        filtered = filtered.filter(function (care) {
-          return care.total_part && care.total_part.toString().includes(_this15.filters.total_part);
-        });
-      }
-
-      // Price filter
-      if (this.filters.price) {
-        filtered = filtered.filter(function (care) {
-          return care.price && care.price.toString().includes(_this15.filters.price);
-        });
-      }
-
-      // Apply other filters
-      if (this.filters.membership_status !== '') {
-        var wantActive = this.filters.membership_status === 'active';
-        filtered = filtered.filter(function (care) {
-          return Boolean(care.membership_active) === wantActive;
-        });
-      }
-      if (this.filters.customer_id) {
-        filtered = filtered.filter(function (care) {
-          return care.customer && care.customer.id == _this15.filters.customer_id;
-        });
-      }
-      if (this.filters.lkp_care_id) {
-        filtered = filtered.filter(function (care) {
-          return care.care && care.care.id == _this15.filters.lkp_care_id;
-        });
-      }
-      if (this.filters.date_from) {
-        var dateFrom = new Date(this.filters.date_from);
-        filtered = filtered.filter(function (care) {
-          var careDate = new Date(care.created_at);
-          return careDate >= dateFrom;
-        });
-      }
-
-      // Apply year filter
-      if (this.filters.year) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getFullYear() === parseInt(_this15.filters.year);
-        });
-      }
-
-      // Apply month filter (only if year is selected)
-      if (this.filters.year && this.filters.month) {
-        filtered = filtered.filter(function (care) {
-          if (!care.created_at) return false;
-          var careDate = new Date(care.created_at);
-          return careDate.getMonth() + 1 === parseInt(_this15.filters.month);
-        });
-      }
-
-      // Apply sorting
-      filtered = this.sortCareData(filtered);
-      return filtered;
-    },
-    // Helper method to check if a single care matches all filters
-    matchesFilters: function matchesFilters(care) {
-      // Check Care Details/Customer filter
-      if (this.filters.care_customer) {
-        var keyword = this.filters.care_customer.toLowerCase();
-        var matches = care.care_id && care.care_id.toLowerCase().includes(keyword) || care.customer && care.customer.name && care.customer.name.toLowerCase().includes(keyword) || care.customer && care.customer.email && care.customer.email.toLowerCase().includes(keyword) || care.customer && (care.customer.customer_id || care.customer.id).toString().toLowerCase().includes(keyword);
-        if (!matches) return false;
-      }
-
-      // Check Order filter
-      if (this.filters.order) {
-        var _keyword4 = this.filters.order.toLowerCase();
-        if (!(care.order && care.order.order_number && care.order.order_number.toLowerCase().includes(_keyword4))) {
-          return false;
-        }
-      }
-
-      // Check Parts Value filter
-      if (this.filters.total_part) {
-        if (!(care.total_part && care.total_part.toString().includes(this.filters.total_part))) {
-          return false;
-        }
-      }
-
-      // Check Price filter
-      if (this.filters.price) {
-        if (!(care.price && care.price.toString().includes(this.filters.price))) {
-          return false;
-        }
-      }
-
-      // Check membership filter
-      if (this.filters.membership_status !== '') {
-        var wantActive = this.filters.membership_status === 'active';
-        if (Boolean(care.membership_active) !== wantActive) {
-          return false;
-        }
-      }
-
-      // Check other filters...
-      if (this.filters.customer_id && care.customer && care.customer.id != this.filters.customer_id) {
-        return false;
-      }
-      if (this.filters.lkp_care_id && care.care && care.care.id != this.filters.lkp_care_id) {
-        return false;
-      }
-      if (this.filters.date_from) {
-        var careDate = new Date(care.created_at);
-        var dateFrom = new Date(this.filters.date_from);
-        if (careDate < dateFrom) return false;
-      }
-      if (this.filters.year) {
-        if (!care.created_at) return false;
-        var _careDate = new Date(care.created_at);
-        if (_careDate.getFullYear() !== parseInt(this.filters.year)) return false;
-      }
-      if (this.filters.year && this.filters.month) {
-        if (!care.created_at) return false;
-        var _careDate2 = new Date(care.created_at);
-        if (_careDate2.getMonth() + 1 !== parseInt(this.filters.month)) return false;
-      }
-      return true;
+        }, _callee8, null, [[1, 7]]);
+      }))();
     },
     exportStatistics: function exportStatistics() {
       var params = {
-        start_date: this.filters.date_from,
-        end_date: this.filters.date_to,
+        start_date: this.filters.created_from,
+        end_date: '',
         "export": 'csv'
       };
       window.location.href = "/api/care-data/statistics?".concat(new URLSearchParams(params).toString());
@@ -38991,7 +38371,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -38999,7 +38379,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "membership_status", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -39028,7 +38408,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -39036,7 +38416,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "customer_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -39048,7 +38428,7 @@ var render = function render() {
       domProps: {
         value: customer.id
       }
-    }, [_vm._v("\n                " + _vm._s(customer.name) + " (" + _vm._s(customer.customer_id || customer.id) + ")\n              ")]);
+    }, [_vm._v("\n                " + _vm._s(customer.full_name) + " (" + _vm._s(customer.customer_id || customer.id) + ")\n              ")]);
   })], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3"
   }, [_c("div", {
@@ -39064,7 +38444,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -39072,7 +38452,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "lkp_care_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -39095,21 +38475,20 @@ var render = function render() {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.filters.date_from,
-      expression: "filters.date_from"
+      value: _vm.filters.created_from,
+      expression: "filters.created_from"
     }],
     staticClass: "form-control form-control-sm",
     attrs: {
       type: "date"
     },
     domProps: {
-      value: _vm.filters.date_from
+      value: _vm.filters.created_from
     },
     on: {
-      change: _vm.applyFilters,
       input: function input($event) {
         if ($event.target.composing) return;
-        _vm.$set(_vm.filters, "date_from", $event.target.value);
+        _vm.$set(_vm.filters, "created_from", $event.target.value);
       }
     }
   })])])]), _vm._v(" "), _c("div", {
@@ -39129,7 +38508,7 @@ var render = function render() {
     }],
     staticClass: "form-control form-control-sm",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -39137,7 +38516,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "year", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -39168,7 +38547,7 @@ var render = function render() {
       disabled: !_vm.filters.year
     },
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -39176,7 +38555,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "month", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -39190,113 +38569,7 @@ var render = function render() {
       }
     }, [_vm._v("\n                " + _vm._s(monthName) + "\n              ")]);
   })], 2)])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Sort By")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.sortBy,
-      expression: "filters.sortBy"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "sortBy", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "created_at_desc"
-    }
-  }, [_vm._v("Date (Newest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "created_at_asc"
-    }
-  }, [_vm._v("Date (Oldest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "customer_name_asc"
-    }
-  }, [_vm._v("Customer Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "customer_name_desc"
-    }
-  }, [_vm._v("Customer Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "care_id_asc"
-    }
-  }, [_vm._v("Care ID (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "care_id_desc"
-    }
-  }, [_vm._v("Care ID (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "price_desc"
-    }
-  }, [_vm._v("Price (High to Low)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "price_asc"
-    }
-  }, [_vm._v("Price (Low to High)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "total_part_desc"
-    }
-  }, [_vm._v("Parts Value (High to Low)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "total_part_asc"
-    }
-  }, [_vm._v("Parts Value (Low to High)")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-2"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Results")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.perPage,
-      expression: "perPage"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.perPage = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "10"
-    }
-  }, [_vm._v("10 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "25"
-    }
-  }, [_vm._v("25 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "50"
-    }
-  }, [_vm._v("50 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "100"
-    }
-  }, [_vm._v("100 per page")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 d-flex align-items-end"
+    staticClass: "col-md-4 d-flex align-items-end"
   }, [_c("div", {
     staticClass: "btn-group w-100"
   }, [_c("button", {
@@ -39309,7 +38582,7 @@ var render = function render() {
   }), _vm._v(" Clear Filters\n            ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-primary btn-sm ml-2",
     on: {
-      click: _vm.fetchCareData
+      click: _vm.applyFilters
     }
   }, [_c("i", {
     staticClass: "fas fa-sync-alt mr-1"
@@ -39348,7 +38621,7 @@ var render = function render() {
     staticClass: "d-flex align-items-center"
   }, [_c("span", {
     staticClass: "text-muted mr-3"
-  }, [_vm._v("\n          Showing " + _vm._s((_vm.currentPage - 1) * _vm.perPage + 1) + " to " + _vm._s(Math.min(_vm.currentPage * _vm.perPage, _vm.filteredCount)) + " of " + _vm._s(_vm.filteredCount) + " records\n        ")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n          " + _vm._s(_vm.meta.total) + " record" + _vm._s(_vm.meta.total === 1 ? "" : "s") + "\n        ")]), _vm._v(" "), _c("div", {
     staticClass: "btn-group"
   }, [_c("button", {
     staticClass: "btn btn-outline-info btn-sm",
@@ -39377,7 +38650,59 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(7), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(8)]) : _vm.filteredCareData.length === 0 ? _c("tbody", [_c("tr", [_c("td", {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("#")]), _vm._v(" "), _c("sortable-th", {
+    staticClass: "align-top",
+    attrs: {
+      label: "Care Details / Customer",
+      "sort-key": "care_data.care_id",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Order")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Care Tier")]), _vm._v(" "), _c("sortable-th", {
+    staticClass: "text-center align-top",
+    attrs: {
+      label: "Parts Value",
+      "sort-key": "care_data.total_part",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    staticClass: "text-center align-top",
+    attrs: {
+      label: "Price",
+      "sort-key": "care_data.price",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Update Membership?")]), _vm._v(" "), _c("sortable-th", {
+    staticClass: "text-center align-top",
+    attrs: {
+      label: "Date",
+      "sort-key": "care_data.created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(7)]) : _vm.careData.length === 0 ? _c("tbody", [_c("tr", [_c("td", {
     staticClass: "text-center py-5",
     attrs: {
       colspan: "10"
@@ -39395,12 +38720,12 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-plus-circle mr-2"
-  }), _vm._v(" Create First Care Data\n                ")])], 1)])]) : _c("tbody", _vm._l(_vm.filteredCareData, function (care, index) {
+  }), _vm._v(" Create First Care Data\n                ")])], 1)])]) : _c("tbody", _vm._l(_vm.careData, function (care, index) {
     return _c("tr", {
       key: care.id
     }, [_c("td", {
       staticClass: "text-center align-middle"
-    }, [_vm._v(_vm._s((_vm.currentPage - 1) * _vm.perPage + index + 1))]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s((_vm.meta.current_page - 1) * _vm.meta.per_page + index + 1))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_c("div", {
       staticClass: "d-flex align-items-center"
@@ -39414,7 +38739,7 @@ var render = function render() {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-phone text-muted mr-1"
-    }), _vm._v(_vm._s(care.customer.phone) + "\n                    ")]) : _vm._e(), _vm._v("\n                    " + _vm._s(care.orderItems) + "\n                    " + _vm._s(care.directOrderDetails) + "\n                  ")])])]), _vm._v(" "), _c("td", {
+    }), _vm._v(_vm._s(care.customer.phone) + "\n                    ")]) : _vm._e()])])]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_c("div", [care.order_id ? _c("router-link", {
       staticClass: "badge badge-light",
@@ -39487,66 +38812,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), 0)])])]), _vm._v(" "), _vm.filteredCareData.length > 0 ? _c("div", {
-    staticClass: "card-footer d-flex justify-content-between align-items-center"
-  }, [_c("div", [_c("small", {
-    staticClass: "text-muted"
-  }, [_vm._v("\n          Showing " + _vm._s((_vm.currentPage - 1) * _vm.perPage + 1) + " to " + _vm._s(Math.min(_vm.currentPage * _vm.perPage, _vm.filteredCount)) + " of " + _vm._s(_vm.filteredCount) + " entries\n        ")])]), _vm._v(" "), _c("div", [_c("nav", {
+  }), 0)])])]), _vm._v(" "), _vm.careData.length > 0 ? _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
     attrs: {
-      "aria-label": "Page navigation"
-    }
-  }, [_c("ul", {
-    staticClass: "pagination pagination-sm mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    attrs: {
-      disabled: _vm.currentPage === 1
+      meta: _vm.meta
     },
     on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage - 1);
-      }
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-left"
-  })])]), _vm._v(" "), _vm._l(_vm.pages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.changePage(page);
-        }
-      }
-    }, [_vm._v(_vm._s(page))])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.lastPage
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    attrs: {
-      disabled: _vm.currentPage === _vm.lastPage
-    },
-    on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage + 1);
-      }
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-right"
-  })])])], 2)])])]) : _vm._e()]), _vm._v(" "), _vm.showStatistics ? _c("div", {
+  })], 1) : _vm._e()]), _vm._v(" "), _vm.showStatistics ? _c("div", {
     staticClass: "modal fade show",
     staticStyle: {
       display: "block",
@@ -39558,7 +38834,7 @@ var render = function render() {
     staticClass: "modal-content"
   }, [_c("div", {
     staticClass: "modal-header"
-  }, [_vm._m(9), _vm._v(" "), _c("button", {
+  }, [_vm._m(8), _vm._v(" "), _c("button", {
     staticClass: "close",
     attrs: {
       type: "button"
@@ -39572,7 +38848,7 @@ var render = function render() {
     staticClass: "modal-body"
   }, [_vm.statisticsLoading ? _c("div", {
     staticClass: "text-center py-5"
-  }, [_vm._m(10), _vm._v(" "), _c("p", {
+  }, [_vm._m(9), _vm._v(" "), _c("p", {
     staticClass: "mt-2 mb-0"
   }, [_vm._v("Loading statistics...")])]) : _c("div", {
     staticClass: "row"
@@ -39580,7 +38856,7 @@ var render = function render() {
     staticClass: "col-md-12 mb-4"
   }, [_c("div", {
     staticClass: "card"
-  }, [_vm._m(11), _vm._v(" "), _c("div", {
+  }, [_vm._m(10), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -39620,7 +38896,7 @@ var render = function render() {
     staticClass: "col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card"
-  }, [_vm._m(12), _vm._v(" "), _c("div", {
+  }, [_vm._m(11), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "row"
@@ -39648,13 +38924,13 @@ var render = function render() {
     staticClass: "col-md-6 mb-4"
   }, [_c("div", {
     staticClass: "card"
-  }, [_vm._m(13), _vm._v(" "), _c("div", {
+  }, [_vm._m(12), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-sm"
-  }, [_vm._m(14), _vm._v(" "), _c("tbody", _vm._l(_vm.getCareTypeStats(), function (careType) {
+  }, [_vm._m(13), _vm._v(" "), _c("tbody", _vm._l(_vm.getCareTypeStats(), function (careType) {
     return _c("tr", {
       key: careType.care_name
     }, [_c("td", [_vm._v(_vm._s(careType.care_name))]), _vm._v(" "), _c("td", {
@@ -39668,13 +38944,13 @@ var render = function render() {
     staticClass: "col-md-12"
   }, [_c("div", {
     staticClass: "card"
-  }, [_vm._m(15), _vm._v(" "), _c("div", {
+  }, [_vm._m(14), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("div", {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-sm"
-  }, [_vm._m(16), _vm._v(" "), _c("tbody", _vm._l(_vm.statistics.monthly_stats || [], function (monthly) {
+  }, [_vm._m(15), _vm._v(" "), _c("tbody", _vm._l(_vm.statistics.monthly_stats || [], function (monthly) {
     return _c("tr", {
       key: "".concat(monthly.year, "-").concat(monthly.month)
     }, [_c("td", [_vm._v(_vm._s(monthly.year) + "-" + _vm._s(String(monthly.month).padStart(2, "0")))]), _vm._v(" "), _c("td", {
@@ -39732,7 +39008,7 @@ var render = function render() {
         _vm.showDeleteModal = false;
       }
     }
-  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(17), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("×")])])]), _vm._v(" "), _vm._m(16), _vm._v(" "), _c("div", {
     staticClass: "modal-footer"
   }, [_c("button", {
     staticClass: "btn btn-secondary",
@@ -39814,30 +39090,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-table mr-2"
   }), _vm._v("Care Data List")]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("#")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Care Details /"), _c("br"), _vm._v(" Customer")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Order")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Care Tier")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Parts Value")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Update Membership?")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Date")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Actions")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
