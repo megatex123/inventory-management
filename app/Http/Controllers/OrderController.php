@@ -12,6 +12,7 @@ use App\Models\Serves;
 use App\Models\Categories;
 use App\Models\Order;
 use App\Models\OrderDetails;
+use App\Models\OrderDraft;
 use App\Models\Customers;
 use App\Support\BusinessId;
 use App\Models\Products;
@@ -690,6 +691,13 @@ class OrderController extends Controller
 
             $order = Order::findOrFail($id);
 
+            if ($order->approve !== null) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Cannot edit an order that has already been approved or rejected.',
+                ], 422);
+            }
+
             // Validate request
             $request->validate([
                 'customer_id' => 'required|exists:customers,id',
@@ -715,6 +723,7 @@ class OrderController extends Controller
             $totalQty = 0;
             $subTotal = 0;
             $eligibleCareTotal = 0;
+            $detailsSnapshot = [];
 
             // Insert new order details
             foreach ($request->products as $productData) {
@@ -728,13 +737,15 @@ class OrderController extends Controller
                 //     throw new \Exception("Insufficient stock for product: " . $product->product_name);
                 // }
 
+                $lineSubTotal = $productData['qty'] * $productData['price'];
+
                 // Create order detail
                 $orderDetail = OrderDetails::create([
                     'order_id' => $id,
                     'pro_id' => $productData['id'],
                     'pro_qty' => $productData['qty'],
                     'pro_price' => $productData['price'],
-                    'sub_total' => $productData['qty'] * $productData['price']
+                    'sub_total' => $lineSubTotal
                 ]);
 
                 // Decrement product stock
@@ -747,6 +758,14 @@ class OrderController extends Controller
                 if (in_array($product->cat_id, self::CARE_ELIGIBLE_CATEGORIES)) {
                     $eligibleCareTotal += $lineTotal;
                 }
+
+                $detailsSnapshot[] = [
+                    'pro_id' => $productData['id'],
+                    'product_name' => $product->product_name,
+                    'pro_qty' => $productData['qty'],
+                    'pro_price' => $productData['price'],
+                    'sub_total' => $lineSubTotal,
+                ];
             }
 
             // QuiviCraft build-class tier — see PosController::orderdone() for the
@@ -785,6 +804,24 @@ class OrderController extends Controller
                 'craft_id' => $craftId,
                 'serve_id' => $serveTierId,
                 'care_id' => $careTierId
+            ]);
+
+            // Snapshot this edit as a new draft revision -- see
+            // docs/superpowers/specs/2026-08-01-quivicraft-draft-history-design.md.
+            // Every successful edit produces exactly one new revision
+            // reflecting the RESULT of that edit (draft -01 is the state
+            // after the first edit, not the original creation state).
+            OrderDraft::create([
+                'order_id' => $order->id,
+                'draft_id' => OrderDraft::nextDraftId($order),
+                'customer_id' => $order->customer_id,
+                'qty' => $order->qty,
+                'sub_total' => $order->sub_total,
+                'total' => $order->total,
+                'craft_id' => $order->craft_id,
+                'serve_id' => $order->serve_id,
+                'care_id' => $order->care_id,
+                'order_details_snapshot' => $detailsSnapshot,
             ]);
 
             DB::commit();

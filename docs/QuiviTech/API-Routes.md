@@ -142,6 +142,8 @@ All business codes above are generated the same way: `Model::count() + 1`, zero-
 
 **`stock/index.vue` (route `/product/stock`) switched from `GET /product/all` to the already-paginated `GET /product` as of 2026-07-30** (Batch 14 of the List Page Standardization initiative — see [[Work-In-Progress]]). No backend changes: `ProductsController@index` already supported everything this page needs (search by name, category filter, status filter, sort by `product_name`/`product_code`/`category`/`price`/`product_qty`/`created_at`) since the earlier `product` batch. `GET /categories/all` (already existing) supplies the category filter dropdown. `SortableTh` on Name/Code/Category/Price/Product Quantity; Photo/Status/Action stay plain columns. This closes out the sidebar's "Stock" menu group (`stock`, `brand`, `category`, `sub_category` — all now migrated) and resolves the `stock/index.vue` deferred item noted after the `product` batch.
 
+**`POST /order/update/{id}` (`OrderController::updateOrderDetails`) changed as of 2026-08-01**: now rejects (422) any edit to an order whose `approve` is no longer `null` (already approved or rejected) — previously this endpoint had no such guard. On a successful edit, it also creates a new `order_drafts` row (`draft_id` like `BLDP-DRF-000042-01`, scoped per-order, incrementing per edit) capturing a full snapshot of the order's fields and line items at that point. See `docs/superpowers/specs/2026-08-01-quivicraft-draft-history-design.md` for the full design. No frontend changes — `order/edit.vue`'s existing generic error handling already surfaces the new 422's `message`.
+
 ## Related
 - [[Domain-Models]]
 - [[Architecture]]
