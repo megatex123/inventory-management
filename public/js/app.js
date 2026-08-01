@@ -14897,7 +14897,7 @@ var EMPTY_FILTERS = {
       showFilters: false,
       filterColumns: [{
         key: 'search',
-        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        label: 'Meeting ID / Requirement ID / Theme / Preference / Exemption / Location',
         type: 'text'
       }, {
         key: 'reason',
@@ -35913,7 +35913,7 @@ var EMPTY_FILTERS = {
       showFilters: false,
       filterColumns: [{
         key: 'search',
-        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        label: 'Meeting ID / UAT ID / Theme / Preference / Exemption / Location',
         type: 'text'
       }, {
         key: 'reason',
@@ -57708,7 +57708,9 @@ var render = function render() {
     staticClass: "thead-light"
   }, [_c("tr", [_c("th", {
     staticClass: "text-center align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("sortable-th", {
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Meeting Requirement ID")]), _vm._v(" "), _c("sortable-th", {
     attrs: {
       label: "Budget (RM)",
       "sort-key": "initial_budget",
@@ -57752,6 +57754,8 @@ var render = function render() {
     }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v("\n              " + _vm._s(detail.requirement_id) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
@@ -64785,7 +64789,7 @@ var render = function render() {
     staticClass: "text-left"
   }, [_vm._v(_vm._s(_vm.order.craft.name))]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
-  }, [_vm._v(_vm._s(_vm.order.craft.code))]), _vm._v(" "), _c("td", {
+  }, [_vm._v(_vm._s(_vm.order.craft_tag_id || "-"))]), _vm._v(" "), _c("td", {
     staticClass: "text-left"
   }, [_vm._v("Building Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
@@ -92757,7 +92761,9 @@ var render = function render() {
     staticClass: "thead-light"
   }, [_c("tr", [_c("th", {
     staticClass: "text-center align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("sortable-th", {
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("UAT ID")]), _vm._v(" "), _c("sortable-th", {
     attrs: {
       label: "Budget (RM)",
       "sort-key": "initial_budget",
@@ -92801,6 +92807,8 @@ var render = function render() {
     }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v("\n              " + _vm._s(detail.uat_id) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"

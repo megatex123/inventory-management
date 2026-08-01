@@ -207,7 +207,7 @@
                                     <tr v-if="order.craft">
                                         <td colspan="3" class="font-weight-bold">QuiviCraft</td>
                                         <td class="text-left">{{ order.craft.name }}</td>
-                                        <td class="text-right">{{ order.craft.code }}</td>
+                                        <td class="text-right">{{ order.craft_tag_id || '-' }}</td>
                                         <td class="text-left">Building Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(order.craft.fee ? order.craft.fee : 0) }}
