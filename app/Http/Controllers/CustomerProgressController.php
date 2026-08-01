@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\CustomerProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -9,53 +10,40 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerProgressController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     const ALLOWED_MIMES = 'pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,txt,csv,zip';
 
     public function index(Request $request)
     {
         $query = CustomerProgress::with(['customer', 'order']);
 
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
+        $this->applyEqualsFilter($query, $request, 'customer_id', 'customer_id');
+        $this->applyEqualsFilter($query, $request, 'order_id', 'order_id');
+        $this->applyEqualsFilter($query, $request, 'status', 'status');
 
-        if ($request->filled('order_id')) {
-            $query->where('order_id', $request->order_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%")
-                    ->orWhereHas('customer', function ($q2) use ($search) {
-                        $q2->where('full_name', 'LIKE', "%{$search}%")
-                           ->orWhere('customer_id', 'LIKE', "%{$search}%");
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('title', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('description', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('customer', function ($q2) use ($escaped) {
+                        $q2->where('full_name', 'LIKE', '%' . $escaped . '%')
+                           ->orWhere('customer_id', 'LIKE', '%' . $escaped . '%');
                     })
-                    ->orWhereHas('order', function ($q2) use ($search) {
-                        $q2->where('order_id', 'LIKE', "%{$search}%");
+                    ->orWhereHas('order', function ($q2) use ($escaped) {
+                        $q2->where('order_id', 'LIKE', '%' . $escaped . '%');
                     });
             });
         }
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
+        $this->resolveSortAndApply($query, $request, ['title', 'status', 'progress_percentage', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        $results = $query->paginate($request->get('per_page', 15));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function show($id)
