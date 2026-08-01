@@ -9,45 +9,36 @@ use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class InvCareController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
         $query = InvCare::with(['masterSku', 'categoryLookup']);
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
+        $this->applyEqualsFilter($query, $request, 'category', 'category');
+        $this->applyEqualsFilter($query, $request, 'status', 'status');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('item_name', 'LIKE', "%{$search}%")
-                    ->orWhere('sku_code', 'LIKE', "%{$search}%")
-                    ->orWhere('inv_care', 'LIKE', "%{$search}%")
-                    ->orWhere('manufacturer', 'LIKE', "%{$search}%");
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('item_name', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('sku_code', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('inv_care', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('manufacturer', 'LIKE', '%' . $escaped . '%');
             });
         }
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
+        $this->resolveSortAndApply($query, $request, ['item_name', 'sku_code', 'unit_cost', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        $results = $query->paginate($request->get('per_page', 15));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function search(Request $request)
