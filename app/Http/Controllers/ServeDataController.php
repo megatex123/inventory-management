@@ -6,6 +6,7 @@ use App\Models\ServeData;
 use App\Models\Serves;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -13,96 +14,66 @@ use Illuminate\Support\Str;
 
 class ServeDataController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
-        $query = ServeData::with(['customer', 'order', 'serve'])->select('serve_data.*');
+        $query = ServeData::with(['customer', 'order', 'serve']);
 
-        if ($request->filled('status')) {
-            if ($request->status === 'active') {
-                $query->where('start_serve_enabled', 1);
-            } elseif ($request->status === 'not_started') {
-                $query->where('start_serve_enabled', 0);
-            } elseif ($request->status === 'with_upgrade') {
-                $query->where('upgrade_pce_enabled', 1);
-            }
-        }
-
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
-
-        if ($request->filled('lkp_serve_id')) {
-            $query->where('lkp_serve_id', $request->lkp_serve_id);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('serve_id', 'LIKE', "%{$search}%")
-                ->orWhere('qvse_cid', 'LIKE', "%{$search}%")
-                ->orWhereHas('customer', function($q) use ($search) {
-                    $q->where('full_name', 'LIKE', "%{$search}%")
-                        ->orWhere('customer_id', 'LIKE', "%{$search}%");
-                })
-                ->orWhereHas('order', function($q) use ($search) {
-                    $q->where('order_id', 'LIKE', "%{$search}%");
-                });
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('serve_data.serve_id', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('serve_data.qvse_cid', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('customer', function ($q2) use ($escaped) {
+                        $q2->where('full_name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('customer_id', 'LIKE', '%' . $escaped . '%');
+                    })
+                    ->orWhereHas('order', function ($q2) use ($escaped) {
+                        $q2->where('order_id', 'LIKE', '%' . $escaped . '%');
+                    });
             });
         }
 
-        if ($request->filled('sort_by')) {
-            $sortBy = $request->sort_by;
-            switch ($sortBy) {
-                case 'created_at_asc':
-                    $query->orderBy('created_at', 'asc');
-                    break;
-                case 'customer_name_asc':
-                    $query->join('customers', 'serve_data.customer_id', '=', 'customers.id')
-                        ->orderBy('customers.full_name', 'asc')
-                        ->select('serve_data.*');
-                    break;
-                case 'customer_name_desc':
-                    $query->join('customers', 'serve_data.customer_id', '=', 'customers.id')
-                        ->orderBy('customers.full_name', 'desc')
-                        ->select('serve_data.*');
-                    break;
-                case 'serve_id_asc':
-                    $query->orderBy('serve_id', 'asc');
-                    break;
-                case 'serve_id_desc':
-                    $query->orderBy('serve_id', 'desc');
-                    break;
-                case 'created_at_desc':
-                default:
-                    $query->orderBy('created_at', 'desc');
-            }
+        $status = $request->input('status');
+        if ($status === 'active') {
+            $query->where('start_serve_enabled', true);
+        } elseif ($status === 'not_started') {
+            $query->where('start_serve_enabled', false);
+        } elseif ($status === 'with_upgrade') {
+            $query->where('upgrade_pce_enabled', true);
+        }
+
+        $this->applyEqualsFilter($query, $request, 'customer_id', 'serve_data.customer_id');
+        $this->applyEqualsFilter($query, $request, 'lkp_serve_id', 'serve_data.lkp_serve_id');
+
+        $dateFrom = $request->input('date_from');
+        if (is_scalar($dateFrom) && $dateFrom !== '') {
+            $query->whereDate('serve_data.created_at', '>=', $dateFrom);
+        }
+
+        $sortBy = $request->input('sort_by');
+        $sortDir = $request->input('sort_dir');
+
+        if ($sortBy === 'customer_name') {
+            $dir = in_array($sortDir, ['asc', 'desc'], true) ? $sortDir : 'asc';
+            $query->join('customers', 'serve_data.customer_id', '=', 'customers.id')
+                ->select('serve_data.*')
+                ->orderBy('customers.full_name', $dir)
+                ->orderBy('serve_data.id', $dir);
         } else {
-            $query->orderBy('created_at', 'desc');
+            $this->resolveSortAndApply($query, $request, ['created_at', 'serve_id'], 'created_at', 'id', [], 'desc');
         }
 
         if ($request->has('export') && $request->export === 'csv') {
             return $this->exportToCSV($query->get());
         }
-        $perPage = $request->get('per_page', 10);
-        $currentPage = $request->get('page', 1);
 
-        $total = $query->count();
+        $perPage = $this->resolvePerPage($request, 15);
         $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $total,
-                'per_page' => $perPage,
-                'current_page' => $currentPage,
-                'last_page' => $results->lastPage()
-            ]
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function show($id)
