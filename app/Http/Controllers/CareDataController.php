@@ -13,159 +13,167 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class CareDataController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     // Get all care data with filters
     public function index(Request $request)
     {
-        try {
-            $query = CareData::with(['customer', 'order', 'care', 'orderItems', 'directOrderDetails'])
-                ->select('care_data.*')
-                ->whereNull('care_data.deleted_at');
+        $query = CareData::with(['customer', 'order', 'care', 'orderItems', 'directOrderDetails'])
+            ->select('care_data.*')
+            ->whereNull('care_data.deleted_at');
 
-            // Search functionality
-            if ($request->has('search') && $request->search != '') {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('care_data.care_id', 'LIKE', "%{$search}%")
-                      ->orWhere('care_data.total_part', 'LIKE', "%{$search}%")
-                      ->orWhere('care_data.price', 'LIKE', "%{$search}%")
-                      ->orWhereHas('customer', function ($q2) use ($search) {
-                          $q2->where('full_name', 'LIKE', "%{$search}%")
-                             ->orWhere('email', 'LIKE', "%{$search}%")
-                             ->orWhere('customer_id', 'LIKE', "%{$search}%")
-                             ->orWhere('phone', 'LIKE', "%{$search}%");
-                      })
-                      ->orWhereHas('order', function ($q2) use ($search) {
-                          $q2->where('invoice_id', 'LIKE', "%{$search}%")
-                             ->orWhere('order_id', 'LIKE', "%{$search}%");
-                      })
-                      ->orWhereHas('care', function ($q2) use ($search) {
-                          $q2->where('name', 'LIKE', "%{$search}%")
-                             ->orWhere('code', 'LIKE', "%{$search}%");
-                      });
-                });
-            }
-
-            // Filter by membership status — auto-derived from remaining QuiviCare
-            // coverage time (order date + care tier period), not a stored flag.
-            // See CareData::getMembershipActiveAttribute().
-            if ($request->has('membership_status') && $request->membership_status != '') {
-                $query->leftJoin('order', 'care_data.order_id', '=', 'order.id')
-                    ->join('care', 'care_data.lkp_care_id', '=', 'care.id')
-                    ->whereRaw(
-                        'DATE_ADD(COALESCE(order.order_date, care_data.created_at), INTERVAL CAST(SUBSTRING_INDEX(care.period, " ", 1) AS UNSIGNED) YEAR) ' .
-                        ($request->membership_status === 'active' ? '>= NOW()' : '< NOW()')
-                    );
-            }
-
-            // Filter by customer
-            if ($request->has('customer_id') && $request->customer_id != '') {
-                $query->where('care_data.customer_id', $request->customer_id);
-            }
-
-            // Filter by order
-            if ($request->has('order_id') && $request->order_id != '') {
-                $query->where('care_data.order_id', $request->order_id);
-            }
-
-            // Filter by care type
-            if ($request->has('lkp_care_id') && $request->lkp_care_id != '') {
-                $query->where('care_data.lkp_care_id', $request->lkp_care_id);
-            }
-
-            // Filter by status
-            if ($request->has('status') && $request->status != '') {
-                $query->where('care_data.status', $request->status);
-            }
-
-            // Date range filter for created_at
-            if ($request->has('created_from') && $request->created_from != '') {
-                $query->whereDate('care_data.created_at', '>=', $request->created_from);
-            }
-
-            if ($request->has('created_to') && $request->created_to != '') {
-                $query->whereDate('care_data.created_at', '<=', $request->created_to);
-            }
-
-            // Date range filter for appointment_date
-            if ($request->has('appointment_from') && $request->appointment_from != '') {
-                $query->whereDate('care_data.appointment_date', '>=', $request->appointment_from);
-            }
-
-            if ($request->has('appointment_to') && $request->appointment_to != '') {
-                $query->whereDate('care_data.appointment_date', '<=', $request->appointment_to);
-            }
-
-            // Start date and end date for range (backward compatibility)
-            if ($request->has('start_date') && $request->has('end_date') &&
-                $request->start_date != '' && $request->end_date != '') {
-                $query->whereBetween('care_data.created_at', [
-                    Carbon::parse($request->start_date)->startOfDay(),
-                    Carbon::parse($request->end_date)->endOfDay()
-                ]);
-            }
-
-            // Order by with table prefix
-            $orderBy = $request->get('order_by', 'care_data.created_at');
-            $orderDirection = $request->get('order_direction', 'desc');
-
-            // Ensure order by is safe
-            $allowedOrderColumns = ['care_data.created_at', 'care_data.updated_at', 'care_data.care_id',
-                                   'care_data.price', 'care_data.total_part', 'care_data.appointment_date'];
-            if (!in_array($orderBy, $allowedOrderColumns)) {
-                $orderBy = 'care_data.created_at';
-            }
-
-            $query->orderBy($orderBy, $orderDirection);
-
-            // Handle export
-            if ($request->has('export') && $request->export === 'csv') {
-                $careData = $query->get();
-                return $this->exportToCSV($careData);
-            }
-
-            if ($request->has('export') && $request->export === 'pdf') {
-                $careData = $query->get();
-                return $this->exportToPDF($careData);
-            }
-
-            // Pagination
-            $perPage = $request->get('per_page', 15);
-            $currentPage = $request->get('page', 1);
-
-            $total = $query->count();
-            $results = $query->paginate($perPage);
-
-            // Get summary statistics
-            $summary = [
-                'total_price' => $query->sum(DB::raw('CAST(care_data.price AS DECIMAL(10,2))')),
-                'total_part' => $query->sum(DB::raw('CAST(care_data.total_part AS DECIMAL(10,2))')),
-                'total_count' => $total
-            ];
-
-            return response()->json([
-                'success' => true,
-                'data' => $results->items(),
-                'meta' => [
-                    'total' => $total,
-                    'per_page' => $perPage,
-                    'current_page' => $currentPage,
-                    'last_page' => $results->lastPage(),
-                    'from' => $results->firstItem(),
-                    'to' => $results->lastItem()
-                ],
-                'summary' => $summary,
-                'message' => 'Care data retrieved successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve care data: ' . $e->getMessage()
-            ], 500);
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('care_data.care_id', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('care_data.total_part', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('care_data.price', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('customer', function ($q2) use ($escaped) {
+                        $q2->where('full_name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('email', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('customer_id', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('phone', 'LIKE', '%' . $escaped . '%');
+                    })
+                    ->orWhereHas('order', function ($q2) use ($escaped) {
+                        $q2->where('invoice_id', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('order_id', 'LIKE', '%' . $escaped . '%');
+                    })
+                    ->orWhereHas('care', function ($q2) use ($escaped) {
+                        $q2->where('name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('code', 'LIKE', '%' . $escaped . '%');
+                    });
+            });
         }
+
+        // Filter by membership status — auto-derived from remaining QuiviCare
+        // coverage time (order date + care tier period), not a stored flag.
+        // Kept as the original hand-rolled DATE_ADD/leftJoin logic: the live
+        // `care` table has a `period` varchar column (e.g. "2 years"), NOT
+        // `period_years` -- referencing a non-existent column here would
+        // reintroduce a 500, the exact class of bug this batch exists to fix.
+        $membershipStatus = $request->input('membership_status');
+        if (is_scalar($membershipStatus) && $membershipStatus !== '') {
+            $query->leftJoin('order', 'care_data.order_id', '=', 'order.id')
+                ->join('care', 'care_data.lkp_care_id', '=', 'care.id')
+                ->whereRaw(
+                    'DATE_ADD(COALESCE(order.order_date, care_data.created_at), INTERVAL CAST(SUBSTRING_INDEX(care.period, " ", 1) AS UNSIGNED) YEAR) ' .
+                    ($membershipStatus === 'active' ? '>= NOW()' : '< NOW()')
+                );
+        }
+
+        $this->applyEqualsFilter($query, $request, 'customer_id', 'care_data.customer_id');
+        $this->applyEqualsFilter($query, $request, 'order_id', 'care_data.order_id');
+        $this->applyEqualsFilter($query, $request, 'lkp_care_id', 'care_data.lkp_care_id');
+
+        $createdFrom = $request->input('created_from');
+        if (is_scalar($createdFrom) && $createdFrom !== '') {
+            $query->whereDate('care_data.created_at', '>=', $createdFrom);
+        }
+        $createdTo = $request->input('created_to');
+        if (is_scalar($createdTo) && $createdTo !== '') {
+            $query->whereDate('care_data.created_at', '<=', $createdTo);
+        }
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        if (is_scalar($startDate) && $startDate !== '' && is_scalar($endDate) && $endDate !== '') {
+            $query->whereBetween('care_data.created_at', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay(),
+            ]);
+        }
+
+        $this->resolveSortAndApply(
+            $query,
+            $request,
+            ['care_data.created_at', 'care_data.updated_at', 'care_data.care_id', 'care_data.price', 'care_data.total_part'],
+            'care_data.created_at',
+            'care_data.id',
+            ['care_data.price', 'care_data.total_part'],
+            'desc'
+        );
+
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
+
+        // Summary totals: computed from a fresh, un-joined query re-applying
+        // only the customer/order/care/date/search filters (not the
+        // membership_status join), so a join that fans out care_data rows
+        // (verified live: it doesn't for this dataset, but the join is on
+        // care_data.order_id/lkp_care_id which are not unique per order/care)
+        // can never multiply the SUM(). Keeps the original method's summary
+        // shape/keys (`total_price`, `total_part`, `total_count`) rather than
+        // the plan snippet's `total_parts_value` rename.
+        $summaryQuery = CareData::whereNull('care_data.deleted_at');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $summaryQuery->where(function ($q) use ($escaped) {
+                $q->where('care_data.care_id', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('care_data.total_part', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('care_data.price', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('customer', function ($q2) use ($escaped) {
+                        $q2->where('full_name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('email', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('customer_id', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('phone', 'LIKE', '%' . $escaped . '%');
+                    })
+                    ->orWhereHas('order', function ($q2) use ($escaped) {
+                        $q2->where('invoice_id', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('order_id', 'LIKE', '%' . $escaped . '%');
+                    })
+                    ->orWhereHas('care', function ($q2) use ($escaped) {
+                        $q2->where('name', 'LIKE', '%' . $escaped . '%')
+                            ->orWhere('code', 'LIKE', '%' . $escaped . '%');
+                    });
+            });
+        }
+        $this->applyEqualsFilter($summaryQuery, $request, 'customer_id', 'care_data.customer_id');
+        $this->applyEqualsFilter($summaryQuery, $request, 'order_id', 'care_data.order_id');
+        $this->applyEqualsFilter($summaryQuery, $request, 'lkp_care_id', 'care_data.lkp_care_id');
+        if (is_scalar($createdFrom) && $createdFrom !== '') {
+            $summaryQuery->whereDate('care_data.created_at', '>=', $createdFrom);
+        }
+        if (is_scalar($createdTo) && $createdTo !== '') {
+            $summaryQuery->whereDate('care_data.created_at', '<=', $createdTo);
+        }
+        if (is_scalar($startDate) && $startDate !== '' && is_scalar($endDate) && $endDate !== '') {
+            $summaryQuery->whereBetween('care_data.created_at', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay(),
+            ]);
+        }
+        if (is_scalar($membershipStatus) && $membershipStatus !== '') {
+            $ids = (clone $query)->getQuery()->cloneWithout(['columns', 'orders', 'limit', 'offset'])
+                ->select('care_data.id')
+                ->pluck('id');
+            $summaryQuery->whereIn('care_data.id', $ids);
+        }
+
+        $summary = [
+            'total_price' => (float) (clone $summaryQuery)->sum(DB::raw('CAST(care_data.price AS DECIMAL(10,2))')),
+            'total_part' => (float) (clone $summaryQuery)->sum(DB::raw('CAST(care_data.total_part AS DECIMAL(10,2))')),
+            'total_count' => $results->total(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $results->items(),
+            'meta' => [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
+                'from' => $results->firstItem(),
+                'to' => $results->lastItem(),
+            ],
+            'summary' => $summary,
+            'message' => 'Care data retrieved successfully',
+        ]);
     }
 
     // Search endpoint (similar to index with search)
