@@ -20,6 +20,7 @@ class InvMerch extends Model {
         'to_restock',
         'status',
         'generate_id',
+        'is_exclusive',
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class InvMerch extends Model {
         'to_restock' => 'integer',
         'status' => 'integer',
         'generate_id' => 'integer',
+        'is_exclusive' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

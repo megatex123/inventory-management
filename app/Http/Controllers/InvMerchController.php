@@ -18,6 +18,11 @@ class InvMerchController extends Controller
             $query->where('status', $request->status);
         }
 
+        $isExclusive = $request->input('is_exclusive');
+        if (is_scalar($isExclusive) && $isExclusive !== '') {
+            $query->where('is_exclusive', (bool) $isExclusive);
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -94,6 +99,7 @@ class InvMerchController extends Controller
             'current_stock' => 'required|integer|min:0',
             'to_restock' => 'nullable|integer|min:0',
             'status' => 'nullable|integer',
+            'is_exclusive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -115,6 +121,7 @@ class InvMerchController extends Controller
                 'to_restock' => $request->to_restock ?? 0,
                 'status' => $request->status ?? 1,
                 'generate_id' => $request->generate_id ?? 0,
+                'is_exclusive' => $request->boolean('is_exclusive'),
             ]);
 
             DB::commit();
@@ -146,6 +153,7 @@ class InvMerchController extends Controller
             'current_stock' => 'required|integer|min:0',
             'to_restock' => 'nullable|integer|min:0',
             'status' => 'nullable|integer',
+            'is_exclusive' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -154,7 +162,7 @@ class InvMerchController extends Controller
 
         try {
             $item->update($request->only([
-                'sku_code', 'item_name', 'unit_cost', 'max_stock', 'current_stock', 'to_restock', 'status',
+                'sku_code', 'item_name', 'unit_cost', 'max_stock', 'current_stock', 'to_restock', 'status', 'is_exclusive',
             ]));
 
             return response()->json([
@@ -191,6 +199,8 @@ class InvMerchController extends Controller
                 'total_items' => InvMerch::count(),
                 'total_stock' => (int) InvMerch::sum('current_stock'),
                 'low_stock_count' => InvMerch::whereColumn('current_stock', '<', 'to_restock')->count(),
+                'exclusive_items' => InvMerch::where('is_exclusive', true)->count(),
+                'general_items' => InvMerch::where('is_exclusive', false)->count(),
             ],
         ]);
     }

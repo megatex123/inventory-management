@@ -488,21 +488,6 @@ Route::prefix('inv-merch')->group(function () {
     });
 });
 
-Route::prefix('inv-excl-merch')->group(function () {
-    Route::get('/', 'InvExclMerchController@index');
-    Route::post('/', 'InvExclMerchController@store');
-    Route::get('/statistics', 'InvExclMerchController@statistics');
-    Route::get('/search', 'InvExclMerchController@search');
-
-    Route::prefix('{id}')->group(function () {
-        Route::get('/', 'InvExclMerchController@show');
-        Route::get('/edit', 'InvExclMerchController@edit');
-        Route::put('/', 'InvExclMerchController@update');
-        Route::patch('/', 'InvExclMerchController@update');
-        Route::delete('/', 'InvExclMerchController@destroy');
-    });
-});
-
 Route::prefix('merch-orders')->group(function () {
     Route::get('/', 'MerchOrderController@index');
     Route::post('/', 'MerchOrderController@store');
