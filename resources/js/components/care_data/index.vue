@@ -838,8 +838,9 @@ export default {
         const month = this.filters.month ? parseInt(this.filters.month, 10) : null;
         const start = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
         const end = month ? new Date(year, month, 0) : new Date(year, 11, 31);
-        params.start_date = start.toISOString().split('T')[0];
-        params.end_date = end.toISOString().split('T')[0];
+        const toLocalDateString = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        params.start_date = toLocalDateString(start);
+        params.end_date = toLocalDateString(end);
       }
 
       Object.keys(params).forEach(key => {

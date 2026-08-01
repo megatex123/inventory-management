@@ -4336,8 +4336,11 @@ var EMPTY_FILTERS = {
         var month = this.filters.month ? parseInt(this.filters.month, 10) : null;
         var start = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
         var end = month ? new Date(year, month, 0) : new Date(year, 11, 31);
-        params.start_date = start.toISOString().split('T')[0];
-        params.end_date = end.toISOString().split('T')[0];
+        var toLocalDateString = function toLocalDateString(d) {
+          return "".concat(d.getFullYear(), "-").concat(String(d.getMonth() + 1).padStart(2, '0'), "-").concat(String(d.getDate()).padStart(2, '0'));
+        };
+        params.start_date = toLocalDateString(start);
+        params.end_date = toLocalDateString(end);
       }
       Object.keys(params).forEach(function (key) {
         if (params[key] === '' || params[key] === null || params[key] === undefined) {
@@ -13532,7 +13535,7 @@ var EMPTY_FILTERS = {
       showFilters: false,
       filterColumns: [{
         key: 'search',
-        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        label: 'Meeting ID / Requirement ID / Theme / Preference / Exemption / Location',
         type: 'text'
       }, {
         key: 'reason',
@@ -34505,7 +34508,7 @@ var EMPTY_FILTERS = {
       showFilters: false,
       filterColumns: [{
         key: 'search',
-        label: 'Meeting ID / Theme / Preference / Exemption / Location',
+        label: 'Meeting ID / UAT ID / Theme / Preference / Exemption / Location',
         type: 'text'
       }, {
         key: 'reason',
@@ -55383,7 +55386,9 @@ var render = function render() {
     staticClass: "thead-light"
   }, [_c("tr", [_c("th", {
     staticClass: "text-center align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("sortable-th", {
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Meeting Requirement ID")]), _vm._v(" "), _c("sortable-th", {
     attrs: {
       label: "Budget (RM)",
       "sort-key": "initial_budget",
@@ -55427,6 +55432,8 @@ var render = function render() {
     }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v("\n              " + _vm._s(detail.requirement_id) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
@@ -90410,7 +90417,9 @@ var render = function render() {
     staticClass: "thead-light"
   }, [_c("tr", [_c("th", {
     staticClass: "text-center align-top"
-  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("sortable-th", {
+  }, [_vm._v("Meeting ID")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("UAT ID")]), _vm._v(" "), _c("sortable-th", {
     attrs: {
       label: "Budget (RM)",
       "sort-key": "initial_budget",
@@ -90454,6 +90463,8 @@ var render = function render() {
     }, [detail.meeting && detail.meeting.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting.meeting_id)), _c("br"), _vm._v("\n                " + _vm._s(detail.meeting.customer.full_name) + "\n              ")]) : detail.meeting_id ? _c("span", [_vm._v("\n                " + _vm._s(detail.meeting_id) + "\n              ")]) : _c("span", {
       staticClass: "text-muted"
     }, [_vm._v("N/A")])]), _vm._v(" "), _c("td", {
+      staticClass: "text-center"
+    }, [_vm._v("\n              " + _vm._s(detail.uat_id) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm._v("\n              RM " + _vm._s(_vm.formatPrice(detail.initial_budget)) + "\n            ")]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
