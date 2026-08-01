@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Refund;
 use App\Models\Order;
 use App\Support\BusinessId;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class RefundController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     private function validationRules()
     {
         return [
@@ -36,28 +39,15 @@ class RefundController extends Controller
     {
         $query = Refund::with($this->relations());
 
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
+        $this->applyEqualsFilter($query, $request, 'customer_id', 'customer_id');
+        $this->applyLikeFilter($query, $request, 'search', 'refund_id');
 
-        if ($request->filled('search')) {
-            $query->where('refund_id', 'LIKE', "%{$request->search}%");
-        }
+        $this->resolveSortAndApply($query, $request, ['refund_id', 'refund_amount', 'created_at'], 'created_at', 'id', [], 'desc');
 
-        $query->orderBy($request->get('order_by', 'created_at'), $request->get('order_direction', 'desc'));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        $results = $query->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function orderOptions(Request $request)

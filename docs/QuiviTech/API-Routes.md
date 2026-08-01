@@ -130,6 +130,8 @@ All business codes above are generated the same way: `Model::count() + 1`, zero-
   - `GET /{id}`, `GET /{id}/edit`, `PUT|PATCH /{id}`, `DELETE /{id}` → standard show/edit/update/soft-delete
 - A refund optionally links to **one** of `order_id` (covers QuiviCraft/Serve/Care, which live on the `order` record itself), `plus_order_id`, `merch_order_id`, `thread_order_id` — not enforced as mutually exclusive at the validation layer, by design (see [[QuiviRefund]]).
 
+**`refunds` deviates from plain CRUD as of 2026-08-01** (Batch 19 of the List Page Standardization initiative — see [[Work-In-Progress]]): `GET /refunds` takes `page`/`per_page`/`sort_by`/`sort_dir`/`search`/`customer_id` and returns `{success, data, meta}` (shape unchanged — already had server-side pagination). `sort_by` allow-listed to `['refund_id', 'refund_amount', 'created_at']`, defaulting to `created_at`/`desc`. **Same class of bug fixed here as in Batches 15-17** (QuiviMerch/QuiviThread/QuiviPlus): the pre-existing `index()` passed `$request->get('order_by', ...)` directly into `->orderBy()` with no allow-list. `SortableTh` on Refund Code/Refund Amount. Existing `statistics()`/`orderOptions()`, and `store`/`show`/`edit`/`update`/`destroy`, untouched. Pre-existing statistics cards preserved. Only 1 live row in the dev DB; sort/pagination/tiebreaker correctness verified via temporary test rows (inserted and cleaned up during this batch's Task 1), not live data.
+
 ## Diagnostics
 - `GET /test-connection` — health check, returns timestamp/version
 - `Route::fallback` — JSON 404 with a hint list of serve-mps endpoints (debug aid left in from that module's build-out)
