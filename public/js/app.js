@@ -27487,6 +27487,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -27506,10 +27509,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       serveData: [],
@@ -27526,16 +27535,20 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         lkp_serve_id: '',
         date_from: '',
         year: '',
-        month: '',
-        sortBy: 'created_at_desc'
+        month: ''
       },
       availableYears: [],
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-      currentPage: 1,
-      perPage: 10,
-      // Increased from 10 to 25 to show more records by default
-      total: 0,
-      filteredCount: 0
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      }
     };
   },
   computed: {
@@ -27549,43 +27562,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var revenue = this.stats.total_revenue || 0;
       return (revenue / total).toFixed(2);
     },
-    lastPage: function lastPage() {
-      return Math.ceil(this.filteredCount / this.perPage);
-    },
-    pages: function pages() {
-      var pages = [];
-      var totalPages = this.lastPage;
-      var startPage = Math.max(1, this.currentPage - 2);
-      var endPage = Math.min(totalPages, this.currentPage + 2);
-      if (totalPages > 5) {
-        if (this.currentPage <= 3) {
-          endPage = 5;
-        } else if (this.currentPage >= totalPages - 2) {
-          startPage = totalPages - 4;
-        }
-      }
-      for (var i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      return pages;
+    // The export code path (sortServes) still needs a single sort token. It
+    // now follows the table's own sort state instead of a separate dropdown.
+    exportSortBy: function exportSortBy() {
+      return "".concat(this.sortState.key, "_").concat(this.sortState.dir);
     },
     hasActiveFilters: function hasActiveFilters() {
-      var _this = this;
-      return Object.values(this.filters).some(function (value, index) {
-        var key = Object.keys(_this.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'created_at_desc';
-        }
+      return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
     },
     activeFilters: function activeFilters() {
-      var _this2 = this;
+      var _this = this;
       var active = {};
       Object.keys(this.filters).forEach(function (key) {
-        var value = _this2.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'created_at_desc')) {
-          if (key === 'month' && !_this2.filters.year) {
+        var value = _this.filters[key];
+        if (value !== '') {
+          if (key === 'month' && !_this.filters.year) {
             return;
           }
           active[key] = value;
@@ -27655,7 +27648,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     }
   },
   mounted: function mounted() {
-    this.fetchServeData();
+    this.fetchList();
     this.fetchCustomers();
     this.fetchServes();
     this.fetchOverallStatistics();
@@ -27725,7 +27718,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return price.toFixed(2);
     },
     getFilterLabel: function getFilterLabel(key, value) {
-      var _this3 = this;
+      var _this2 = this;
       var labels = {
         search: "Search: \"".concat(value, "\""),
         status: {
@@ -27736,13 +27729,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           'not_started_only': 'Status: Not Started Only'
         },
         customer_id: function customer_id() {
-          var customer = _this3.customers.find(function (c) {
+          var customer = _this2.customers.find(function (c) {
             return c.id == value;
           });
           return "Customer: ".concat(customer ? customer.full_name : value);
         },
         lkp_serve_id: function lkp_serve_id() {
-          var serve = _this3.serves.find(function (s) {
+          var serve = _this2.serves.find(function (s) {
             return s.id == value;
           });
           return "Type: ".concat(serve ? serve.name : value);
@@ -27750,18 +27743,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         date_from: "From: ".concat(value),
         year: "Year: ".concat(value),
         month: function month() {
-          var monthName = _this3.monthNames[value - 1] || value;
+          var monthName = _this2.monthNames[value - 1] || value;
           return "Month: ".concat(monthName);
-        },
-        sortBy: {
-          'created_at_desc': 'Sort: Date (Newest)',
-          'created_at_asc': 'Sort: Date (Oldest)',
-          'customer_name_asc': 'Sort: Customer A-Z',
-          'customer_name_desc': 'Sort: Customer Z-A',
-          'serve_id_asc': 'Sort: Serve ID A-Z',
-          'serve_id_desc': 'Sort: Serve ID Z-A',
-          'package_price_desc': 'Sort: Price High-Low',
-          'package_price_asc': 'Sort: Price Low-High'
         }
       };
       if (key === 'search') return labels.search;
@@ -27781,55 +27764,39 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
       return "".concat(key, ": ").concat(value);
     },
-    fetchServeData: function fetchServeData() {
-      var _this4 = this;
+    fetchList: function fetchList() {
+      var _this3 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var params, res, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _this4.loading = true;
+              _this3.loading = true;
               _context.p = 1;
-              params = _objectSpread({
-                page: _this4.currentPage,
-                per_page: _this4.perPage
-              }, _this4.filters); // Remove empty params
+              params = _objectSpread(_objectSpread({}, _this3.filters), {}, {
+                page: _this3.meta.current_page,
+                per_page: _this3.meta.per_page,
+                sort_by: _this3.sortState.key,
+                sort_dir: _this3.sortState.dir
+              }); // Remove empty params
               Object.keys(params).forEach(function (key) {
                 if (params[key] === '' || params[key] === null || params[key] === undefined) {
                   delete params[key];
                 }
               });
-              console.log('Fetching data with params:', params);
               _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-data', {
                 params: params
               });
             case 2:
               res = _context.v;
-              console.log('Server response:', res.data);
-              _this4.serveData = res.data.data || [];
-
-              // Get pagination info from server response
+              _this3.serveData = res.data.data || [];
               if (res.data.meta) {
-                _this4.total = res.data.meta.total || 0;
-                _this4.filteredCount = res.data.meta.total || 0;
-                _this4.currentPage = res.data.meta.current_page || 1;
-                _this4.perPage = res.data.meta.per_page || _this4.perPage;
-              } else if (res.data.total !== undefined) {
-                _this4.total = res.data.total;
-                _this4.filteredCount = res.data.total;
-              } else {
-                _this4.total = _this4.serveData.length;
-                _this4.filteredCount = _this4.serveData.length;
+                _this3.meta = res.data.meta;
               }
-              console.log('Total records:', _this4.total);
-              console.log('Filtered count:', _this4.filteredCount);
-              console.log('Current page:', _this4.currentPage);
-              console.log('Per page:', _this4.perPage);
-              console.log('Records loaded:', _this4.serveData.length);
 
               // Update statistics for the current page
-              _this4.updateStatistics(_this4.serveData);
+              _this3.updateStatistics(_this3.serveData);
               _context.n = 4;
               break;
             case 3:
@@ -27839,7 +27806,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to load serve data', 'error');
             case 4:
               _context.p = 4;
-              _this4.loading = false;
+              _this3.loading = false;
               return _context.f(4);
             case 5:
               return _context.a(2);
@@ -27848,7 +27815,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     fetchOverallStatistics: function fetchOverallStatistics() {
-      var _this5 = this;
+      var _this4 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
         var res, _t2;
         return _regenerator().w(function (_context2) {
@@ -27859,8 +27826,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-data/statistics');
             case 1:
               res = _context2.v;
-              _this5.allStats = res.data.data || {};
-              _this5.stats = _objectSpread({}, _this5.allStats);
+              _this4.allStats = res.data.data || {};
+              _this4.stats = _objectSpread({}, _this4.allStats);
               _context2.n = 3;
               break;
             case 2:
@@ -27874,7 +27841,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     updateStatistics: function updateStatistics(filteredData) {
-      var _this6 = this;
+      var _this5 = this;
       if (!filteredData || filteredData.length === 0) {
         return;
       }
@@ -27893,7 +27860,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
       var totalRevenue = 0;
       filteredData.forEach(function (serve) {
-        var packagePrice = parseFloat(_this6.getPackagePrice(serve)) || 0;
+        var packagePrice = parseFloat(_this5.getPackagePrice(serve)) || 0;
         totalRevenue += packagePrice;
       });
       var today = new Date().toISOString().split('T')[0];
@@ -27906,7 +27873,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
       // Update stats for current page only
       this.stats = {
-        total_serves: this.filteredCount,
+        total_serves: this.meta.total,
         // Use total count from server for overall total
         today_serves: todayServes,
         total_upgrades: totalUpgrades,
@@ -27917,7 +27884,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       };
     },
     fetchCustomers: function fetchCustomers() {
-      var _this7 = this;
+      var _this6 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
         var res, _t3;
         return _regenerator().w(function (_context3) {
@@ -27928,7 +27895,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/customer/all');
             case 1:
               res = _context3.v;
-              _this7.customers = res.data.data || res.data;
+              _this6.customers = res.data.data || res.data;
               _context3.n = 3;
               break;
             case 2:
@@ -27942,7 +27909,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     fetchServes: function fetchServes() {
-      var _this8 = this;
+      var _this7 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
         var res, _t4;
         return _regenerator().w(function (_context4) {
@@ -27953,7 +27920,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serves');
             case 1:
               res = _context4.v;
-              _this8.serves = res.data.data || res.data;
+              _this7.serves = res.data.data || res.data;
               _context4.n = 3;
               break;
             case 2:
@@ -27974,8 +27941,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     applyFilters: function applyFilters() {
-      this.currentPage = 1;
-      this.fetchServeData();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     resetFilters: function resetFilters() {
       this.filters = {
@@ -27985,11 +27952,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         lkp_serve_id: '',
         date_from: '',
         year: '',
-        month: '',
-        sortBy: 'created_at_desc'
+        month: ''
       };
-      this.perPage = 25;
-      this.currentPage = 1;
+      this.sortState = {
+        key: 'created_at',
+        dir: 'desc'
+      };
+      this.meta.current_page = 1;
       this.stats = _objectSpread({}, this.allStats);
     },
     removeFilter: function removeFilter(filterKey) {
@@ -28000,13 +27969,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         }
       }
     },
-    changePage: function changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchServeData();
-    },
     refreshData: function refreshData() {
-      this.fetchServeData();
+      this.fetchList();
       this.fetchOverallStatistics();
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Refreshed!',
@@ -28017,7 +27981,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     deleteServe: function deleteServe(id) {
-      var _this9 = this;
+      var _this8 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -28030,8 +27994,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         if (result.isConfirmed) {
           axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/serve-data/".concat(id)).then(function () {
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Deleted!', 'Serve data has been deleted.', 'success');
-            _this9.fetchServeData();
-            _this9.fetchOverallStatistics();
+            _this8.fetchList();
+            _this8.fetchOverallStatistics();
           })["catch"](function (error) {
             console.error('Error deleting serve:', error);
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to delete serve data', 'error');
@@ -28040,10 +28004,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     exportToCSV: function exportToCSV() {
-      var _this0 = this;
+      var _this9 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Export Options',
-        html: "\n          <div class=\"text-left\">\n            <p>Choose export format:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n              <label class=\"form-check-label\" for=\"formatExcel\">\n                Excel/HTML Format (Styled Report)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n              <label class=\"form-check-label\" for=\"formatCSV\">\n                Simple CSV Format\n              </label>\n            </div>\n            <br>\n            <p>Choose what to export:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n              <label class=\"form-check-label\" for=\"exportFiltered\">\n                Export filtered data (".concat(this.filteredCount, " records)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n              <label class=\"form-check-label\" for=\"exportAll\">\n                Export all data (").concat(this.total, " records)\n              </label>\n            </div>\n          </div>\n        "),
+        html: "\n          <div class=\"text-left\">\n            <p>Choose export format:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n              <label class=\"form-check-label\" for=\"formatExcel\">\n                Excel/HTML Format (Styled Report)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n              <label class=\"form-check-label\" for=\"formatCSV\">\n                Simple CSV Format\n              </label>\n            </div>\n            <br>\n            <p>Choose what to export:</p>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n              <label class=\"form-check-label\" for=\"exportFiltered\">\n                Export filtered data (".concat(this.meta.total, " records)\n              </label>\n            </div>\n            <div class=\"form-check\">\n              <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n              <label class=\"form-check-label\" for=\"exportAll\">\n                Export all data (").concat(this.meta.total, " records)\n              </label>\n            </div>\n          </div>\n        "),
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
@@ -28062,15 +28026,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             format = _result$value.format,
             scope = _result$value.scope;
           if (format === 'excel') {
-            _this0.generateStyledExcelReport(scope);
+            _this9.generateStyledExcelReport(scope);
           } else {
-            _this0.generateSimpleCSV(scope);
+            _this9.generateSimpleCSV(scope);
           }
         }
       });
     },
     generateStyledExcelReport: function generateStyledExcelReport(scope) {
-      var _this1 = this;
+      var _this0 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
         var dataToExport, params, res, exportDate, totalRecords, totalUpgrades, totalStarted, totalRevenue, htmlContent, blob, url, link, date, filename, _error$response, _t5;
         return _regenerator().w(function (_context5) {
@@ -28091,7 +28055,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 break;
               }
               _context5.n = 2;
-              return _this1.getAllFilteredData();
+              return _this0.getAllFilteredData();
             case 2:
               dataToExport = _context5.v;
               _context5.n = 5;
@@ -28132,11 +28096,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 return serve.start_serve_enabled;
               }).length;
               totalRevenue = dataToExport.reduce(function (sum, serve) {
-                return sum + parseFloat(_this1.getPackagePrice(serve));
+                return sum + parseFloat(_this0.getPackagePrice(serve));
               }, 0);
               htmlContent = "\n        <!DOCTYPE html>\n        <html>\n        <head>\n            <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\" />\n            <title>QuiviServe Report</title>\n            <style type=\"text/css\">\n                body {\n                    font-family: Arial, Helvetica, sans-serif;\n                    margin: 20px;\n                }\n\n                .report-title {\n                    text-align: center;\n                    font-size: 24px;\n                    font-weight: bold;\n                    color: #2c3e50;\n                    margin-bottom: 10px;\n                }\n\n                .report-subtitle {\n                    text-align: center;\n                    font-size: 16px;\n                    color: #7f8c8d;\n                    margin-bottom: 20px;\n                }\n\n                table {\n                    width: 100%;\n                    border-collapse: collapse;\n                    margin-top: 20px;\n                    font-size: 12px;\n                }\n\n                td, th {\n                    border: 1px solid #ddd;\n                    padding: 8px;\n                    text-align: center;\n                }\n\n                tr:nth-child(even) {\n                    background-color: #f2f2f2;\n                }\n\n                th {\n                    padding-top: 12px;\n                    padding-bottom: 12px;\n                    background-color: #b0e0e6;\n                    color: black;\n                    font-weight: bold;\n                }\n\n                .header-title {\n                    text-align: center;\n                    font-size: 16px;\n                    font-weight: bold;\n                    background-color: #e8ec7e;\n                    color: black;\n                    padding: 10px;\n                }\n\n                .subtitle {\n                    font-size: 11px;\n                    text-align: center;\n                    padding: 8px;\n                    background-color: #f0f0f0;\n                }\n\n                .total-row {\n                    font-weight: bold;\n                    background-color: #b0e0e6;\n                }\n\n                .text-center {\n                    text-align: center;\n                }\n\n                .text-right {\n                    text-align: right;\n                }\n\n                .text-left {\n                    text-align: left;\n                }\n\n                .status-active {\n                    color: #28a745;\n                    font-weight: bold;\n                }\n\n                .status-inactive {\n                    color: #dc3545;\n                    font-weight: bold;\n                }\n\n                .upgrade-yes {\n                    color: #28a745;\n                    font-weight: bold;\n                }\n\n                .upgrade-no {\n                    color: #6c757d;\n                }\n\n                .footer {\n                    text-align: center;\n                    font-size: 10px;\n                    color: #95a5a6;\n                    margin-top: 30px;\n                    padding-top: 10px;\n                    border-top: 1px solid #ecf0f1;\n                }\n            </style>\n        </head>\n        <body>\n            <div class=\"book\">\n                <div class=\"page\">\n                    <h1 class=\"report-title\">QUIVISERVE REPORT</h1>\n                    <h4 class=\"report-subtitle\"></h4>\n\n                    <table>\n                        <tr>\n                            <th colspan=\"12\" class=\"header-title\">\n                                SERVE DATA DETAILED LIST\n                            </th>\n                        </tr>\n                        <tr>\n                            <td colspan=\"12\" class=\"subtitle\">\n                                Records: ".concat(totalRecords, " | Export Date: ").concat(exportDate, " |\n                                ").concat(scope === 'filtered' ? 'Filtered Data' : 'All Data', "\n                            </td>\n                        </tr>\n                        <tr class=\"total-row\">\n                            <th>No.</th>\n                            <th>Serve ID</th>\n                            <th>Customer Name</th>\n                            <th>Customer ID</th>\n                            <th>Phone</th>\n                            <th>Order ID</th>\n                            <th>Serve Type</th>\n                            <th>Base Price</th>\n                            <th>Upgrade</th>\n                            <th>Total Price</th>\n                            <th>Status</th>\n                            <th>Created Date</th>\n                        </tr>\n                        ").concat(dataToExport.map(function (serve, index) {
                 var _serve$customer, _serve$customer2, _serve$customer3, _serve$order, _serve$serve, _serve$serve2;
-                return "\n                        <tr>\n                            <td class=\"text-center\">".concat(index + 1, "</td>\n                            <td class=\"text-center\">").concat(_this1.escapeHtml(serve.serve_id || 'N/A'), "</td>\n                            <td class=\"text-left\">").concat(_this1.escapeHtml(((_serve$customer = serve.customer) === null || _serve$customer === void 0 ? void 0 : _serve$customer.full_name) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this1.escapeHtml(((_serve$customer2 = serve.customer) === null || _serve$customer2 === void 0 ? void 0 : _serve$customer2.customer_id) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this1.escapeHtml(((_serve$customer3 = serve.customer) === null || _serve$customer3 === void 0 ? void 0 : _serve$customer3.phone) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this1.escapeHtml(((_serve$order = serve.order) === null || _serve$order === void 0 ? void 0 : _serve$order.order_id) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this1.escapeHtml(((_serve$serve = serve.serve) === null || _serve$serve === void 0 ? void 0 : _serve$serve.name) || 'N/A'), "</td>\n                            <td class=\"text-right\">RM").concat(((_serve$serve2 = serve.serve) === null || _serve$serve2 === void 0 ? void 0 : _serve$serve2.fee) || '0.00', "</td>\n                            <td class=\"text-center ").concat(serve.upgrade_pce_enabled ? 'upgrade-yes' : 'upgrade-no', "\">\n                                ").concat(serve.upgrade_pce_enabled ? 'Yes' : 'No', "\n                            </td>\n                            <td class=\"text-right\">RM").concat(_this1.getPackagePrice(serve), "</td>\n                            <td class=\"text-center ").concat(serve.start_serve_enabled ? 'status-active' : 'status-inactive', "\">\n                                ").concat(serve.start_serve_enabled ? 'Active' : 'Inactive', "\n                            </td>\n                            <td class=\"text-center\">").concat(_this1.formatDate(serve.created_at), "</td>\n                        </tr>\n                        ");
+                return "\n                        <tr>\n                            <td class=\"text-center\">".concat(index + 1, "</td>\n                            <td class=\"text-center\">").concat(_this0.escapeHtml(serve.serve_id || 'N/A'), "</td>\n                            <td class=\"text-left\">").concat(_this0.escapeHtml(((_serve$customer = serve.customer) === null || _serve$customer === void 0 ? void 0 : _serve$customer.full_name) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this0.escapeHtml(((_serve$customer2 = serve.customer) === null || _serve$customer2 === void 0 ? void 0 : _serve$customer2.customer_id) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this0.escapeHtml(((_serve$customer3 = serve.customer) === null || _serve$customer3 === void 0 ? void 0 : _serve$customer3.phone) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this0.escapeHtml(((_serve$order = serve.order) === null || _serve$order === void 0 ? void 0 : _serve$order.order_id) || 'N/A'), "</td>\n                            <td class=\"text-center\">").concat(_this0.escapeHtml(((_serve$serve = serve.serve) === null || _serve$serve === void 0 ? void 0 : _serve$serve.name) || 'N/A'), "</td>\n                            <td class=\"text-right\">RM").concat(((_serve$serve2 = serve.serve) === null || _serve$serve2 === void 0 ? void 0 : _serve$serve2.fee) || '0.00', "</td>\n                            <td class=\"text-center ").concat(serve.upgrade_pce_enabled ? 'upgrade-yes' : 'upgrade-no', "\">\n                                ").concat(serve.upgrade_pce_enabled ? 'Yes' : 'No', "\n                            </td>\n                            <td class=\"text-right\">RM").concat(_this0.getPackagePrice(serve), "</td>\n                            <td class=\"text-center ").concat(serve.start_serve_enabled ? 'status-active' : 'status-inactive', "\">\n                                ").concat(serve.start_serve_enabled ? 'Active' : 'Inactive', "\n                            </td>\n                            <td class=\"text-center\">").concat(_this0.formatDate(serve.created_at), "</td>\n                        </tr>\n                        ");
               }).join(''), "\n\n                        <tr class=\"total-row\">\n                            <td colspan=\"7\" class=\"text-center\">TOTAL</td>\n                            <td class=\"text-right\">RM").concat(dataToExport.reduce(function (sum, serve) {
                 var _serve$serve3;
                 return sum + (parseFloat((_serve$serve3 = serve.serve) === null || _serve$serve3 === void 0 ? void 0 : _serve$serve3.fee) || 0);
@@ -28180,14 +28144,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     getAllFilteredData: function getAllFilteredData() {
-      var _this10 = this;
+      var _this1 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
         var params, res, filteredData, _t6;
         return _regenerator().w(function (_context6) {
           while (1) switch (_context6.p = _context6.n) {
             case 0:
               _context6.p = 0;
-              params = _objectSpread(_objectSpread({}, _this10.filters), {}, {
+              params = _objectSpread(_objectSpread({}, _this1.filters), {}, {
                 per_page: 10000,
                 page: 1
               }); // Remove empty filters
@@ -28209,23 +28173,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 1:
               res = _context6.v;
               filteredData = res.data.data || []; // Apply year/month filters client-side
-              if (_this10.filters.year) {
+              if (_this1.filters.year) {
                 filteredData = filteredData.filter(function (serve) {
                   if (!serve.created_at) return false;
                   var serveDate = new Date(serve.created_at);
-                  return serveDate.getFullYear() === parseInt(_this10.filters.year);
+                  return serveDate.getFullYear() === parseInt(_this1.filters.year);
                 });
               }
-              if (_this10.filters.year && _this10.filters.month) {
+              if (_this1.filters.year && _this1.filters.month) {
                 filteredData = filteredData.filter(function (serve) {
                   if (!serve.created_at) return false;
                   var serveDate = new Date(serve.created_at);
-                  return serveDate.getMonth() + 1 === parseInt(_this10.filters.month);
+                  return serveDate.getMonth() + 1 === parseInt(_this1.filters.month);
                 });
               }
 
               // Apply sorting client-side
-              filteredData = _this10.sortServes(filteredData);
+              filteredData = _this1.sortServes(filteredData);
               console.log("Fetched ".concat(filteredData.length, " records for export"));
               return _context6.a(2, filteredData);
             case 2:
@@ -28233,14 +28197,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _t6 = _context6.v;
               console.error('Error fetching all filtered data:', _t6);
               // Fallback to client-side filtering from current page data
-              return _context6.a(2, _this10.getFilteredDataForExport());
+              return _context6.a(2, _this1.getFilteredDataForExport());
           }
         }, _callee6, null, [[0, 2]]);
       }))();
     },
     sortServes: function sortServes(serves) {
-      var _this11 = this;
-      switch (this.filters.sortBy) {
+      var _this10 = this;
+      switch (this.exportSortBy) {
         case 'created_at_asc':
           return serves.slice().sort(function (a, b) {
             return new Date(a.created_at) - new Date(b.created_at);
@@ -28267,14 +28231,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           });
         case 'package_price_desc':
           return serves.slice().sort(function (a, b) {
-            var priceA = _this11.getPackagePrice(a);
-            var priceB = _this11.getPackagePrice(b);
+            var priceA = _this10.getPackagePrice(a);
+            var priceB = _this10.getPackagePrice(b);
             return parseFloat(priceB) - parseFloat(priceA);
           });
         case 'package_price_asc':
           return serves.slice().sort(function (a, b) {
-            var priceA = _this11.getPackagePrice(a);
-            var priceB = _this11.getPackagePrice(b);
+            var priceA = _this10.getPackagePrice(a);
+            var priceB = _this10.getPackagePrice(b);
             return parseFloat(priceA) - parseFloat(priceB);
           });
         case 'created_at_desc':
@@ -28298,7 +28262,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     generateSimpleCSV: function generateSimpleCSV(scope) {
-      var _this12 = this;
+      var _this11 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Generating CSV...',
         text: 'Please wait while we prepare your export',
@@ -28317,7 +28281,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           // If no data, try to fetch from API
           if (!dataToExport || dataToExport.length === 0) {
             dataToExport = this.serveData.filter(function (serve) {
-              return _this12.matchesFilters(serve);
+              return _this11.matchesFilters(serve);
             });
           }
         } else {
@@ -28328,7 +28292,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-data', {
             params: params
           }).then(function (res) {
-            _this12.exportCSVData(res.data.data || [], scope);
+            _this11.exportCSVData(res.data.data || [], scope);
           })["catch"](function (error) {
             console.error('Error fetching all data for CSV:', error);
             sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('Error!', 'Failed to fetch data for export', 'error');
@@ -28346,7 +28310,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     exportCSVData: function exportCSVData(dataToExport, scope) {
-      var _this13 = this;
+      var _this12 = this;
       if (!dataToExport || dataToExport.length === 0) {
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.close();
         sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire('No Data', 'There is no data to export', 'warning');
@@ -28355,7 +28319,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var headers = ['No.', 'Serve ID', 'Customer Name', 'Customer ID', 'Phone', 'Order ID', 'Order Total', 'Serve Type', 'Base Price', 'Upgrade Enabled', 'Upgrade Price', 'Package Price', 'Status', 'QVSE CID', 'Notes', 'Created Date'];
       var rows = dataToExport.map(function (serve, index) {
         var _serve$customer4, _serve$customer5, _serve$customer6, _serve$order2, _serve$order3, _serve$serve4, _serve$serve5;
-        return [index + 1, serve.serve_id || '', ((_serve$customer4 = serve.customer) === null || _serve$customer4 === void 0 ? void 0 : _serve$customer4.full_name) || '', ((_serve$customer5 = serve.customer) === null || _serve$customer5 === void 0 ? void 0 : _serve$customer5.customer_id) || '', ((_serve$customer6 = serve.customer) === null || _serve$customer6 === void 0 ? void 0 : _serve$customer6.phone) || '', ((_serve$order2 = serve.order) === null || _serve$order2 === void 0 ? void 0 : _serve$order2.order_id) || '', ((_serve$order3 = serve.order) === null || _serve$order3 === void 0 ? void 0 : _serve$order3.total) || '0', ((_serve$serve4 = serve.serve) === null || _serve$serve4 === void 0 ? void 0 : _serve$serve4.name) || '', ((_serve$serve5 = serve.serve) === null || _serve$serve5 === void 0 ? void 0 : _serve$serve5.fee) || '0', serve.upgrade_pce_enabled ? 'Yes' : 'No', serve.upgrade_price || '69.90', _this13.getPackagePrice(serve), serve.start_serve_enabled ? 'Active' : 'Inactive', serve.qvse_cid || '', (serve.notes || '').replace(/"/g, '""'), new Date(serve.created_at).toISOString()].map(function (cell) {
+        return [index + 1, serve.serve_id || '', ((_serve$customer4 = serve.customer) === null || _serve$customer4 === void 0 ? void 0 : _serve$customer4.full_name) || '', ((_serve$customer5 = serve.customer) === null || _serve$customer5 === void 0 ? void 0 : _serve$customer5.customer_id) || '', ((_serve$customer6 = serve.customer) === null || _serve$customer6 === void 0 ? void 0 : _serve$customer6.phone) || '', ((_serve$order2 = serve.order) === null || _serve$order2 === void 0 ? void 0 : _serve$order2.order_id) || '', ((_serve$order3 = serve.order) === null || _serve$order3 === void 0 ? void 0 : _serve$order3.total) || '0', ((_serve$serve4 = serve.serve) === null || _serve$serve4 === void 0 ? void 0 : _serve$serve4.name) || '', ((_serve$serve5 = serve.serve) === null || _serve$serve5 === void 0 ? void 0 : _serve$serve5.fee) || '0', serve.upgrade_pce_enabled ? 'Yes' : 'No', serve.upgrade_price || '69.90', _this12.getPackagePrice(serve), serve.start_serve_enabled ? 'Active' : 'Inactive', serve.qvse_cid || '', (serve.notes || '').replace(/"/g, '""'), new Date(serve.created_at).toISOString()].map(function (cell) {
           return "\"".concat(cell, "\"");
         });
       });
@@ -28387,9 +28351,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     getFilteredDataForExport: function getFilteredDataForExport() {
-      var _this14 = this;
+      var _this13 = this;
       var filtered = this.serveData.filter(function (serve) {
-        return _this14.matchesFilters(serve);
+        return _this13.matchesFilters(serve);
       });
       if (filtered.length > 0) {
         return this.sortServes(filtered);
@@ -28403,22 +28367,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
       if (this.filters.status) {
         filtered = filtered.filter(function (serve) {
-          if (_this14.filters.status === 'active') return serve.start_serve_enabled;
-          if (_this14.filters.status === 'not_started') return !serve.start_serve_enabled;
-          if (_this14.filters.status === 'with_upgrade') return serve.upgrade_pce_enabled;
-          if (_this14.filters.status === 'started') return serve.start_serve_enabled;
-          if (_this14.filters.status === 'not_started_only') return !serve.start_serve_enabled;
+          if (_this13.filters.status === 'active') return serve.start_serve_enabled;
+          if (_this13.filters.status === 'not_started') return !serve.start_serve_enabled;
+          if (_this13.filters.status === 'with_upgrade') return serve.upgrade_pce_enabled;
+          if (_this13.filters.status === 'started') return serve.start_serve_enabled;
+          if (_this13.filters.status === 'not_started_only') return !serve.start_serve_enabled;
           return true;
         });
       }
       if (this.filters.customer_id) {
         filtered = filtered.filter(function (serve) {
-          return serve.customer && serve.customer.id == _this14.filters.customer_id;
+          return serve.customer && serve.customer.id == _this13.filters.customer_id;
         });
       }
       if (this.filters.lkp_serve_id) {
         filtered = filtered.filter(function (serve) {
-          return serve.serve && serve.serve.id == _this14.filters.lkp_serve_id;
+          return serve.serve && serve.serve.id == _this13.filters.lkp_serve_id;
         });
       }
       if (this.filters.date_from) {
@@ -28432,14 +28396,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         filtered = filtered.filter(function (serve) {
           if (!serve.created_at) return false;
           var serveDate = new Date(serve.created_at);
-          return serveDate.getFullYear() === parseInt(_this14.filters.year);
+          return serveDate.getFullYear() === parseInt(_this13.filters.year);
         });
       }
       if (this.filters.year && this.filters.month) {
         filtered = filtered.filter(function (serve) {
           if (!serve.created_at) return false;
           var serveDate = new Date(serve.created_at);
-          return serveDate.getMonth() + 1 === parseInt(_this14.filters.month);
+          return serveDate.getMonth() + 1 === parseInt(_this13.filters.month);
         });
       }
       filtered = this.sortServes(filtered);
@@ -77190,104 +77154,6 @@ var render = function render() {
       }
     }, [_vm._v("\n                " + _vm._s(monthName) + "\n              ")]);
   })], 2)])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Sort By")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.sortBy,
-      expression: "filters.sortBy"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: function change($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "sortBy", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "created_at_desc"
-    }
-  }, [_vm._v("Date (Newest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "created_at_asc"
-    }
-  }, [_vm._v("Date (Oldest)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "customer_name_asc"
-    }
-  }, [_vm._v("Customer Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "customer_name_desc"
-    }
-  }, [_vm._v("Customer Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "serve_id_asc"
-    }
-  }, [_vm._v("Serve ID (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "serve_id_desc"
-    }
-  }, [_vm._v("Serve ID (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "package_price_desc"
-    }
-  }, [_vm._v("Package Price (High to Low)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "package_price_asc"
-    }
-  }, [_vm._v("Package Price (Low to High)")])])])]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-2"
-  }, [_c("div", {
-    staticClass: "form-group"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Results")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.perPage,
-      expression: "perPage"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.perPage = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "10"
-    }
-  }, [_vm._v("10 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "25"
-    }
-  }, [_vm._v("25 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "50"
-    }
-  }, [_vm._v("50 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "100"
-    }
-  }, [_vm._v("100 per page")])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-3 d-flex align-items-end"
   }, [_c("div", {
     staticClass: "btn-group w-100"
@@ -77301,7 +77167,7 @@ var render = function render() {
   }), _vm._v(" Clear Filters\n            ")]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-primary btn-sm ml-2",
     on: {
-      click: _vm.fetchServeData
+      click: _vm.fetchList
     }
   }, [_c("i", {
     staticClass: "fas fa-sync-alt mr-1"
@@ -77340,7 +77206,7 @@ var render = function render() {
     staticClass: "d-flex align-items-center"
   }, [_c("span", {
     staticClass: "text-muted mr-3"
-  }, [_vm._v("\n          Showing " + _vm._s((_vm.currentPage - 1) * _vm.perPage + 1) + " to " + _vm._s(Math.min(_vm.currentPage * _vm.perPage, _vm.filteredCount)) + " of " + _vm._s(_vm.filteredCount) + " records\n          "), _vm.filters.search ? _c("span", {
+  }, [_vm._v("\n          Showing " + _vm._s(_vm.meta.total === 0 ? 0 : (_vm.meta.current_page - 1) * _vm.meta.per_page + 1) + " to " + _vm._s(Math.min(_vm.meta.current_page * _vm.meta.per_page, _vm.meta.total)) + " of " + _vm._s(_vm.meta.total) + " records\n          "), _vm.filters.search ? _c("span", {
     staticClass: "text-primary"
   }, [_vm._v('\n            for "' + _vm._s(_vm.filters.search) + '"\n          ')]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "btn-group"
@@ -77364,7 +77230,53 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover mb-0"
-  }, [_vm._m(9), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(10)]) : _vm.serveData.length === 0 ? _c("tbody", [_c("tr", [_c("td", {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("#")]), _vm._v(" "), _c("sortable-th", {
+    staticClass: "align-top",
+    attrs: {
+      label: "Serve Details",
+      "sort-key": "serve_id",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    staticClass: "align-top",
+    attrs: {
+      label: "Customer",
+      "sort-key": "customer_name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Order")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Serve Type")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Status")]), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Upgrade")]), _vm._v(" "), _c("sortable-th", {
+    staticClass: "text-center align-top",
+    attrs: {
+      label: "Date",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "text-center align-top"
+  }, [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(9)]) : _vm.serveData.length === 0 ? _c("tbody", [_c("tr", [_c("td", {
     staticClass: "text-center py-5",
     attrs: {
       colspan: "10"
@@ -77389,15 +77301,15 @@ var render = function render() {
       key: serve.id
     }, [_c("td", {
       staticClass: "text-center align-middle"
-    }, [_vm._v(_vm._s((_vm.currentPage - 1) * _vm.perPage + index + 1))]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s((_vm.meta.current_page - 1) * _vm.meta.per_page + index + 1))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_c("div", {
-      staticClass: "d-flex align-items-center"
-    }, [_c("div", [_c("div", [_c("div", {
       staticClass: "font-weight-bold text-primary"
     }, [_vm._v(_vm._s(serve.serve_id))]), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
-    }, [_vm._v("CID: " + _vm._s(serve.qvse_cid || "N/A"))])]), _vm._v(" "), _c("div", {
+    }, [_vm._v("CID: " + _vm._s(serve.qvse_cid || "N/A"))])]), _vm._v(" "), _c("td", {
+      staticClass: "align-middle"
+    }, [_c("div", {
       staticClass: "font-weight-bold"
     }, [_vm._v(_vm._s(serve.customer ? serve.customer.full_name : "N/A"))]), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
@@ -77405,7 +77317,7 @@ var render = function render() {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-phone text-muted mr-1"
-    }), _vm._v(_vm._s(serve.customer.phone) + "\n                    ")]) : _vm._e()])])]), _vm._v(" "), _c("td", {
+    }), _vm._v(_vm._s(serve.customer.phone) + "\n                ")]) : _vm._e()]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_c("div", [_c("span", {
       staticClass: "badge badge-light"
@@ -77480,66 +77392,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), 0)])])]), _vm._v(" "), _vm.filteredCount > 0 ? _c("div", {
-    staticClass: "card-footer d-flex justify-content-between align-items-center"
-  }, [_c("div", [_c("small", {
-    staticClass: "text-muted"
-  }, [_vm._v("\n          Page " + _vm._s(_vm.currentPage) + " of " + _vm._s(_vm.lastPage) + " |\n          Showing " + _vm._s((_vm.currentPage - 1) * _vm.perPage + 1) + " to " + _vm._s(Math.min(_vm.currentPage * _vm.perPage, _vm.filteredCount)) + " of " + _vm._s(_vm.filteredCount) + " entries\n        ")])]), _vm._v(" "), _c("div", [_c("nav", {
+  }), 0)])])]), _vm._v(" "), _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
     attrs: {
-      "aria-label": "Page navigation"
-    }
-  }, [_c("ul", {
-    staticClass: "pagination pagination-sm mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    attrs: {
-      disabled: _vm.currentPage === 1
+      meta: _vm.meta
     },
     on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage - 1);
-      }
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-left"
-  })])]), _vm._v(" "), _vm._l(_vm.pages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.changePage(page);
-        }
-      }
-    }, [_vm._v(_vm._s(page))])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.lastPage
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    attrs: {
-      disabled: _vm.currentPage === _vm.lastPage
-    },
-    on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.currentPage + 1);
-      }
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-right"
-  })])])], 2)])])]) : _vm._e()])]);
+  })], 1)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -77623,30 +77486,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-table mr-2"
   }), _vm._v("Serve Data List")]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("#")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Serve Details /"), _c("br"), _vm._v(" Customer")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Order")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Serve Type")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Price")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Status")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Upgrade")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Date")]), _vm._v(" "), _c("th", {
-    staticClass: "text-center align-top"
-  }, [_vm._v("Actions")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;

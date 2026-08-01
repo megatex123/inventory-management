@@ -155,43 +155,13 @@
             </div>
           </div>
 
-          <!-- Sort By Filter -->
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Sort By</label>
-              <select v-model="filters.sortBy" class="form-control form-control-sm">
-                <option value="created_at_desc">Date (Newest)</option>
-                <option value="created_at_asc">Date (Oldest)</option>
-                <option value="customer_name_asc">Customer Name (A-Z)</option>
-                <option value="customer_name_desc">Customer Name (Z-A)</option>
-                <option value="serve_id_asc">Serve ID (A-Z)</option>
-                <option value="serve_id_desc">Serve ID (Z-A)</option>
-                <option value="package_price_desc">Package Price (High to Low)</option>
-                <option value="package_price_asc">Package Price (Low to High)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Results Per Page -->
-          <div class="col-md-2">
-            <div class="form-group">
-              <label class="small font-weight-bold text-muted">Results</label>
-              <select v-model="perPage" class="form-control form-control-sm" @change="applyFilters">
-                <option value="10">10 per page</option>
-                <option value="25">25 per page</option>
-                <option value="50">50 per page</option>
-                <option value="100">100 per page</option>
-              </select>
-            </div>
-          </div>
-
           <!-- Action Buttons -->
           <div class="col-md-3 d-flex align-items-end">
             <div class="btn-group w-100">
               <button class="btn btn-outline-secondary btn-sm" @click="resetFilters">
                 <i class="fas fa-redo mr-1"></i> Clear Filters
               </button>
-              <button class="btn btn-primary btn-sm ml-2" @click="fetchServeData">
+              <button class="btn btn-primary btn-sm ml-2" @click="fetchList">
                 <i class="fas fa-sync-alt mr-1"></i> Apply
               </button>
             </div>
@@ -224,7 +194,7 @@
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Serve Data List</h5>
         <div class="d-flex align-items-center">
           <span class="text-muted mr-3">
-            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} records
+            Showing {{ meta.total === 0 ? 0 : ((meta.current_page - 1) * meta.per_page) + 1 }} to {{ Math.min(meta.current_page * meta.per_page, meta.total) }} of {{ meta.total }} records
             <span v-if="filters.search" class="text-primary">
               for "{{ filters.search }}"
             </span>
@@ -245,13 +215,32 @@
             <thead class="thead-light">
               <tr>
                 <th class="text-center align-top">#</th>
-                <th class="align-top">Serve Details /<br> Customer</th>
+                <sortable-th
+                  class="align-top"
+                  label="Serve Details"
+                  sort-key="serve_id"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
+                <sortable-th
+                  class="align-top"
+                  label="Customer"
+                  sort-key="customer_name"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
                 <th class="align-top">Order</th>
                 <th class="text-center align-top">Serve Type</th>
                 <th class="text-center align-top">Price</th>
                 <th class="text-center align-top">Status</th>
                 <th class="text-center align-top">Upgrade</th>
-                <th class="text-center align-top">Date</th>
+                <sortable-th
+                  class="text-center align-top"
+                  label="Date"
+                  sort-key="created_at"
+                  :current-sort="sortState"
+                  @sort="onSort"
+                />
                 <th class="text-center align-top">Actions</th>
               </tr>
             </thead>
@@ -280,20 +269,16 @@
             </tbody>
             <tbody v-else>
               <tr v-for="(serve, index) in serveData" :key="serve.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle">
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div>
-                        <div class="font-weight-bold text-primary">{{ serve.serve_id }}</div>
-                        <small class="text-muted">CID: {{ serve.qvse_cid || 'N/A' }}</small>
-                      </div>
-                      <div class="font-weight-bold">{{ serve.customer ? serve.customer.full_name : 'N/A' }}</div>
-                      <small class="text-muted">{{ serve.customer ? serve.customer.customer_id : 'N/A' }}</small>
-                      <div v-if="serve.customer && serve.customer.phone" class="small">
-                        <i class="fas fa-phone text-muted mr-1"></i>{{ serve.customer.phone }}
-                      </div>
-                    </div>
+                  <div class="font-weight-bold text-primary">{{ serve.serve_id }}</div>
+                  <small class="text-muted">CID: {{ serve.qvse_cid || 'N/A' }}</small>
+                </td>
+                <td class="align-middle">
+                  <div class="font-weight-bold">{{ serve.customer ? serve.customer.full_name : 'N/A' }}</div>
+                  <small class="text-muted">{{ serve.customer ? serve.customer.customer_id : 'N/A' }}</small>
+                  <div v-if="serve.customer && serve.customer.phone" class="small">
+                    <i class="fas fa-phone text-muted mr-1"></i>{{ serve.customer.phone }}
                   </div>
                 </td>
                 <td class="align-middle">
@@ -359,32 +344,12 @@
           </table>
         </div>
       </div>
-      <div v-if="filteredCount > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <div>
-          <small class="text-muted">
-            Page {{ currentPage }} of {{ lastPage }} |
-            Showing {{ ((currentPage - 1) * perPage) + 1 }} to {{ Math.min(currentPage * perPage, filteredCount) }} of {{ filteredCount }} entries
-          </small>
-        </div>
-        <div>
-          <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm mb-0">
-              <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <button class="page-link" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-              </li>
-              <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }">
-                <button class="page-link" @click="changePage(page)">{{ page }}</button>
-              </li>
-              <li class="page-item" :class="{ disabled: currentPage === lastPage }">
-                <button class="page-link" @click="changePage(currentPage + 1)" :disabled="currentPage === lastPage">
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -394,9 +359,13 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 export default {
-  components: { ColumnSearchPanel },
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
+  mixins: [sortablePaginationMixin],
   data() {
     return {
       serveData: [],
@@ -413,18 +382,15 @@ export default {
         lkp_serve_id: '',
         date_from: '',
         year: '',
-        month: '',
-        sortBy: 'created_at_desc'
+        month: ''
       },
       availableYears: [],
       monthNames: [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
-      currentPage: 1,
-      perPage: 10, // Increased from 10 to 25 to show more records by default
-      total: 0,
-      filteredCount: 0
+      meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
+      sortState: { key: 'created_at', dir: 'desc' }
     };
   },
   computed: {
@@ -438,42 +404,19 @@ export default {
       const revenue = this.stats.total_revenue || 0;
       return (revenue / total).toFixed(2);
     },
-    lastPage() {
-      return Math.ceil(this.filteredCount / this.perPage);
-    },
-    pages() {
-      const pages = [];
-      const totalPages = this.lastPage;
-      let startPage = Math.max(1, this.currentPage - 2);
-      let endPage = Math.min(totalPages, this.currentPage + 2);
-
-      if (totalPages > 5) {
-        if (this.currentPage <= 3) {
-          endPage = 5;
-        } else if (this.currentPage >= totalPages - 2) {
-          startPage = totalPages - 4;
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
-      return pages;
+    // The export code path (sortServes) still needs a single sort token. It
+    // now follows the table's own sort state instead of a separate dropdown.
+    exportSortBy() {
+      return `${this.sortState.key}_${this.sortState.dir}`;
     },
     hasActiveFilters() {
-      return Object.values(this.filters).some((value, index) => {
-        const key = Object.keys(this.filters)[index];
-        if (key === 'sortBy') {
-          return value !== 'created_at_desc';
-        }
-        return value !== '';
-      });
+      return Object.values(this.filters).some(value => value !== '');
     },
     activeFilters() {
       const active = {};
       Object.keys(this.filters).forEach(key => {
         const value = this.filters[key];
-        if (value !== '' && !(key === 'sortBy' && value === 'created_at_desc')) {
+        if (value !== '') {
           if (key === 'month' && !this.filters.year) {
             return;
           }
@@ -511,7 +454,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchServeData();
+    this.fetchList();
     this.fetchCustomers();
     this.fetchServes();
     this.fetchOverallStatistics();
@@ -613,16 +556,6 @@ export default {
         month: () => {
           const monthName = this.monthNames[value - 1] || value;
           return `Month: ${monthName}`;
-        },
-        sortBy: {
-          'created_at_desc': 'Sort: Date (Newest)',
-          'created_at_asc': 'Sort: Date (Oldest)',
-          'customer_name_asc': 'Sort: Customer A-Z',
-          'customer_name_desc': 'Sort: Customer Z-A',
-          'serve_id_asc': 'Sort: Serve ID A-Z',
-          'serve_id_desc': 'Sort: Serve ID Z-A',
-          'package_price_desc': 'Sort: Price High-Low',
-          'package_price_asc': 'Sort: Price Low-High'
         }
       };
 
@@ -649,13 +582,15 @@ export default {
       return `${key}: ${value}`;
     },
 
-    async fetchServeData() {
+    async fetchList() {
       this.loading = true;
       try {
         const params = {
-          page: this.currentPage,
-          per_page: this.perPage,
-          ...this.filters
+          ...this.filters,
+          page: this.meta.current_page,
+          per_page: this.meta.per_page,
+          sort_by: this.sortState.key,
+          sort_dir: this.sortState.dir
         };
 
         // Remove empty params
@@ -665,32 +600,13 @@ export default {
           }
         });
 
-        console.log('Fetching data with params:', params);
-
         const res = await axios.get('/api/serve-data', { params });
-        console.log('Server response:', res.data);
 
         this.serveData = res.data.data || [];
 
-        // Get pagination info from server response
         if (res.data.meta) {
-          this.total = res.data.meta.total || 0;
-          this.filteredCount = res.data.meta.total || 0;
-          this.currentPage = res.data.meta.current_page || 1;
-          this.perPage = res.data.meta.per_page || this.perPage;
-        } else if (res.data.total !== undefined) {
-          this.total = res.data.total;
-          this.filteredCount = res.data.total;
-        } else {
-          this.total = this.serveData.length;
-          this.filteredCount = this.serveData.length;
+          this.meta = res.data.meta;
         }
-
-        console.log('Total records:', this.total);
-        console.log('Filtered count:', this.filteredCount);
-        console.log('Current page:', this.currentPage);
-        console.log('Per page:', this.perPage);
-        console.log('Records loaded:', this.serveData.length);
 
         // Update statistics for the current page
         this.updateStatistics(this.serveData);
@@ -746,7 +662,7 @@ export default {
 
       // Update stats for current page only
       this.stats = {
-        total_serves: this.filteredCount, // Use total count from server for overall total
+        total_serves: this.meta.total, // Use total count from server for overall total
         today_serves: todayServes,
         total_upgrades: totalUpgrades,
         total_started: totalStarted,
@@ -783,8 +699,8 @@ export default {
     },
 
     applyFilters() {
-      this.currentPage = 1;
-      this.fetchServeData();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
 
     resetFilters() {
@@ -795,11 +711,10 @@ export default {
         lkp_serve_id: '',
         date_from: '',
         year: '',
-        month: '',
-        sortBy: 'created_at_desc'
+        month: ''
       };
-      this.perPage = 25;
-      this.currentPage = 1;
+      this.sortState = { key: 'created_at', dir: 'desc' };
+      this.meta.current_page = 1;
       this.stats = { ...this.allStats };
     },
 
@@ -812,14 +727,8 @@ export default {
       }
     },
 
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchServeData();
-    },
-
     refreshData() {
-      this.fetchServeData();
+      this.fetchList();
       this.fetchOverallStatistics();
       Swal.fire({
         title: 'Refreshed!',
@@ -844,7 +753,7 @@ export default {
           axios.delete(`/api/serve-data/${id}`)
             .then(() => {
               Swal.fire('Deleted!', 'Serve data has been deleted.', 'success');
-              this.fetchServeData();
+              this.fetchList();
               this.fetchOverallStatistics();
             })
             .catch(error => {
@@ -878,13 +787,13 @@ export default {
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
               <label class="form-check-label" for="exportFiltered">
-                Export filtered data (${this.filteredCount} records)
+                Export filtered data (${this.meta.total} records)
               </label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exportScope" id="exportAll" value="all">
               <label class="form-check-label" for="exportAll">
-                Export all data (${this.total} records)
+                Export all data (${this.meta.total} records)
               </label>
             </div>
           </div>
@@ -1232,7 +1141,7 @@ export default {
     },
 
     sortServes(serves) {
-      switch (this.filters.sortBy) {
+      switch (this.exportSortBy) {
         case 'created_at_asc':
           return serves.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         case 'customer_name_asc':
