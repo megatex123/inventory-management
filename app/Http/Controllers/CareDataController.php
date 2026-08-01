@@ -103,10 +103,12 @@ class CareDataController extends Controller
 
         // Summary totals: computed from a fresh, un-joined query re-applying
         // only the customer/order/care/date/search filters (not the
-        // membership_status join), so a join that fans out care_data rows
-        // (verified live: it doesn't for this dataset, but the join is on
-        // care_data.order_id/lkp_care_id which are not unique per order/care)
-        // can never multiply the SUM(). Keeps the original method's summary
+        // membership_status join), so the SUM() can never be multiplied by
+        // join fan-out. (Fan-out would require the joined side to have more
+        // than one matching row per care_data row; here both joins are on
+        // `order`/`care` PKs, so today they can't fan out. Building the
+        // summary off an un-joined query means that stays true even if those
+        // joins are ever widened.) Keeps the original method's summary
         // shape/keys (`total_price`, `total_part`, `total_count`) rather than
         // the plan snippet's `total_parts_value` rename.
         $summaryQuery = CareData::whereNull('care_data.deleted_at');
