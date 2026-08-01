@@ -97,21 +97,21 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Movement Log</h5>
-        <span class="text-muted">Total: {{ total }} records</span>
+        <span class="text-muted">Total: {{ meta.total }} records</span>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover mb-0">
             <thead class="thead-light">
               <tr>
-                <th>Movement ID</th>
-                <th>Date</th>
+                <sortable-th label="Movement ID" sort-key="movement_id" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Date" sort-key="date" :current-sort="sortState" @sort="onSort" />
                 <th>SKU Code</th>
                 <th>Item Name</th>
                 <th>Destination</th>
-                <th>Type</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Unit Cost</th>
+                <sortable-th label="Type" sort-key="type" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Qty" sort-key="quantity" :current-sort="sortState" @sort="onSort" class="text-right" />
+                <sortable-th label="Unit Cost" sort-key="unit_cost" :current-sort="sortState" @sort="onSort" class="text-right" />
                 <th>Order</th>
                 <th class="text-center">Actions</th>
               </tr>
@@ -147,15 +147,12 @@
           </table>
         </div>
       </div>
-      <div v-if="total > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <small class="text-muted">Page {{ currentPage }} of {{ lastPage }}</small>
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }"><button class="page-link" @click="changePage(currentPage - 1)">&laquo;</button></li>
-            <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }"><button class="page-link" @click="changePage(page)">{{ page }}</button></li>
-            <li class="page-item" :class="{ disabled: currentPage === lastPage }"><button class="page-link" @click="changePage(currentPage + 1)">&raquo;</button></li>
-          </ul>
-        </nav>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -165,9 +162,15 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = { search: '', destination_id: '', type: '' };
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -176,23 +179,12 @@ export default {
       stats: {},
       loading: true,
       showFilters: false,
-      filters: { search: '', destination_id: '', type: '' },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'date', dir: 'desc' },
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
     };
   },
   computed: {
-    lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages() {
-      const pages = [];
-      let start = Math.max(1, this.currentPage - 2);
-      let end = Math.min(this.lastPage, this.currentPage + 2);
-      for (let i = start; i <= end; i++) pages.push(i);
-      return pages;
-    },
     filterColumns() {
       return [
         { key: 'search', label: 'Movement ID / SKU / Item / Destination / Order', type: 'text' },
@@ -204,13 +196,14 @@ export default {
   watch: {
     filters: {
       handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted() {
-    this.fetchItems();
+  created() {
+    this.fetchList();
     this.fetchDestinations();
     this.fetchStatistics();
   },
@@ -223,48 +216,44 @@ export default {
       if (!dateString) return 'N/A';
       return new Date(dateString).toLocaleDateString('en-MY', { year: 'numeric', month: 'short', day: 'numeric' });
     },
-    async fetchItems() {
+    fetchList() {
       this.loading = true;
-      try {
-        const params = { page: this.currentPage, per_page: this.perPage, ...this.filters };
-        Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
-        const res = await axios.get('/api/inventory-movements', { params });
-        this.items = (res.data.data || []).map(item => ({ ...item, master_sku: item.master_sku || item.masterSku }));
-        this.total = res.data.meta ? res.data.meta.total : this.items.length;
-      } catch (error) {
-        console.error('Error fetching movements:', error);
-        Swal.fire('Error!', 'Failed to load inventory movements', 'error');
-      } finally {
-        this.loading = false;
-      }
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.filters,
+      };
+      Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
+      axios.get('/api/inventory-movements', { params })
+        .then(res => {
+          this.items = (res.data.data || []).map(item => ({ ...item, master_sku: item.master_sku || item.masterSku }));
+          this.meta = res.data.meta;
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Failed to load inventory movements', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    async fetchDestinations() {
-      try {
-        const res = await axios.get('/api/destinations');
-        this.destinations = res.data.data || [];
-      } catch (error) {
-        console.error('Error fetching destinations:', error);
-      }
+    fetchDestinations() {
+      axios.get('/api/destinations')
+        .then(res => {
+          this.destinations = res.data.data || [];
+        })
+        .catch(() => {});
     },
-    async fetchStatistics() {
-      try {
-        const res = await axios.get('/api/inventory-movements/statistics');
-        this.stats = res.data.data || {};
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+    fetchStatistics() {
+      axios.get('/api/inventory-movements/statistics')
+        .then(res => {
+          this.stats = res.data.data || {};
+        })
+        .catch(() => {});
     },
     resetFilters() {
-      this.filters = { search: '', destination_id: '', type: '' };
-    },
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = { ...EMPTY_FILTERS };
     },
     deleteItem(item) {
       Swal.fire({
@@ -279,7 +268,10 @@ export default {
           axios.delete(`/api/inventory-movements/${item.id}`)
             .then(() => {
               Swal.fire('Deleted!', 'Movement has been deleted.', 'success');
-              this.fetchItems();
+              if (this.items.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               this.fetchStatistics();
             })
             .catch(() => Swal.fire('Error!', 'Failed to delete movement', 'error'));
