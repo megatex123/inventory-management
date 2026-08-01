@@ -257,7 +257,6 @@ class OrderController extends Controller
                     'product_code' => $detail->product->product_code ?? null,
                     'image' => $detail->product->image ?? null,
                     'pro_id' => $detail->pro_id,
-                    'product_code' => $detail->product->product_code ?? null,
                     'order_id' => $detail->order_id,
                     'pro_qty' => $detail->pro_qty,
                     'pro_price' => $detail->pro_price,
@@ -291,7 +290,6 @@ class OrderController extends Controller
                     'pro_id' => $detail->pro_id,
                     'product_code' => $product->product_code ?? 'N/A',
                     'product_name' => $product->product_name ?? 'N/A',
-                    'product_code' => $product->product_code ?? 'N/A',
                     'product_image' => $product->image ?? null,
                     'pro_price' => floatval($detail->pro_price),
                     'pro_qty' => intval($detail->pro_qty),
@@ -594,14 +592,16 @@ class OrderController extends Controller
                 $approveValue = null;
             } elseif ($approveValue === '0' || $approveValue === 0) {
                 $approveValue = 0;
+                $reject_id = BusinessId::next('order', 'reject_id', 'BLDP-REJ-', 6);
             } elseif ($approveValue === '1' || $approveValue === 1) {
                 $approveValue = 1;
+                $reject_id = null; // Clear reject_id when approving
             }
 
             // Update the order
             $order->approve = $approveValue;
             $order->invoice_id = $invoiceId;
-
+            $order->reject_id = $reject_id ?? null;
             // Set approved_at only when approving
             if ($approveValue == 1) {
                 $order->approved_at = now();
@@ -795,6 +795,12 @@ class OrderController extends Controller
             // ($eligibleCareTotal, accumulated above), not the whole order total.
             $careTierId = $this->resolveCareTier($eligibleCareTotal)['lkp_care_id'];
 
+            $getCraftTagId = $order->craft_tag_id;
+            $updateCraftTag = null;
+            if ($getCraftTagId && preg_match('/^(.*?)(\d+)$/', $getCraftTagId, $matches)) {
+                $updateCraftTag = $matches[1] . str_pad((int)$matches[2] + 1, strlen($matches[2]), '0', STR_PAD_LEFT);
+            }
+
             // Update order
             $order->update([
                 'customer_id' => $request->customer_id,
@@ -803,7 +809,8 @@ class OrderController extends Controller
                 'total' => $subTotal,
                 'craft_id' => $craftId,
                 'serve_id' => $serveTierId,
-                'care_id' => $careTierId
+                'care_id' => $careTierId,
+                'craft_tag_id' => $updateCraftTag
             ]);
 
             // Snapshot this edit as a new draft revision -- see

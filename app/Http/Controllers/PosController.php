@@ -106,8 +106,11 @@ public function orderdone(Request $request)
         $careTierId = 3; // VIS10N
     }
 
-    $orderId = BusinessId::next('order', 'order_id', 'QV-ORDR-', 6);
+    $orderId = BusinessId::next('order', 'order_id', 'QV-BLDP-', 6);
 
+    $craftTagId = BusinessId::next('order', 'craft_tag_id', 'BLDP-DRF-', 6) . '-01';
+
+    $craftDataId = BusinessId::next('order', 'craft_data_id', 'QV-CRFT-', 6);
     $data = [
         'order_id' => $orderId,
         'customer_id' => $request->customer_id,
@@ -121,7 +124,9 @@ public function orderdone(Request $request)
         'serve_id' => $serveTierId,
         'care_id' => $careTierId,
         'is_reason' => $request->is_reason,
+        'craft_tag_id' => $craftTagId,
         'skip_quivicare' => $request->boolean('skip_quivicare'),
+        'craft_data_id' => $craftDataId,
     ];
 
     $order_id = DB::table('order')->insertGetId($data);

@@ -196,7 +196,7 @@ class CustomersController extends Controller
         DB::beginTransaction();
 
         try {
-            $customerId = BusinessId::next('customers', 'customer_id', 'QV-CUST-', 6);
+            $customerId = BusinessId::next('customers', 'customer_id', 'QV-VIES-', 6);
 
             $customer = Customers::create([
                 'customer_id'      => $customerId,

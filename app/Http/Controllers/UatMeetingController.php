@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\UatMeeting;
+use App\Support\BusinessId;
+use App\Models\Meeting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
@@ -26,7 +28,8 @@ class UatMeetingController extends Controller
                     ->orWhere('target_location', 'LIKE', '%' . $escaped . '%')
                     ->orWhereHas('meeting', function ($mq) use ($escaped) {
                         $mq->where('meeting_id', 'LIKE', '%' . $escaped . '%');
-                    });
+                    })
+                    ->orWhere('uat_id', 'LIKE', '%' . $escaped . '%');
 
                 // Replicates the pre-migration client-side search's "does
                 // the keyword appear as a substring of the fixed display
@@ -91,8 +94,23 @@ class UatMeetingController extends Controller
 
     public function store(Request $request)
     {
+        $idMeeting = $request->input('meeting_id');
+        $meeting = Meeting::find($idMeeting);
+
+        // Initialize $uatId to avoid undefined variable errors if the meeting is not found
+        $uatId = null;
+
+        if ($meeting) {
+            // Extract the number part (e.g., "000001" or integer 1)
+            $meetingIdNumber = preg_replace('/[^0-9]/', '', $meeting->meeting_id);
+            
+            // Generate the UAT ID
+            $uatId = BusinessId::next('uat_meetings', 'uat_id', "CONS-UAT-{$meetingIdNumber}-", 2);
+        }
+
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
+            'uat_id' => ['required', 'string'], // Added validation rule for uat_id
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',
@@ -115,6 +133,9 @@ class UatMeetingController extends Controller
             'target_build_date' => 'nullable|date',
             'target_location' => 'nullable|string|max:191',
         ]);
+
+        // Manually inject the generated $uatId into the validated array since it wasn't part of the raw request payload
+        $validated['uat_id'] = $uatId;
 
         $uatMeeting = UatMeeting::create($validated);
 
@@ -144,6 +165,7 @@ class UatMeetingController extends Controller
 
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
+            'uat_id' => 'required|exists:uats,id',
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',

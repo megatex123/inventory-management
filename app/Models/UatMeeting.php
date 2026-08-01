@@ -10,6 +10,7 @@ class UatMeeting extends Model
 
     protected $fillable = [
         'meeting_id',
+        'uat_id',
         'initial_budget',
         'reason',
         'play_mode',

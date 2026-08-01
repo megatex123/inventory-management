@@ -190,7 +190,7 @@ class MeetingController extends Controller
         }
 
         try {
-            $meetingId = BusinessId::next('meetings', 'meeting_id', 'QV-MEET-', 6);
+            $meetingId = BusinessId::next('meetings', 'meeting_id', 'QV-CONS-', 6);
 
             $meeting = Meeting::create([
                 'meeting_id'       => $meetingId,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MeetingDetails;
+use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
@@ -26,7 +27,8 @@ class MeetingDetailsController extends Controller
                     ->orWhere('target_location', 'LIKE', '%' . $escaped . '%')
                     ->orWhereHas('meeting', function ($mq) use ($escaped) {
                         $mq->where('meeting_id', 'LIKE', '%' . $escaped . '%');
-                    });
+                    })
+                    ->orWhere('requirement_id', 'LIKE', '%' . $escaped . '%');
 
                 // Replicates the pre-migration client-side search's
                 // "does the keyword appear as a substring of the fixed
@@ -120,8 +122,10 @@ class MeetingDetailsController extends Controller
 
     public function store(Request $request)
     {
+        $requirementId = BusinessId::next('meeting_details', 'requirement_id', 'CONS-RQD-', 6);
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
+            'requirement_id' => $requirementId,
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',
@@ -173,6 +177,7 @@ class MeetingDetailsController extends Controller
 
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
+            'requirement_id' => 'required|exists:requirements,id',
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',

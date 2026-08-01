@@ -169,6 +169,7 @@
           <thead class="thead-light">
             <tr>
               <th class="text-center align-top">Meeting ID</th>
+              <th class="text-center align-top">Meeting Requirement ID</th>
               <sortable-th label="Budget (RM)" sort-key="initial_budget" :current-sort="sortState" @sort="onSort" />
               <th class="text-center align-top">Reason & Play Mode</th>
               <th class="text-center align-top">Include Peripheral</th>
@@ -198,6 +199,11 @@
                   {{ detail.meeting_id }}
                 </span>
                 <span v-else class="text-muted">N/A</span>
+              </td>
+
+              <!-- Requirement ID -->
+              <td class="text-center">
+                {{ detail.requirement_id }}
               </td>
 
               <!-- Budget -->
@@ -427,7 +433,7 @@ export default {
       loading: true,
       showFilters: false,
       filterColumns: [
-        { key: 'search', label: 'Meeting ID / Theme / Preference / Exemption / Location', type: 'text' },
+        { key: 'search', label: 'Meeting ID / Requirement ID / Theme / Preference / Exemption / Location', type: 'text' },
         { key: 'reason', label: 'Reason', type: 'select', options: [
           { value: '1', label: 'Work' },
           { value: '2', label: 'Gaming' },

@@ -8,6 +8,7 @@ class MeetingDetails extends Model
 {
     protected $fillable = [
         'meeting_id',
+        'requirement_id',
         'initial_budget',
         'reason',
         'play_mode',

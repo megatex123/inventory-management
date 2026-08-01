@@ -30,13 +30,16 @@ class Order extends Model
         'order_year',
         'categories_id',
         'reject_id',
+        'craft_tag_id',
         'no_craft',
+        'craft_id',
         'serve_id',
         'care_id',
         'approve',
         'approved_at',
         'is_reason',
-        'skip_quivicare'
+        'skip_quivicare',
+        'craft_data_id'
     ];
 
     protected $dates = ['deleted_at'];
