@@ -24,7 +24,7 @@ class BusinessIdBackfill extends Command
         $dryRun = (bool) $this->option('dry-run');
         $entity = $this->argument('entity');
 
-        $validEntities = array_merge(array_keys(self::SIMPLE_ENTITIES), ['care', 'inv-care']);
+        $validEntities = array_merge(array_keys(self::SIMPLE_ENTITIES), ['care', 'inv-care', 'craft-tag']);
         if ($entity && !in_array($entity, $validEntities, true)) {
             $this->error("Unknown entity '{$entity}'. Valid: " . implode(', ', $validEntities));
             return 1;
@@ -47,6 +47,10 @@ class BusinessIdBackfill extends Command
 
         if (!$entity || $entity === 'inv-care') {
             $this->backfillInvCare($dryRun);
+        }
+
+        if (!$entity || $entity === 'craft-tag') {
+            $this->backfillCraftTagId($dryRun);
         }
 
         return 0;
@@ -127,6 +131,56 @@ class BusinessIdBackfill extends Command
                 if (!$dryRun) {
                     DB::table('inv_care')->where('id', $row->id)->update(['inv_care' => $newValue]);
                 }
+            }
+        }
+    }
+
+    /**
+     * Unlike the other entities above, this is NOT a full renumber-every-row
+     * backfill -- craft_tag_id only applies to approved orders (approve=1)
+     * and is only ever set once, on approval (see
+     * OrderController::updateApprove()). This fills in the gap for orders
+     * that were approved before that logic existed (or before craft_tag_id
+     * existed at all) and so were never assigned one.
+     *
+     * The running sequence is tracked LOCALLY rather than by repeatedly
+     * calling BusinessId::next() per row: that helper looks up the highest
+     * existing value in the DB each time, which only advances once a write
+     * actually happens -- under --dry-run (no writes), every row would
+     * incorrectly compute the same "next" value instead of a real preview
+     * of the sequence.
+     */
+    private function backfillCraftTagId(bool $dryRun)
+    {
+        $this->info('=== craft-tag (order.craft_tag_id, approved orders only) ===');
+
+        $rows = DB::table('order')
+            ->where('approve', 1)
+            ->whereNull('craft_tag_id')
+            ->orderBy('id')
+            ->get(['id']);
+
+        if ($rows->isEmpty()) {
+            $this->line('  (nothing to backfill)');
+            return;
+        }
+
+        $prefix = 'QV-CRFT-';
+        $lastValue = DB::table('order')->where('craft_tag_id', 'like', $prefix . '%')->orderByDesc('id')->value('craft_tag_id');
+        $nextNumber = 1;
+        if ($lastValue) {
+            preg_match('/(\d+)$/', $lastValue, $matches);
+            $nextNumber = (isset($matches[1]) ? (int) $matches[1] : 0) + 1;
+        }
+
+        foreach ($rows as $row) {
+            $newValue = $prefix . str_pad((string) $nextNumber, 6, '0', STR_PAD_LEFT);
+            $nextNumber++;
+
+            $this->line("  id {$row->id}: (none) -> {$newValue}");
+
+            if (!$dryRun) {
+                DB::table('order')->where('id', $row->id)->update(['craft_tag_id' => $newValue]);
             }
         }
     }
