@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\InvMove;
 use App\Models\MasterSku;
 use App\Models\Destination;
@@ -12,65 +13,51 @@ use Carbon\Carbon;
 
 class InventoryMovementController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     public function index(Request $request)
     {
         $query = InvMove::with(['masterSku', 'destination', 'order']);
 
-        if ($request->filled('destination_id')) {
-            $query->where('destination_id', $request->destination_id);
+        $this->applyEqualsFilter($query, $request, 'destination_id', 'destination_id');
+        $this->applyEqualsFilter($query, $request, 'master_sku_id', 'master_sku_id');
+        $this->applyEqualsFilter($query, $request, 'order_id', 'order_id');
+        $this->applyEqualsFilter($query, $request, 'type', 'type');
+
+        $dateFrom = $request->input('date_from');
+        if (is_scalar($dateFrom) && $dateFrom !== '') {
+            $query->whereDate('date', '>=', $dateFrom);
         }
 
-        if ($request->filled('master_sku_id')) {
-            $query->where('master_sku_id', $request->master_sku_id);
+        $dateTo = $request->input('date_to');
+        if (is_scalar($dateTo) && $dateTo !== '') {
+            $query->whereDate('date', '<=', $dateTo);
         }
 
-        if ($request->filled('order_id')) {
-            $query->where('order_id', $request->order_id);
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('date', '<=', $request->date_to);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('movement_id', 'LIKE', "%{$search}%")
-                    ->orWhere('item_name', 'LIKE', "%{$search}%")
-                    ->orWhereHas('masterSku', function ($q2) use ($search) {
-                        $q2->where('sku_code', 'LIKE', "%{$search}%");
+        $search = $request->input('search');
+        if (is_scalar($search) && $search !== '') {
+            $escaped = addcslashes((string) $search, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('movement_id', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('item_name', 'LIKE', '%' . $escaped . '%')
+                    ->orWhereHas('masterSku', function ($q2) use ($escaped) {
+                        $q2->where('sku_code', 'LIKE', '%' . $escaped . '%');
                     })
-                    ->orWhereHas('destination', function ($q2) use ($search) {
-                        $q2->where('description', 'LIKE', "%{$search}%");
+                    ->orWhereHas('destination', function ($q2) use ($escaped) {
+                        $q2->where('description', 'LIKE', '%' . $escaped . '%');
                     })
-                    ->orWhereHas('order', function ($q2) use ($search) {
-                        $q2->where('order_id', 'LIKE', "%{$search}%");
+                    ->orWhereHas('order', function ($q2) use ($escaped) {
+                        $q2->where('order_id', 'LIKE', '%' . $escaped . '%');
                     });
             });
         }
 
-        $query->orderBy($request->get('order_by', 'date'), $request->get('order_direction', 'desc'));
+        $this->resolveSortAndApply($query, $request, ['movement_id', 'date', 'type', 'quantity', 'unit_cost'], 'date', 'id', [], 'desc');
 
-        $results = $query->paginate($request->get('per_page', 15));
+        $perPage = $this->resolvePerPage($request, 15);
+        $results = $query->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $results->items(),
-            'meta' => [
-                'total' => $results->total(),
-                'per_page' => $results->perPage(),
-                'current_page' => $results->currentPage(),
-                'last_page' => $results->lastPage(),
-            ],
-        ]);
+        return $this->paginatedResponse($results);
     }
 
     public function show($id)
