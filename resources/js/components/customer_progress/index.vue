@@ -97,7 +97,7 @@
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-table mr-2"></i>Progress Entries</h5>
-        <span class="text-muted">Total: {{ total }} records</span>
+        <span class="text-muted">Total: {{ meta.total }} records</span>
       </div>
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -107,11 +107,11 @@
                 <th class="text-center">#</th>
                 <th>Customer</th>
                 <th>Order</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th style="width: 160px;">Progress</th>
+                <sortable-th label="Title" sort-key="title" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Status" sort-key="status" :current-sort="sortState" @sort="onSort" />
+                <sortable-th label="Progress" sort-key="progress_percentage" :current-sort="sortState" @sort="onSort" style="width: 160px;" />
                 <th>Updated By</th>
-                <th>Date</th>
+                <sortable-th label="Date" sort-key="created_at" :current-sort="sortState" @sort="onSort" />
                 <th class="text-center">Actions</th>
               </tr>
             </thead>
@@ -123,7 +123,7 @@
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
-                <td class="text-center align-middle">{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle">
                   <div class="font-weight-bold">{{ item.customer ? item.customer.full_name : 'N/A' }}</div>
                   <small class="text-muted" v-if="item.customer">{{ item.customer.customer_id }}</small>
@@ -158,15 +158,12 @@
           </table>
         </div>
       </div>
-      <div v-if="total > 0" class="card-footer d-flex justify-content-between align-items-center">
-        <small class="text-muted">Page {{ currentPage }} of {{ lastPage }}</small>
-        <nav>
-          <ul class="pagination pagination-sm mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }"><button class="page-link" @click="changePage(currentPage - 1)">&laquo;</button></li>
-            <li class="page-item" v-for="page in pages" :key="page" :class="{ active: page === currentPage }"><button class="page-link" @click="changePage(page)">{{ page }}</button></li>
-            <li class="page-item" :class="{ disabled: currentPage === lastPage }"><button class="page-link" @click="changePage(currentPage + 1)">&raquo;</button></li>
-          </ul>
-        </nav>
+      <div class="card-footer">
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
   </div>
@@ -176,9 +173,15 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
+
+const EMPTY_FILTERS = { search: '', status: '' };
 
 export default {
-  components: { ColumnSearchPanel },
+  mixins: [sortablePaginationMixin],
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
   data() {
     return {
       items: [],
@@ -194,34 +197,22 @@ export default {
           { value: 'on_hold', label: 'On Hold' },
         ] },
       ],
-      filters: { search: '', status: '' },
-      currentPage: 1,
-      perPage: 15,
-      total: 0
+      filters: { ...EMPTY_FILTERS },
+      sortState: { key: 'created_at', dir: 'desc' },
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
     };
-  },
-  computed: {
-    lastPage() {
-      return Math.max(1, Math.ceil(this.total / this.perPage));
-    },
-    pages() {
-      const pages = [];
-      let start = Math.max(1, this.currentPage - 2);
-      let end = Math.min(this.lastPage, this.currentPage + 2);
-      for (let i = start; i <= end; i++) pages.push(i);
-      return pages;
-    }
   },
   watch: {
     filters: {
       handler() {
-        this.applyFilters();
+        this.meta.current_page = 1;
+        this.fetchList();
       },
       deep: true
     }
   },
-  mounted() {
-    this.fetchItems();
+  created() {
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -245,40 +236,37 @@ export default {
       if (!text) return '';
       return text.length > len ? text.substring(0, len) + '...' : text;
     },
-    async fetchItems() {
+    fetchList() {
       this.loading = true;
-      try {
-        const params = { page: this.currentPage, per_page: this.perPage, ...this.filters };
-        Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
-        const res = await axios.get('/api/customer-progress', { params });
-        this.items = res.data.data || [];
-        this.total = res.data.meta ? res.data.meta.total : this.items.length;
-      } catch (error) {
-        console.error('Error fetching progress entries:', error);
-        Swal.fire('Error!', 'Failed to load progress entries', 'error');
-      } finally {
-        this.loading = false;
-      }
+      const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        ...this.filters,
+      };
+      Object.keys(params).forEach(key => { if (params[key] === '') delete params[key]; });
+      axios.get('/api/customer-progress', { params })
+        .then(res => {
+          this.items = res.data.data || [];
+          this.meta = res.data.meta;
+        })
+        .catch(() => {
+          Swal.fire('Error!', 'Failed to load progress entries', 'error');
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
-    async fetchStatistics() {
-      try {
-        const res = await axios.get('/api/customer-progress/statistics');
-        this.stats = res.data.data || {};
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    applyFilters() {
-      this.currentPage = 1;
-      this.fetchItems();
+    fetchStatistics() {
+      axios.get('/api/customer-progress/statistics')
+        .then(res => {
+          this.stats = res.data.data || {};
+        })
+        .catch(() => {});
     },
     resetFilters() {
-      this.filters = { search: '', status: '' };
-    },
-    changePage(page) {
-      if (page < 1 || page > this.lastPage) return;
-      this.currentPage = page;
-      this.fetchItems();
+      this.filters = { ...EMPTY_FILTERS };
     },
     downloadFile(item) {
       window.open(`/api/customer-progress/${item.id}/download`, '_blank');
@@ -296,7 +284,10 @@ export default {
           axios.delete(`/api/customer-progress/${item.id}`)
             .then(() => {
               Swal.fire('Deleted!', 'Progress entry has been deleted.', 'success');
-              this.fetchItems();
+              if (this.items.length === 1 && this.meta.current_page > 1) {
+                this.meta.current_page -= 1;
+              }
+              this.fetchList();
               this.fetchStatistics();
             })
             .catch(() => Swal.fire('Error!', 'Failed to delete progress entry', 'error'));
