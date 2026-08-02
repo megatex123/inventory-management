@@ -29300,24 +29300,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
-function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
+
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ServeMpsIndex',
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       serveMps: [],
@@ -29342,8 +29351,13 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         key: 'promo_status',
         label: 'Promo Code Status',
         type: 'select',
-        options: [{
-          value: 'available',
+        options: [
+        // Server's `generated` == the old client-side `available` predicate
+        // (generate_code && !rm100_promo_code_claim). The server's own
+        // `available` means something different (promo code string present),
+        // so map to `generated` to preserve the previous behaviour exactly.
+        {
+          value: 'generated',
           label: 'Available (Generated)'
         }, {
           value: 'claimed',
@@ -29360,8 +29374,16 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         date_start_from: '',
         date_start_to: ''
       },
-      currentPage: 1,
-      itemsPerPage: 10,
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      },
       statistics: {
         total_records: 0,
         active_warranty: 0,
@@ -29369,14 +29391,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         available_promo_codes: 0,
         active_warranty_percentage: 0,
         expired_warranty_percentage: 0
-      },
-      paginationMeta: {
-        current_page: 1,
-        last_page: 1,
-        per_page: 10,
-        total: 0,
-        from: 0,
-        to: 0
       }
     };
   },
@@ -29385,95 +29399,44 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       return Object.values(this.filters).some(function (value) {
         return value !== '';
       });
-    },
-    totalPages: function totalPages() {
-      return this.paginationMeta.last_page || 1;
-    },
-    filteredServeMps: function filteredServeMps() {
-      var _this = this;
-      var filtered = _toConsumableArray(this.serveMps);
-
-      // Apply local filtering only
-      if (this.filters.qvse_cid) {
-        var searchTerm = this.filters.qvse_cid.toLowerCase();
-        filtered = filtered.filter(function (item) {
-          return item.qvse_cid && item.qvse_cid.toLowerCase().includes(searchTerm);
-        });
-      }
-      if (this.filters.warranty_status) {
-        filtered = filtered.filter(function (item) {
-          var status = _this.getWarrantyStatus(item.date_start);
-          return status.status === _this.filters.warranty_status;
-        });
-      }
-      if (this.filters.promo_status) {
-        filtered = filtered.filter(function (item) {
-          if (_this.filters.promo_status === 'available') {
-            return item.generate_code && !item.rm100_promo_code_claim;
-          } else if (_this.filters.promo_status === 'claimed') {
-            return item.rm100_promo_code_claim;
-          } else if (_this.filters.promo_status === 'not_generated') {
-            return !item.generate_code;
-          }
-          return true;
-        });
-      }
-
-      // Date filtering
-      if (this.filters.date_start_from) {
-        var fromDate = new Date(this.filters.date_start_from);
-        filtered = filtered.filter(function (item) {
-          if (!item.date_start) return false;
-          var itemDate = new Date(item.date_start);
-          return itemDate >= fromDate;
-        });
-      }
-      if (this.filters.date_start_to) {
-        var toDate = new Date(this.filters.date_start_to);
-        filtered = filtered.filter(function (item) {
-          if (!item.date_start) return false;
-          var itemDate = new Date(item.date_start);
-          return itemDate <= toDate;
-        });
-      }
-      return filtered;
-    },
-    paginatedServeMps: function paginatedServeMps() {
-      // Use API pagination data for display
-      if (this.serveMps.length <= this.itemsPerPage) {
-        return this.serveMps;
-      }
-
-      // If local filtering is active, apply pagination to filtered results
-      if (this.hasActiveFilters) {
-        var start = (this.currentPage - 1) * this.itemsPerPage;
-        var end = start + this.itemsPerPage;
-        return this.filteredServeMps.slice(start, end);
-      }
-
-      // Otherwise use the full dataset from API (with API pagination)
-      return this.serveMps;
-    }
+    } // NOTE: the former `filteredServeMps` / `paginatedServeMps` computed
+    // properties were deleted here. They re-filtered and re-sliced a response
+    // that the server had ALREADY paginated, so with any filter active the
+    // page showed a slice-of-a-slice (the `care_data` double-pagination bug).
+    // Every filter they applied is now sent to /api/serve-mps as a query
+    // param by fetchList(); the server is the single source of truth.
   },
   methods: {
-    fetchServeMps: function fetchServeMps() {
-      var _arguments = arguments,
-        _this2 = this;
+    fetchList: function fetchList() {
+      var _this = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var page, response, errorMessage, _t;
+        var params, response, errorMessage, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              page = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
-              _this2.loading = true;
-              _this2.currentPage = page;
+              _this.loading = true;
               _context.p = 1;
+              // Every filter is sent to the server. Nothing is filtered or sliced
+              // client-side any more -- see the note in `computed`.
+              params = {
+                page: _this.meta.current_page,
+                per_page: _this.meta.per_page,
+                sort_by: _this.sortState.key,
+                sort_dir: _this.sortState.dir,
+                qvse_cid: _this.filters.qvse_cid,
+                warranty_status: _this.filters.warranty_status,
+                promo_status: _this.filters.promo_status,
+                date_start_from: _this.filters.date_start_from,
+                date_start_to: _this.filters.date_start_to
+              }; // Drop empty filters so they aren't sent as blank query params
+              Object.keys(params).forEach(function (key) {
+                if (params[key] === '' || params[key] === null || params[key] === undefined) {
+                  delete params[key];
+                }
+              });
               _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-mps', {
-                params: {
-                  page: page,
-                  per_page: _this2.itemsPerPage
-                },
+                params: params,
                 headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json'
@@ -29482,7 +29445,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
               });
             case 2:
               response = _context.v;
-              console.log('API Response:', response.data);
               if (response.data) {
                 _context.n = 3;
                 break;
@@ -29495,31 +29457,24 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
               }
               throw new Error(response.data.message || 'API error');
             case 4:
-              // Direct assignment - get all data from index
-              _this2.serveMps = response.data.data || [];
-
-              // Set pagination meta if available
+              _this.serveMps = response.data.data || [];
               if (response.data.meta) {
-                _this2.paginationMeta = {
-                  total: response.data.meta.total || 0,
-                  per_page: response.data.meta.per_page || _this2.itemsPerPage,
-                  current_page: response.data.meta.current_page || 1,
-                  last_page: response.data.meta.last_page || 1,
-                  from: response.data.meta.from || 0,
-                  to: response.data.meta.to || 0
-                };
+                _this.meta = response.data.meta;
               } else {
                 // Fallback if no meta data
-                _this2.paginationMeta = {
+                _this.meta = {
                   current_page: 1,
                   last_page: 1,
-                  per_page: _this2.itemsPerPage,
-                  total: _this2.serveMps.length,
-                  from: 1,
-                  to: _this2.serveMps.length
+                  per_page: _this.meta.per_page,
+                  total: _this.serveMps.length
                 };
               }
-              console.log('Loaded records:', _this2.serveMps.length);
+
+              // The index endpoint already returns whole-table (unfiltered)
+              // statistics, so the stat cards come straight off this response.
+              if (response.data.statistics) {
+                _this.statistics = response.data.statistics;
+              }
               _context.n = 6;
               break;
             case 5:
@@ -29543,85 +29498,21 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
                 text: errorMessage,
                 confirmButtonText: 'OK'
               });
-              _this2.serveMps = [];
-              _this2.paginationMeta = {
+              _this.serveMps = [];
+              _this.meta = {
                 current_page: 1,
                 last_page: 1,
-                per_page: _this2.itemsPerPage,
-                total: 0,
-                from: 0,
-                to: 0
+                per_page: _this.meta.per_page,
+                total: 0
               };
             case 6:
               _context.p = 6;
-              _this2.loading = false;
+              _this.loading = false;
               return _context.f(6);
             case 7:
               return _context.a(2);
           }
         }, _callee, null, [[1, 5, 6, 7]]);
-      }))();
-    },
-    calculateStatistics: function calculateStatistics() {
-      var _this3 = this;
-      var total = this.serveMps.length;
-      var activeWarranty = 0;
-      var expiredWarranty = 0;
-      var availablePromoCodes = 0;
-      this.serveMps.forEach(function (item) {
-        var warrantyStatus = _this3.getWarrantyStatus(item.date_start);
-        if (warrantyStatus.status === 'active') {
-          activeWarranty++;
-        } else if (warrantyStatus.status === 'expired') {
-          expiredWarranty++;
-        }
-
-        // Count available promo codes
-        if (item.generate_code && !item.rm100_promo_code_claim) {
-          availablePromoCodes++;
-        }
-      });
-      var activePercentage = total > 0 ? Math.round(activeWarranty / total * 100) : 0;
-      var expiredPercentage = total > 0 ? Math.round(expiredWarranty / total * 100) : 0;
-      this.statistics = {
-        total_records: total,
-        active_warranty: activeWarranty,
-        expired_warranty: expiredWarranty,
-        available_promo_codes: availablePromoCodes,
-        active_warranty_percentage: activePercentage,
-        expired_warranty_percentage: expiredPercentage
-      };
-    },
-    fetchStatistics: function fetchStatistics() {
-      var _this4 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var response, _t2;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              _context2.p = 0;
-              _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-mps');
-            case 1:
-              response = _context2.v;
-              if (response.data && response.data.success && response.data.statistics) {
-                _this4.statistics = response.data.statistics;
-              } else {
-                // Calculate locally if API doesn't provide statistics
-                _this4.calculateStatistics();
-              }
-              _context2.n = 3;
-              break;
-            case 2:
-              _context2.p = 2;
-              _t2 = _context2.v;
-              console.error('Error fetching statistics:', _t2);
-              // Calculate locally if API fails
-              _this4.calculateStatistics();
-            case 3:
-              return _context2.a(2);
-          }
-        }, _callee2, null, [[0, 2]]);
       }))();
     },
     resetFilters: function resetFilters() {
@@ -29632,7 +29523,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         date_start_from: '',
         date_start_to: ''
       };
-      this.currentPage = 1;
+      this.meta.current_page = 1;
     },
     clearFilter: function clearFilter(filterName) {
       this.filters[filterName] = '';
@@ -29644,27 +29535,12 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     clearAllFilters: function clearAllFilters() {
       this.resetFilters();
     },
-    prevPage: function prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.fetchServeMps(this.currentPage);
-      }
-    },
-    nextPage: function nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-        this.fetchServeMps(this.currentPage);
-      }
-    },
-    goToPage: function goToPage(page) {
-      if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-        this.currentPage = page;
-        this.fetchServeMps(page);
-      }
+    applyFilters: function applyFilters() {
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     refreshData: function refreshData() {
-      this.fetchServeMps(this.currentPage);
-      this.fetchStatistics();
+      this.fetchList();
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         icon: 'success',
         title: 'Refreshed',
@@ -29712,14 +29588,14 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       }
     },
     markPromoClaimed: function markPromoClaimed(item) {
-      var _this5 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var result, response, _error$response, _t3;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.p = _context3.n) {
+      var _this2 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var result, response, _error$response, _t2;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
-              _context3.p = 0;
-              _context3.n = 1;
+              _context2.p = 0;
+              _context2.n = 1;
               return sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Mark Promo as Claimed?',
                 text: "Mark RM100 promo code for ".concat(item.qvse_cid || 'this entry', " as claimed?"),
@@ -29729,18 +29605,22 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
                 cancelButtonText: 'Cancel'
               });
             case 1:
-              result = _context3.v;
+              result = _context2.v;
               if (!result.isConfirmed) {
-                _context3.n = 3;
+                _context2.n = 3;
                 break;
               }
-              _context3.n = 2;
+              _context2.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("/api/serve-mps/".concat(item.id, "/mark-promo-claimed"));
             case 2:
-              response = _context3.v;
+              response = _context2.v;
               if (response.data.success) {
+                // In-place patch of the row object already held in `serveMps`
+                // -- still valid now that the table renders `serveMps` directly.
                 item.rm100_promo_code_claim = true;
-                _this5.calculateStatistics();
+                if (_this2.statistics.available_promo_codes > 0) {
+                  _this2.statistics.available_promo_codes--;
+                }
                 sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                   icon: 'success',
                   title: 'Success',
@@ -29750,28 +29630,28 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
                 });
               }
             case 3:
-              _context3.n = 5;
+              _context2.n = 5;
               break;
             case 4:
-              _context3.p = 4;
-              _t3 = _context3.v;
-              console.error('Error marking promo claimed:', _t3);
+              _context2.p = 4;
+              _t2 = _context2.v;
+              console.error('Error marking promo claimed:', _t2);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 icon: 'error',
                 title: 'Error',
-                text: ((_error$response = _t3.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to mark promo as claimed'
+                text: ((_error$response = _t2.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.message) || 'Failed to mark promo as claimed'
               });
             case 5:
-              return _context3.a(2);
+              return _context2.a(2);
           }
-        }, _callee3, null, [[0, 4]]);
+        }, _callee2, null, [[0, 4]]);
       }))();
     },
     exportToExcel: function exportToExcel() {
-      var _this6 = this;
+      var _this3 = this;
       var headers = ['ID', 'QVSE CID', 'Start Date', 'Warranty Status', '2 Year Assembly Warranty', 'Troubleshooting Claim 1', 'Troubleshooting Claim 2', 'Cable Management Claim 1', 'Cable Management Claim 2', 'Dust Cleaning Claim', 'Promo Code', 'Promo Generated', 'Promo Claimed', 'Created At', 'Updated At'];
       var data = this.serveMps.map(function (item) {
-        return [item.id, item.qvse_cid || '', _this6.formatDate(item.date_start), _this6.getWarrantyStatus(item.date_start).text, item.two_year_assembly_warranty ? 'Yes' : 'No', item.two_free_onsite_troubleshooting_claim_1 ? 'Used' : 'Available', item.two_free_onsite_troubleshooting_claim_2 ? 'Used' : 'Available', item.two_advance_cable_management_claim_1 ? 'Used' : 'Available', item.two_advance_cable_management_claim_2 ? 'Used' : 'Available', item.one_free_dust_cleaning_claim ? 'Used' : 'Available', item.rm100_promo_code_claim || '', item.generate_code ? 'Yes' : 'No', item.rm100_promo_code_claim ? 'Yes' : 'No', new Date(item.created_at).toLocaleString(), new Date(item.updated_at).toLocaleString()];
+        return [item.id, item.qvse_cid || '', _this3.formatDate(item.date_start), _this3.getWarrantyStatus(item.date_start).text, item.two_year_assembly_warranty ? 'Yes' : 'No', item.two_free_onsite_troubleshooting_claim_1 ? 'Used' : 'Available', item.two_free_onsite_troubleshooting_claim_2 ? 'Used' : 'Available', item.two_advance_cable_management_claim_1 ? 'Used' : 'Available', item.two_advance_cable_management_claim_2 ? 'Used' : 'Available', item.one_free_dust_cleaning_claim ? 'Used' : 'Available', item.rm100_promo_code_next_build || '', item.generate_code ? 'Yes' : 'No', item.rm100_promo_code_claim ? 'Yes' : 'No', new Date(item.created_at).toLocaleString(), new Date(item.updated_at).toLocaleString()];
       });
       var csvContent = [headers].concat(_toConsumableArray(data)).map(function (row) {
         return row.map(function (cell) {
@@ -29794,20 +29674,20 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       var warrantyStatus = this.getWarrantyStatus(item.date_start);
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: "Quick Info - ".concat(item.qvse_cid || 'No CID'),
-        html: "\n          <div class=\"text-left\">\n            <p><strong>ID:</strong> ".concat(item.id, "</p>\n            <p><strong>QVSE CID:</strong> ").concat(item.qvse_cid || 'N/A', "</p>\n            <p><strong>Start Date:</strong> ").concat(this.formatDate(item.date_start), "</p>\n            <p><strong>Warranty Status:</strong> <span class=\"").concat(warrantyStatus["class"], "\">").concat(warrantyStatus.text, "</span></p>\n            <hr>\n            <p><strong>2 Year Assembly Warranty:</strong> <span class=\"badge ").concat(item.two_year_assembly_warranty ? 'badge-success' : 'badge-secondary', "\">").concat(item.two_year_assembly_warranty ? 'Active' : 'Not Active', "</span></p>\n            <hr>\n            <p><strong>Claims Status:</strong></p>\n            <ul>\n              <li>Troubleshooting Claim 1: <span class=\"badge ").concat(item.two_free_onsite_troubleshooting_claim_1 ? 'badge-success' : 'badge-info', "\">").concat(item.two_free_onsite_troubleshooting_claim_1 ? 'Used' : 'Available', "</span></li>\n              <li>Troubleshooting Claim 2: <span class=\"badge ").concat(item.two_free_onsite_troubleshooting_claim_2 ? 'badge-success' : 'badge-info', "\">").concat(item.two_free_onsite_troubleshooting_claim_2 ? 'Used' : 'Available', "</span></li>\n              <li>Cable Management Claim 1: <span class=\"badge ").concat(item.two_advance_cable_management_claim_1 ? 'badge-success' : 'badge-warning', "\">").concat(item.two_advance_cable_management_claim_1 ? 'Used' : 'Available', "</span></li>\n              <li>Cable Management Claim 2: <span class=\"badge ").concat(item.two_advance_cable_management_claim_2 ? 'badge-success' : 'badge-warning', "\">").concat(item.two_advance_cable_management_claim_2 ? 'Used' : 'Available', "</span></li>\n              <li>Dust Cleaning Claim: <span class=\"badge ").concat(item.one_free_dust_cleaning_claim ? 'badge-success' : 'badge-teal', "\">").concat(item.one_free_dust_cleaning_claim ? 'Used' : 'Available', "</span></li>\n            </ul>\n            <hr>\n            <p><strong>Promo Code:</strong> ").concat(item.rm100_promo_code_claim || 'N/A', "</p>\n            <p><strong>Promo Status:</strong> ").concat(item.rm100_promo_code_claim ? '<span class="badge badge-success">Claimed</span>' : item.generate_code ? '<span class="badge badge-warning">Generated</span>' : '<span class="badge badge-secondary">Not Generated</span>', "</p>\n            ").concat(item.notes ? "<hr><p><strong>Notes:</strong><br>".concat(item.notes, "</p>") : '', "\n            <hr>\n            <p><small class=\"text-muted\">Created: ").concat(new Date(item.created_at).toLocaleString(), "</small></p>\n            <p><small class=\"text-muted\">Updated: ").concat(new Date(item.updated_at).toLocaleString(), "</small></p>\n          </div>\n        "),
+        html: "\n          <div class=\"text-left\">\n            <p><strong>ID:</strong> ".concat(item.id, "</p>\n            <p><strong>QVSE CID:</strong> ").concat(item.qvse_cid || 'N/A', "</p>\n            <p><strong>Start Date:</strong> ").concat(this.formatDate(item.date_start), "</p>\n            <p><strong>Warranty Status:</strong> <span class=\"").concat(warrantyStatus["class"], "\">").concat(warrantyStatus.text, "</span></p>\n            <hr>\n            <p><strong>2 Year Assembly Warranty:</strong> <span class=\"badge ").concat(item.two_year_assembly_warranty ? 'badge-success' : 'badge-secondary', "\">").concat(item.two_year_assembly_warranty ? 'Active' : 'Not Active', "</span></p>\n            <hr>\n            <p><strong>Claims Status:</strong></p>\n            <ul>\n              <li>Troubleshooting Claim 1: <span class=\"badge ").concat(item.two_free_onsite_troubleshooting_claim_1 ? 'badge-success' : 'badge-info', "\">").concat(item.two_free_onsite_troubleshooting_claim_1 ? 'Used' : 'Available', "</span></li>\n              <li>Troubleshooting Claim 2: <span class=\"badge ").concat(item.two_free_onsite_troubleshooting_claim_2 ? 'badge-success' : 'badge-info', "\">").concat(item.two_free_onsite_troubleshooting_claim_2 ? 'Used' : 'Available', "</span></li>\n              <li>Cable Management Claim 1: <span class=\"badge ").concat(item.two_advance_cable_management_claim_1 ? 'badge-success' : 'badge-warning', "\">").concat(item.two_advance_cable_management_claim_1 ? 'Used' : 'Available', "</span></li>\n              <li>Cable Management Claim 2: <span class=\"badge ").concat(item.two_advance_cable_management_claim_2 ? 'badge-success' : 'badge-warning', "\">").concat(item.two_advance_cable_management_claim_2 ? 'Used' : 'Available', "</span></li>\n              <li>Dust Cleaning Claim: <span class=\"badge ").concat(item.one_free_dust_cleaning_claim ? 'badge-success' : 'badge-teal', "\">").concat(item.one_free_dust_cleaning_claim ? 'Used' : 'Available', "</span></li>\n            </ul>\n            <hr>\n            <p><strong>Promo Code:</strong> ").concat(item.rm100_promo_code_next_build || 'N/A', "</p>\n            <p><strong>Promo Status:</strong> ").concat(item.rm100_promo_code_claim ? '<span class="badge badge-success">Claimed</span>' : item.generate_code ? '<span class="badge badge-warning">Generated</span>' : '<span class="badge badge-secondary">Not Generated</span>', "</p>\n            ").concat(item.notes ? "<hr><p><strong>Notes:</strong><br>".concat(item.notes, "</p>") : '', "\n            <hr>\n            <p><small class=\"text-muted\">Created: ").concat(new Date(item.created_at).toLocaleString(), "</small></p>\n            <p><small class=\"text-muted\">Updated: ").concat(new Date(item.updated_at).toLocaleString(), "</small></p>\n          </div>\n        "),
         showCloseButton: true,
         showConfirmButton: false,
         width: 600
       });
     },
     deleteItem: function deleteItem(id) {
-      var _this7 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-        var result, response, _error$response2, _t4;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
+      var _this4 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        var result, response, _error$response2, _t3;
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
             case 0:
-              _context4.n = 1;
+              _context3.n = 1;
               return sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 title: 'Are you sure?',
                 text: "This action cannot be undone!",
@@ -29819,22 +29699,20 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
                 cancelButtonText: 'Cancel'
               });
             case 1:
-              result = _context4.v;
+              result = _context3.v;
               if (!result.isConfirmed) {
-                _context4.n = 5;
+                _context3.n = 5;
                 break;
               }
-              _context4.p = 2;
-              _context4.n = 3;
+              _context3.p = 2;
+              _context3.n = 3;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/serve-mps/".concat(id));
             case 3:
-              response = _context4.v;
+              response = _context3.v;
               if (response.data.success) {
-                // Remove from local array
-                _this7.serveMps = _this7.serveMps.filter(function (item) {
-                  return item.id !== id;
-                });
-                _this7.calculateStatistics();
+                // Refetch rather than splice: with server-side pagination a local
+                // removal would leave the page short and the meta/stats stale.
+                _this4.fetchList();
                 sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                   icon: 'success',
                   title: 'Deleted!',
@@ -29843,26 +29721,33 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
                   showConfirmButton: false
                 });
               }
-              _context4.n = 5;
+              _context3.n = 5;
               break;
             case 4:
-              _context4.p = 4;
-              _t4 = _context4.v;
+              _context3.p = 4;
+              _t3 = _context3.v;
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 icon: 'error',
                 title: 'Error',
-                text: ((_error$response2 = _t4.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to delete record'
+                text: ((_error$response2 = _t3.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to delete record'
               });
             case 5:
-              return _context4.a(2);
+              return _context3.a(2);
           }
-        }, _callee4, null, [[2, 4]]);
+        }, _callee3, null, [[2, 4]]);
       }))();
     }
   },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
+    }
+  },
   created: function created() {
-    this.fetchServeMps();
-    this.fetchStatistics();
+    this.fetchList();
   }
 });
 
@@ -79975,7 +79860,7 @@ var render = function render() {
     staticClass: "fas fa-file-excel mr-1"
   }), _vm._v(" Export All\n                ")]), _vm._v(" "), _c("p", {
     staticClass: "text-muted mt-2 mb-0"
-  }, [_vm._v("\n                  Local filtering applied to " + _vm._s(_vm.serveMps.length) + " records\n                ")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  }, [_vm._v("\n                  Filters are applied server-side across all " + _vm._s(_vm.statistics.total_records || 0) + " records\n                ")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "mt-3 pt-3 border-top"
   }, [_c("div", {
     staticClass: "d-flex justify-content-between align-items-center"
@@ -80028,7 +79913,7 @@ var render = function render() {
     staticClass: "fas fa-times"
   })])]) : _vm._e()]), _vm._v(" "), _c("p", {
     staticClass: "text-muted mt-2 mb-0"
-  }, [_vm._v("\n                  Showing " + _vm._s(_vm.filteredServeMps.length) + " of " + _vm._s(_vm.serveMps.length) + " records\n                ")])]), _vm._v(" "), _c("button", {
+  }, [_vm._v("\n                  " + _vm._s(_vm.meta.total) + " of " + _vm._s(_vm.statistics.total_records || 0) + " records match\n                ")])]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-sm btn-outline-danger",
     on: {
       click: _vm.clearAllFilters
@@ -80061,7 +79946,9 @@ var render = function render() {
     staticClass: "text-center py-5"
   }, [_c("i", {
     staticClass: "fas fa-database fa-4x text-muted mb-3"
-  }), _vm._v(" "), _c("h4", [_vm._v("No Records Found")]), _vm._v(" "), _c("p", {
+  }), _vm._v(" "), _c("h4", [_vm._v("No Records Found")]), _vm._v(" "), _vm.hasActiveFilters ? _c("p", {
+    staticClass: "text-muted"
+  }, [_vm._v("No records match the current filters.")]) : _c("p", {
     staticClass: "text-muted"
   }, [_vm._v("The serve_mps table is empty. Create your first record.")]), _vm._v(" "), _c("router-link", {
     staticClass: "btn btn-primary mt-2",
@@ -80074,14 +79961,34 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(8), _vm._v(" "), _c("tbody", _vm._l(_vm.paginatedServeMps, function (item) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Start Date",
+      "sort-key": "date_start",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Created",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("2 Year Warranty")]), _vm._v(" "), _c("th", [_vm._v("Troubleshooting Claims")]), _vm._v(" "), _c("th", [_vm._v("Cable Management Claims")]), _vm._v(" "), _c("th", [_vm._v("Dust Cleaning Claim")]), _vm._v(" "), _c("th", [_vm._v("Promo Code")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.serveMps, function (item) {
     return _c("tr", {
       key: item.id
     }, [_c("td", [_c("strong", [_vm._v(_vm._s(item.qvse_cid || "N/A"))]), _vm._v(" "), _c("br"), _vm._v(" "), _c("small", {
       staticClass: "text-muted"
     }, [_vm._v("ID: " + _vm._s(item.id))])]), _vm._v(" "), _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(item.date_start)) + "\n                  "), _c("br"), _vm._v(" "), _c("small", {
       "class": _vm.getWarrantyStatus(item.date_start)["class"]
-    }, [_vm._v("\n                    " + _vm._s(_vm.getWarrantyStatus(item.date_start).text) + "\n                  ")])]), _vm._v(" "), _c("td", [_c("span", {
+    }, [_vm._v("\n                    " + _vm._s(_vm.getWarrantyStatus(item.date_start).text) + "\n                  ")])]), _vm._v(" "), _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(item.created_at)) + "\n                ")]), _vm._v(" "), _c("td", [_c("span", {
       staticClass: "badge",
       "class": item.two_year_assembly_warranty ? "badge-success" : "badge-secondary"
     }, [_vm._v("\n                    " + _vm._s(item.two_year_assembly_warranty ? "Active" : "Not Active") + "\n                  ")])]), _vm._v(" "), _c("td", [_c("div", {
@@ -80160,54 +80067,15 @@ var render = function render() {
     }), _vm._v(" Mark Claimed\n                    ")]) : _vm._e()])])]);
   }), 0)])]), _vm._v(" "), !_vm.loading && _vm.serveMps.length > 0 ? _c("div", {
     staticClass: "card-footer"
-  }, [_c("nav", {
+  }, [_c("pagination-control", {
     attrs: {
-      "aria-label": "Record navigation"
-    }
-  }, [_c("ul", {
-    staticClass: "pagination justify-content-center mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
+      meta: _vm.meta
+    },
     on: {
-      click: _vm.prevPage
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-left"
-  })])]), _vm._v(" "), _vm._l(_vm.totalPages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.goToPage(page);
-        }
-      }
-    }, [_vm._v("\n                  " + _vm._s(page) + "\n                ")])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.totalPages
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    on: {
-      click: _vm.nextPage
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-right"
-  })])])], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "text-center text-muted mt-2"
-  }, [_vm._v("\n            Showing " + _vm._s(_vm.paginationMeta.from || 0) + " to " + _vm._s(_vm.paginationMeta.to || 0) + " of " + _vm._s(_vm.paginationMeta.total || 0) + " entries\n          ")])]) : _vm._e()])])])]);
+  })], 1) : _vm._e()])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -80266,7 +80134,7 @@ var staticRenderFns = [function () {
     staticClass: "m-0 font-weight-bold text-primary"
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
-  }), _vm._v("Filter Records (Local Filtering)\n          ")]);
+  }), _vm._v("Filter Records\n          ")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -80278,12 +80146,6 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "sr-only"
   }, [_vm._v("Loading...")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("th", [_vm._v("Start Date")]), _vm._v(" "), _c("th", [_vm._v("2 Year Warranty")]), _vm._v(" "), _c("th", [_vm._v("Troubleshooting Claims")]), _vm._v(" "), _c("th", [_vm._v("Cable Management Claims")]), _vm._v(" "), _c("th", [_vm._v("Dust Cleaning Claim")]), _vm._v(" "), _c("th", [_vm._v("Promo Code")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }];
 render._withStripped = true;
 

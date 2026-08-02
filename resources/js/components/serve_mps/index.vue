@@ -90,7 +90,7 @@
         <div class="card mb-4">
           <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="m-0 font-weight-bold text-primary">
-              <i class="fas fa-filter mr-2"></i>Filter Records (Local Filtering)
+              <i class="fas fa-filter mr-2"></i>Filter Records
             </h5>
             <button
                 @click="showFilters = !showFilters"
@@ -142,7 +142,7 @@
                     <i class="fas fa-file-excel mr-1"></i> Export All
                   </button>
                   <p class="text-muted mt-2 mb-0">
-                    Local filtering applied to {{ serveMps.length }} records
+                    Filters are applied server-side across all {{ statistics.total_records || 0 }} records
                   </p>
                 </div>
               </div>
@@ -192,7 +192,7 @@
                     </span>
                   </div>
                   <p class="text-muted mt-2 mb-0">
-                    Showing {{ filteredServeMps.length }} of {{ serveMps.length }} records
+                    {{ meta.total }} of {{ statistics.total_records || 0 }} records match
                   </p>
                 </div>
                 <button
@@ -233,7 +233,8 @@
           <div v-else-if="serveMps.length === 0" class="text-center py-5">
             <i class="fas fa-database fa-4x text-muted mb-3"></i>
             <h4>No Records Found</h4>
-            <p class="text-muted">The serve_mps table is empty. Create your first record.</p>
+            <p class="text-muted" v-if="hasActiveFilters">No records match the current filters.</p>
+            <p class="text-muted" v-else>The serve_mps table is empty. Create your first record.</p>
             <router-link to="/serve-mps/create" class="btn btn-primary mt-2">
               <i class="fas fa-plus-circle mr-1"></i> Create First Record
             </router-link>
@@ -245,7 +246,8 @@
               <thead class="thead-light">
                 <tr>
                   <th>QVSE CID</th>
-                  <th>Start Date</th>
+                  <sortable-th label="Start Date" sort-key="date_start" :current-sort="sortState" @sort="onSort" />
+                  <sortable-th label="Created" sort-key="created_at" :current-sort="sortState" @sort="onSort" />
                   <th>2 Year Warranty</th>
                   <th>Troubleshooting Claims</th>
                   <th>Cable Management Claims</th>
@@ -255,7 +257,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in paginatedServeMps" :key="item.id">
+                <tr v-for="item in serveMps" :key="item.id">
                   <td>
                     <strong>{{ item.qvse_cid || 'N/A' }}</strong>
                     <br>
@@ -267,6 +269,9 @@
                     <small :class="getWarrantyStatus(item.date_start).class">
                       {{ getWarrantyStatus(item.date_start).text }}
                     </small>
+                  </td>
+                  <td>
+                    {{ formatDate(item.created_at) }}
                   </td>
                   <td>
                     <span class="badge" :class="item.two_year_assembly_warranty ? 'badge-success' : 'badge-secondary'">
@@ -355,33 +360,11 @@
 
           <!-- Pagination -->
           <div class="card-footer" v-if="!loading && serveMps.length > 0">
-            <nav aria-label="Record navigation">
-              <ul class="pagination justify-content-center mb-0">
-                <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <button class="page-link" @click="prevPage">
-                    <i class="fas fa-chevron-left"></i>
-                  </button>
-                </li>
-                <li
-                  class="page-item"
-                  v-for="page in totalPages"
-                  :key="page"
-                  :class="{ active: page === currentPage }"
-                >
-                  <button class="page-link" @click="goToPage(page)">
-                    {{ page }}
-                  </button>
-                </li>
-                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                  <button class="page-link" @click="nextPage">
-                    <i class="fas fa-chevron-right"></i>
-                  </button>
-                </li>
-              </ul>
-            </nav>
-            <div class="text-center text-muted mt-2">
-              Showing {{ paginationMeta.from || 0 }} to {{ paginationMeta.to || 0 }} of {{ paginationMeta.total || 0 }} entries
-            </div>
+            <pagination-control
+                :meta="meta"
+                @page-change="onPageChange"
+                @per-page-change="onPerPageChange"
+            />
           </div>
         </div>
       </div>
@@ -393,10 +376,14 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
+import PaginationControl from '../shared/PaginationControl.vue'
+import SortableTh from '../shared/SortableTh.vue'
+import sortablePaginationMixin from '../../mixins/sortablePagination'
 
 export default {
   name: 'ServeMpsIndex',
-  components: { ColumnSearchPanel },
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
+  mixins: [sortablePaginationMixin],
   data() {
     return {
       serveMps: [],
@@ -409,7 +396,11 @@ export default {
           { value: 'expired', label: 'Expired Warranty' },
         ] },
         { key: 'promo_status', label: 'Promo Code Status', type: 'select', options: [
-          { value: 'available', label: 'Available (Generated)' },
+          // Server's `generated` == the old client-side `available` predicate
+          // (generate_code && !rm100_promo_code_claim). The server's own
+          // `available` means something different (promo code string present),
+          // so map to `generated` to preserve the previous behaviour exactly.
+          { value: 'generated', label: 'Available (Generated)' },
           { value: 'claimed', label: 'Claimed' },
           { value: 'not_generated', label: 'Not Generated' },
         ] },
@@ -421,8 +412,8 @@ export default {
         date_start_from: '',
         date_start_to: ''
       },
-      currentPage: 1,
-      itemsPerPage: 10,
+      meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
+      sortState: { key: 'created_at', dir: 'desc' },
       statistics: {
         total_records: 0,
         active_warranty: 0,
@@ -430,14 +421,6 @@ export default {
         available_promo_codes: 0,
         active_warranty_percentage: 0,
         expired_warranty_percentage: 0
-      },
-      paginationMeta: {
-        current_page: 1,
-        last_page: 1,
-        per_page: 10,
-        total: 0,
-        from: 0,
-        to: 0
       }
     }
   },
@@ -445,98 +428,47 @@ export default {
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '')
     },
-    totalPages() {
-      return this.paginationMeta.last_page || 1
-    },
-    filteredServeMps() {
-      let filtered = [...this.serveMps]
-
-      // Apply local filtering only
-      if (this.filters.qvse_cid) {
-        const searchTerm = this.filters.qvse_cid.toLowerCase()
-        filtered = filtered.filter(item =>
-          item.qvse_cid && item.qvse_cid.toLowerCase().includes(searchTerm)
-        )
-      }
-
-      if (this.filters.warranty_status) {
-        filtered = filtered.filter(item => {
-          const status = this.getWarrantyStatus(item.date_start)
-          return status.status === this.filters.warranty_status
-        })
-      }
-
-      if (this.filters.promo_status) {
-        filtered = filtered.filter(item => {
-          if (this.filters.promo_status === 'available') {
-            return item.generate_code && !item.rm100_promo_code_claim
-          } else if (this.filters.promo_status === 'claimed') {
-            return item.rm100_promo_code_claim
-          } else if (this.filters.promo_status === 'not_generated') {
-            return !item.generate_code
-          }
-          return true
-        })
-      }
-
-      // Date filtering
-      if (this.filters.date_start_from) {
-        const fromDate = new Date(this.filters.date_start_from)
-        filtered = filtered.filter(item => {
-          if (!item.date_start) return false
-          const itemDate = new Date(item.date_start)
-          return itemDate >= fromDate
-        })
-      }
-
-      if (this.filters.date_start_to) {
-        const toDate = new Date(this.filters.date_start_to)
-        filtered = filtered.filter(item => {
-          if (!item.date_start) return false
-          const itemDate = new Date(item.date_start)
-          return itemDate <= toDate
-        })
-      }
-
-      return filtered
-    },
-    paginatedServeMps() {
-      // Use API pagination data for display
-      if (this.serveMps.length <= this.itemsPerPage) {
-        return this.serveMps
-      }
-
-      // If local filtering is active, apply pagination to filtered results
-      if (this.hasActiveFilters) {
-        const start = (this.currentPage - 1) * this.itemsPerPage
-        const end = start + this.itemsPerPage
-        return this.filteredServeMps.slice(start, end)
-      }
-
-      // Otherwise use the full dataset from API (with API pagination)
-      return this.serveMps
-    }
+    // NOTE: the former `filteredServeMps` / `paginatedServeMps` computed
+    // properties were deleted here. They re-filtered and re-sliced a response
+    // that the server had ALREADY paginated, so with any filter active the
+    // page showed a slice-of-a-slice (the `care_data` double-pagination bug).
+    // Every filter they applied is now sent to /api/serve-mps as a query
+    // param by fetchList(); the server is the single source of truth.
   },
   methods: {
-    async fetchServeMps(page = 1) {
+    async fetchList() {
       this.loading = true
-      this.currentPage = page
 
       try {
-        // Fetch ALL data from index endpoint - no filters applied
+        // Every filter is sent to the server. Nothing is filtered or sliced
+        // client-side any more -- see the note in `computed`.
+        const params = {
+          page: this.meta.current_page,
+          per_page: this.meta.per_page,
+          sort_by: this.sortState.key,
+          sort_dir: this.sortState.dir,
+          qvse_cid: this.filters.qvse_cid,
+          warranty_status: this.filters.warranty_status,
+          promo_status: this.filters.promo_status,
+          date_start_from: this.filters.date_start_from,
+          date_start_to: this.filters.date_start_to
+        }
+
+        // Drop empty filters so they aren't sent as blank query params
+        Object.keys(params).forEach(key => {
+          if (params[key] === '' || params[key] === null || params[key] === undefined) {
+            delete params[key]
+          }
+        })
+
         const response = await axios.get('/api/serve-mps', {
-          params: {
-            page: page,
-            per_page: this.itemsPerPage
-          },
+          params,
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
           timeout: 30000
         })
-
-        console.log('API Response:', response.data)
 
         if (!response.data) {
           throw new Error('Empty response from server')
@@ -546,32 +478,25 @@ export default {
           throw new Error(response.data.message || 'API error')
         }
 
-        // Direct assignment - get all data from index
         this.serveMps = response.data.data || []
 
-        // Set pagination meta if available
         if (response.data.meta) {
-          this.paginationMeta = {
-            total: response.data.meta.total || 0,
-            per_page: response.data.meta.per_page || this.itemsPerPage,
-            current_page: response.data.meta.current_page || 1,
-            last_page: response.data.meta.last_page || 1,
-            from: response.data.meta.from || 0,
-            to: response.data.meta.to || 0
-          }
+          this.meta = response.data.meta
         } else {
           // Fallback if no meta data
-          this.paginationMeta = {
+          this.meta = {
             current_page: 1,
             last_page: 1,
-            per_page: this.itemsPerPage,
-            total: this.serveMps.length,
-            from: 1,
-            to: this.serveMps.length
+            per_page: this.meta.per_page,
+            total: this.serveMps.length
           }
         }
 
-        console.log('Loaded records:', this.serveMps.length)
+        // The index endpoint already returns whole-table (unfiltered)
+        // statistics, so the stat cards come straight off this response.
+        if (response.data.statistics) {
+          this.statistics = response.data.statistics
+        }
 
       } catch (error) {
         console.error('Error fetching serve MPS:', error)
@@ -596,65 +521,14 @@ export default {
         })
 
         this.serveMps = []
-        this.paginationMeta = {
+        this.meta = {
           current_page: 1,
           last_page: 1,
-          per_page: this.itemsPerPage,
-          total: 0,
-          from: 0,
-          to: 0
+          per_page: this.meta.per_page,
+          total: 0
         }
       } finally {
         this.loading = false
-      }
-    },
-
-    calculateStatistics() {
-      const total = this.serveMps.length
-      let activeWarranty = 0
-      let expiredWarranty = 0
-      let availablePromoCodes = 0
-
-      this.serveMps.forEach(item => {
-        const warrantyStatus = this.getWarrantyStatus(item.date_start)
-        if (warrantyStatus.status === 'active') {
-          activeWarranty++
-        } else if (warrantyStatus.status === 'expired') {
-          expiredWarranty++
-        }
-
-        // Count available promo codes
-        if (item.generate_code && !item.rm100_promo_code_claim) {
-          availablePromoCodes++
-        }
-      })
-
-      const activePercentage = total > 0 ? Math.round((activeWarranty / total) * 100) : 0
-      const expiredPercentage = total > 0 ? Math.round((expiredWarranty / total) * 100) : 0
-
-      this.statistics = {
-        total_records: total,
-        active_warranty: activeWarranty,
-        expired_warranty: expiredWarranty,
-        available_promo_codes: availablePromoCodes,
-        active_warranty_percentage: activePercentage,
-        expired_warranty_percentage: expiredPercentage
-      }
-    },
-
-    async fetchStatistics() {
-      try {
-        const response = await axios.get('/api/serve-mps')
-        if (response.data && response.data.success && response.data.statistics) {
-          this.statistics = response.data.statistics
-        } else {
-          // Calculate locally if API doesn't provide statistics
-          this.calculateStatistics()
-        }
-      } catch (error) {
-        console.error('Error fetching statistics:', error)
-        // Calculate locally if API fails
-        this.calculateStatistics()
       }
     },
 
@@ -666,7 +540,7 @@ export default {
         date_start_from: '',
         date_start_to: ''
       }
-      this.currentPage = 1
+      this.meta.current_page = 1
     },
 
     clearFilter(filterName) {
@@ -682,30 +556,13 @@ export default {
       this.resetFilters()
     },
 
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        this.fetchServeMps(this.currentPage)
-      }
-    },
-
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        this.fetchServeMps(this.currentPage)
-      }
-    },
-
-    goToPage(page) {
-      if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-        this.currentPage = page
-        this.fetchServeMps(page)
-      }
+    applyFilters() {
+      this.meta.current_page = 1
+      this.fetchList()
     },
 
     refreshData() {
-      this.fetchServeMps(this.currentPage)
-      this.fetchStatistics()
+      this.fetchList()
       Swal.fire({
         icon: 'success',
         title: 'Refreshed',
@@ -765,8 +622,12 @@ export default {
           const response = await axios.put(`/api/serve-mps/${item.id}/mark-promo-claimed`)
 
           if (response.data.success) {
+            // In-place patch of the row object already held in `serveMps`
+            // -- still valid now that the table renders `serveMps` directly.
             item.rm100_promo_code_claim = true
-            this.calculateStatistics()
+            if (this.statistics.available_promo_codes > 0) {
+              this.statistics.available_promo_codes--
+            }
             Swal.fire({
               icon: 'success',
               title: 'Success',
@@ -806,7 +667,7 @@ export default {
         item.two_advance_cable_management_claim_1 ? 'Used' : 'Available',
         item.two_advance_cable_management_claim_2 ? 'Used' : 'Available',
         item.one_free_dust_cleaning_claim ? 'Used' : 'Available',
-        item.rm100_promo_code_claim || '',
+        item.rm100_promo_code_next_build || '',
         item.generate_code ? 'Yes' : 'No',
         item.rm100_promo_code_claim ? 'Yes' : 'No',
         new Date(item.created_at).toLocaleString(),
@@ -851,7 +712,7 @@ export default {
               <li>Dust Cleaning Claim: <span class="badge ${item.one_free_dust_cleaning_claim ? 'badge-success' : 'badge-teal'}">${item.one_free_dust_cleaning_claim ? 'Used' : 'Available'}</span></li>
             </ul>
             <hr>
-            <p><strong>Promo Code:</strong> ${item.rm100_promo_code_claim || 'N/A'}</p>
+            <p><strong>Promo Code:</strong> ${item.rm100_promo_code_next_build || 'N/A'}</p>
             <p><strong>Promo Status:</strong> ${item.rm100_promo_code_claim ? '<span class="badge badge-success">Claimed</span>' : (item.generate_code ? '<span class="badge badge-warning">Generated</span>' : '<span class="badge badge-secondary">Not Generated</span>')}</p>
             ${item.notes ? `<hr><p><strong>Notes:</strong><br>${item.notes}</p>` : ''}
             <hr>
@@ -882,9 +743,9 @@ export default {
           const response = await axios.delete(`/api/serve-mps/${id}`)
 
           if (response.data.success) {
-            // Remove from local array
-            this.serveMps = this.serveMps.filter(item => item.id !== id)
-            this.calculateStatistics()
+            // Refetch rather than splice: with server-side pagination a local
+            // removal would leave the page short and the meta/stats stale.
+            this.fetchList()
             Swal.fire({
               icon: 'success',
               title: 'Deleted!',
@@ -903,9 +764,16 @@ export default {
       }
     }
   },
+  watch: {
+    filters: {
+      handler() {
+        this.applyFilters()
+      },
+      deep: true
+    }
+  },
   created() {
-    this.fetchServeMps()
-    this.fetchStatistics()
+    this.fetchList()
   }
 }
 </script>

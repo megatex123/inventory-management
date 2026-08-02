@@ -24,8 +24,14 @@ class ServeMpsController extends Controller
             $query = ServeMps::query();
 
             // Apply filters
+            // `qvse_cid` is NOT a column on serve_mps -- it is an accessor that
+            // reads through the serveData relation (see ServeMps::getQvseCidAttribute).
+            // Filtering it directly produced a 1054 "Unknown column" error.
             if ($request->has('qvse_cid') && !empty($request->qvse_cid)) {
-                $query->where('qvse_cid', 'like', '%' . addcslashes($request->qvse_cid, '%_\\') . '%');
+                $needle = '%' . addcslashes($request->qvse_cid, '%_\\') . '%';
+                $query->whereHas('serveData', function ($q) use ($needle) {
+                    $q->where('qvse_cid', 'like', $needle);
+                });
             }
 
             if ($request->has('date_start_from') && !empty($request->date_start_from)) {
