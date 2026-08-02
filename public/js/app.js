@@ -24727,10 +24727,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
@@ -24743,6 +24752,10 @@ __webpack_require__.r(__webpack_exports__);
       }],
       filters: {
         salary_month: ''
+      },
+      sortState: {
+        key: 'salary_month',
+        dir: 'asc'
       }
     };
   },
@@ -24756,13 +24769,25 @@ __webpack_require__.r(__webpack_exports__);
         // console.error(err);
         notification.error();
       });
+    },
+    onSort: function onSort(key) {
+      if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortState.key = key;
+        this.sortState.dir = 'asc';
+      }
     }
   },
   computed: {
     filterSearch: function filterSearch() {
       var _this2 = this;
-      return this.employees.filter(function (data) {
+      var filtered = this.employees.filter(function (data) {
         return data.salary_month.match(_this2.filters.salary_month);
+      });
+      var dir = this.sortState.dir === 'desc' ? -1 : 1;
+      return _toConsumableArray(filtered).sort(function (a, b) {
+        return dir * (a.salary_month || '').localeCompare(b.salary_month || '');
       });
     }
   },
@@ -71971,7 +71996,18 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.filterSearch, function (data) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Salary Month",
+      "sort-key": "salary_month",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Action")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.filterSearch, function (data) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(data.salary_month))]), _vm._v(" "), _c("td", [_c("router-link", {
@@ -71989,13 +72025,7 @@ var render = function render() {
     staticClass: "text-center"
   })])])])])])])]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Sallery Month")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 

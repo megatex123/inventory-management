@@ -34,7 +34,7 @@
                     <thead class="thead-light">
                       <tr>
 
-                        <th>Sallery Month</th>
+                        <sortable-th label="Salary Month" sort-key="salary_month" :current-sort="sortState" @sort="onSort" />
 
                         <th>Action</th>
                       </tr>
@@ -66,9 +66,10 @@
 </template>
 <script>
     import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+    import SortableTh from '../shared/SortableTh.vue';
 
     export default {
-        components: { ColumnSearchPanel },
+        components: { ColumnSearchPanel, SortableTh },
         data() {
             return {
 employees: [],
@@ -79,6 +80,7 @@ filterColumns: [
 filters: {
     salary_month: '',
 },
+sortState: { key: 'salary_month', dir: 'asc' },
             }
         },
         methods: {
@@ -94,13 +96,25 @@ getEmp(){
 
 })
 },
+onSort(key) {
+    if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+        this.sortState.key = key;
+        this.sortState.dir = 'asc';
+    }
+},
 
         },
         computed: {
 filterSearch(){
-    return this.employees.filter(data=>{
+    const filtered = this.employees.filter(data=>{
         return data.salary_month.match(this.filters.salary_month)
-    })
+    });
+    const dir = this.sortState.dir === 'desc' ? -1 : 1;
+    return [...filtered].sort((a, b) => {
+        return dir * (a.salary_month || '').localeCompare(b.salary_month || '');
+    });
 }
         },
        created() {
