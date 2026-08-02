@@ -21,13 +21,17 @@ class ExpensesController extends Controller
 
         $this->applyLikeFilter($query, $request, 'search', 'details');
 
+        // amount is varchar(191) in the live schema despite holding numeric
+        // data -- must be CAST for a numeric (not lexicographic) sort, same
+        // recurring trap documented elsewhere in this initiative (e.g.
+        // order.total, care_data.price).
         $this->resolveSortAndApply(
             $query,
             $request,
             ['details', 'amount', 'expenses_date', 'created_at'],
             'created_at',
             'id',
-            [],
+            ['amount'],
             'desc'
         );
 
