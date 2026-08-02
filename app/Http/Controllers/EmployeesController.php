@@ -2,21 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Image;
 class EmployeesController extends Controller
 {
+    use FiltersSortsAndPaginates;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-       $employees=Employees::all();
-       return response()->json($employees);
+        $query = Employees::query();
+
+        if (is_scalar($request->input('search')) && $request->input('search') !== '') {
+            $keyword = (string) $request->input('search');
+            $escaped = addcslashes($keyword, '%_\\');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('name', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('email', 'LIKE', '%' . $escaped . '%');
+            });
+        }
+
+        $this->resolveSortAndApply(
+            $query,
+            $request,
+            ['name', 'phone', 'join_date', 'created_at'],
+            'created_at',
+            'id',
+            [],
+            'desc'
+        );
+
+        $perPage = $this->resolvePerPage($request);
+        $paginator = $query->paginate($perPage);
+
+        return $this->paginatedResponse($paginator);
     }
 
     /**

@@ -2,20 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Expenses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class ExpensesController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $expenses=Expenses::all();
-        return response()->json($expenses);
+        $query = Expenses::query();
+
+        $this->applyLikeFilter($query, $request, 'search', 'details');
+
+        $this->resolveSortAndApply(
+            $query,
+            $request,
+            ['details', 'amount', 'expenses_date', 'created_at'],
+            'created_at',
+            'id',
+            [],
+            'desc'
+        );
+
+        $perPage = $this->resolvePerPage($request);
+        $paginator = $query->paginate($perPage);
+
+        return $this->paginatedResponse($paginator);
     }
 
     /**
