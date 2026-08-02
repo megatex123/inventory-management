@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\ServeBek;
 use App\Models\ServeMps;
 use App\Models\ServePce;
@@ -23,6 +24,8 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     // QuiviCare RMA-eligible part categories: CPU, SSD, GPU, HDD, RAM, MBD,
     // PSU, HSF, AIO. Excludes CSE (Case — spec lists it as "optional", not
     // included by default), FAN, and all ACC-*/PER-* accessory/peripheral
@@ -142,18 +145,33 @@ class OrderController extends Controller
      * (Order::whereDate('order_date', Carbon::today())), so the Today's Orders page
      * and the All Orders page's "Today's Summary" card never disagree.
      */
-    public function today()
+    public function today(Request $request)
     {
-        $orders = Order::with([
+        $query = Order::with([
                 'customer',
                 'craft',
                 'serve',
                 'care',
                 'care_data'
             ])
-            ->whereDate('order_date', Carbon::today())
-            ->orderByDesc('id')
-            ->get()
+            ->whereDate('order_date', Carbon::today());
+
+        // Sort in SQL, before ->get() materializes the rows, so the ->map()
+        // below (the QuiviCare membership countdown) still sees the same set
+        // of rows in the requested order. Default stays 'id' desc, matching
+        // the pre-sort-support ->orderByDesc('id') behaviour. `total` is
+        // varchar(191) in the live DB, so it must be CAST for a numeric sort.
+        $this->resolveSortAndApply(
+            $query,
+            $request,
+            ['order_id', 'total', 'order_date', 'created_at'],
+            'id',
+            'id',
+            ['total'],
+            'desc'
+        );
+
+        $orders = $query->get()
             ->map(function($order) {
                 if ($order->approved_at) {
                     $today = Carbon::now();
