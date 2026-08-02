@@ -17817,6 +17817,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -17835,10 +17838,16 @@ function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_4__["default"]],
   data: function data() {
     return {
       orders: [],
@@ -17877,118 +17886,60 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         serve_id: '',
         care_id: ''
       },
-      currentPage: 1,
-      itemsPerPage: 10,
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      },
       loading: false
     };
   },
-  computed: {
-    filteredOrders: function filteredOrders() {
-      var _this = this;
-      var filtered = this.orders;
-
-      // Order ID filter
-      if (this.filters.order_id) {
-        var kw = this.filters.order_id.toLowerCase();
-        filtered = filtered.filter(function (order) {
-          return order.order_id && order.order_id.toString().toLowerCase().includes(kw);
-        });
-      }
-
-      // Customer Name filter
-      if (this.filters.customer_name) {
-        var _kw = this.filters.customer_name.toLowerCase();
-        filtered = filtered.filter(function (order) {
-          return order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(_kw);
-        });
-      }
-
-      // Customer Email filter
-      if (this.filters.customer_email) {
-        var _kw2 = this.filters.customer_email.toLowerCase();
-        filtered = filtered.filter(function (order) {
-          return order.customer && order.customer.email && order.customer.email.toLowerCase().includes(_kw2);
-        });
-      }
-
-      // Total filter
-      if (this.filters.total) {
-        filtered = filtered.filter(function (order) {
-          return order.total !== undefined && order.total !== null && order.total.toString().includes(_this.filters.total);
-        });
-      }
-
-      // Approve status filter - fixed to use actual approve values
-      if (this.filters.approve !== '') {
-        if (this.filters.approve === 'null') {
-          // Filter for draft orders (null or undefined)
-          filtered = filtered.filter(function (order) {
-            return order.approve === null || order.approve === '' || order.approve === undefined;
-          });
-        } else {
-          // Filter for numeric values (1 = approved, 0 = rejected)
-          var approveValue = parseInt(this.filters.approve);
-          filtered = filtered.filter(function (order) {
-            return order.approve == approveValue;
-          });
-        }
-      }
-
-      // Date range filter
-      if (this.filters.date_from) {
-        filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) >= new Date(_this.filters.date_from);
-        });
-      }
-      if (this.filters.date_to) {
-        filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) <= new Date(_this.filters.date_to + 'T23:59:59');
-        });
-      }
-      return filtered;
-    },
-    paginatedOrders: function paginatedOrders() {
-      var start = (this.currentPage - 1) * this.itemsPerPage;
-      var end = start + this.itemsPerPage;
-      return this.filteredOrders.slice(start, end);
-    },
-    totalPages: function totalPages() {
-      return Math.ceil(this.filteredOrders.length / this.itemsPerPage);
-    }
-  },
   methods: {
-    getOrders: function getOrders() {
-      var _this2 = this;
+    fetchList: function fetchList() {
+      var _this = this;
       this.loading = true;
-      var params = {};
-
-      // Add filters to params if they exist
-      Object.keys(this.filters).forEach(function (key) {
-        if (_this2.filters[key] !== '' && _this2.filters[key] !== undefined) {
-          // Handle null value for draft
-          if (key === 'approve' && _this2.filters[key] === 'null') {
-            params[key] = null;
-          } else {
-            params[key] = _this2.filters[key];
-          }
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        order_id: this.filters.order_id,
+        customer_name: this.filters.customer_name,
+        customer_email: this.filters.customer_email,
+        total: this.filters.total,
+        approve: this.filters.approve,
+        date_from: this.filters.date_from,
+        date_to: this.filters.date_to
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '' || params[key] === undefined) {
+          delete params[key];
         }
       });
-      axios.get('/api/orders', {
+      axios.get('/api/orders/all', {
         params: params
       }).then(function (res) {
-        _this2.orders = res.data;
-        _this2.loading = false;
+        _this.orders = res.data.data || [];
+        if (res.data.meta) {
+          _this.meta = res.data.meta;
+        }
+        _this.loading = false;
       })["catch"](function (err) {
         console.error(err);
-        _this2.loading = false;
+        _this.loading = false;
       });
     },
     getStatistics: function getStatistics() {
-      var _this3 = this;
+      var _this2 = this;
       axios.get('/api/orders/statistics').then(function (res) {
-        _this3.statistics = res.data;
+        _this2.statistics = res.data;
         // Format overview statistics
-        _this3.statistics.overview = [{
+        _this2.statistics.overview = [{
           label: 'Total Orders',
           value: res.data.overview ? res.data.overview.total_orders : 0,
           icon: 'fa-shopping-cart',
@@ -17997,7 +17948,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           description: 'All time orders'
         }, {
           label: 'Total Revenue',
-          value: 'RM' + _this3.formatNumber(res.data.overview ? res.data.overview.total_revenue : 0),
+          value: 'RM' + _this2.formatNumber(res.data.overview ? res.data.overview.total_revenue : 0),
           icon: 'fa-dollar-sign',
           iconClass: 'bg-success',
           "class": 'text-success',
@@ -18085,8 +18036,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return brightness > 180;
     },
     applyFilters: function applyFilters() {
-      this.currentPage = 1;
-      this.getOrders();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     resetFilters: function resetFilters() {
       this.filters = {
@@ -18100,8 +18051,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         serve_id: '',
         care_id: ''
       };
-      this.currentPage = 1;
-      this.getOrders();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     canOpenServeRecord: function canOpenServeRecord(order) {
       return order.approve == 1 && [1, 2, 3].includes(Number(order.serve_id));
@@ -18114,7 +18065,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }[Number(order.serve_id)];
     },
     goToServeRecord: function goToServeRecord(order, tier) {
-      var _this4 = this;
+      var _this3 = this;
       var endpoints = {
         bek: "/api/serve-beks/order/".concat(order.id),
         mps: "/api/serve-mps/order/".concat(order.id),
@@ -18129,7 +18080,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       var routeName = routeNames[tier];
       axios.get(endpoint).then(function (response) {
         var record = response.data.data;
-        _this4.$router.push({
+        _this3.$router.push({
           name: routeName,
           params: {
             id: record.id
@@ -18144,14 +18095,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       return order.approve == 1 && !!order.care_id;
     },
     goToCareRecord: function goToCareRecord(order) {
-      var _this5 = this;
+      var _this4 = this;
       axios.get("/api/care-data/order/".concat(order.id)).then(function (response) {
         var record = (response.data.data || [])[0];
         if (!record) {
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('Not Found', 'No QuiviCare record exists for this order yet.', 'warning');
           return;
         }
-        _this5.$router.push({
+        _this4.$router.push({
           name: 'caredataedit',
           params: {
             id: record.id
@@ -18163,7 +18114,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     approveOrder: function approveOrder(order, status) {
-      var _this6 = this;
+      var _this5 = this;
       var statusText = status === 1 ? 'approve' : status === 0 ? 'reject' : 'reset to draft';
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: "Are you sure?",
@@ -18175,12 +18126,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         confirmButtonText: "Yes, ".concat(statusText, " it!")
       }).then(function (result) {
         if (result.isConfirmed) {
-          _this6.updateApprove(order, status);
+          _this5.updateApprove(order, status);
         }
       });
     },
     updateApprove: function updateApprove(order, status) {
-      var _this7 = this;
+      var _this6 = this;
       var loading = sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: 'Updating...',
         text: 'Please wait',
@@ -18217,8 +18168,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         });
 
         // Refresh the data to get updated orders
-        _this7.getOrders();
-        _this7.getStatistics();
+        _this6.fetchList();
+        _this6.getStatistics();
       })["catch"](function (error) {
         loading.close();
         console.error('Error updating approval:', error);
@@ -18278,10 +18229,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     exportToExcel: function exportToExcel() {
-      var _this8 = this;
+      var _this7 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         title: 'Export Options',
-        html: "\n                    <div class=\"text-left\">\n                        <p>Choose export format:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n                            <label class=\"form-check-label\" for=\"formatExcel\">\n                                Excel/HTML Format (Styled Report)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n                            <label class=\"form-check-label\" for=\"formatCSV\">\n                                Simple CSV Format\n                            </label>\n                        </div>\n                        <br>\n                        <p>Choose what to export:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n                            <label class=\"form-check-label\" for=\"exportFiltered\">\n                                Export filtered data (".concat(this.filteredOrders.length, " records)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n                            <label class=\"form-check-label\" for=\"exportAll\">\n                                Export all data (").concat(this.orders.length, " records)\n                            </label>\n                        </div>\n                    </div>\n                "),
+        html: "\n                    <div class=\"text-left\">\n                        <p>Choose export format:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatExcel\" value=\"excel\" checked>\n                            <label class=\"form-check-label\" for=\"formatExcel\">\n                                Excel/HTML Format (Styled Report)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportFormat\" id=\"formatCSV\" value=\"csv\">\n                            <label class=\"form-check-label\" for=\"formatCSV\">\n                                Simple CSV Format\n                            </label>\n                        </div>\n                        <br>\n                        <p>Choose what to export:</p>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportFiltered\" value=\"filtered\" checked>\n                            <label class=\"form-check-label\" for=\"exportFiltered\">\n                                Export filtered data (".concat(this.meta.total, " records matching current filters)\n                            </label>\n                        </div>\n                        <div class=\"form-check\">\n                            <input class=\"form-check-input\" type=\"radio\" name=\"exportScope\" id=\"exportAll\" value=\"all\">\n                            <label class=\"form-check-label\" for=\"exportAll\">\n                                Export all data (").concat(this.orders.length, " records)\n                            </label>\n                        </div>\n                    </div>\n                "),
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Export',
@@ -18300,17 +18251,17 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             format = _result$value.format,
             scope = _result$value.scope;
           if (format === 'excel') {
-            _this8.generateStyledExcelReport(scope);
+            _this7.generateStyledExcelReport(scope);
           } else {
-            _this8.generateSimpleCSV(scope);
+            _this7.generateSimpleCSV(scope);
           }
         }
       });
     },
     generateStyledExcelReport: function generateStyledExcelReport(scope) {
-      var _this9 = this;
+      var _this8 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var dataToExport, params, res, totalOrders, totalRevenue, totalFees, approvedOrders, rejectedOrders, draftOrders, exportDate, filterSummary, statusMap, htmlContent, blob, url, link, date, filterType, filename, _error$response3, _t;
+        var dataToExport, page, lastPage, res, totalOrders, totalRevenue, totalFees, approvedOrders, rejectedOrders, draftOrders, exportDate, filterSummary, statusMap, htmlContent, blob, url, link, date, filterType, filename, _error$response3, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
@@ -18329,39 +18280,52 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 break;
               }
               _context.n = 2;
-              return _this9.getAllFilteredOrders();
+              return _this8.getAllFilteredOrders();
             case 2:
               dataToExport = _context.v;
-              _context.n = 5;
+              _context.n = 7;
               break;
             case 3:
-              // Fetch all data without any filters
-              params = {
-                per_page: 10000
-              };
-              _context.n = 4;
-              return axios.get('/api/orders', {
-                params: params
-              });
+              // Fetch all data without any filters, looping pages the
+              // same way getAllFilteredOrders() does (resolvePerPage()
+              // caps at 100/page server-side).
+              page = 1;
+              lastPage = 1;
+              dataToExport = [];
             case 4:
-              res = _context.v;
-              dataToExport = res.data;
+              _context.n = 5;
+              return axios.get('/api/orders/all', {
+                params: {
+                  page: page,
+                  per_page: 100
+                }
+              });
             case 5:
+              res = _context.v;
+              dataToExport = dataToExport.concat(res.data.data || []);
+              lastPage = res.data.meta ? res.data.meta.last_page : 1;
+              page++;
+            case 6:
+              if (page <= lastPage) {
+                _context.n = 4;
+                break;
+              }
+            case 7:
               if (!(!dataToExport || dataToExport.length === 0)) {
-                _context.n = 6;
+                _context.n = 8;
                 break;
               }
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.close();
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('No Data', 'There is no data to export', 'warning');
               return _context.a(2);
-            case 6:
+            case 8:
               // Calculate summary statistics
               totalOrders = dataToExport.length;
               totalRevenue = dataToExport.reduce(function (sum, order) {
                 return sum + (parseFloat(order.total) || 0);
               }, 0);
               totalFees = dataToExport.reduce(function (sum, order) {
-                return sum + ((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this9.careFeeContribution(order));
+                return sum + ((order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this8.careFeeContribution(order));
               }, 0);
               approvedOrders = dataToExport.filter(function (order) {
                 return order.approve == 1;
@@ -18380,26 +18344,26 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 minute: '2-digit'
               }); // Generate filter summary
               filterSummary = [];
-              if (_this9.filters.order_id) filterSummary.push("Order ID: \"".concat(_this9.filters.order_id, "\""));
-              if (_this9.filters.customer_name) filterSummary.push("Customer Name: \"".concat(_this9.filters.customer_name, "\""));
-              if (_this9.filters.customer_email) filterSummary.push("Customer Email: \"".concat(_this9.filters.customer_email, "\""));
-              if (_this9.filters.total) filterSummary.push("Total: \"".concat(_this9.filters.total, "\""));
-              if (_this9.filters.approve) {
+              if (_this8.filters.order_id) filterSummary.push("Order ID: \"".concat(_this8.filters.order_id, "\""));
+              if (_this8.filters.customer_name) filterSummary.push("Customer Name: \"".concat(_this8.filters.customer_name, "\""));
+              if (_this8.filters.customer_email) filterSummary.push("Customer Email: \"".concat(_this8.filters.customer_email, "\""));
+              if (_this8.filters.total) filterSummary.push("Total: \"".concat(_this8.filters.total, "\""));
+              if (_this8.filters.approve) {
                 statusMap = {
                   '1': 'Approved',
                   '0': 'Rejected',
                   'null': 'Draft'
                 };
-                filterSummary.push("Status: ".concat(statusMap[_this9.filters.approve] || _this9.filters.approve));
+                filterSummary.push("Status: ".concat(statusMap[_this8.filters.approve] || _this8.filters.approve));
               }
-              if (_this9.filters.date_from) filterSummary.push("From: ".concat(_this9.filters.date_from));
-              if (_this9.filters.date_to) filterSummary.push("To: ".concat(_this9.filters.date_to));
-              htmlContent = "\n                <html>\n                <head>\n                    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n                    <title>QuiviCraft Report</title>\n                    <style>\n                        body {\n                            font-family: Arial, Helvetica, sans-serif;\n                            margin: 20px;\n                            background-color: #ffffff;\n                        }\n                        h1 {\n                            color: #4e73df;\n                            text-align: center;\n                            font-size: 24px;\n                            margin-bottom: 5px;\n                        }\n                        h3 {\n                            text-align: center;\n                            color: #858796;\n                            font-size: 14px;\n                            margin-top: 0;\n                            margin-bottom: 20px;\n                            font-weight: normal;\n                        }\n                        .stats-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-bottom: 20px;\n                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n                            color: black;\n                        }\n                        .stats-table td {\n                            padding: 15px;\n                            text-align: center;\n                            border: none;\n                        }\n                        .stats-label {\n                            font-size: 12px;\n                            text-transform: uppercase;\n                        }\n                        .stats-value {\n                            font-size: 20px;\n                            font-weight: bold;\n                            margin-top: 5px;\n                        }\n                        .filter-section {\n                            background-color: #f8f9fc;\n                            padding: 15px;\n                            border-radius: 8px;\n                            margin-bottom: 20px;\n                            border: 1px solid #e3e6f0;\n                        }\n                        .filter-title {\n                            font-size: 14px;\n                            font-weight: bold;\n                            color: #4e73df;\n                            margin-bottom: 10px;\n                        }\n                        .filter-badge {\n                            background-color: #4e73df;\n                            color: white;\n                            padding: 5px 10px;\n                            border-radius: 20px;\n                            font-size: 12px;\n                            display: inline-block;\n                            margin-right: 5px;\n                            margin-bottom: 5px;\n                        }\n                        .generated-info {\n                            font-size: 11px;\n                            color: #858796;\n                            text-align: right;\n                            margin-bottom: 10px;\n                        }\n                        table.data-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-top: 20px;\n                            font-size: 12px;\n                        }\n                        table.data-table th {\n                            background-color: #4e73df;\n                            color: white;\n                            font-weight: bold;\n                            padding: 12px;\n                            text-align: center;\n                            border: 1px solid #ddd;\n                        }\n                        table.data-table td {\n                            padding: 8px;\n                            border: 1px solid #ddd;\n                            text-align: center;\n                            color: #000000; /* Black text for all cells */\n                        }\n                        table.data-table tr:nth-child(even) {\n                            background-color: #f2f2f2;\n                        }\n                        .total-row {\n                            font-weight: bold;\n                            background-color: #4e73df !important;\n                            color: white;\n                        }\n                        .total-row td {\n                            color: white !important; /* Keep total row white text */\n                        }\n                        .footer {\n                            text-align: center;\n                            font-size: 10px;\n                            color: #95a5a6;\n                            margin-top: 30px;\n                            padding-top: 10px;\n                            border-top: 1px solid #ecf0f1;\n                        }\n                        .text-right { text-align: right; }\n                        .text-left { text-align: left; }\n                        .text-center { text-align: center; }\n                        .text-black { color: #000000; } /* Utility class for black text */\n                    </style>\n                </head>\n                <body>\n                    <h1>ORDERS REPORT</h1>\n                    <h3>Comprehensive Order Data Analysis</h3>\n\n                    <!-- Statistics Table -->\n                    <table class=\"stats-table\" cellspacing=\"0\" cellpadding=\"0\">\n                        <tr>\n                            <td><div class=\"stats-label\">Total Orders</div><div class=\"stats-value\">".concat(totalOrders, "</div></td>\n                            <td><div class=\"stats-label\">Total Revenue</div><div class=\"stats-value\">RM ").concat(_this9.formatNumber(totalRevenue), "</div></td>\n                            <td><div class=\"stats-label\">Total Fees</div><div class=\"stats-value\">RM ").concat(_this9.formatNumber(totalFees), "</div></td>\n                            <td><div class=\"stats-label\">Approved</div><div class=\"stats-value\">").concat(approvedOrders, "</div></td>\n                            <td><div class=\"stats-label\">Draft</div><div class=\"stats-value\">").concat(draftOrders, "</div></td>\n                            <td><div class=\"stats-label\">Rejected</div><div class=\"stats-value\">").concat(rejectedOrders, "</div></td>\n                        </tr>\n                    </table>\n\n                    <div class=\"generated-info\">\n                        Generated on: ").concat(exportDate, "\n                    </div>\n\n                    <!-- Main Data Table -->\n                    <table class=\"data-table\" cellspacing=\"0\" cellpadding=\"0\" border=\"1\">\n                        <thead>\n                            <tr>\n                                <th>No.</th>\n                                <th>Order ID</th>\n                                <th>Customer Name</th>\n                                <th>Customer Email</th>\n                                <th>Order Date</th>\n                                <th>Total (RM)</th>\n                                <th>QuiviServe</th>\n                                <th>QuiviCare</th>\n                                <th>Status</th>\n                                <th>Time Remaining</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            ").concat(dataToExport.map(function (order, index) {
+              if (_this8.filters.date_from) filterSummary.push("From: ".concat(_this8.filters.date_from));
+              if (_this8.filters.date_to) filterSummary.push("To: ".concat(_this8.filters.date_to));
+              htmlContent = "\n                <html>\n                <head>\n                    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n                    <title>QuiviCraft Report</title>\n                    <style>\n                        body {\n                            font-family: Arial, Helvetica, sans-serif;\n                            margin: 20px;\n                            background-color: #ffffff;\n                        }\n                        h1 {\n                            color: #4e73df;\n                            text-align: center;\n                            font-size: 24px;\n                            margin-bottom: 5px;\n                        }\n                        h3 {\n                            text-align: center;\n                            color: #858796;\n                            font-size: 14px;\n                            margin-top: 0;\n                            margin-bottom: 20px;\n                            font-weight: normal;\n                        }\n                        .stats-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-bottom: 20px;\n                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n                            color: black;\n                        }\n                        .stats-table td {\n                            padding: 15px;\n                            text-align: center;\n                            border: none;\n                        }\n                        .stats-label {\n                            font-size: 12px;\n                            text-transform: uppercase;\n                        }\n                        .stats-value {\n                            font-size: 20px;\n                            font-weight: bold;\n                            margin-top: 5px;\n                        }\n                        .filter-section {\n                            background-color: #f8f9fc;\n                            padding: 15px;\n                            border-radius: 8px;\n                            margin-bottom: 20px;\n                            border: 1px solid #e3e6f0;\n                        }\n                        .filter-title {\n                            font-size: 14px;\n                            font-weight: bold;\n                            color: #4e73df;\n                            margin-bottom: 10px;\n                        }\n                        .filter-badge {\n                            background-color: #4e73df;\n                            color: white;\n                            padding: 5px 10px;\n                            border-radius: 20px;\n                            font-size: 12px;\n                            display: inline-block;\n                            margin-right: 5px;\n                            margin-bottom: 5px;\n                        }\n                        .generated-info {\n                            font-size: 11px;\n                            color: #858796;\n                            text-align: right;\n                            margin-bottom: 10px;\n                        }\n                        table.data-table {\n                            width: 100%;\n                            border-collapse: collapse;\n                            margin-top: 20px;\n                            font-size: 12px;\n                        }\n                        table.data-table th {\n                            background-color: #4e73df;\n                            color: white;\n                            font-weight: bold;\n                            padding: 12px;\n                            text-align: center;\n                            border: 1px solid #ddd;\n                        }\n                        table.data-table td {\n                            padding: 8px;\n                            border: 1px solid #ddd;\n                            text-align: center;\n                            color: #000000; /* Black text for all cells */\n                        }\n                        table.data-table tr:nth-child(even) {\n                            background-color: #f2f2f2;\n                        }\n                        .total-row {\n                            font-weight: bold;\n                            background-color: #4e73df !important;\n                            color: white;\n                        }\n                        .total-row td {\n                            color: white !important; /* Keep total row white text */\n                        }\n                        .footer {\n                            text-align: center;\n                            font-size: 10px;\n                            color: #95a5a6;\n                            margin-top: 30px;\n                            padding-top: 10px;\n                            border-top: 1px solid #ecf0f1;\n                        }\n                        .text-right { text-align: right; }\n                        .text-left { text-align: left; }\n                        .text-center { text-align: center; }\n                        .text-black { color: #000000; } /* Utility class for black text */\n                    </style>\n                </head>\n                <body>\n                    <h1>ORDERS REPORT</h1>\n                    <h3>Comprehensive Order Data Analysis</h3>\n\n                    <!-- Statistics Table -->\n                    <table class=\"stats-table\" cellspacing=\"0\" cellpadding=\"0\">\n                        <tr>\n                            <td><div class=\"stats-label\">Total Orders</div><div class=\"stats-value\">".concat(totalOrders, "</div></td>\n                            <td><div class=\"stats-label\">Total Revenue</div><div class=\"stats-value\">RM ").concat(_this8.formatNumber(totalRevenue), "</div></td>\n                            <td><div class=\"stats-label\">Total Fees</div><div class=\"stats-value\">RM ").concat(_this8.formatNumber(totalFees), "</div></td>\n                            <td><div class=\"stats-label\">Approved</div><div class=\"stats-value\">").concat(approvedOrders, "</div></td>\n                            <td><div class=\"stats-label\">Draft</div><div class=\"stats-value\">").concat(draftOrders, "</div></td>\n                            <td><div class=\"stats-label\">Rejected</div><div class=\"stats-value\">").concat(rejectedOrders, "</div></td>\n                        </tr>\n                    </table>\n\n                    <div class=\"generated-info\">\n                        Generated on: ").concat(exportDate, "\n                    </div>\n\n                    <!-- Main Data Table -->\n                    <table class=\"data-table\" cellspacing=\"0\" cellpadding=\"0\" border=\"1\">\n                        <thead>\n                            <tr>\n                                <th>No.</th>\n                                <th>Order ID</th>\n                                <th>Customer Name</th>\n                                <th>Customer Email</th>\n                                <th>Order Date</th>\n                                <th>Total (RM)</th>\n                                <th>QuiviServe</th>\n                                <th>QuiviCare</th>\n                                <th>Status</th>\n                                <th>Time Remaining</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            ").concat(dataToExport.map(function (order, index) {
                 var _order$customer, _order$customer2, _order$serve, _order$care;
                 var statusText = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
                 var serveStyle = order.serve && order.serve.colour ? "background-color: ".concat(order.serve.colour, "; color: #000000;") : 'background-color: #f2f2f2; color: #000000;';
-                return "\n                                <tr>\n                                    <td class=\"text-center\">".concat(index + 1, "</td>\n                                    <td class=\"text-center\"><strong>").concat(_this9.escapeHtml(order.order_id || 'N/A'), "</strong></td>\n                                    <td class=\"text-left\">").concat(_this9.escapeHtml(((_order$customer = order.customer) === null || _order$customer === void 0 ? void 0 : _order$customer.full_name) || 'N/A'), "</td>\n                                    <td class=\"text-left\">").concat(_this9.escapeHtml(((_order$customer2 = order.customer) === null || _order$customer2 === void 0 ? void 0 : _order$customer2.email) || 'N/A'), "</td>\n                                    <td class=\"text-center\">").concat(_this9.formatDate(order.order_date), "</td>\n                                    <td class=\"text-right\"><strong>RM ").concat(_this9.formatNumber(order.total || 0), "</strong></td>\n                                    <td class=\"text-center\">\n                                        <span style=\"").concat(serveStyle, " padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this9.escapeHtml(((_order$serve = order.serve) === null || _order$serve === void 0 ? void 0 : _order$serve.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"background-color: #f2f2f2; padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this9.escapeHtml(((_order$care = order.care) === null || _order$care === void 0 ? void 0 : _order$care.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"color: #000000;\">\n                                            ").concat(statusText, "\n                                        </span>\n                                        ").concat(order.invoice_id ? "<br><small>".concat(_this9.escapeHtml(order.invoice_id), "</small>") : '', "\n                                    </td>\n                                    <td class=\"text-center\">\n                                        ").concat(order.approve == 1 && order.approved_at ? "<span style=\"color: #000000;\">\n                                                ".concat(_this9.escapeHtml(order.time_remaining || 'N/A'), "\n                                            </span>") : '-', "\n                                    </td>\n                                </tr>\n                            ");
-              }).join(''), "\n\n                            <tr class=\"total-row\">\n                                <td colspan=\"5\" class=\"text-center\"><strong>GRAND TOTAL</strong></td>\n                                <td class=\"text-right\"><strong>RM ").concat(_this9.formatNumber(totalRevenue), "</strong></td>\n                                <td colspan=\"4\"></td>\n                            </tr>\n                        </tbody>\n                    </table>\n\n                    <div class=\"footer\">\n                        <p>Generated by Order Management System | ").concat(exportDate, "</p>\n                        <p>This is a computer-generated report. No signature is required.</p>\n                        <p>Total Pages: 1 | Confidential</p>\n                    </div>\n                </body>\n                </html>");
+                return "\n                                <tr>\n                                    <td class=\"text-center\">".concat(index + 1, "</td>\n                                    <td class=\"text-center\"><strong>").concat(_this8.escapeHtml(order.order_id || 'N/A'), "</strong></td>\n                                    <td class=\"text-left\">").concat(_this8.escapeHtml(((_order$customer = order.customer) === null || _order$customer === void 0 ? void 0 : _order$customer.full_name) || 'N/A'), "</td>\n                                    <td class=\"text-left\">").concat(_this8.escapeHtml(((_order$customer2 = order.customer) === null || _order$customer2 === void 0 ? void 0 : _order$customer2.email) || 'N/A'), "</td>\n                                    <td class=\"text-center\">").concat(_this8.formatDate(order.order_date), "</td>\n                                    <td class=\"text-right\"><strong>RM ").concat(_this8.formatNumber(order.total || 0), "</strong></td>\n                                    <td class=\"text-center\">\n                                        <span style=\"").concat(serveStyle, " padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this8.escapeHtml(((_order$serve = order.serve) === null || _order$serve === void 0 ? void 0 : _order$serve.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"background-color: #f2f2f2; padding: 3px 8px; border-radius: 20px; color: #000000;\">\n                                            ").concat(_this8.escapeHtml(((_order$care = order.care) === null || _order$care === void 0 ? void 0 : _order$care.name) || 'N/A'), "\n                                        </span>\n                                    </td>\n                                    <td class=\"text-center\">\n                                        <span style=\"color: #000000;\">\n                                            ").concat(statusText, "\n                                        </span>\n                                        ").concat(order.invoice_id ? "<br><small>".concat(_this8.escapeHtml(order.invoice_id), "</small>") : '', "\n                                    </td>\n                                    <td class=\"text-center\">\n                                        ").concat(order.approve == 1 && order.approved_at ? "<span style=\"color: #000000;\">\n                                                ".concat(_this8.escapeHtml(order.time_remaining || 'N/A'), "\n                                            </span>") : '-', "\n                                    </td>\n                                </tr>\n                            ");
+              }).join(''), "\n\n                            <tr class=\"total-row\">\n                                <td colspan=\"5\" class=\"text-center\"><strong>GRAND TOTAL</strong></td>\n                                <td class=\"text-right\"><strong>RM ").concat(_this8.formatNumber(totalRevenue), "</strong></td>\n                                <td colspan=\"4\"></td>\n                            </tr>\n                        </tbody>\n                    </table>\n\n                    <div class=\"footer\">\n                        <p>Generated by Order Management System | ").concat(exportDate, "</p>\n                        <p>This is a computer-generated report. No signature is required.</p>\n                        <p>Total Pages: 1 | Confidential</p>\n                    </div>\n                </body>\n                </html>");
               blob = new Blob([htmlContent], {
                 type: 'application/vnd.ms-excel'
               });
@@ -18422,10 +18386,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 timer: 2000,
                 showConfirmButton: false
               });
-              _context.n = 8;
+              _context.n = 10;
               break;
-            case 7:
-              _context.p = 7;
+            case 9:
+              _context.p = 9;
               _t = _context.v;
               console.error('Export error:', _t);
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
@@ -18433,159 +18397,186 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 text: ((_error$response3 = _t.response) === null || _error$response3 === void 0 || (_error$response3 = _error$response3.data) === null || _error$response3 === void 0 ? void 0 : _error$response3.message) || _t.message || 'Failed to generate report',
                 icon: 'error'
               });
-            case 8:
+            case 10:
               return _context.a(2);
           }
-        }, _callee, null, [[1, 7]]);
+        }, _callee, null, [[1, 9]]);
       }))();
     },
     getAllFilteredOrders: function getAllFilteredOrders() {
-      var _this0 = this;
+      var _this9 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var params, res, filteredData, kw, _kw3, _kw4, _t2;
+        var baseParams, page, lastPage, allData, res, _t2;
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
               _context2.p = 0;
-              params = _objectSpread(_objectSpread({}, _this0.filters), {}, {
-                per_page: 10000,
-                page: 1
-              }); // Handle null value for draft
-              if (params.approve === 'null') {
-                params.approve = null;
-              }
-
-              // Remove empty filters
-              Object.keys(params).forEach(function (key) {
-                if (params[key] === '' || params[key] === null || params[key] === undefined) {
-                  delete params[key];
+              baseParams = {
+                sort_by: _this9.sortState.key,
+                sort_dir: _this9.sortState.dir,
+                order_id: _this9.filters.order_id,
+                customer_name: _this9.filters.customer_name,
+                customer_email: _this9.filters.customer_email,
+                total: _this9.filters.total,
+                approve: _this9.filters.approve,
+                date_from: _this9.filters.date_from,
+                date_to: _this9.filters.date_to,
+                per_page: 100
+              };
+              Object.keys(baseParams).forEach(function (key) {
+                if (baseParams[key] === '' || baseParams[key] === undefined) {
+                  delete baseParams[key];
                 }
               });
-              console.log('Fetching all filtered orders with params:', params);
-              _context2.n = 1;
-              return axios.get('/api/orders', {
-                params: params
-              });
-            case 1:
-              res = _context2.v;
-              filteredData = res.data || []; // Apply any client-side filtering if needed
-              if (_this0.filters.order_id) {
-                kw = _this0.filters.order_id.toLowerCase();
-                filteredData = filteredData.filter(function (order) {
-                  return order.order_id && order.order_id.toString().toLowerCase().includes(kw);
-                });
-              }
-              if (_this0.filters.customer_name) {
-                _kw3 = _this0.filters.customer_name.toLowerCase();
-                filteredData = filteredData.filter(function (order) {
-                  return order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(_kw3);
-                });
-              }
-              if (_this0.filters.customer_email) {
-                _kw4 = _this0.filters.customer_email.toLowerCase();
-                filteredData = filteredData.filter(function (order) {
-                  return order.customer && order.customer.email && order.customer.email.toLowerCase().includes(_kw4);
-                });
-              }
-              if (_this0.filters.total) {
-                filteredData = filteredData.filter(function (order) {
-                  return order.total !== undefined && order.total !== null && order.total.toString().includes(_this0.filters.total);
-                });
-              }
 
-              // Apply date filters again to ensure consistency
-              if (_this0.filters.date_from) {
-                filteredData = filteredData.filter(function (order) {
-                  return order.order_date && new Date(order.order_date) >= new Date(_this0.filters.date_from);
-                });
-              }
-              if (_this0.filters.date_to) {
-                filteredData = filteredData.filter(function (order) {
-                  return order.order_date && new Date(order.order_date) <= new Date(_this0.filters.date_to + 'T23:59:59');
-                });
-              }
-              console.log("Fetched ".concat(filteredData.length, " records for export"));
-              return _context2.a(2, filteredData);
+              // resolvePerPage() caps at 100/page server-side -- loop pages
+              // to collect the full filtered set, same pattern as Batch 24
+              // (care_data) and Batch 27 (serve_mps)'s "export all" flows.
+              page = 1;
+              lastPage = 1;
+              allData = [];
+            case 1:
+              _context2.n = 2;
+              return axios.get('/api/orders/all', {
+                params: _objectSpread(_objectSpread({}, baseParams), {}, {
+                  page: page
+                })
+              });
             case 2:
-              _context2.p = 2;
+              res = _context2.v;
+              allData = allData.concat(res.data.data || []);
+              lastPage = res.data.meta ? res.data.meta.last_page : 1;
+              page++;
+            case 3:
+              if (page <= lastPage) {
+                _context2.n = 1;
+                break;
+              }
+            case 4:
+              return _context2.a(2, allData);
+            case 5:
+              _context2.p = 5;
               _t2 = _context2.v;
               console.error('Error fetching all filtered orders:', _t2);
               // Fallback to client-side filtering from current data
-              return _context2.a(2, _this0.getFilteredOrdersForExport());
+              return _context2.a(2, _this9.getFilteredOrdersForExport());
           }
-        }, _callee2, null, [[0, 2]]);
+        }, _callee2, null, [[0, 5]]);
       }))();
     },
     generateSimpleCSV: function generateSimpleCSV(scope) {
-      var _this1 = this;
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
-        title: 'Generating CSV...',
-        text: 'Please wait while we prepare your export',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: function didOpen() {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.showLoading();
-        }
-      });
-      try {
-        var dataToExport;
-        if (scope === 'filtered') {
-          dataToExport = this.filteredOrders;
-        } else {
-          dataToExport = this.orders;
-        }
-        if (!dataToExport || dataToExport.length === 0) {
-          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.close();
-          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('No Data', 'There is no data to export', 'warning');
-          return;
-        }
-        var headers = ['No.', 'Order ID', 'Customer Name', 'Customer Email', 'Order Date', 'Total Amount (RM)', 'Fees (RM)', 'QuiviServe', 'QuiviCare', 'Status', 'Invoice ID', 'Time Remaining', 'Approved At', 'Created At'];
-        var rows = dataToExport.map(function (order, index) {
-          var _order$customer3, _order$customer4, _order$serve2, _order$care2;
-          var fees = (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this1.careFeeContribution(order);
-          var status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
-          return [index + 1, order.order_id || '', ((_order$customer3 = order.customer) === null || _order$customer3 === void 0 ? void 0 : _order$customer3.full_name) || '', ((_order$customer4 = order.customer) === null || _order$customer4 === void 0 ? void 0 : _order$customer4.email) || '', _this1.formatDate(order.order_date), order.total || '0', fees.toFixed(2), ((_order$serve2 = order.serve) === null || _order$serve2 === void 0 ? void 0 : _order$serve2.name) || 'N/A', ((_order$care2 = order.care) === null || _order$care2 === void 0 ? void 0 : _order$care2.name) || 'N/A', status, order.invoice_id || '', order.time_remaining || 'N/A', order.approved_at ? _this1.formatDate(order.approved_at) : '', order.created_at ? _this1.formatDate(order.created_at) : ''].map(function (cell) {
-            return "\"".concat(cell, "\"");
-          });
-        });
-        var csvContent = [headers.join(',')].concat(_toConsumableArray(rows.map(function (row) {
-          return row.join(',');
-        }))).join('\n');
-        var BOM = "\uFEFF";
-        var blob = new Blob([BOM + csvContent], {
-          type: 'text/csv;charset=utf-8;'
-        });
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement('a');
-        var date = new Date().toISOString().split('T')[0];
-        var filterType = scope === 'filtered' ? 'Filtered' : 'All';
-        var filename = "QuiviCraft_Data_".concat(date, "_").concat(filterType, ".csv");
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.close();
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
-          title: 'Export Complete!',
-          text: 'CSV file has been generated and downloaded',
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        console.error('CSV export error:', error);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
-          title: 'Export Failed!',
-          text: error.message || 'Failed to generate CSV',
-          icon: 'error'
-        });
-      }
+      var _this0 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        var dataToExport, page, lastPage, res, headers, rows, csvContent, BOM, blob, url, link, date, filterType, filename, _t3;
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
+            case 0:
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+                title: 'Generating CSV...',
+                text: 'Please wait while we prepare your export',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: function didOpen() {
+                  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.showLoading();
+                }
+              });
+              _context3.p = 1;
+              if (!(scope === 'filtered')) {
+                _context3.n = 3;
+                break;
+              }
+              _context3.n = 2;
+              return _this0.getAllFilteredOrders();
+            case 2:
+              dataToExport = _context3.v;
+              _context3.n = 7;
+              break;
+            case 3:
+              page = 1;
+              lastPage = 1;
+              dataToExport = [];
+            case 4:
+              _context3.n = 5;
+              return axios.get('/api/orders/all', {
+                params: {
+                  page: page,
+                  per_page: 100
+                }
+              });
+            case 5:
+              res = _context3.v;
+              dataToExport = dataToExport.concat(res.data.data || []);
+              lastPage = res.data.meta ? res.data.meta.last_page : 1;
+              page++;
+            case 6:
+              if (page <= lastPage) {
+                _context3.n = 4;
+                break;
+              }
+            case 7:
+              if (!(!dataToExport || dataToExport.length === 0)) {
+                _context3.n = 8;
+                break;
+              }
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.close();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire('No Data', 'There is no data to export', 'warning');
+              return _context3.a(2);
+            case 8:
+              headers = ['No.', 'Order ID', 'Customer Name', 'Customer Email', 'Order Date', 'Total Amount (RM)', 'Fees (RM)', 'QuiviServe', 'QuiviCare', 'Status', 'Invoice ID', 'Time Remaining', 'Approved At', 'Created At'];
+              rows = dataToExport.map(function (order, index) {
+                var _order$customer3, _order$customer4, _order$serve2, _order$care2;
+                var fees = (order.craft && order.craft.fee ? Number(order.craft.fee) : 0) + (order.serve && order.serve.fee ? Number(order.serve.fee) : 0) + _this0.careFeeContribution(order);
+                var status = order.approve === null || order.approve === '' || order.approve === undefined ? 'Draft' : order.approve == 1 ? 'Approved' : 'Rejected';
+                return [index + 1, order.order_id || '', ((_order$customer3 = order.customer) === null || _order$customer3 === void 0 ? void 0 : _order$customer3.full_name) || '', ((_order$customer4 = order.customer) === null || _order$customer4 === void 0 ? void 0 : _order$customer4.email) || '', _this0.formatDate(order.order_date), order.total || '0', fees.toFixed(2), ((_order$serve2 = order.serve) === null || _order$serve2 === void 0 ? void 0 : _order$serve2.name) || 'N/A', ((_order$care2 = order.care) === null || _order$care2 === void 0 ? void 0 : _order$care2.name) || 'N/A', status, order.invoice_id || '', order.time_remaining || 'N/A', order.approved_at ? _this0.formatDate(order.approved_at) : '', order.created_at ? _this0.formatDate(order.created_at) : ''].map(function (cell) {
+                  return "\"".concat(cell, "\"");
+                });
+              });
+              csvContent = [headers.join(',')].concat(_toConsumableArray(rows.map(function (row) {
+                return row.join(',');
+              }))).join('\n');
+              BOM = "\uFEFF";
+              blob = new Blob([BOM + csvContent], {
+                type: 'text/csv;charset=utf-8;'
+              });
+              url = URL.createObjectURL(blob);
+              link = document.createElement('a');
+              date = new Date().toISOString().split('T')[0];
+              filterType = scope === 'filtered' ? 'Filtered' : 'All';
+              filename = "QuiviCraft_Data_".concat(date, "_").concat(filterType, ".csv");
+              link.setAttribute('href', url);
+              link.setAttribute('download', filename);
+              link.style.visibility = 'hidden';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.close();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+                title: 'Export Complete!',
+                text: 'CSV file has been generated and downloaded',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+              });
+              _context3.n = 10;
+              break;
+            case 9:
+              _context3.p = 9;
+              _t3 = _context3.v;
+              console.error('CSV export error:', _t3);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+                title: 'Export Failed!',
+                text: _t3.message || 'Failed to generate CSV',
+                icon: 'error'
+              });
+            case 10:
+              return _context3.a(2);
+          }
+        }, _callee3, null, [[1, 9]]);
+      }))();
     },
     getFilteredOrdersForExport: function getFilteredOrdersForExport() {
-      var _this10 = this;
+      var _this1 = this;
       var filtered = _toConsumableArray(this.orders);
 
       // Order ID filter
@@ -18598,24 +18589,24 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
       // Customer Name filter
       if (this.filters.customer_name) {
-        var _kw5 = this.filters.customer_name.toLowerCase();
+        var _kw = this.filters.customer_name.toLowerCase();
         filtered = filtered.filter(function (order) {
-          return order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(_kw5);
+          return order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(_kw);
         });
       }
 
       // Customer Email filter
       if (this.filters.customer_email) {
-        var _kw6 = this.filters.customer_email.toLowerCase();
+        var _kw2 = this.filters.customer_email.toLowerCase();
         filtered = filtered.filter(function (order) {
-          return order.customer && order.customer.email && order.customer.email.toLowerCase().includes(_kw6);
+          return order.customer && order.customer.email && order.customer.email.toLowerCase().includes(_kw2);
         });
       }
 
       // Total filter
       if (this.filters.total) {
         filtered = filtered.filter(function (order) {
-          return order.total !== undefined && order.total !== null && order.total.toString().includes(_this10.filters.total);
+          return order.total !== undefined && order.total !== null && order.total.toString().includes(_this1.filters.total);
         });
       }
 
@@ -18636,12 +18627,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       // Date range filter
       if (this.filters.date_from) {
         filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) >= new Date(_this10.filters.date_from);
+          return order.order_date && new Date(order.order_date) >= new Date(_this1.filters.date_from);
         });
       }
       if (this.filters.date_to) {
         filtered = filtered.filter(function (order) {
-          return order.order_date && new Date(order.order_date) <= new Date(_this10.filters.date_to + 'T23:59:59');
+          return order.order_date && new Date(order.order_date) <= new Date(_this1.filters.date_to + 'T23:59:59');
         });
       }
       return filtered;
@@ -18660,7 +18651,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       });
     },
     refreshData: function refreshData() {
-      this.getOrders();
+      this.fetchList();
       this.getStatistics();
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
         icon: 'success',
@@ -18669,19 +18660,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         timer: 1000,
         showConfirmButton: false
       });
-    },
-    prevPage: function prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage: function nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-      }
-    },
-    goToPage: function goToPage(page) {
-      this.currentPage = page;
+    }
+  },
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   created: function created() {
@@ -18690,7 +18676,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         name: 'login'
       });
     }
-    this.getOrders();
+    this.fetchList();
     this.getStatistics();
   }
 });
@@ -60849,7 +60835,7 @@ var render = function render() {
     }],
     staticClass: "form-control",
     on: {
-      change: [function ($event) {
+      change: function change($event) {
         var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
           return o.selected;
         }).map(function (o) {
@@ -60857,7 +60843,7 @@ var render = function render() {
           return val;
         });
         _vm.$set(_vm.filters, "approve", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
+      }
     }
   }, [_c("option", {
     attrs: {
@@ -60894,7 +60880,6 @@ var render = function render() {
       value: _vm.filters.date_from
     },
     on: {
-      change: _vm.applyFilters,
       input: function input($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.filters, "date_from", $event.target.value);
@@ -60919,7 +60904,6 @@ var render = function render() {
       value: _vm.filters.date_to
     },
     on: {
-      change: _vm.applyFilters,
       input: function input($event) {
         if ($event.target.composing) return;
         _vm.$set(_vm.filters, "date_to", $event.target.value);
@@ -60945,7 +60929,7 @@ var render = function render() {
     staticClass: "fas fa-filter mr-1"
   }), _vm._v(" Apply Filters\n                                        ")]), _vm._v(" "), _c("span", {
     staticClass: "ml-3 text-muted"
-  }, [_vm._v("\n                                            Showing " + _vm._s(_vm.filteredOrders.length) + " of " + _vm._s(_vm.orders.length) + " orders\n                                        ")])])])], 1) : _vm._e()])], 1), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                            Showing " + _vm._s(_vm.orders.length) + " of " + _vm._s(_vm.meta.total) + " orders\n                                        ")])])])], 1) : _vm._e()])], 1), _vm._v(" "), _c("div", {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header py-3 d-flex flex-row align-items-center justify-content-between"
@@ -60969,7 +60953,36 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(3), _vm._v(" "), _c("tbody", [_vm._l(_vm.paginatedOrders, function (order) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Order",
+      "sort-key": "order_id",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Payment",
+      "sort-key": "total",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Date",
+      "sort-key": "order_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("QuiviServe")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Remaining")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _c("tbody", [_vm._l(_vm.orders, function (order) {
     return _c("tr", {
       key: order.id
     }, [_c("td", [_c("span", {
@@ -61169,54 +61182,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-undo"
     })]) : _vm._e()], 1)])]);
-  }), _vm._v(" "), _vm.filteredOrders.length === 0 ? _c("tr", [_vm._m(4)]) : _vm._e()], 2)])]), _vm._v(" "), _vm.filteredOrders.length > _vm.itemsPerPage ? _c("div", {
+  }), _vm._v(" "), _vm.orders.length === 0 ? _c("tr", [_vm._m(3)]) : _vm._e()], 2)])]), _vm._v(" "), _vm.orders.length > 0 ? _c("div", {
     staticClass: "card-footer"
-  }, [_c("nav", {
+  }, [_c("pagination-control", {
     attrs: {
-      "aria-label": "Order navigation"
-    }
-  }, [_c("ul", {
-    staticClass: "pagination justify-content-center mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
+      meta: _vm.meta
+    },
     on: {
-      click: _vm.prevPage
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-left"
-  })])]), _vm._v(" "), _vm._l(_vm.totalPages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.goToPage(page);
-        }
-      }
-    }, [_vm._v("\n                                                " + _vm._s(page) + "\n                                            ")])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.totalPages
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    on: {
-      click: _vm.nextPage
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-right"
-  })])])], 2)])]) : _vm._e()])])])])])])]);
+  })], 1) : _vm._e()])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -61244,12 +61220,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filter QuiviCraft\n                                ")]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Order")]), _vm._v(" "), _c("th", [_vm._v("Payment")]), _vm._v(" "), _c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("QuiviServe")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Remaining")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
