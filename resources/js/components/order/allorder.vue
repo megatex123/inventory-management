@@ -76,7 +76,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">Status</label>
-                                            <select class="form-control" v-model="filters.approve" @change="applyFilters">
+                                            <select class="form-control" v-model="filters.approve">
                                                 <option value="">All Status</option>
                                                 <option value="1">Approved</option>
                                                 <option value="0">Rejected</option>
@@ -90,7 +90,6 @@
                                                 type="date"
                                                 class="form-control"
                                                 v-model="filters.date_from"
-                                                @change="applyFilters"
                                             >
                                         </div>
 
@@ -100,7 +99,6 @@
                                                 type="date"
                                                 class="form-control"
                                                 v-model="filters.date_to"
-                                                @change="applyFilters"
                                             >
                                         </div>
                                     </div>
@@ -114,7 +112,7 @@
                                                 <i class="fas fa-filter mr-1"></i> Apply Filters
                                             </button>
                                             <span class="ml-3 text-muted">
-                                                Showing {{ filteredOrders.length }} of {{ orders.length }} orders
+                                                Showing {{ orders.length }} of {{ meta.total }} orders
                                             </span>
                                         </div>
                                     </div>
@@ -139,9 +137,9 @@
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>Order</th>
-                                                <th>Payment</th>
-                                                <th>Date</th>
+                                                <sortable-th label="Order" sort-key="order_id" :current-sort="sortState" @sort="onSort" />
+                                                <sortable-th label="Payment" sort-key="total" :current-sort="sortState" @sort="onSort" />
+                                                <sortable-th label="Date" sort-key="order_date" :current-sort="sortState" @sort="onSort" />
                                                 <th>QuiviServe</th>
                                                 <th>QuiviCare</th>
                                                 <th>Status</th>
@@ -150,7 +148,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for='order in paginatedOrders' :key="order.id">
+                                            <tr v-for='order in orders' :key="order.id">
                                                 <td>
                                                     <span class="badge badge-light">{{ order.order_id }}</span><br><br>
                                                     <!-- Reason -->
@@ -320,7 +318,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr v-if="filteredOrders.length === 0">
+                                            <tr v-if="orders.length === 0">
                                                 <td colspan="9" class="text-center py-4">
                                                     <div class="empty-state">
                                                         <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
@@ -334,31 +332,12 @@
                                 </div>
 
                                 <!-- Pagination -->
-                                <div class="card-footer" v-if="filteredOrders.length > itemsPerPage">
-                                    <nav aria-label="Order navigation">
-                                        <ul class="pagination justify-content-center mb-0">
-                                            <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                                                <button class="page-link" @click="prevPage">
-                                                    <i class="fas fa-chevron-left"></i>
-                                                </button>
-                                            </li>
-                                            <li
-                                                class="page-item"
-                                                v-for="page in totalPages"
-                                                :key="page"
-                                                :class="{ active: page === currentPage }"
-                                            >
-                                                <button class="page-link" @click="goToPage(page)">
-                                                    {{ page }}
-                                                </button>
-                                            </li>
-                                            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                                                <button class="page-link" @click="nextPage">
-                                                    <i class="fas fa-chevron-right"></i>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                <div class="card-footer" v-if="orders.length > 0">
+                                    <pagination-control
+                                        :meta="meta"
+                                        @page-change="onPageChange"
+                                        @per-page-change="onPerPageChange"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -372,9 +351,13 @@
 <script>
 import Swal from 'sweetalert2';
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 export default {
-    components: { ColumnSearchPanel },
+    components: { ColumnSearchPanel, PaginationControl, SortableTh },
+    mixins: [sortablePaginationMixin],
     data() {
         return {
             orders: [],
@@ -401,97 +384,41 @@ export default {
                 serve_id: '',
                 care_id: ''
             },
-            currentPage: 1,
-            itemsPerPage: 10,
+            meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
+            sortState: { key: 'created_at', dir: 'desc' },
             loading: false
         }
     },
-    computed: {
-        filteredOrders() {
-            let filtered = this.orders;
-
-            // Order ID filter
-            if (this.filters.order_id) {
-                const kw = this.filters.order_id.toLowerCase();
-                filtered = filtered.filter(order => order.order_id && order.order_id.toString().toLowerCase().includes(kw));
-            }
-
-            // Customer Name filter
-            if (this.filters.customer_name) {
-                const kw = this.filters.customer_name.toLowerCase();
-                filtered = filtered.filter(order => order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(kw));
-            }
-
-            // Customer Email filter
-            if (this.filters.customer_email) {
-                const kw = this.filters.customer_email.toLowerCase();
-                filtered = filtered.filter(order => order.customer && order.customer.email && order.customer.email.toLowerCase().includes(kw));
-            }
-
-            // Total filter
-            if (this.filters.total) {
-                filtered = filtered.filter(order => order.total !== undefined && order.total !== null && order.total.toString().includes(this.filters.total));
-            }
-
-            // Approve status filter - fixed to use actual approve values
-            if (this.filters.approve !== '') {
-                if (this.filters.approve === 'null') {
-                    // Filter for draft orders (null or undefined)
-                    filtered = filtered.filter(order =>
-                        order.approve === null ||
-                        order.approve === '' ||
-                        order.approve === undefined
-                    );
-                } else {
-                    // Filter for numeric values (1 = approved, 0 = rejected)
-                    const approveValue = parseInt(this.filters.approve);
-                    filtered = filtered.filter(order => order.approve == approveValue);
-                }
-            }
-
-            // Date range filter
-            if (this.filters.date_from) {
-                filtered = filtered.filter(order =>
-                    order.order_date && new Date(order.order_date) >= new Date(this.filters.date_from)
-                );
-            }
-            if (this.filters.date_to) {
-                filtered = filtered.filter(order =>
-                    order.order_date && new Date(order.order_date) <= new Date(this.filters.date_to + 'T23:59:59')
-                );
-            }
-
-            return filtered;
-        },
-        paginatedOrders() {
-            const start = (this.currentPage - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.filteredOrders.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.filteredOrders.length / this.itemsPerPage);
-        }
-    },
     methods: {
-        getOrders() {
+        fetchList() {
             this.loading = true;
-            const params = {};
 
-            // Add filters to params if they exist
-            Object.keys(this.filters).forEach(key => {
-                if (this.filters[key] !== '' && this.filters[key] !== undefined) {
-                    // Handle null value for draft
-                    if (key === 'approve' && this.filters[key] === 'null') {
-                        params[key] = null;
-                    } else {
-                        params[key] = this.filters[key];
-                    }
+            const params = {
+                page: this.meta.current_page,
+                per_page: this.meta.per_page,
+                sort_by: this.sortState.key,
+                sort_dir: this.sortState.dir,
+                order_id: this.filters.order_id,
+                customer_name: this.filters.customer_name,
+                customer_email: this.filters.customer_email,
+                total: this.filters.total,
+                approve: this.filters.approve,
+                date_from: this.filters.date_from,
+                date_to: this.filters.date_to
+            };
+
+            Object.keys(params).forEach(key => {
+                if (params[key] === '' || params[key] === undefined) {
+                    delete params[key];
                 }
             });
 
-            axios.get('/api/orders', { params })
+            axios.get('/api/orders/all', { params })
                 .then(res => {
-                    this.orders = res.data;
+                    this.orders = res.data.data || [];
+                    if (res.data.meta) {
+                        this.meta = res.data.meta;
+                    }
                     this.loading = false;
                 })
                 .catch(err => {
@@ -612,8 +539,8 @@ export default {
             return brightness > 180;
         },
         applyFilters() {
-            this.currentPage = 1;
-            this.getOrders();
+            this.meta.current_page = 1;
+            this.fetchList();
         },
         resetFilters() {
             this.filters = {
@@ -627,8 +554,8 @@ export default {
                 serve_id: '',
                 care_id: ''
             };
-            this.currentPage = 1;
-            this.getOrders();
+            this.meta.current_page = 1;
+            this.fetchList();
         },
         canOpenServeRecord(order) {
             return order.approve == 1 && [1, 2, 3].includes(Number(order.serve_id));
@@ -744,7 +671,7 @@ export default {
                 });
 
                 // Refresh the data to get updated orders
-                this.getOrders();
+                this.fetchList();
                 this.getStatistics();
             })
             .catch((error) => {
@@ -840,7 +767,7 @@ export default {
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" value="filtered" checked>
                             <label class="form-check-label" for="exportFiltered">
-                                Export filtered data (${this.filteredOrders.length} records)
+                                Export filtered data (${this.meta.total} records matching current filters)
                             </label>
                         </div>
                         <div class="form-check">
@@ -889,10 +816,20 @@ export default {
                     // Get ALL filtered data
                     dataToExport = await this.getAllFilteredOrders();
                 } else {
-                    // Fetch all data without any filters
-                    const params = { per_page: 10000 };
-                    const res = await axios.get('/api/orders', { params });
-                    dataToExport = res.data;
+                    // Fetch all data without any filters, looping pages the
+                    // same way getAllFilteredOrders() does (resolvePerPage()
+                    // caps at 100/page server-side).
+                    let page = 1;
+                    let lastPage = 1;
+                    dataToExport = [];
+                    do {
+                        const res = await axios.get('/api/orders/all', {
+                            params: { page, per_page: 100 }
+                        });
+                        dataToExport = dataToExport.concat(res.data.data || []);
+                        lastPage = res.data.meta ? res.data.meta.last_page : 1;
+                        page++;
+                    } while (page <= lastPage);
                 }
 
                 if (!dataToExport || dataToExport.length === 0) {
@@ -1192,61 +1129,41 @@ export default {
         },
         async getAllFilteredOrders() {
             try {
-                const params = {
-                    ...this.filters,
-                    per_page: 10000,
-                    page: 1
+                const baseParams = {
+                    sort_by: this.sortState.key,
+                    sort_dir: this.sortState.dir,
+                    order_id: this.filters.order_id,
+                    customer_name: this.filters.customer_name,
+                    customer_email: this.filters.customer_email,
+                    total: this.filters.total,
+                    approve: this.filters.approve,
+                    date_from: this.filters.date_from,
+                    date_to: this.filters.date_to,
+                    per_page: 100
                 };
-
-                // Handle null value for draft
-                if (params.approve === 'null') {
-                    params.approve = null;
-                }
-
-                // Remove empty filters
-                Object.keys(params).forEach(key => {
-                    if (params[key] === '' || params[key] === null || params[key] === undefined) {
-                        delete params[key];
+                Object.keys(baseParams).forEach(key => {
+                    if (baseParams[key] === '' || baseParams[key] === undefined) {
+                        delete baseParams[key];
                     }
                 });
 
-                console.log('Fetching all filtered orders with params:', params);
+                // resolvePerPage() caps at 100/page server-side -- loop pages
+                // to collect the full filtered set, same pattern as Batch 24
+                // (care_data) and Batch 27 (serve_mps)'s "export all" flows.
+                let page = 1;
+                let lastPage = 1;
+                let allData = [];
 
-                const res = await axios.get('/api/orders', { params });
+                do {
+                    const res = await axios.get('/api/orders/all', {
+                        params: { ...baseParams, page }
+                    });
+                    allData = allData.concat(res.data.data || []);
+                    lastPage = res.data.meta ? res.data.meta.last_page : 1;
+                    page++;
+                } while (page <= lastPage);
 
-                let filteredData = res.data || [];
-
-                // Apply any client-side filtering if needed
-                if (this.filters.order_id) {
-                    const kw = this.filters.order_id.toLowerCase();
-                    filteredData = filteredData.filter(order => order.order_id && order.order_id.toString().toLowerCase().includes(kw));
-                }
-                if (this.filters.customer_name) {
-                    const kw = this.filters.customer_name.toLowerCase();
-                    filteredData = filteredData.filter(order => order.customer && order.customer.full_name && order.customer.full_name.toLowerCase().includes(kw));
-                }
-                if (this.filters.customer_email) {
-                    const kw = this.filters.customer_email.toLowerCase();
-                    filteredData = filteredData.filter(order => order.customer && order.customer.email && order.customer.email.toLowerCase().includes(kw));
-                }
-                if (this.filters.total) {
-                    filteredData = filteredData.filter(order => order.total !== undefined && order.total !== null && order.total.toString().includes(this.filters.total));
-                }
-
-                // Apply date filters again to ensure consistency
-                if (this.filters.date_from) {
-                    filteredData = filteredData.filter(order =>
-                        order.order_date && new Date(order.order_date) >= new Date(this.filters.date_from)
-                    );
-                }
-                if (this.filters.date_to) {
-                    filteredData = filteredData.filter(order =>
-                        order.order_date && new Date(order.order_date) <= new Date(this.filters.date_to + 'T23:59:59')
-                    );
-                }
-
-                console.log(`Fetched ${filteredData.length} records for export`);
-                return filteredData;
+                return allData;
 
             } catch (error) {
                 console.error('Error fetching all filtered orders:', error);
@@ -1255,7 +1172,7 @@ export default {
             }
         },
 
-        generateSimpleCSV(scope) {
+        async generateSimpleCSV(scope) {
             Swal.fire({
                 title: 'Generating CSV...',
                 text: 'Please wait while we prepare your export',
@@ -1269,9 +1186,19 @@ export default {
             try {
                 let dataToExport;
                 if (scope === 'filtered') {
-                    dataToExport = this.filteredOrders;
+                    dataToExport = await this.getAllFilteredOrders();
                 } else {
-                    dataToExport = this.orders;
+                    let page = 1;
+                    let lastPage = 1;
+                    dataToExport = [];
+                    do {
+                        const res = await axios.get('/api/orders/all', {
+                            params: { page, per_page: 100 }
+                        });
+                        dataToExport = dataToExport.concat(res.data.data || []);
+                        lastPage = res.data.meta ? res.data.meta.last_page : 1;
+                        page++;
+                    } while (page <= lastPage);
                 }
 
                 if (!dataToExport || dataToExport.length === 0) {
@@ -1435,7 +1362,7 @@ export default {
             return text.toString().replace(/[&<>"']/g, m => map[m]);
         },
         refreshData() {
-            this.getOrders();
+            this.fetchList();
             this.getStatistics();
             Swal.fire({
                 icon: 'success',
@@ -1445,25 +1372,20 @@ export default {
                 showConfirmButton: false
             });
         },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-            }
-        },
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
-            }
-        },
-        goToPage(page) {
-            this.currentPage = page;
+    },
+    watch: {
+        filters: {
+            handler() {
+                this.applyFilters();
+            },
+            deep: true
         }
     },
     created() {
         if (!User.loggedIn()) {
             this.$router.push({ name: 'login' });
         }
-        this.getOrders();
+        this.fetchList();
         this.getStatistics();
     }
 }
