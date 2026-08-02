@@ -79,7 +79,7 @@ CREATE TABLE `care` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,8 +139,8 @@ INSERT INTO `care_data` VALUES
 (10,'VIS10N-2712-0004','QV-CARE-000006',21,6,3,'10537','1159',1,'2026-07-09 15:44:53','2026-07-27 08:40:49',NULL),
 (11,'COR3-1402-0002','QV-CARE-000007',20,8,1,'3500','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
 (12,'COR3-1402-0003','QV-CARE-000008',20,9,1,'6200','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(13,'COR3-1402-0004','QV-CARE-000009',20,10,1,'8200','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(14,'COR3-1402-0005','QV-CARE-000010',20,11,1,'9750','379',0,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
+(13,'COR3-1402-0004','QV-CARE-000009',20,10,1,'8200','379',0,'2026-07-12 12:24:24','2026-08-01 03:28:01','2026-08-01 03:28:01'),
+(14,'COR3-1402-0005','QV-CARE-000010',20,11,1,'9750','379',0,'2026-07-12 12:24:24','2026-08-01 04:15:28',NULL),
 (15,'VIS10N-2712-0005','QV-CARE-000011',4,7,3,'22411','2479',0,'2026-07-20 11:39:47','2026-07-27 08:40:49',NULL);
 /*!40000 ALTER TABLE `care_data` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -247,27 +247,27 @@ LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `categories` VALUES
-(1,'CPU','QV-PROD-CPU','2025-12-30 02:49:27','2026-02-05 08:01:28',NULL),
-(2,'SSD','QV-PROD-SSD','2026-01-03 21:49:40','2026-02-05 08:03:10',NULL),
-(3,'GPU','QV-PROD-GPU','2026-01-03 21:49:40','2026-02-05 08:01:38',NULL),
-(4,'HDD','QV-PROD-HDD','2026-01-03 21:49:40','2026-02-05 08:03:10',NULL),
-(5,'RAM','QV-PROD-RAM','2026-01-10 08:49:34','2026-02-05 08:01:03',NULL),
-(6,'MBD','QV-PROD-MDB','2026-01-10 09:52:37','2026-02-05 08:01:17',NULL),
-(7,'PSU','QV-PROD-PSU','2026-02-05 08:02:47','2026-02-05 08:02:47',NULL),
-(8,'HSF','QV-PROD-HSF','2026-02-05 08:03:39','2026-02-05 08:03:39',NULL),
-(9,'CSE','QV-PROD-CSE','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
-(10,'FAN','QV-PROD-FAN','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
-(11,'AIO','QV-PROD-AIO','2026-02-05 08:03:39','2026-02-05 08:03:39',NULL),
-(12,'ACC-SAG','QV-PROD-ACC-SAG','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
-(13,'ACC-CTL ','QV-PROD-ACC-CTL','2025-12-30 02:27:06','2026-02-28 07:02:48',NULL),
-(14,'ACC-HUB','QV-PROD-ACC-HUB','2025-12-30 02:59:49','2026-02-28 07:02:56',NULL),
-(15,'PER-MON','QV-PROD-PER-MON','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(16,'PER-MOU','QV-PROD-PER-MOU','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(17,'PER-HDS','QV-PROD-PER-HDS','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(18,'PER-MIC','QV-PROD-PER-MIC','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(19,'PER-MSP','QV-PROD-PER-MSP','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(20,'PER-KEY','QV-PROD-PER-KEY','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
-(21,'PER-CAM','QV-PROD-PER-CAM','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL);
+(1,'CPU','PART-CPU','2025-12-30 02:49:27','2026-02-05 08:01:28',NULL),
+(2,'SSD','PART-SSD','2026-01-03 21:49:40','2026-02-05 08:03:10',NULL),
+(3,'GPU','PART-GPU','2026-01-03 21:49:40','2026-02-05 08:01:38',NULL),
+(4,'HDD','PART-HDD','2026-01-03 21:49:40','2026-02-05 08:03:10',NULL),
+(5,'RAM','PART-RAM','2026-01-10 08:49:34','2026-02-05 08:01:03',NULL),
+(6,'MBD','PART-MDB','2026-01-10 09:52:37','2026-02-05 08:01:17',NULL),
+(7,'PSU','PART-PSU','2026-02-05 08:02:47','2026-02-05 08:02:47',NULL),
+(8,'HSF','PART-HSF','2026-02-05 08:03:39','2026-02-05 08:03:39',NULL),
+(9,'CSE','PART-CSE','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
+(10,'FAN','PART-FAN','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
+(11,'AIO','PART-AIO','2026-02-05 08:03:39','2026-02-05 08:03:39',NULL),
+(12,'ACC-SAG','PART-ACC-SAG','2026-02-05 08:03:58','2026-02-11 07:38:52',NULL),
+(13,'ACC-CTL ','PART-ACC-CTL','2025-12-30 02:27:06','2026-02-28 07:02:48',NULL),
+(14,'ACC-HUB','PART-ACC-HUB','2025-12-30 02:59:49','2026-02-28 07:02:56',NULL),
+(15,'PER-MON','PART-PER-MON','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(16,'PER-MOU','PART-PER-MOU','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(17,'PER-HDS','PART-PER-HDS','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(18,'PER-MIC','PART-PER-MIC','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(19,'PER-MSP','PART-PER-MSP','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(20,'PER-KEY','PART-PER-KEY','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
+(21,'PER-CAM','PART-PER-CAM','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL);
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -288,7 +288,7 @@ CREATE TABLE `craft` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -501,7 +501,7 @@ CREATE TABLE `customers` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `customers_customer_id_unique` (`customer_id`),
   UNIQUE KEY `customers_update_token_unique` (`update_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -512,17 +512,17 @@ LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `customers` VALUES
-(3,'QV-CUST-000001','MUHAMMAD FARIS ISKANDAR BIN SHAMSIR','BruhRis','fariskandar99@gmail.com','+60172109876','47810','WhatsApp',NULL,'Custom PC build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-07-09 15:30:49','ac450a3c-93a4-4e70-aaac-5a46e5d11578',1,'2025-12-29 20:54:33','2026-07-09 15:30:49',NULL),
-(4,'QV-CUST-000002','MUHAMMAD NAJMI NOOR ZAIRUL','Najmi','najminoorzairul@gmail.com','+60197017321','A-1-10, Cita Damansara, Jalan PJU 3/27, Sunway Damansara','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'711774c2-478a-4c85-808e-18848a78e45a',1,'2025-12-29 21:32:12','2025-12-30 00:04:11',NULL),
-(5,'QV-CUST-000003','NURSYAZWANI BINTI AHMAD NIZAM','Wani','wannieq8@gmail.com','+60197266130','A-1-10','WhatsApp',NULL,NULL,'TikTok',NULL,NULL,1,1,'2026-07-09 15:30:43','9f8be78c-9ba9-4218-9e1c-c3028a74a8a6',1,'2025-12-29 21:33:04','2026-07-09 15:30:43',NULL),
-(6,'QV-CUST-000004','MUHAMMAD EIRFAN BIN NOOR ZAIRUL','Epan','eirfan019@gmail.com','+60197091129','No 2&4, Jalan Perdana 2/42, Taman Bukit Perdana 2, 83000, Batu Pahat,Johor','WhatsApp',NULL,'Nice',NULL,NULL,NULL,1,1,'2026-01-11 07:13:03','01064af6-083e-4e5e-9722-b05921e9876f',1,'2025-12-29 22:30:09','2026-01-11 07:13:03',NULL),
-(7,'QV-CUST-000005','MUHAMMAD IZZHAZIQ BIN MOHD RAJIL','Izz','Izzhaziq1117@gmail.com','+601126605294','A-404, Tingkat 3, Palma Perak Apartment, Jalan Cecawi 6/6, 47810,Petaling Jaya, Selangor','WhatsApp',NULL,'Pc build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-01-11 07:05:43','420c2946-d5da-45d3-ac54-75f521152dbc',1,'2025-12-29 21:35:06','2026-01-11 07:05:43',NULL),
-(9,'QV-CUST-000006','TEST DATA','test',NULL,'+602603123123','dasasd.12312312,123,daman','TikTok',NULL,'asdasdasd','Event / Booth',NULL,NULL,1,1,'2026-01-11 07:12:56','08bcdc01-a436-43ee-82f8-61d7f30f938d',1,'2025-12-31 09:22:52','2026-01-11 07:12:56',NULL),
-(11,'QV-CUST-000007','AHMAD ALBAB BIN ISMAIL','Ahmad','ahmad@gmail.com','+600232323232','Damansara, 47810, Petaling jaya,Selangor','Facebook',NULL,'aswdasdasd','TikTok',NULL,NULL,1,1,'2025-10-01 05:23:04','1c422c11-129e-45f5-af66-6641cccc2525',1,'2026-01-01 05:16:58','2026-01-01 05:23:04',NULL),
-(12,'QV-CUST-000008','SYED IQBAL','Iqbal','iqbal@mail.com','+60912121212','atas klang','Instagram',NULL,'sdasdsd','Friend / Referral',NULL,'megat',1,1,'2026-01-18 01:43:25','fee7c0b0-4b5e-49f0-ae7e-4db95a1022b6',1,'2026-01-18 01:40:54','2026-01-18 01:43:25',NULL),
-(19,'QV-CUST-000009','WAWA FFF','wawa','wawa@gmail.com','+600234234234','werwrwerer',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cde29dba-c6c9-4941-bb47-ec6b96a5f111',0,'2026-03-21 02:23:08','2026-03-21 02:23:08',NULL),
-(20,'QV-CUST-000010','TEST','test1','test@gmail.com','+60123456789','test1','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,1,'2026-07-09 14:07:03','dc0de823-f55f-430f-882e-85a6548cb116',1,'2026-07-09 14:03:54','2026-07-09 14:07:03',NULL),
-(21,'QV-CUST-000011','FARIS BIN FARIS','Faris','faris@gmail.com','+601912312312','kota damansara seksyen 7','Discord',NULL,'mas amba','Instagram',NULL,NULL,1,1,'2026-07-09 15:33:07','93eb19ba-9628-48de-bb2c-668cc732a646',1,'2026-07-09 15:31:42','2026-07-09 15:33:07',NULL);
+(3,'QV-VIES-000001','MUHAMMAD FARIS ISKANDAR BIN SHAMSIR','BruhRis','fariskandar99@gmail.com','+60172109876','47810','WhatsApp',NULL,'Custom PC build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-07-09 15:30:49','ac450a3c-93a4-4e70-aaac-5a46e5d11578',1,'2025-12-29 20:54:33','2026-07-09 15:30:49',NULL),
+(4,'QV-VIES-000002','MUHAMMAD NAJMI NOOR ZAIRUL','Najmi','najminoorzairul@gmail.com','+60197017321','A-1-10, Cita Damansara, Jalan PJU 3/27, Sunway Damansara','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'711774c2-478a-4c85-808e-18848a78e45a',1,'2025-12-29 21:32:12','2025-12-30 00:04:11',NULL),
+(5,'QV-VIES-000003','NURSYAZWANI BINTI AHMAD NIZAM','Wani','wannieq8@gmail.com','+60197266130','A-1-10','WhatsApp',NULL,NULL,'TikTok',NULL,NULL,1,1,'2026-07-09 15:30:43','9f8be78c-9ba9-4218-9e1c-c3028a74a8a6',1,'2025-12-29 21:33:04','2026-07-09 15:30:43',NULL),
+(6,'QV-VIES-000004','MUHAMMAD EIRFAN BIN NOOR ZAIRUL','Epan','eirfan019@gmail.com','+60197091129','No 2&4, Jalan Perdana 2/42, Taman Bukit Perdana 2, 83000, Batu Pahat,Johor','WhatsApp',NULL,'Nice',NULL,NULL,NULL,1,1,'2026-01-11 07:13:03','01064af6-083e-4e5e-9722-b05921e9876f',1,'2025-12-29 22:30:09','2026-01-11 07:13:03',NULL),
+(7,'QV-VIES-000005','MUHAMMAD IZZHAZIQ BIN MOHD RAJIL','Izz','Izzhaziq1117@gmail.com','+601126605294','A-404, Tingkat 3, Palma Perak Apartment, Jalan Cecawi 6/6, 47810,Petaling Jaya, Selangor','WhatsApp',NULL,'Pc build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-01-11 07:05:43','420c2946-d5da-45d3-ac54-75f521152dbc',1,'2025-12-29 21:35:06','2026-01-11 07:05:43',NULL),
+(9,'QV-VIES-000006','TEST DATA','test',NULL,'+602603123123','dasasd.12312312,123,daman','TikTok',NULL,'asdasdasd','Event / Booth',NULL,NULL,1,1,'2026-01-11 07:12:56','08bcdc01-a436-43ee-82f8-61d7f30f938d',1,'2025-12-31 09:22:52','2026-01-11 07:12:56',NULL),
+(11,'QV-VIES-000007','AHMAD ALBAB BIN ISMAIL','Ahmad','ahmad@gmail.com','+600232323232','Damansara, 47810, Petaling jaya,Selangor','Facebook',NULL,'aswdasdasd','TikTok',NULL,NULL,1,1,'2025-10-01 05:23:04','1c422c11-129e-45f5-af66-6641cccc2525',1,'2026-01-01 05:16:58','2026-01-01 05:23:04',NULL),
+(12,'QV-VIES-000008','SYED IQBAL','Iqbal','iqbal@mail.com','+60912121212','atas klang','Instagram',NULL,'sdasdsd','Friend / Referral',NULL,'megat',1,1,'2026-01-18 01:43:25','fee7c0b0-4b5e-49f0-ae7e-4db95a1022b6',1,'2026-01-18 01:40:54','2026-01-18 01:43:25',NULL),
+(19,'QV-VIES-000009','WAWA FFF','wawa','wawa@gmail.com','+600234234234','werwrwerer',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cde29dba-c6c9-4941-bb47-ec6b96a5f111',0,'2026-03-21 02:23:08','2026-03-21 02:23:08',NULL),
+(20,'QV-VIES-000010','TEST','test1','test@gmail.com','+60123456789','test1','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,1,'2026-07-09 14:07:03','dc0de823-f55f-430f-882e-85a6548cb116',1,'2026-07-09 14:03:54','2026-07-09 14:07:03',NULL),
+(21,'QV-VIES-000011','FARIS BIN FARIS','Faris','faris@gmail.com','+601912312312','kota damansara seksyen 7','Discord',NULL,'mas amba','Instagram',NULL,NULL,1,1,'2026-07-09 15:33:07','93eb19ba-9628-48de-bb2c-668cc732a646',1,'2026-07-09 15:31:42','2026-07-09 15:33:07',NULL);
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -759,55 +759,13 @@ LOCK TABLES `inv_care` WRITE;
 /*!40000 ALTER TABLE `inv_care` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `inv_care` VALUES
-(1,'IC-CPU-0001',2,'QVSK-SPARE-CPU-001','AMD Ryzen 7 9800X3D (Spare)',2399,5,3,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','AMD','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
-(2,'IC-CPU-0002',1,'QVSK-SPARE-CPU-002','INTEL Core Ultra 7 265 (Spare)',1699,4,2,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','INTEL','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
-(3,'IC-GPU-0001',7,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
-(4,'IC-GPU-0002',9,'QVSK-SPARE-GPU-002','ASUS ROG Strix RTX 5070 Ti 16GB (Spare)',3799,3,2,3,1,0,0,'2026-01-01 00:00:00',60,'2031-01-01 00:00:00','ASUS','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
-(5,'IC-RAM-0001',8,'QVSK-SPARE-RAM-001','G.SKILL Trident Z5 32GB Kit (Spare)',899,6,4,5,1,0,0,'2026-01-01 00:00:00',24,'2028-01-01 00:00:00','G.Skill','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL),
-(6,'IC-GPU-0003',10,'QVSK-SPARE-GPU-001','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-07-27 08:40:49','2026-07-27 08:40:49',NULL);
+(1,'IC-CPU-0001',2,'CINV-CPU-000001','AMD Ryzen 7 9800X3D (Spare)',2399,5,3,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','AMD','2026-08-02 04:25:16','2026-08-02 04:25:16',NULL),
+(2,'IC-CPU-0002',1,'CINV-CPU-000002','INTEL Core Ultra 7 265 (Spare)',1699,4,2,1,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','INTEL','2026-08-02 04:24:52','2026-08-02 04:24:52',NULL),
+(3,'IC-GPU-0001',7,'CINV-GPU-000002','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-08-02 04:24:33','2026-08-02 04:24:33',NULL),
+(4,'IC-GPU-0002',9,'CINV-GPU-000001','ASUS ROG Strix RTX 5070 Ti 16GB (Spare)',3799,3,2,3,1,0,0,'2026-01-01 00:00:00',60,'2031-01-01 00:00:00','ASUS','2026-08-02 04:24:16','2026-08-02 04:24:16',NULL),
+(5,'IC-RAM-0001',8,'CINV-RAM-000001','G.SKILL Trident Z5 32GB Kit (Spare)',899,6,4,5,1,0,0,'2026-01-01 00:00:00',24,'2028-01-01 00:00:00','G.Skill','2026-08-02 04:23:38','2026-08-02 04:23:38',NULL),
+(6,'IC-GPU-0003',10,'CINV-GPU-000002','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-08-02 04:23:22','2026-08-02 04:23:22',NULL);
 /*!40000 ALTER TABLE `inv_care` ENABLE KEYS */;
-UNLOCK TABLES;
-commit;
-
---
--- Table structure for table `inv_excl_merch`
---
-
-DROP TABLE IF EXISTS `inv_excl_merch`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `inv_excl_merch` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `inv_excl_merch_id` varchar(50) NOT NULL,
-  `sku_code` varchar(100) NOT NULL,
-  `item_name` varchar(100) NOT NULL,
-  `unit_cost` int(11) NOT NULL DEFAULT 0,
-  `max_stock` int(11) NOT NULL DEFAULT 0,
-  `current_stock` int(11) NOT NULL DEFAULT 0,
-  `to_restock` int(11) NOT NULL DEFAULT 0,
-  `status` int(11) NOT NULL DEFAULT 1,
-  `generate_id` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `inv_excl_merch_inv_excl_merch_id_unique` (`inv_excl_merch_id`),
-  KEY `inv_excl_merch_sku_code_index` (`sku_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `inv_excl_merch`
---
-
-LOCK TABLES `inv_excl_merch` WRITE;
-/*!40000 ALTER TABLE `inv_excl_merch` DISABLE KEYS */;
-set autocommit=0;
-INSERT INTO `inv_excl_merch` VALUES
-(1,'IE-QVMR-0001','QVSKU 0010','Quivitech Carbon Fiber Keychain',43,50,50,15,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(2,'IE-QVMR-0002','QVSKU 0011','Quivitech Full Grain Leather Keychain',16,52,52,16,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(3,'IE-QVMR-0003','QVSKU 0020','Quivitech Neoprene Pouch',8,200,200,60,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL);
-/*!40000 ALTER TABLE `inv_excl_merch` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -834,7 +792,7 @@ CREATE TABLE `inv_excl_serve` (
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -866,13 +824,14 @@ CREATE TABLE `inv_merch` (
   `to_restock` int(11) NOT NULL DEFAULT 0,
   `status` int(11) NOT NULL DEFAULT 1,
   `generate_id` int(11) NOT NULL DEFAULT 0,
+  `is_exclusive` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `inv_merch_inv_merch_id_unique` (`inv_merch_id`),
   KEY `inv_merch_sku_code_index` (`sku_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -883,15 +842,18 @@ LOCK TABLES `inv_merch` WRITE;
 /*!40000 ALTER TABLE `inv_merch` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `inv_merch` VALUES
-(1,'I-QVMR-0001','QVSKU 0005','Quivitech White Embroidery Keychain',6,200,200,60,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(2,'I-QVMR-0002','QVSKU 0006','Quivitech Red Eagle Hook Keychain',8,50,50,15,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(3,'I-QVMR-0003','QVSKU 0007','Quivitech Yellow Eagle Hook Keychain',8,50,50,15,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(4,'I-QVMR-0004','QVSKU 0008','Quivitech Blue Eagle Hook Keychain',8,51,51,16,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(5,'I-QVMR-0005','QVSKU 0009','Quivitech Pink Eagle Hook Keychain',8,51,51,16,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(6,'I-QVMR-0006','QVSKU 0016','Quivitech 2cm x 15cm Velcro Back to Back',1,400,400,120,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(7,'I-QVMR-0007','QVSKU 0017','Quivitech 1\" x 6\" Velcro OneWrap',6,300,300,90,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(8,'I-QVMR-0008','QVSKU 0018','Quivitech Microfiber Pouch',7,200,200,60,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
-(9,'I-QVMR-0009','QVSKU 0019','Quivitech Polymer Pouch',8,200,200,60,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL);
+(1,'I-QVMR-0001','QVSKU 0005','Quivitech White Embroidery Keychain',6,200,200,60,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(2,'I-QVMR-0002','QVSKU 0006','Quivitech Red Eagle Hook Keychain',8,50,50,15,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(3,'I-QVMR-0003','QVSKU 0007','Quivitech Yellow Eagle Hook Keychain',8,50,50,15,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(4,'I-QVMR-0004','QVSKU 0008','Quivitech Blue Eagle Hook Keychain',8,51,51,16,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(5,'I-QVMR-0005','QVSKU 0009','Quivitech Pink Eagle Hook Keychain',8,51,51,16,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(6,'I-QVMR-0006','QVSKU 0016','Quivitech 2cm x 15cm Velcro Back to Back',1,400,400,120,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(7,'I-QVMR-0007','QVSKU 0017','Quivitech 1\" x 6\" Velcro OneWrap',6,300,300,90,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(8,'I-QVMR-0008','QVSKU 0018','Quivitech Microfiber Pouch',7,200,200,60,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(9,'I-QVMR-0009','QVSKU 0019','Quivitech Polymer Pouch',8,200,200,60,1,1,0,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(10,'I-QVMR-0010','QVSKU 0010','Quivitech Carbon Fiber Keychain',43,50,50,15,1,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(11,'I-QVMR-0011','QVSKU 0011','Quivitech Full Grain Leather Keychain',16,52,52,16,1,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL),
+(12,'I-QVMR-0012','QVSKU 0020','Quivitech Neoprene Pouch',8,200,200,60,1,1,1,'2026-07-14 15:59:49','2026-07-14 15:59:49',NULL);
 /*!40000 ALTER TABLE `inv_merch` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1149,11 +1111,11 @@ INSERT INTO `master_sku` VALUES
 (52,'QVSKU 0049',NULL,NULL,'MDPC-X 3:1 Heatshrink Micro',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
 (53,'QVSKU 0050',NULL,NULL,'MDPC-X 8 PCIe Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
 (54,'QVSKU 0051',NULL,NULL,'MOLEX Black 8 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(56,'QVSK-SPARE-CPU-001',NULL,NULL,'AMD Ryzen 7 9800X3D (Spare/RMA Unit)',NULL,'2399','pcs',1,'2026-07-12 18:15:08','2026-07-12 18:15:08',NULL),
-(57,'QVSK-SPARE-CPU-002',NULL,NULL,'INTEL Core Ultra 7 265 (Spare/RMA Unit)',NULL,'1699','pcs',1,'2026-07-12 18:15:08','2026-07-12 18:15:08',NULL),
-(58,'QVSK-SPARE-GPU-001',NULL,NULL,'MSI Trio X White RTX 5080 16GB (Spare/RMA Unit)',NULL,'4999','pcs',1,'2026-07-12 18:15:09','2026-07-12 18:15:09',NULL),
-(59,'QVSK-SPARE-GPU-002',NULL,NULL,'ASUS ROG Strix RTX 5070 Ti 16GB (Spare/RMA Unit)',NULL,'3799','pcs',1,'2026-07-12 18:15:09','2026-07-12 18:15:09',NULL),
-(60,'QVSK-SPARE-RAM-001',NULL,NULL,'G.SKILL Trident Z5 32GB (Spare)',NULL,'899','pcs',1,'2026-07-12 18:17:12','2026-07-12 18:17:12',NULL);
+(56,'CINV-CPU-000001',NULL,NULL,'AMD Ryzen 7 9800X3D (Spare/RMA Unit)',NULL,'2399','pcs',1,'2026-08-02 04:19:02','2026-08-02 04:19:02',NULL),
+(57,'CINV-CPU-000002',NULL,NULL,'INTEL Core Ultra 7 265 (Spare/RMA Unit)',NULL,'1699','pcs',1,'2026-08-02 04:19:16','2026-08-02 04:19:16',NULL),
+(58,'CINV-GPU-000002',NULL,NULL,'MSI Trio X White RTX 5080 16GB (Spare/RMA Unit)',NULL,'4999','pcs',1,'2026-08-02 04:18:32','2026-08-02 04:18:32',NULL),
+(59,'CINV-GPU-000001',NULL,NULL,'ASUS ROG Strix RTX 5070 Ti 16GB (Spare/RMA Unit)',NULL,'3799','pcs',1,'2026-08-02 04:16:47','2026-08-02 04:16:47',NULL),
+(60,'CINV-RAM-000001',NULL,NULL,'G.SKILL Trident Z5 32GB (Spare)',NULL,'899','pcs',1,'2026-08-02 04:14:07','2026-08-02 04:14:07',NULL);
 /*!40000 ALTER TABLE `master_sku` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1168,7 +1130,8 @@ DROP TABLE IF EXISTS `meeting_details`;
 CREATE TABLE `meeting_details` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `meeting_id` bigint(20) unsigned NOT NULL,
-  `initial_budget` decimal(10,2) DEFAULT NULL,
+  `requirement_id` varchar(255) NOT NULL,
+  `initial_budget` decimal(10,2) DEFAULT 0.00,
   `reason` tinyint(1) NOT NULL COMMENT '1: Work, 2: Gaming',
   `play_mode` tinyint(1) DEFAULT NULL COMMENT '1: Multiplayer, 2: Singleplayer',
   `include_monitor` tinyint(1) DEFAULT NULL,
@@ -1189,13 +1152,13 @@ CREATE TABLE `meeting_details` (
   `qvtd_notes` text DEFAULT NULL,
   `target_build_date` datetime DEFAULT NULL,
   `target_location` varchar(191) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `meeting_details_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `meeting_details_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1206,9 +1169,9 @@ LOCK TABLES `meeting_details` WRITE;
 /*!40000 ALTER TABLE `meeting_details` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `meeting_details` VALUES
-(1,13,10000.00,2,2,1,'all',NULL,'wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-09 14:32:04','2026-07-09 14:32:04',NULL),
-(2,14,6000.00,2,2,NULL,NULL,NULL,'premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-09 17:05:55','2026-07-09 17:05:55',NULL),
-(3,16,NULL,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-16 14:28:35','2026-07-16 14:28:35',NULL);
+(1,13,'CONS-RQD-000001',10000.00,2,2,1,'all',NULL,'wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-09 14:32:04','2026-07-30 15:55:04',NULL),
+(2,14,'CONS-RQD-000002',6000.00,2,2,NULL,NULL,NULL,'premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-09 17:05:55','2026-07-30 15:55:04',NULL),
+(3,16,'CONS-RQD-000003',6000.00,2,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-16 14:28:35','2026-07-30 15:55:04',NULL);
 /*!40000 ALTER TABLE `meeting_details` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1234,7 +1197,7 @@ CREATE TABLE `meetings` (
   PRIMARY KEY (`id`),
   KEY `meetings_customer_id_foreign` (`customer_id`),
   CONSTRAINT `meetings_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1245,10 +1208,10 @@ LOCK TABLES `meetings` WRITE;
 /*!40000 ALTER TABLE `meetings` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `meetings` VALUES
-(13,'QV-MEET-000001',20,'custom gaming pc test','2026-07-09','9:00 pm',NULL,'2026-07-09 14:30:43','2026-07-09 14:30:43',NULL),
-(14,'QV-MEET-000002',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL),
-(15,'QV-MEET-000003',21,'2nd meeting','2026-07-17',NULL,NULL,'2026-07-16 14:25:47','2026-07-16 14:25:47',NULL),
-(16,'QV-MEET-000004',20,'first meeting','2026-07-17',NULL,NULL,'2026-07-16 14:28:17','2026-07-16 14:28:17',NULL);
+(13,'QV-CONS-000001',20,'custom gaming pc test','2026-07-09','9:00 pm',NULL,'2026-07-09 14:30:43','2026-07-09 14:30:43',NULL),
+(14,'QV-CONS-000002',21,'first meeting','2026-07-10',NULL,NULL,'2026-07-09 16:09:24','2026-07-09 16:09:24',NULL),
+(15,'QV-CONS-000003',21,'2nd meeting','2026-07-17',NULL,NULL,'2026-07-16 14:25:47','2026-07-16 14:25:47',NULL),
+(16,'QV-CONS-000004',20,'first meeting','2026-07-17',NULL,NULL,'2026-07-16 14:28:17','2026-07-16 14:28:17',NULL);
 /*!40000 ALTER TABLE `meetings` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1347,8 +1310,8 @@ INSERT INTO `menu_items` VALUES
 (59,57,'link','Add Plus Order',NULL,'/plus-orders/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (60,NULL,'group','QuiviThread','fas fa-fw fa-plug',NULL,8,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (61,60,'header','Bill of Materials',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
-(62,61,'link','All BOMs',NULL,'/thread-bom',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(63,61,'link','Add BOM',NULL,'/thread-bom/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(62,61,'link','All Bill Of Materials',NULL,'/thread-bom',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(63,61,'link','Add Bill Of Materials',NULL,'/thread-bom/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (64,77,'header','Thread Inventory',NULL,NULL,6,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (65,64,'link','All Thread Inventory',NULL,'/inv-thread',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (66,64,'link','Add Thread Inventory',NULL,'/inv-thread/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -1386,12 +1349,9 @@ INSERT INTO `menu_items` VALUES
 (98,77,'header','QS Excl. Inventory',NULL,NULL,3,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (99,98,'link','All QS Excl. Inventory',NULL,'/inv-excl-serve',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (100,98,'link','Add QS Excl. Inventory',NULL,'/inv-excl-serve/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(101,77,'header','QM Inventory',NULL,NULL,4,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
-(102,101,'link','All QM Inventory',NULL,'/inv-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
+(101,77,'header','QuiviMerch Inventory',NULL,NULL,4,0,1,'2026-07-20 12:56:08','2026-08-01 06:01:00'),
+(102,101,'link','All QuiviMerch Inventory',NULL,'/inv-merch',0,0,1,'2026-07-20 12:56:08','2026-08-01 06:01:00'),
 (103,101,'link','Add QM Inventory',NULL,'/inv-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(104,77,'header','QM Excl. Inventory',NULL,NULL,5,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
-(105,104,'link','All QM Excl. Inventory',NULL,'/inv-excl-merch',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(106,104,'link','Add QM Excl. Inventory',NULL,'/inv-excl-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (107,77,'header','Inventory Movement',NULL,NULL,10,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (108,107,'link','All Movements',NULL,'/inventory-movements',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (109,107,'link','Add Movement',NULL,'/inventory-movements/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -1514,7 +1474,7 @@ CREATE TABLE `merch_orders` (
   UNIQUE KEY `merch_orders_merch_order_id_unique` (`merch_order_id`),
   KEY `merch_orders_customer_id_index` (`customer_id`),
   KEY `merch_orders_order_id_index` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1540,7 +1500,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1632,7 +1592,10 @@ INSERT INTO `migrations` VALUES
 (102,'2026_07_28_100000_create_onsite_handovers_studio_table',38),
 (103,'2026_07_27_300000_add_care_data_id_to_care_data_table',39),
 (104,'2026_07_28_150000_create_refunds_table',40),
-(105,'2026_07_28_160000_add_refunds_menu_item',41);
+(105,'2026_07_28_160000_add_refunds_menu_item',41),
+(106,'2026_08_01_000000_create_order_drafts_table',42),
+(107,'2026_08_01_010000_merge_inv_excl_merch_into_inv_merch',43),
+(108,'2026_08_02_000000_add_business_id_columns_missing_from_history',44);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1879,8 +1842,11 @@ CREATE TABLE `order` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   `is_reason` tinyint(1) NOT NULL COMMENT '1: Work, 2: Gaming',
+  `craft_tag_id` varchar(255) DEFAULT NULL,
+  `reject_id` varchar(255) DEFAULT NULL,
+  `craft_data_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1891,17 +1857,20 @@ LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `order` VALUES
-(1,'QV-ORDR-000001','QVT-INV-2607-1',4,'8','15432',NULL,'15432',NULL,NULL,NULL,'2026-03-19 14:36:42','March','2026',2,3,3,0,1,'2026-07-09 14:21:43','2026-03-19 14:36:42','2026-07-27 08:40:49',NULL,1),
-(2,'QV-ORDR-000002','QVT-INV-2603-2',19,'7','13913',NULL,'13913',NULL,NULL,NULL,'2026-03-21 10:30:29','March','2026',2,3,3,0,1,'2026-03-21 05:11:40','2026-03-21 10:30:29','2026-07-27 08:40:49',NULL,2),
-(3,'QV-ORDR-000003','QVT-INV-2607-3',20,'17','23333',NULL,'23333',NULL,NULL,NULL,'2026-07-09 14:08:47','July','2026',4,3,3,0,1,'2026-07-09 14:22:43','2026-07-09 14:08:47','2026-07-27 08:40:49',NULL,2),
-(4,'QV-ORDR-000004','QVT-INV-2607-4',20,'8','7435',NULL,'7435',NULL,NULL,NULL,'2026-07-09 14:17:17','July','2026',3,2,1,0,1,'2026-07-12 11:40:41','2026-07-09 14:17:17','2026-07-27 08:40:49',NULL,2),
-(5,'QV-ORDR-000005','QVT-INV-2607-5',20,'9','5198',NULL,'5198',NULL,NULL,NULL,'2026-07-09 14:19:06','July','2026',1,1,1,0,1,'2026-07-12 11:56:01','2026-07-09 14:19:06','2026-07-27 08:40:49',NULL,2),
-(6,'QV-ORDR-000006','QVT-INV-2607-6',21,'14','10537',NULL,'10537',NULL,NULL,NULL,'2026-07-09 15:35:33','July','2026',2,3,3,0,1,'2026-07-09 15:44:53','2026-07-09 15:35:33','2026-07-27 08:40:49',NULL,2),
-(7,'QV-ORDR-000007','QVT-INV-2607-7',4,'9','22411',NULL,'22411',NULL,NULL,NULL,'2026-07-10 16:16:33','July','2026',4,3,3,0,1,'2026-07-20 11:39:47','2026-07-10 16:16:33','2026-07-27 08:40:49',NULL,1),
-(8,'QV-ORDR-000008','QVT-INV-2607-8',20,'14','3500.00',NULL,'3500.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
-(9,'QV-ORDR-000009','QVT-INV-2607-9',20,'14','6200.00',NULL,'6200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
-(10,'QV-ORDR-000010','QVT-INV-2607-10',20,'14','8200.00',NULL,'8200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1),
-(11,'QV-ORDR-000011','QVT-INV-2607-11',20,'14','9750.00',NULL,'9750.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-07-27 08:40:49',NULL,1);
+(1,'QV-BPLD-000001','QVT-INV-2607-1',4,'8','15432',NULL,'15432',NULL,NULL,NULL,'2026-03-19 14:36:42','March','2026',2,3,3,0,1,'2026-07-09 14:21:43','2026-03-19 14:36:42','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000001-01',NULL,'QV-CRFT-000001'),
+(2,'QV-BPLD-000002','QVT-INV-2603-2',19,'7','13913',NULL,'13913',NULL,NULL,NULL,'2026-03-21 10:30:29','March','2026',2,3,3,0,1,'2026-03-21 05:11:40','2026-03-21 10:30:29','2026-08-01 16:19:11',NULL,2,'BLDP-DRF-000002-03',NULL,'QV-CRFT-000002'),
+(3,'QV-BPLD-000003','QVT-INV-2607-3',20,'17','23333',NULL,'23333',NULL,NULL,NULL,'2026-07-09 14:08:47','July','2026',4,3,3,0,1,'2026-07-09 14:22:43','2026-07-09 14:08:47','2026-08-01 16:19:11',NULL,2,'BLDP-DRF-000003-02',NULL,'QV-CRFT-000003'),
+(4,'QV-BPLD-000004','QVT-INV-2607-4',20,'8','7435',NULL,'7435',NULL,NULL,NULL,'2026-07-09 14:17:17','July','2026',3,2,1,0,1,'2026-07-12 11:40:41','2026-07-09 14:17:17','2026-08-01 16:19:11',NULL,2,'BLDP-DRF-000004-01',NULL,'QV-CRFT-000004'),
+(5,'QV-BPLD-000005','QVT-INV-2607-5',20,'9','5198',NULL,'5198',NULL,NULL,NULL,'2026-07-09 14:19:06','July','2026',1,1,1,0,1,'2026-07-12 11:56:01','2026-07-09 14:19:06','2026-08-01 16:19:11',NULL,2,'BLDP-DRF-000005-01',NULL,'QV-CRFT-000005'),
+(6,'QV-BPLD-000006','QVT-INV-2607-6',21,'14','10537',NULL,'10537',NULL,NULL,NULL,'2026-07-09 15:35:33','July','2026',2,3,3,0,1,'2026-07-09 15:44:53','2026-07-09 15:35:33','2026-08-01 16:19:11',NULL,2,'BLDP-DRF-000006-05',NULL,'QV-CRFT-000006'),
+(7,'QV-BPLD-000007','QVT-INV-2607-7',4,'9','22411',NULL,'22411',NULL,NULL,NULL,'2026-07-10 16:16:33','July','2026',4,3,3,0,1,'2026-07-20 11:39:47','2026-07-10 16:16:33','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000007-01',NULL,'QV-CRFT-000007'),
+(8,'QV-BPLD-000008','QVT-INV-2607-8',20,'14','3500.00',NULL,'3500.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000008-04',NULL,'QV-CRFT-000008'),
+(9,'QV-BPLD-000009','QVT-INV-2607-9',20,'14','6200.00',NULL,'6200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',1,1,1,0,1,'2026-07-12 12:24:24','2026-07-12 12:21:58','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000009-04',NULL,'QV-CRFT-000009'),
+(10,'QV-BPLD-000010','QVT-INV-2608-10',20,'14','8200.00',NULL,'8200.00',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,0,NULL,'2026-07-12 12:21:58','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000010-01','BLDP-REJ-000001','QV-CRFT-000010'),
+(11,'QV-BPLD-000011','QVT-INV-2608-11',20,'25','44663',NULL,'44663',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,3,3,0,NULL,NULL,'2026-07-12 12:21:58','2026-08-01 16:19:11',NULL,1,'BLDP-DRF-000011-04',NULL,'QV-CRFT-000011'),
+(14,'QV-BPLD-000012','QVT-INV-2608-12',20,'14','9750',NULL,'9750',NULL,NULL,NULL,'2026-07-12 12:21:58','July','2026',3,2,1,0,NULL,NULL,'2026-07-12 12:21:58','2026-08-01 16:30:39',NULL,1,'BLDP-DRF-000011-01',NULL,'QV-CRFT-000012'),
+(15,'QV-BLDP-000013',NULL,5,'7','11264',NULL,'11264',NULL,NULL,NULL,'2026-08-01 16:24:02','August','2026',2,3,3,0,NULL,NULL,'2026-08-01 16:24:02','2026-08-01 16:25:56',NULL,1,'BLDP-DRF-000002-01',NULL,'QV-CRFT-000013'),
+(16,'QV-BLDP-000014',NULL,11,'7','17013',NULL,'17013',NULL,NULL,NULL,'2026-08-01 16:32:58','August','2026',2,3,3,0,NULL,NULL,'2026-08-01 16:32:58','2026-08-01 16:32:58',NULL,2,'BLDP-DRF-000002-01',NULL,'QV-CRFT-000014');
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -1925,7 +1894,7 @@ CREATE TABLE `order_details` (
   `serial_no` varchar(191) DEFAULT NULL,
   `start_warranty_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2020,16 +1989,75 @@ INSERT INTO `order_details` VALUES
 (109,10,10,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
 (110,10,26,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
 (111,10,19,'1','3862','3862','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(112,11,6,'1','1779','1779','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(113,11,9,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(114,11,24,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(115,11,22,'1','769','769','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(116,11,13,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(117,11,39,'6','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(118,11,11,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(119,11,27,'1','0','0','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL),
-(120,11,18,'1','7202','7202','2026-07-20 09:54:13','2026-07-20 09:54:13',NULL,NULL);
+(162,11,6,'2','1779','3558','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(163,11,9,'2','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(164,11,24,'2','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(165,11,22,'3','769','2307','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(166,11,13,'2','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(167,11,39,'8','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(168,11,11,'2','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(169,11,27,'2','0','0','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(170,11,17,'2','19399','38798','2026-08-01 05:23:51','2026-08-01 05:23:51',NULL,NULL),
+(171,15,2,'1','3699.00','3699.00',NULL,NULL,NULL,NULL),
+(172,15,8,'1','1899.00','1899.00',NULL,NULL,NULL,NULL),
+(173,15,24,'1','0.00','0.00',NULL,NULL,NULL,NULL),
+(174,15,15,'1','2499.00','2499.00',NULL,NULL,NULL,NULL),
+(175,15,22,'1','769.00','769.00',NULL,NULL,NULL,NULL),
+(176,15,12,'1','1499.00','1499.00',NULL,NULL,NULL,NULL),
+(177,15,29,'1','899.00','899.00',NULL,NULL,NULL,NULL),
+(178,16,2,'1','3699.00','3699.00',NULL,NULL,NULL,NULL),
+(179,16,8,'1','1899.00','1899.00',NULL,NULL,NULL,NULL),
+(180,16,25,'1','6109.00','6109.00',NULL,NULL,NULL,NULL),
+(181,16,15,'1','2499.00','2499.00',NULL,NULL,NULL,NULL),
+(182,16,22,'1','769.00','769.00',NULL,NULL,NULL,NULL),
+(183,16,12,'1','1499.00','1499.00',NULL,NULL,NULL,NULL),
+(184,16,28,'1','539.00','539.00',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `order_drafts`
+--
+
+DROP TABLE IF EXISTS `order_drafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `order_drafts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) unsigned NOT NULL,
+  `draft_id` varchar(50) NOT NULL,
+  `customer_id` int(10) unsigned DEFAULT NULL,
+  `qty` int(11) DEFAULT NULL,
+  `sub_total` decimal(12,2) DEFAULT NULL,
+  `total` decimal(12,2) DEFAULT NULL,
+  `craft_id` int(10) unsigned DEFAULT NULL,
+  `serve_id` int(10) unsigned DEFAULT NULL,
+  `care_id` int(10) unsigned DEFAULT NULL,
+  `order_details_snapshot` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`order_details_snapshot`)),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `order_drafts_draft_id_unique` (`draft_id`),
+  KEY `order_drafts_order_id_index` (`order_id`),
+  CONSTRAINT `order_drafts_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `order_drafts`
+--
+
+LOCK TABLES `order_drafts` WRITE;
+/*!40000 ALTER TABLE `order_drafts` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `order_drafts` VALUES
+(4,11,'BLDP-DRF-000011-01',20,15,21947.00,21947.00,3,3,3,'[{\"pro_id\":6,\"product_name\":\"INTEL Core Ultra 7 265KF\",\"pro_qty\":1,\"pro_price\":1779,\"sub_total\":1779},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":24,\"product_name\":\"G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":22,\"product_name\":\"LIAN LI Hydroshift ii LCD-C 360 Fanless\",\"pro_qty\":1,\"pro_price\":769,\"sub_total\":769},{\"pro_id\":13,\"product_name\":\"GIGABYTE Aorus Elite AE850W\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":39,\"product_name\":\"LIAN LI TL LCD REV 140\",\"pro_qty\":7,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":11,\"product_name\":\"SAMSUNG 9100 Pro 1TB\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":27,\"product_name\":\"NZXT H9 Flow RGB\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":17,\"product_name\":\"ASUS ROG Astral RTX 5090 32GB\",\"pro_qty\":1,\"pro_price\":19399,\"sub_total\":19399}]','2026-08-01 04:54:25'),
+(5,11,'BLDP-DRF-000011-02',20,17,24495.00,24495.00,3,3,3,'[{\"pro_id\":6,\"product_name\":\"INTEL Core Ultra 7 265KF\",\"pro_qty\":2,\"pro_price\":1779,\"sub_total\":3558},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":24,\"product_name\":\"G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":22,\"product_name\":\"LIAN LI Hydroshift ii LCD-C 360 Fanless\",\"pro_qty\":2,\"pro_price\":769,\"sub_total\":1538},{\"pro_id\":13,\"product_name\":\"GIGABYTE Aorus Elite AE850W\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":39,\"product_name\":\"LIAN LI TL LCD REV 140\",\"pro_qty\":7,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":11,\"product_name\":\"SAMSUNG 9100 Pro 1TB\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":27,\"product_name\":\"NZXT H9 Flow RGB\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":17,\"product_name\":\"ASUS ROG Astral RTX 5090 32GB\",\"pro_qty\":1,\"pro_price\":19399,\"sub_total\":19399}]','2026-08-01 04:55:21'),
+(6,11,'BLDP-DRF-000011-03',20,1,2799.00,2799.00,3,1,1,'[{\"pro_id\":1,\"product_name\":\"AMD Ryzen 7 9800X3D\",\"pro_qty\":1,\"pro_price\":2799,\"sub_total\":2799}]','2026-08-01 05:07:23'),
+(7,11,'BLDP-DRF-000011-04',20,1,2799.00,2799.00,3,1,1,'[{\"pro_id\":1,\"product_name\":\"AMD Ryzen 7 9800X3D\",\"pro_qty\":1,\"pro_price\":2799,\"sub_total\":2799}]','2026-08-01 05:08:31'),
+(8,11,'BLDP-DRF-000011-05',20,20,24495.00,24495.00,3,3,3,'[{\"pro_id\":6,\"product_name\":\"INTEL Core Ultra 7 265KF\",\"pro_qty\":2,\"pro_price\":1779,\"sub_total\":3558},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":24,\"product_name\":\"G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":22,\"product_name\":\"LIAN LI Hydroshift ii LCD-C 360 Fanless\",\"pro_qty\":2,\"pro_price\":769,\"sub_total\":1538},{\"pro_id\":13,\"product_name\":\"GIGABYTE Aorus Elite AE850W\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":39,\"product_name\":\"LIAN LI TL LCD REV 140\",\"pro_qty\":7,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":11,\"product_name\":\"SAMSUNG 9100 Pro 1TB\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":27,\"product_name\":\"NZXT H9 Flow RGB\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":17,\"product_name\":\"ASUS ROG Astral RTX 5090 32GB\",\"pro_qty\":1,\"pro_price\":19399,\"sub_total\":19399}]','2026-08-01 05:23:20'),
+(9,11,'BLDP-DRF-000011-06',20,25,44663.00,44663.00,3,3,3,'[{\"pro_id\":6,\"product_name\":\"INTEL Core Ultra 7 265KF\",\"pro_qty\":2,\"pro_price\":1779,\"sub_total\":3558},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":24,\"product_name\":\"G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":22,\"product_name\":\"LIAN LI Hydroshift ii LCD-C 360 Fanless\",\"pro_qty\":3,\"pro_price\":769,\"sub_total\":2307},{\"pro_id\":13,\"product_name\":\"GIGABYTE Aorus Elite AE850W\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":39,\"product_name\":\"LIAN LI TL LCD REV 140\",\"pro_qty\":8,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":11,\"product_name\":\"SAMSUNG 9100 Pro 1TB\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":27,\"product_name\":\"NZXT H9 Flow RGB\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":17,\"product_name\":\"ASUS ROG Astral RTX 5090 32GB\",\"pro_qty\":2,\"pro_price\":19399,\"sub_total\":38798}]','2026-08-01 05:23:51');
+/*!40000 ALTER TABLE `order_drafts` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -2881,7 +2909,7 @@ CREATE TABLE `plus_orders` (
   UNIQUE KEY `plus_orders_plus_order_id_unique` (`plus_order_id`),
   KEY `plus_orders_customer_id_index` (`customer_id`),
   KEY `plus_orders_order_id_index` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2955,7 +2983,7 @@ CREATE TABLE `pos` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3103,48 +3131,48 @@ LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `products` VALUES
-(1,1,'QV-PROD-CPU-0001',1,'CPU',2,6,'AMD Ryzen 7 9800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2799.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103563.png',39,NULL,'2026-02-11 18:18:32','2026-07-09 15:36:25',NULL),
-(2,1,'QV-PROD-CPU-0002',1,'CPU',2,6,'AMD Ryzen 9 9950X3D',16,32,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3699.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103599.png',30,NULL,'2026-02-11 18:18:32','2026-02-26 03:00:01',NULL),
-(3,1,'QV-PROD-CPU-0003',1,'CPU',2,6,'AMD Ryzen 7 7800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103498.png',45,NULL,'2026-02-11 18:18:32','2026-07-09 14:17:47',NULL),
-(4,1,'QV-PROD-CPU-0004',1,'CPU',4,7,'INTEL Core Ultra 5 245KF',14,20,'1440P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1039.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159321.png',44,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:41',NULL),
-(5,1,'QV-PROD-CPU-0005',1,'CPU',4,7,'INTEL Core Ultra 7 265',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159303.png',46,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:23',NULL),
-(6,1,'QV-PROD-CPU-0006',1,'CPU',4,7,'INTEL Core Ultra 7 265KF',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159286.png',50,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:06',NULL),
-(7,1,'QV-PROD-CPU-0007',6,'MBD',11,8,'GIGABYTE Aorus X870 ELite Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158386.png',41,NULL,'2026-02-11 18:53:57','2026-07-09 15:36:25',NULL),
-(8,1,'QV-PROD-CPU-0008',6,'MBD',11,8,'GIGABYTE Aorus X870 Stealth Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,1,'1899.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158365.png',21,NULL,'2026-02-11 18:53:57','2026-07-09 14:17:47',NULL),
-(9,1,'QV-PROD-CPU-0009',6,'MBD',11,9,'ASUS ROG Crosshair X870e Hero',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131661.png',48,NULL,'2026-02-11 18:53:57','2026-02-26 10:47:41',NULL),
-(10,1,'QV-PROD-CPU-0010',2,'SSD',56,1,'SAMSUNG 990 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 4',NULL,'2TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131569.png',43,NULL,'2026-02-11 19:04:35','2026-07-09 15:36:25',NULL),
-(11,1,'QV-PROD-CPU-0011',2,'SSD',55,1,'SAMSUNG 9100 Pro 1TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'1TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103110.png',46,NULL,'2026-02-11 19:04:35','2026-02-26 02:51:52',NULL),
-(12,1,'QV-PROD-CPU-0012',2,'SSD',56,1,'SAMSUNG 9100 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'2TB',NULL,NULL,NULL,'1499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103086.png',23,NULL,'2026-02-11 19:04:35','2026-07-09 14:17:47',NULL),
-(13,1,'QV-PROD-CPU-0013',7,'PSU',50,8,'GIGABYTE Aorus Elite AE850W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159225.png',43,NULL,'2026-02-11 19:12:30','2026-07-09 15:36:25',NULL),
-(14,1,'QV-PROD-CPU-0014',7,'PSU',51,10,'CORSAIR RM1000X Shift',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Gold','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'959.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159043.png',26,NULL,'2026-02-11 19:12:30','2026-02-26 18:24:03',NULL),
-(15,1,'QV-PROD-CPU-0015',7,'PSU',52,9,'ASUS ROG Thor III 1200W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'Black',NULL,'2499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159078.png',39,NULL,'2026-02-11 19:12:30','2026-07-09 14:17:47',NULL),
-(16,1,'QV-PROD-CPU-0016',3,'GPU',40,9,'ASUS ROG Strix RTX 5070 Ti 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'8GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131755.png',42,NULL,'2026-02-12 02:36:59','2026-07-09 15:36:25',NULL),
-(17,1,'QV-PROD-CPU-0017',3,'GPU',42,9,'ASUS ROG Astral RTX 5090 32GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'12GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'19399.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131722.png',45,NULL,'2026-02-12 02:36:59','2026-02-26 10:48:42',NULL),
-(18,1,'QV-PROD-CPU-0018',3,'GPU',41,11,'MSI Trio X White RTX 5080 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'16GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'7099.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131106.png',32,NULL,'2026-02-12 02:36:59','2026-07-09 15:36:25',NULL),
-(19,1,'QV-PROD-CPU-0019',3,'GPU',38,11,'MSI Ventus 2X OC PLUS RTX 5060 Ti 16GB',0,NULL,NULL,'AMD',NULL,NULL,NULL,'',NULL,'32GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'2999.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772130424.png',45,NULL,'2026-02-12 02:36:59','2026-02-26 10:27:04',NULL),
-(20,1,'QV-PROD-CPU-0020',11,'AIO',46,14,'ARCTIC Liquid Freezer III Pro ARGB 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','None',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'639.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131017.png',34,NULL,'2026-02-12 02:45:27','2026-07-09 15:36:25',NULL),
-(21,1,'QV-PROD-CPU-0021',11,'AIO',46,12,'NZXT Kraken Elite 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103657.png',44,NULL,'2026-02-12 02:45:27','2026-02-26 03:00:59',NULL),
-(22,1,'QV-PROD-CPU-0022',11,'AIO',46,13,'LIAN LI Hydroshift ii LCD-C 360 Fanless',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'769.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131504.png',34,NULL,'2026-02-12 02:45:27','2026-02-26 10:45:04',NULL),
-(23,1,'QV-PROD-CPU-0023',5,'RAM',28,17,'G.SKILL Trident Z5 Neo RGB DDR5 CL30 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL30',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158970.png',43,NULL,'2026-02-12 02:56:11','2026-07-09 15:36:25',NULL),
-(24,1,'QV-PROD-CPU-0024',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL26',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','Gold',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158918.png',33,NULL,'2026-02-12 02:56:11','2026-07-09 14:17:47',NULL),
-(25,1,'QV-PROD-CPU-0025',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL28',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'6109.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158950.png',13,NULL,'2026-02-12 02:56:11','2026-02-26 18:22:30',NULL),
-(26,1,'QV-PROD-CPU-0026',9,'CSE',20,12,'NZXT H9 Elite',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772130298.png',43,NULL,'2026-02-12 03:06:31','2026-07-09 15:36:25',NULL),
-(27,1,'QV-PROD-CPU-0027',9,'CSE',20,12,'NZXT H9 Flow RGB',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772103870.png',48,NULL,'2026-02-12 03:06:31','2026-02-26 03:04:31',NULL),
-(28,1,'QV-PROD-CPU-0028',9,'CSE',20,13,'LIAN LI O11 Vision Compact',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX, Back Connect',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'539.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131463.png',31,NULL,'2026-02-12 03:06:31','2026-02-26 10:44:23',NULL),
-(29,1,'QV-PROD-CPU-0029',9,'CSE',19,16,'HAVN HS 420',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'899.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772159360.png',36,NULL,'2026-02-12 03:06:31','2026-07-09 14:17:47',NULL),
-(30,1,'QV-PROD-CPU-0030',9,'CSE',21,15,'JONSBO D31 Screen',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'439.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131185.png',46,NULL,'2026-02-12 03:06:31','2026-02-26 10:39:45',NULL),
-(31,0,'QV-PROD-CPU-0031',10,'FAN',22,14,'ARCTIC P12 PWM',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','Black',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130982.png',50,NULL,'2026-02-12 03:23:12','2026-02-26 10:36:22',NULL),
-(32,0,'QV-PROD-CPU-0032',10,'FAN',22,12,'NZXT F360',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB, 3x',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'598.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130370.png',41,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:10',NULL),
-(33,0,'QV-PROD-CPU-0033',10,'FAN',22,12,'NZXT F120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130392.png',48,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:32',NULL),
-(34,0,'QV-PROD-CPU-0034',10,'FAN',22,13,'LIAN LI SL INF 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130933.png',35,NULL,'2026-02-12 03:23:12','2026-07-09 14:17:47',NULL),
-(35,0,'QV-PROD-CPU-0035',10,'FAN',24,13,'LIAN LI SL INF REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'24','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159471.png',36,NULL,'2026-02-12 03:23:12','2026-02-26 18:31:11',NULL),
-(36,0,'QV-PROD-CPU-0036',10,'FAN',22,13,'LIAN LI TL LCD 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'269.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130903.png',50,NULL,'2026-02-12 03:23:12','2026-02-26 10:35:03',NULL),
-(37,0,'QV-PROD-CPU-0037',10,'FAN',22,13,'LIAN LI TL LCD REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'269.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159443.png',46,NULL,'2026-02-12 03:23:12','2026-02-26 18:30:43',NULL),
-(38,0,'QV-PROD-CPU-0038',10,'FAN',23,13,'LIAN LI TL LCD 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130678.png',32,NULL,'2026-02-12 03:23:12','2026-07-09 15:36:25',NULL),
-(39,0,'QV-PROD-CPU-0039',10,'FAN',23,13,'LIAN LI TL LCD REV 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159425.png',46,NULL,'2026-02-12 03:23:12','2026-02-26 18:30:25',NULL),
-(40,0,'QV-PROD-CPU-0040',12,'ACC',31,9,'ASUS ROG Wingwall',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130575.png',46,NULL,'2026-02-12 03:26:48','2026-02-26 10:29:35',NULL),
-(41,0,'QV-PROD-CPU-0041',12,'ACC',33,13,'LIAN LI L- Wireless Controller',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'95.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130539.png',42,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:59',NULL),
-(42,0,'QV-PROD-CPU-0042',12,'ACC',32,13,'LIAN LI Edge Hub',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'89.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130511.png',37,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:31',NULL);
+(1,1,'PART-CPU-000001',1,'CPU',2,6,'AMD Ryzen 7 9800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2799.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103563.png',34,NULL,'2026-02-11 18:18:32','2026-08-01 05:23:20',NULL),
+(2,1,'PART-CPU-000002',1,'CPU',2,6,'AMD Ryzen 9 9950X3D',16,32,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3699.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103599.png',26,NULL,'2026-02-11 18:18:32','2026-02-26 03:00:01',NULL),
+(3,1,'PART-CPU-000003',1,'CPU',2,6,'AMD Ryzen 7 7800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103498.png',45,NULL,'2026-02-11 18:18:32','2026-07-09 14:17:47',NULL),
+(4,1,'PART-CPU-000004',1,'CPU',4,7,'INTEL Core Ultra 5 245KF',14,20,'1440P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1039.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159321.png',44,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:41',NULL),
+(5,1,'PART-CPU-000005',1,'CPU',4,7,'INTEL Core Ultra 7 265',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159303.png',46,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:23',NULL),
+(6,1,'PART-CPU-000006',1,'CPU',4,7,'INTEL Core Ultra 7 265KF',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159286.png',41,NULL,'2026-02-11 18:18:32','2026-08-01 05:23:51',NULL),
+(7,1,'PART-MBD-000001',6,'MBD',11,8,'GIGABYTE Aorus X870 ELite Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158386.png',41,NULL,'2026-02-11 18:53:57','2026-07-09 15:36:25',NULL),
+(8,1,'PART-MBD-000002',6,'MBD',11,8,'GIGABYTE Aorus X870 Stealth Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,1,'1899.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158365.png',17,NULL,'2026-02-11 18:53:57','2026-07-09 14:17:47',NULL),
+(9,1,'PART-MBD-000003',6,'MBD',11,9,'ASUS ROG Crosshair X870e Hero',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131661.png',40,NULL,'2026-02-11 18:53:57','2026-08-01 05:23:51',NULL),
+(10,1,'PART-SSD-000001',2,'SSD',56,1,'SAMSUNG 990 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 4',NULL,'2TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131569.png',43,NULL,'2026-02-11 19:04:35','2026-07-09 15:36:25',NULL),
+(11,1,'PART-MBD-000002',2,'SSD',55,1,'SAMSUNG 9100 Pro 1TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'1TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103110.png',39,NULL,'2026-02-11 19:04:35','2026-08-01 05:23:51',NULL),
+(12,1,'PART-MBD-000003',2,'SSD',56,1,'SAMSUNG 9100 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'2TB',NULL,NULL,NULL,'1499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103086.png',19,NULL,'2026-02-11 19:04:35','2026-07-09 14:17:47',NULL),
+(13,1,'PART-PSU-000001',7,'PSU',50,8,'GIGABYTE Aorus Elite AE850W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159225.png',36,NULL,'2026-02-11 19:12:30','2026-08-01 05:23:51',NULL),
+(14,1,'PART-PSU-000002',7,'PSU',51,10,'CORSAIR RM1000X Shift',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Gold','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'959.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159043.png',26,NULL,'2026-02-11 19:12:30','2026-02-26 18:24:03',NULL),
+(15,1,'PART-PSU-000003',7,'PSU',52,9,'ASUS ROG Thor III 1200W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'Black',NULL,'2499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159078.png',35,NULL,'2026-02-11 19:12:30','2026-07-09 14:17:47',NULL),
+(16,1,'PART-GPU-000001',3,'GPU',40,9,'ASUS ROG Strix RTX 5070 Ti 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'8GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131755.png',42,NULL,'2026-02-12 02:36:59','2026-07-09 15:36:25',NULL),
+(17,1,'PART-GPU-000002',3,'GPU',42,9,'ASUS ROG Astral RTX 5090 32GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'12GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'19399.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131722.png',38,NULL,'2026-02-12 02:36:59','2026-08-01 05:23:51',NULL),
+(18,1,'PART-GPU-000003',3,'GPU',41,11,'MSI Trio X White RTX 5080 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'16GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'7099.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131106.png',32,NULL,'2026-02-12 02:36:59','2026-08-01 04:54:25',NULL),
+(19,1,'PART-GPU-000004',3,'GPU',38,11,'MSI Ventus 2X OC PLUS RTX 5060 Ti 16GB',0,NULL,NULL,'AMD',NULL,NULL,NULL,'',NULL,'32GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'2999.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772130424.png',45,NULL,'2026-02-12 02:36:59','2026-02-26 10:27:04',NULL),
+(20,1,'PART-AIO-000001',11,'AIO',46,14,'ARCTIC Liquid Freezer III Pro ARGB 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','None',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'639.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131017.png',34,NULL,'2026-02-12 02:45:27','2026-07-09 15:36:25',NULL),
+(21,1,'PART-AIO-000002',11,'AIO',46,12,'NZXT Kraken Elite 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103657.png',44,NULL,'2026-02-12 02:45:27','2026-02-26 03:00:59',NULL),
+(22,1,'PART-AIO-000003',11,'AIO',46,13,'LIAN LI Hydroshift ii LCD-C 360 Fanless',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'769.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131504.png',19,NULL,'2026-02-12 02:45:27','2026-08-01 05:23:51',NULL),
+(23,1,'PART-RAM-000001',5,'RAM',28,17,'G.SKILL Trident Z5 Neo RGB DDR5 CL30 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL30',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158970.png',43,NULL,'2026-02-12 02:56:11','2026-07-09 15:36:25',NULL),
+(24,1,'PART-RAM-000002',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL26',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','Gold',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158918.png',23,NULL,'2026-02-12 02:56:11','2026-08-01 05:23:51',NULL),
+(25,1,'PART-RAM-000003',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL28',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'6109.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158950.png',11,NULL,'2026-02-12 02:56:11','2026-02-26 18:22:30',NULL),
+(26,1,'PART-CSE-000001',9,'CSE',20,12,'NZXT H9 Elite',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772130298.png',43,NULL,'2026-02-12 03:06:31','2026-07-09 15:36:25',NULL),
+(27,1,'PART-CSE-000002',9,'CSE',20,12,'NZXT H9 Flow RGB',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772103870.png',40,NULL,'2026-02-12 03:06:31','2026-08-01 05:23:51',NULL),
+(28,1,'PART-CSE-000003',9,'CSE',20,13,'LIAN LI O11 Vision Compact',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX, Back Connect',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'539.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131463.png',29,NULL,'2026-02-12 03:06:31','2026-02-26 10:44:23',NULL),
+(29,1,'PART-CSE-000004',9,'CSE',19,16,'HAVN HS 420',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'899.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772159360.png',34,NULL,'2026-02-12 03:06:31','2026-07-09 14:17:47',NULL),
+(30,1,'PART-CSE-000005',9,'CSE',21,15,'JONSBO D31 Screen',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'439.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131185.png',46,NULL,'2026-02-12 03:06:31','2026-02-26 10:39:45',NULL),
+(31,0,'PART-FAN-000001',10,'FAN',22,14,'ARCTIC P12 PWM',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','Black',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130982.png',50,NULL,'2026-02-12 03:23:12','2026-02-26 10:36:22',NULL),
+(32,0,'PART-FAN-000002',10,'FAN',22,12,'NZXT F360',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB, 3x',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'598.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130370.png',41,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:10',NULL),
+(33,0,'PART-FAN-000003',10,'FAN',22,12,'NZXT F120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130392.png',48,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:32',NULL),
+(34,0,'PART-FAN-000004',10,'FAN',22,13,'LIAN LI SL INF 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130933.png',35,NULL,'2026-02-12 03:23:12','2026-07-09 14:17:47',NULL),
+(35,0,'PART-FAN-000005',10,'FAN',24,13,'LIAN LI SL INF REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'24','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159471.png',36,NULL,'2026-02-12 03:23:12','2026-02-26 18:31:11',NULL),
+(36,0,'PART-FAN-000006',10,'FAN',22,13,'LIAN LI TL LCD 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'269.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130903.png',50,NULL,'2026-02-12 03:23:12','2026-02-26 10:35:03',NULL),
+(37,0,'PART-FAN-000007',10,'FAN',22,13,'LIAN LI TL LCD REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'269.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159443.png',46,NULL,'2026-02-12 03:23:12','2026-02-26 18:30:43',NULL),
+(38,0,'PART-FAN-000008',10,'FAN',23,13,'LIAN LI TL LCD 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130678.png',32,NULL,'2026-02-12 03:23:12','2026-07-09 15:36:25',NULL),
+(39,0,'PART-FAN-000009',10,'FAN',23,13,'LIAN LI TL LCD REV 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159425.png',9,NULL,'2026-02-12 03:23:12','2026-08-01 05:23:51',NULL),
+(40,0,'PART-ACC-SAG-000001',12,'ACC',31,9,'ASUS ROG Wingwall',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130575.png',46,NULL,'2026-02-12 03:26:48','2026-02-26 10:29:35',NULL),
+(41,0,'PART-ACC-CTL-000001',12,'ACC',33,13,'LIAN LI L- Wireless Controller',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'95.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130539.png',42,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:59',NULL),
+(42,0,'PART-ACC-HUB-000001',12,'ACC',32,13,'LIAN LI Edge Hub',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'89.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130511.png',37,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:31',NULL);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -3180,7 +3208,7 @@ CREATE TABLE `refunds` (
   KEY `refunds_plus_order_id_index` (`plus_order_id`),
   KEY `refunds_merch_order_id_index` (`merch_order_id`),
   KEY `refunds_thread_order_id_index` (`thread_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3302,7 +3330,7 @@ CREATE TABLE `serve_data` (
   KEY `idx_start_serve_enabled` (`start_serve_enabled`),
   KEY `idx_upgrade_pce_enabled` (`upgrade_pce_enabled`),
   KEY `idx_start_serve_date` (`start_serve_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3313,17 +3341,17 @@ LOCK TABLES `serve_data` WRITE;
 /*!40000 ALTER TABLE `serve_data` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `serve_data` VALUES
-(7,'QV-SRV-000001','PCE-2610-0001',19,2,3,0,NULL,NULL,0,NULL,'2026-03-21 05:11:40','2026-07-27 08:40:49',NULL),
-(8,'QV-SRV-000002','PCE-2610-0002',4,1,3,0,NULL,NULL,0,NULL,'2026-03-21 05:12:20','2026-07-27 08:40:49',NULL),
-(13,'QV-SRV-000003','PCE-2610-0003',20,3,3,1,'2026-07-09 14:34:00',1783607692,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer shows high engagement potential. Recommend premium package upgrade with additional features.','2026-07-09 14:21:57','2026-07-27 08:40:49',NULL),
-(23,'QV-SRV-000004','PCE-2610-0004',21,6,3,1,'2026-07-09 15:47:00',1783612136,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer feedback positive. Recommend adding support for additional users/teams.','2026-07-09 15:44:53','2026-07-27 08:40:49',NULL),
-(24,'QV-SRV-000005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-07-27 08:40:49',NULL),
-(27,'QV-SRV-000006','BEK-2304-0001',20,5,1,0,NULL,NULL,0,NULL,'2026-07-12 11:56:01','2026-07-27 08:40:49',NULL),
-(28,'QV-SRV-000007','BEK-2304-0002',20,8,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(29,'QV-SRV-000008','BEK-2304-0003',20,9,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(30,'QV-SRV-000009','MPS-0407-0002',20,10,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(31,'QV-SRV-000010','MPS-0407-0003',20,11,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-07-27 08:40:49',NULL),
-(33,'QV-SRV-000011','PCE-2610-0005',4,7,3,0,NULL,NULL,0,NULL,'2026-07-20 11:39:47','2026-07-27 08:40:49',NULL);
+(7,'QV-SERV-000001','PCE-2610-0001',19,2,3,0,NULL,NULL,0,NULL,'2026-03-21 05:11:40','2026-08-01 16:10:09',NULL),
+(8,'QV-SERV-000002','PCE-2610-0002',4,1,3,0,NULL,NULL,0,NULL,'2026-03-21 05:12:20','2026-08-01 16:10:09',NULL),
+(13,'QV-SERV-000003','PCE-2610-0003',20,3,3,1,'2026-07-09 14:34:00',1783607692,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer shows high engagement potential. Recommend premium package upgrade with additional features.','2026-07-09 14:21:57','2026-08-01 16:10:09',NULL),
+(23,'QV-SERV-000004','PCE-2610-0004',21,6,3,1,'2026-07-09 15:47:00',1783612136,1,'Current Tier: Collectorâs Edition (RM400.00)\n\nCustomer feedback positive. Recommend adding support for additional users/teams.','2026-07-09 15:44:53','2026-08-01 16:10:09',NULL),
+(24,'QV-SERV-000005','MPS-0407-0001',20,4,2,0,NULL,NULL,0,NULL,'2026-07-12 11:40:41','2026-08-01 16:10:09',NULL),
+(27,'QV-SERV-000006','BEK-2304-0001',20,5,1,0,NULL,NULL,0,NULL,'2026-07-12 11:56:01','2026-08-01 16:10:09',NULL),
+(28,'QV-SERV-000007','BEK-2304-0002',20,8,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-08-01 16:10:09',NULL),
+(29,'QV-SERV-000008','BEK-2304-0003',20,9,1,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-08-01 16:10:09',NULL),
+(30,'QV-SERV-000009','MPS-0407-0002',20,10,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-08-01 16:10:09','2026-08-01 03:28:01'),
+(31,'QV-SERV-000010','MPS-0407-0003',20,11,2,0,NULL,NULL,0,NULL,'2026-07-12 12:24:24','2026-08-01 16:10:09',NULL),
+(33,'QV-SERV-000011','PCE-2610-0005',4,7,3,0,NULL,NULL,0,NULL,'2026-07-20 11:39:47','2026-08-01 16:10:09',NULL);
 /*!40000 ALTER TABLE `serve_data` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -3839,7 +3867,7 @@ CREATE TABLE `thread_orders` (
   UNIQUE KEY `thread_orders_thread_order_id_unique` (`thread_order_id`),
   KEY `thread_orders_customer_id_index` (`customer_id`),
   KEY `thread_orders_order_id_index` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3863,7 +3891,8 @@ DROP TABLE IF EXISTS `uat_meeting`;
 CREATE TABLE `uat_meeting` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `meeting_id` bigint(20) unsigned NOT NULL,
-  `initial_budget` decimal(10,2) DEFAULT NULL,
+  `uat_id` varchar(255) NOT NULL DEFAULT 'NULL',
+  `initial_budget` decimal(10,2) DEFAULT 0.00,
   `reason` tinyint(4) NOT NULL COMMENT '1: Work, 2: Gaming',
   `play_mode` tinyint(4) DEFAULT NULL COMMENT '1: Multiplayer, 2: Singleplayer',
   `include_monitor` tinyint(1) DEFAULT NULL,
@@ -3884,13 +3913,13 @@ CREATE TABLE `uat_meeting` (
   `qvtd_notes` text DEFAULT NULL,
   `target_build_date` datetime DEFAULT NULL,
   `target_location` varchar(191) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `uat_meeting_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `uat_meeting_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3901,10 +3930,10 @@ LOCK TABLES `uat_meeting` WRITE;
 /*!40000 ALTER TABLE `uat_meeting` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `uat_meeting` VALUES
-(2,13,10000.00,2,2,1,'Customer confirmed monitor and peripheral bundle at UAT walkthrough','Customer approved final build spec, signed off on wood panel finish','wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-20 10:00:00','2026-07-20 10:00:00',NULL),
-(3,14,6000.00,2,2,NULL,NULL,'Customer reviewed cable colour sample, approved dual-colour sleeving','premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour - confirmed at UAT','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-20 11:30:00','2026-07-20 11:30:00',NULL),
-(4,15,6500.00,1,NULL,0,NULL,'Follow-up UAT for workstation reconfirmation, budget revised up',NULL,'quiet cooling preferred',NULL,1,3,1,0,0,0,1,0,0,NULL,'2026-08-05 14:00:00','kota damansara seksyen 7','2026-07-21 09:00:00','2026-07-21 09:00:00',NULL),
-(5,16,4500.00,2,1,0,NULL,'Initial UAT check-in, spec still being finalised',NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-22 15:00:00','2026-07-22 15:00:00',NULL);
+(2,13,'CONS-UAT-000001-01',10000.00,2,2,1,'Customer confirmed monitor and peripheral bundle at UAT walkthrough','Customer approved final build spec, signed off on wood panel finish','wood','none','none',1,3,1,1,0,1,1,1,0,NULL,'2026-07-29 22:30:00','no 2, jalan bangsar','2026-07-20 10:00:00','2026-07-30 16:38:53',NULL),
+(3,14,'CONS-UAT-000002-01',6000.00,2,2,NULL,NULL,'Customer reviewed cable colour sample, approved dual-colour sleeving','premium minimal wood accent','rog but can go asus or giga','asrock',1,3,1,1,1,0,1,1,1,'gpu cable dual colour - confirmed at UAT','2026-08-10 17:45:00','kota damansara seksyen 7','2026-07-20 11:30:00','2026-07-30 16:38:53',NULL),
+(4,15,'CONS-UAT-000003-01',6500.00,1,NULL,0,NULL,'Follow-up UAT for workstation reconfirmation, budget revised up',NULL,'quiet cooling preferred',NULL,1,3,1,0,0,0,1,0,0,NULL,'2026-08-05 14:00:00','kota damansara seksyen 7','2026-07-21 09:00:00','2026-07-30 16:38:53',NULL),
+(5,16,'CONS-UAT-000004-01',4500.00,2,1,0,NULL,'Initial UAT check-in, spec still being finalised',NULL,NULL,NULL,0,NULL,0,NULL,0,0,0,0,0,NULL,NULL,NULL,'2026-07-22 15:00:00','2026-07-30 16:38:53',NULL);
 /*!40000 ALTER TABLE `uat_meeting` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -3956,4 +3985,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-07-27 14:24:52
+-- Dump completed on 2026-08-02  5:37:51
