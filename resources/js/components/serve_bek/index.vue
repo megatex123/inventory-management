@@ -143,7 +143,7 @@
     <!-- Error State -->
     <div v-else-if="error" class="alert alert-danger">
       {{ error }}
-      <button @click="fetchServeBeks" class="btn btn-sm btn-link">Retry</button>
+      <button @click="fetchList" class="btn btn-sm btn-link">Retry</button>
     </div>
 
     <!-- Data Table -->
@@ -156,17 +156,17 @@
                 <th>ID</th>
                 <th>QVSE CID</th>
                 <th>Serve Data ID</th>
-                <th>Start Date</th>
+                <sortable-th label="Start Date" sort-key="date_start" :current-sort="sortState" @sort="onSort" />
                 <th>Warranty</th>
                 <th>Troubleshooting</th>
                 <th>Cable Management</th>
                 <th>Dust Cleaning</th>
-                <th>Created</th>
+                <sortable-th label="Created" sort-key="created_at" :current-sort="sortState" @sort="onSort" />
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in serveBeks.data" :key="item.id">
+              <tr v-for="item in items" :key="item.id">
                 <td>{{ item.id }}</td>
                 <td>
                   <span class="badge bg-info" v-if="item.qvse_cid">
@@ -255,7 +255,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-if="serveBeks.data.length === 0" class="text-center py-5">
+        <div v-if="items.length === 0" class="text-center py-5">
           <i class="fas fa-inbox fa-3x text-muted"></i>
           <h4 class="mt-3">No ServeBek Records Found</h4>
           <p>Start by creating a new ServeBek record.</p>
@@ -265,53 +265,11 @@
         </div>
 
         <!-- Pagination -->
-        <div v-if="serveBeks.data.length > 0" class="d-flex justify-content-between align-items-center mt-3">
-          <div class="text-muted">
-            Showing {{ serveBeks.from || 0 }} to {{ serveBeks.to || 0 }} of {{ serveBeks.total || 0 }} records
-          </div>
-          <nav>
-            <ul class="pagination mb-0">
-              <li class="page-item" :class="{ disabled: !serveBeks.prev_page_url }">
-                <button
-                  class="page-link"
-                  @click="changePage(serveBeks.current_page - 1)"
-                  :disabled="!serveBeks.prev_page_url"
-                >
-                  Previous
-                </button>
-              </li>
-
-              <li
-                v-for="page in paginationRange"
-                :key="page"
-                class="page-item"
-                :class="{ active: page === serveBeks.current_page }"
-              >
-                <button class="page-link" @click="changePage(page)">
-                  {{ page }}
-                </button>
-              </li>
-
-              <li class="page-item" :class="{ disabled: !serveBeks.next_page_url }">
-                <button
-                  class="page-link"
-                  @click="changePage(serveBeks.current_page + 1)"
-                  :disabled="!serveBeks.next_page_url"
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-          <div class="form-inline">
-            <select v-model="perPage" @change="changePerPage" class="form-control form-control-sm">
-              <option value="10">10 per page</option>
-              <option value="25">25 per page</option>
-              <option value="50">50 per page</option>
-              <option value="100">100 per page</option>
-            </select>
-          </div>
-        </div>
+        <pagination-control
+            :meta="meta"
+            @page-change="onPageChange"
+            @per-page-change="onPerPageChange"
+        />
       </div>
     </div>
 
@@ -351,21 +309,19 @@
 
 <script>
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+import PaginationControl from '../shared/PaginationControl.vue';
+import SortableTh from '../shared/SortableTh.vue';
+import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 export default {
   name: 'ServeBekIndex',
-  components: { ColumnSearchPanel },
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
+  mixins: [sortablePaginationMixin],
   data() {
     return {
-      serveBeks: {
-        data: [],
-        current_page: 1,
-        per_page: 15,
-        total: 0,
-        last_page: 0,
-        from: 0,
-        to: 0,
-      },
+      items: [],
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
+      sortState: { key: 'created_at', dir: 'desc' },
       loading: true,
       error: null,
       deleting: false,
@@ -382,39 +338,8 @@ export default {
         date_from: '',
         date_to: '',
       },
-      perPage: 15,
       statistics: {},
     };
-  },
-  computed: {
-    paginationRange() {
-      const current = this.serveBeks.current_page;
-      const last = this.serveBeks.last_page;
-      const delta = 2;
-      const range = [];
-      const rangeWithDots = [];
-      let l;
-
-      for (let i = 1; i <= last; i++) {
-        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
-          range.push(i);
-        }
-      }
-
-      range.forEach((i) => {
-        if (l) {
-          if (i - l === 2) {
-            rangeWithDots.push(l + 1);
-          } else if (i - l !== 1) {
-            rangeWithDots.push('...');
-          }
-        }
-        rangeWithDots.push(i);
-        l = i;
-      });
-
-      return rangeWithDots;
-    }
   },
   watch: {
     filters: {
@@ -425,7 +350,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchServeBeks();
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -537,14 +462,16 @@ export default {
              !item.dust_cleaning.claimed;
     },
 
-    async fetchServeBeks() {
+    async fetchList() {
       this.loading = true;
       this.error = null;
 
       try {
         const params = {
-          page: this.serveBeks.current_page,
-          per_page: this.perPage,
+          page: this.meta.current_page,
+          per_page: this.meta.per_page,
+          sort_by: this.sortState.key,
+          sort_dir: this.sortState.dir,
           ...this.filters
         };
 
@@ -556,7 +483,8 @@ export default {
         });
 
         const response = await axios.get('/api/serve-beks', { params });
-        this.serveBeks = response.data.data;
+        this.items = response.data.data;
+        this.meta = response.data.meta;
       } catch (error) {
         console.error('Error fetching ServeBek records:', error);
         this.error = error.response && error.response.data && error.response.data.message
@@ -568,8 +496,8 @@ export default {
     },
 
     applyFilters() {
-      this.serveBeks.current_page = 1;
-      this.fetchServeBeks();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
 
     resetFilters() {
@@ -579,19 +507,7 @@ export default {
         date_from: '',
         date_to: '',
       };
-      this.serveBeks.current_page = 1;
-    },
-
-    changePage(page) {
-      if (page >= 1 && page <= this.serveBeks.last_page) {
-        this.serveBeks.current_page = page;
-        this.fetchServeBeks();
-      }
-    },
-
-    changePerPage() {
-      this.serveBeks.current_page = 1;
-      this.fetchServeBeks();
+      this.meta.current_page = 1;
     },
 
     confirmDelete(item) {
@@ -611,7 +527,7 @@ export default {
         this.itemToDelete = null;
 
         // Refresh the list
-        this.fetchServeBeks();
+        this.fetchList();
       } catch (error) {
         console.error('Error deleting ServeBek:', error);
         const message = error.response && error.response.data && error.response.data.message
@@ -639,9 +555,9 @@ export default {
         // already returns, so the claim date shows immediately instead of
         // waiting on a full list refetch.
         const updated = response.data.data;
-        const index = this.serveBeks.data.findIndex(item => item.id === id);
+        const index = this.items.findIndex(item => item.id === id);
         if (index !== -1 && updated) {
-          this.serveBeks.data.splice(index, 1, updated);
+          this.items.splice(index, 1, updated);
         }
 
       } catch (error) {

@@ -25962,6 +25962,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -25979,21 +25982,29 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ServeBekIndex',
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__["default"]],
   data: function data() {
     return {
-      serveBeks: {
-        data: [],
-        current_page: 1,
-        per_page: 15,
+      items: [],
+      meta: {
         total: 0,
-        last_page: 0,
-        from: 0,
-        to: 0
+        per_page: 15,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
       },
       loading: true,
       error: null,
@@ -26016,36 +26027,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         date_from: '',
         date_to: ''
       },
-      perPage: 15,
       statistics: {}
     };
-  },
-  computed: {
-    paginationRange: function paginationRange() {
-      var current = this.serveBeks.current_page;
-      var last = this.serveBeks.last_page;
-      var delta = 2;
-      var range = [];
-      var rangeWithDots = [];
-      var l;
-      for (var i = 1; i <= last; i++) {
-        if (i === 1 || i === last || i >= current - delta && i <= current + delta) {
-          range.push(i);
-        }
-      }
-      range.forEach(function (i) {
-        if (l) {
-          if (i - l === 2) {
-            rangeWithDots.push(l + 1);
-          } else if (i - l !== 1) {
-            rangeWithDots.push('...');
-          }
-        }
-        rangeWithDots.push(i);
-        l = i;
-      });
-      return rangeWithDots;
-    }
   },
   watch: {
     filters: {
@@ -26056,7 +26039,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     }
   },
   mounted: function mounted() {
-    this.fetchServeBeks();
+    this.fetchList();
     this.fetchStatistics();
   },
   methods: {
@@ -26164,7 +26147,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     canClaimDustCleaning: function canClaimDustCleaning(item) {
       return item.dust_cleaning && item.dust_cleaning.available && !item.dust_cleaning.claimed;
     },
-    fetchServeBeks: function fetchServeBeks() {
+    fetchList: function fetchList() {
       var _this2 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
         var params, response, _t2;
@@ -26175,8 +26158,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this2.error = null;
               _context2.p = 1;
               params = _objectSpread({
-                page: _this2.serveBeks.current_page,
-                per_page: _this2.perPage
+                page: _this2.meta.current_page,
+                per_page: _this2.meta.per_page,
+                sort_by: _this2.sortState.key,
+                sort_dir: _this2.sortState.dir
               }, _this2.filters); // Remove empty filters
               Object.keys(params).forEach(function (key) {
                 if (params[key] === '') {
@@ -26189,7 +26174,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
             case 2:
               response = _context2.v;
-              _this2.serveBeks = response.data.data;
+              _this2.items = response.data.data;
+              _this2.meta = response.data.meta;
               _context2.n = 4;
               break;
             case 3:
@@ -26208,8 +26194,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     applyFilters: function applyFilters() {
-      this.serveBeks.current_page = 1;
-      this.fetchServeBeks();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     resetFilters: function resetFilters() {
       this.filters = {
@@ -26218,17 +26204,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         date_from: '',
         date_to: ''
       };
-      this.serveBeks.current_page = 1;
-    },
-    changePage: function changePage(page) {
-      if (page >= 1 && page <= this.serveBeks.last_page) {
-        this.serveBeks.current_page = page;
-        this.fetchServeBeks();
-      }
-    },
-    changePerPage: function changePerPage() {
-      this.serveBeks.current_page = 1;
-      this.fetchServeBeks();
+      this.meta.current_page = 1;
     },
     confirmDelete: function confirmDelete(item) {
       this.itemToDelete = item;
@@ -26257,7 +26233,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _this3.itemToDelete = null;
 
               // Refresh the list
-              _this3.fetchServeBeks();
+              _this3.fetchList();
               _context3.n = 5;
               break;
             case 4:
@@ -26302,11 +26278,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               // already returns, so the claim date shows immediately instead of
               // waiting on a full list refetch.
               updated = response.data.data;
-              index = _this4.serveBeks.data.findIndex(function (item) {
+              index = _this4.items.findIndex(function (item) {
                 return item.id === id;
               });
               if (index !== -1 && updated) {
-                _this4.serveBeks.data.splice(index, 1, updated);
+                _this4.items.splice(index, 1, updated);
               }
               _context4.n = 4;
               break;
@@ -75331,7 +75307,7 @@ var render = function render() {
   }, [_vm._v("\n    " + _vm._s(_vm.error) + "\n    "), _c("button", {
     staticClass: "btn btn-sm btn-link",
     on: {
-      click: _vm.fetchServeBeks
+      click: _vm.fetchList
     }
   }, [_vm._v("Retry")])]) : _c("div", {
     staticClass: "card"
@@ -75341,7 +75317,25 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table table-hover"
-  }, [_vm._m(8), _vm._v(" "), _c("tbody", _vm._l(_vm.serveBeks.data, function (item) {
+  }, [_c("thead", [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("th", [_vm._v("Serve Data ID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Start Date",
+      "sort-key": "date_start",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Warranty")]), _vm._v(" "), _c("th", [_vm._v("Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("Cable Management")]), _vm._v(" "), _c("th", [_vm._v("Dust Cleaning")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Created",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.items, function (item) {
     return _c("tr", {
       key: item.id
     }, [_c("td", [_vm._v(_vm._s(item.id))]), _vm._v(" "), _c("td", [item.qvse_cid ? _c("span", {
@@ -75426,7 +75420,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), 0)])]), _vm._v(" "), _vm.serveBeks.data.length === 0 ? _c("div", {
+  }), 0)])]), _vm._v(" "), _vm.items.length === 0 ? _c("div", {
     staticClass: "text-center py-5"
   }, [_c("i", {
     staticClass: "fas fa-inbox fa-3x text-muted"
@@ -75437,95 +75431,15 @@ var render = function render() {
     attrs: {
       to: "/serve-bek/create"
     }
-  }, [_vm._v("\n          Create New ServeBek\n        ")])], 1) : _vm._e(), _vm._v(" "), _vm.serveBeks.data.length > 0 ? _c("div", {
-    staticClass: "d-flex justify-content-between align-items-center mt-3"
-  }, [_c("div", {
-    staticClass: "text-muted"
-  }, [_vm._v("\n          Showing " + _vm._s(_vm.serveBeks.from || 0) + " to " + _vm._s(_vm.serveBeks.to || 0) + " of " + _vm._s(_vm.serveBeks.total || 0) + " records\n        ")]), _vm._v(" "), _c("nav", [_c("ul", {
-    staticClass: "pagination mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: !_vm.serveBeks.prev_page_url
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
+  }, [_vm._v("\n          Create New ServeBek\n        ")])], 1) : _vm._e(), _vm._v(" "), _c("pagination-control", {
     attrs: {
-      disabled: !_vm.serveBeks.prev_page_url
+      meta: _vm.meta
     },
     on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.serveBeks.current_page - 1);
-      }
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_vm._v("\n                Previous\n              ")])]), _vm._v(" "), _vm._l(_vm.paginationRange, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.serveBeks.current_page
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.changePage(page);
-        }
-      }
-    }, [_vm._v("\n                " + _vm._s(page) + "\n              ")])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: !_vm.serveBeks.next_page_url
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    attrs: {
-      disabled: !_vm.serveBeks.next_page_url
-    },
-    on: {
-      click: function click($event) {
-        return _vm.changePage(_vm.serveBeks.current_page + 1);
-      }
-    }
-  }, [_vm._v("\n                Next\n              ")])])], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "form-inline"
-  }, [_c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.perPage,
-      expression: "perPage"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.perPage = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
-      }, _vm.changePerPage]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "10"
-    }
-  }, [_vm._v("10 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "25"
-    }
-  }, [_vm._v("25 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "50"
-    }
-  }, [_vm._v("50 per page")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "100"
-    }
-  }, [_vm._v("100 per page")])])])]) : _vm._e()])]), _vm._v(" "), _vm.showDeleteModal ? _c("div", {
+  })], 1)]), _vm._v(" "), _vm.showDeleteModal ? _c("div", {
     staticClass: "modal fade show",
     staticStyle: {
       display: "block",
@@ -75647,10 +75561,6 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "sr-only"
   }, [_vm._v("Loading...")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("th", [_vm._v("Serve Data ID")]), _vm._v(" "), _c("th", [_vm._v("Start Date")]), _vm._v(" "), _c("th", [_vm._v("Warranty")]), _vm._v(" "), _c("th", [_vm._v("Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("Cable Management")]), _vm._v(" "), _c("th", [_vm._v("Dust Cleaning")]), _vm._v(" "), _c("th", [_vm._v("Created")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }];
 render._withStripped = true;
 
