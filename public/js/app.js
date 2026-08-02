@@ -24813,30 +24813,73 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_2__["default"]],
   data: function data() {
     return {
       employees: [],
-      searchItem: ''
+      searchItem: '',
+      loading: false,
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      }
     };
   },
   methods: {
-    getEmp: function getEmp() {
+    fetchList: function fetchList() {
       var _this = this;
+      this.loading = true;
       var id = this.$route.params.id;
-      axios.get('/api/salaryview/' + id).then(function (res) {
-        _this.employees = res.data;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.searchItem
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '' || params[key] === undefined) {
+          delete params[key];
+        }
+      });
+      axios.get('/api/salaryview/' + id, {
+        params: params
+      }).then(function (res) {
+        _this.employees = res.data.data || [];
+        if (res.data.meta) {
+          _this.meta = res.data.meta;
+        }
+        _this.loading = false;
       })["catch"](function (err) {
         console.error(err);
+        _this.loading = false;
       });
+    },
+    applyFilters: function applyFilters() {
+      this.meta.current_page = 1;
+      this.fetchList();
     }
   },
-  computed: {
-    filterSearch: function filterSearch() {
-      var _this2 = this;
-      return this.employees.filter(function (data) {
-        return data.salary_month.match(_this2.searchItem);
-      });
+  watch: {
+    searchItem: function searchItem() {
+      this.applyFilters();
     }
   },
   created: function created() {
@@ -24846,7 +24889,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
     ;
-    this.getEmp();
+    this.fetchList();
   }
 });
 
@@ -72079,7 +72122,7 @@ var render = function render() {
     attrs: {
       type: "text",
       id: "searchItems",
-      placeholder: "Search Employee By Phone"
+      placeholder: "Search Employee By Name"
     },
     domProps: {
       value: _vm.searchItem
@@ -72094,21 +72137,54 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.filterSearch, function (data) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Phone",
+      "sort-key": "phone",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Month")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Sallery",
+      "sort-key": "amount",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Date")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.employees, function (data) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(data.name))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.phone))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.salary_month))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.amount))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.salary_date))])]);
-  }), 0)])])]), _vm._v(" "), _c("div", {
+  }), 0)])]), _vm._v(" "), !_vm.loading && _vm.employees.length > 0 ? _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])])]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Phone")]), _vm._v(" "), _c("th", [_vm._v("Month")]), _vm._v(" "), _c("th", [_vm._v("Sallery")]), _vm._v(" "), _c("th", [_vm._v("Date")])])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 

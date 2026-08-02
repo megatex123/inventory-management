@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use App\Models\Salaries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SalariesController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      *
@@ -52,18 +55,48 @@ if($check){
         return response()->json($salary);
     }
 
-public function salaryview($id){
-    // $products=DB::table('salaries')->where('salary_month',$id)->get();
+public function salaryview(Request $request, $id){
+    $query = DB::table('salaries')
+        ->where('salary_month', $id)
+        ->join('employees', 'salaries.emp_id', 'employees.id')
+        ->select('employees.name', 'employees.phone', 'salaries.*');
 
+    // The page's search box used to filter on salaries.salary_month --
+    // a no-op, since this endpoint is already scoped to exactly one
+    // month via the {id} route param (every row shares the same
+    // value). Fixed to filter on the visible Name column instead.
+    $this->applyLikeFilter($query, $request, 'search', 'employees.name');
 
-    $products=DB::table('salaries')->where('salary_month',$id)
-    ->join('employees', 'salaries.emp_id','employees.id')
-    ->select('employees.name','employees.phone','salaries.*')
-    ->orderBy('salaries.id','DESC')
-    ->get();
+    // salaries and employees both have an unqualified `created_at`
+    // column, so an unqualified ORDER BY created_at is ambiguous SQL
+    // once the two tables are joined -- confirmed live (see task-2
+    // report). Rewrite the incoming sort_by so the allow-list entry
+    // presented to the trait/frontend stays the plain 'created_at'
+    // (matching the SortableTh sort-key and the allow-list documented
+    // in the plan), while the column resolveSortAndApply actually
+    // orders by is table-qualified.
+    if ($request->get('sort_by') === 'created_at') {
+        $request->merge(['sort_by' => 'salaries.created_at']);
+    }
 
+    // salary_date/salary_month/salary_year/emp_id are deliberately NOT
+    // sortable here -- see the plan's Global Constraints for why.
+    // amount is varchar(191) in the live schema, so it needs CAST for a
+    // numeric (not lexicographic) sort.
+    $this->resolveSortAndApply(
+        $query,
+        $request,
+        ['name', 'phone', 'amount', 'salaries.created_at'],
+        'salaries.id',
+        'salaries.id',
+        ['amount'],
+        'desc'
+    );
 
-    return response()->json($products);
+    $perPage = $this->resolvePerPage($request);
+    $paginator = $query->paginate($perPage);
+
+    return $this->paginatedResponse($paginator);
 }
     /**
      * Show the form for editing the specified resource.
