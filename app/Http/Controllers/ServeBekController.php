@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServeBek;
 use App\Models\ServeData;
 use App\Models\Serves;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,49 +13,45 @@ use Illuminate\Support\Facades\Validator;
 
 class ServeBekController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         try {
-            $query = ServeBek::with('serveData')
-                ->active()
-                ->orderBy('created_at', 'desc');
+            $query = ServeBek::with('serveData')->active();
 
-            // Filter by serve_data_id if provided
-            if ($request->has('serve_data_id')) {
-                $query->where('serve_data_id', $request->serve_data_id);
-            }
+            $this->applyEqualsFilter($query, $request, 'serve_data_id', 'serve_data_id');
 
-            // Search by qvse_cid through serveData relationship
-            if ($request->has('qvse_cid')) {
-                $query->whereHas('serveData', function ($q) use ($request) {
-                    $q->where('qvse_cid', 'like', '%' . $request->qvse_cid . '%');
+            $qvseCid = $request->input('qvse_cid');
+            if (is_scalar($qvseCid) && $qvseCid !== '') {
+                $escaped = addcslashes((string) $qvseCid, '%_\\');
+                $query->whereHas('serveData', function ($q) use ($escaped) {
+                    $q->where('qvse_cid', 'LIKE', '%' . $escaped . '%');
                 });
             }
 
-            // Filter by date range
-            if ($request->has('date_from')) {
-                $query->where('date_start', '>=', $request->date_from);
+            $dateFrom = $request->input('date_from');
+            if (is_scalar($dateFrom) && $dateFrom !== '') {
+                $query->where('date_start', '>=', $dateFrom);
             }
-            if ($request->has('date_to')) {
-                $query->where('date_start', '<=', $request->date_to);
+            $dateTo = $request->input('date_to');
+            if (is_scalar($dateTo) && $dateTo !== '') {
+                $query->where('date_start', '<=', $dateTo);
             }
 
-            $perPage = $request->per_page ?? 15;
-            $serveBeks = $query->paginate($perPage);
+            $this->resolveSortAndApply($query, $request, ['created_at', 'date_start'], 'created_at', 'id', [], 'desc');
 
-            // Transform the data if needed
-            $serveBeks->getCollection()->transform(function ($item) {
+            $perPage = $this->resolvePerPage($request, 15);
+            $results = $query->paginate($perPage);
+
+            $results->getCollection()->transform(function ($item) {
                 return $this->formatServeBekItem($item);
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $serveBeks,
-                'message' => 'ServeBek records retrieved successfully.'
-            ]);
+            return $this->paginatedResponse($results);
         } catch (\Exception $e) {
             Log::error('ServeBekController@index error: ' . $e->getMessage());
             return response()->json([
