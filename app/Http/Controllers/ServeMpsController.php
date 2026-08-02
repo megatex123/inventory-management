@@ -8,9 +8,12 @@ use App\Models\ServeData;
 use App\Models\Serves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class ServeMpsController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Display a listing of the resource with filters and statistics
      */
@@ -22,7 +25,7 @@ class ServeMpsController extends Controller
 
             // Apply filters
             if ($request->has('qvse_cid') && !empty($request->qvse_cid)) {
-                $query->where('qvse_cid', 'like', '%' . $request->qvse_cid . '%');
+                $query->where('qvse_cid', 'like', '%' . addcslashes($request->qvse_cid, '%_\\') . '%');
             }
 
             if ($request->has('date_start_from') && !empty($request->date_start_from)) {
@@ -86,11 +89,11 @@ class ServeMpsController extends Controller
                 $query->where('rm100_promo_code_next_build', 'like', '%' . $request->promo_code . '%');
             }
 
-            // Order by latest
-            $query->orderBy('created_at', 'desc');
+            // Order by
+            $this->resolveSortAndApply($query, $request, ['created_at', 'date_start'], 'created_at', 'id', [], 'desc');
 
             // Pagination
-            $perPage = $request->get('per_page', 10);
+            $perPage = $this->resolvePerPage($request, 10);
             $page = $request->get('page', 1);
 
             // Get paginated results
