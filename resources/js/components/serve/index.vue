@@ -232,9 +232,61 @@
             }
         },
         methods: {
+            // Renders the small subset of Markdown actually used in
+            // serves.description (### headers, **bold**, `code`, * bullet
+            // lists) -- no markdown library is installed in this project, and
+            // this admin-authored business text (eligibility rules, ID
+            // formats, perks) never needs anything beyond these four
+            // constructs. Escapes HTML first since the result is bound via
+            // v-html.
             formatDescription(text) {
                 if (!text) return '';
-                return text.replace(/\n/g, '<br>');
+
+                const escapeHtml = (str) => str.replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+
+                const lines = escapeHtml(text).split('\n');
+                let html = '';
+                let inList = false;
+
+                const closeList = () => {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                };
+
+                const inline = (line) => line
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/`(.+?)`/g, '<code>$1</code>');
+
+                lines.forEach(line => {
+                    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+                    const listItem = line.match(/^[*-]\s+(.*)$/);
+
+                    if (heading) {
+                        closeList();
+                        const level = Math.min(heading[1].length + 3, 6);
+                        html += `<h${level} class="description-heading">${inline(heading[2])}</h${level}>`;
+                    } else if (listItem) {
+                        if (!inList) {
+                            html += '<ul class="description-list">';
+                            inList = true;
+                        }
+                        html += `<li>${inline(listItem[1])}</li>`;
+                    } else if (line.trim() === '') {
+                        closeList();
+                    } else {
+                        closeList();
+                        html += `<div>${inline(line)}</div>`;
+                    }
+                });
+
+                closeList();
+                return html;
             },
             getTextColor(bgColor) {
                 if (!bgColor) return '#000';
@@ -495,6 +547,26 @@
 <style scoped>
     .table th, .table td {
         vertical-align: middle !important;
+    }
+
+    .description-heading {
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin: 0.5rem 0 0.15rem;
+        color: #4e73df;
+    }
+
+    .description-heading:first-child {
+        margin-top: 0;
+    }
+
+    .description-list {
+        margin: 0 0 0.25rem;
+        padding-left: 1.1rem;
+    }
+
+    .description-list li {
+        font-size: 0.85rem;
     }
 
     .serve-options {

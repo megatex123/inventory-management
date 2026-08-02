@@ -25270,9 +25270,52 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     };
   },
   methods: {
+    // Renders the small subset of Markdown actually used in
+    // serves.description (### headers, **bold**, `code`, * bullet
+    // lists) -- no markdown library is installed in this project, and
+    // this admin-authored business text (eligibility rules, ID
+    // formats, perks) never needs anything beyond these four
+    // constructs. Escapes HTML first since the result is bound via
+    // v-html.
     formatDescription: function formatDescription(text) {
       if (!text) return '';
-      return text.replace(/\n/g, '<br>');
+      var escapeHtml = function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+      };
+      var lines = escapeHtml(text).split('\n');
+      var html = '';
+      var inList = false;
+      var closeList = function closeList() {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+      };
+      var inline = function inline(line) {
+        return line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');
+      };
+      lines.forEach(function (line) {
+        var heading = line.match(/^(#{1,6})\s+(.*)$/);
+        var listItem = line.match(/^[*-]\s+(.*)$/);
+        if (heading) {
+          closeList();
+          var level = Math.min(heading[1].length + 3, 6);
+          html += "<h".concat(level, " class=\"description-heading\">").concat(inline(heading[2]), "</h").concat(level, ">");
+        } else if (listItem) {
+          if (!inList) {
+            html += '<ul class="description-list">';
+            inList = true;
+          }
+          html += "<li>".concat(inline(listItem[1]), "</li>");
+        } else if (line.trim() === '') {
+          closeList();
+        } else {
+          closeList();
+          html += "<div>".concat(inline(line), "</div>");
+        }
+      });
+      closeList();
+      return html;
     },
     getTextColor: function getTextColor(bgColor) {
       if (!bgColor) return '#000';
@@ -96605,7 +96648,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.table th[data-v-6c2d3852], .table td[data-v-6c2d3852] {\n    vertical-align: middle !important;\n}\n.serve-options[data-v-6c2d3852] {\n    display: flex;\n    flex-direction: column;\n    gap: 10px;\n    align-items: flex-start;\n}\n.serve-item[data-v-6c2d3852] {\n    display: flex;\n    align-items: left;\n    gap: 10px;\n    cursor: pointer;\n}\n.serve-badge[data-v-6c2d3852] {\n    padding: 8px 14px;\n    border-radius: 8px;\n    font-weight: 500;\n    white-space: nowrap;\n    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n    transition: all 0.15s ease;\n    min-width: 80px;\n    text-align: center;\n}\n.serve-item:hover .serve-badge[data-v-6c2d3852] {\n    transform: translateY(-1px);\n    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-6c2d3852] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-6c2d3852] {\n    gap: 0.5rem;\n}\n\n/* Read More button */\n.btn-link[data-v-6c2d3852] {\n    text-decoration: none;\n    font-size: 0.8em;\n    color: #007bff;\n}\n\n/* Color filter dropdown options */\nselect option[data-v-6c2d3852] {\n    padding: 8px !important;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-6c2d3852] {\n        flex-direction: column;\n        align-items: flex-start !important;\n}\n.table-responsive[data-v-6c2d3852] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-6c2d3852] {\n        margin-bottom: 10px;\n}\n.col-xl-3[data-v-6c2d3852] {\n        margin-bottom: 15px;\n}\n.serve-badge[data-v-6c2d3852] {\n        padding: 6px 10px;\n        font-size: 0.8em;\n}\n}\n.filter-panel-enter-active[data-v-6c2d3852],\n.filter-panel-leave-active[data-v-6c2d3852] {\n    transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-6c2d3852],\n.filter-panel-leave-to[data-v-6c2d3852] {\n    opacity: 0;\n    transform: translateY(-8px);\n}\n", ""]);
+exports.push([module.i, "\n.table th[data-v-6c2d3852], .table td[data-v-6c2d3852] {\n    vertical-align: middle !important;\n}\n.description-heading[data-v-6c2d3852] {\n    font-size: 0.85rem;\n    font-weight: 700;\n    margin: 0.5rem 0 0.15rem;\n    color: #4e73df;\n}\n.description-heading[data-v-6c2d3852]:first-child {\n    margin-top: 0;\n}\n.description-list[data-v-6c2d3852] {\n    margin: 0 0 0.25rem;\n    padding-left: 1.1rem;\n}\n.description-list li[data-v-6c2d3852] {\n    font-size: 0.85rem;\n}\n.serve-options[data-v-6c2d3852] {\n    display: flex;\n    flex-direction: column;\n    gap: 10px;\n    align-items: flex-start;\n}\n.serve-item[data-v-6c2d3852] {\n    display: flex;\n    align-items: left;\n    gap: 10px;\n    cursor: pointer;\n}\n.serve-badge[data-v-6c2d3852] {\n    padding: 8px 14px;\n    border-radius: 8px;\n    font-weight: 500;\n    white-space: nowrap;\n    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n    transition: all 0.15s ease;\n    min-width: 80px;\n    text-align: center;\n}\n.serve-item:hover .serve-badge[data-v-6c2d3852] {\n    transform: translateY(-1px);\n    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);\n}\n\n/* Active Filter Badges */\n.badge-info[data-v-6c2d3852] {\n    background-color: #36b9cc !important;\n    font-size: 0.75em;\n    padding: 0.4em 0.8em;\n}\n\n/* Gap utility for badges */\n.gap-2[data-v-6c2d3852] {\n    gap: 0.5rem;\n}\n\n/* Read More button */\n.btn-link[data-v-6c2d3852] {\n    text-decoration: none;\n    font-size: 0.8em;\n    color: #007bff;\n}\n\n/* Color filter dropdown options */\nselect option[data-v-6c2d3852] {\n    padding: 8px !important;\n}\n\n/* Responsive adjustments */\n@media (max-width: 768px) {\n.card-header[data-v-6c2d3852] {\n        flex-direction: column;\n        align-items: flex-start !important;\n}\n.table-responsive[data-v-6c2d3852] {\n        font-size: 0.8rem;\n}\n.col-md-3[data-v-6c2d3852] {\n        margin-bottom: 10px;\n}\n.col-xl-3[data-v-6c2d3852] {\n        margin-bottom: 15px;\n}\n.serve-badge[data-v-6c2d3852] {\n        padding: 6px 10px;\n        font-size: 0.8em;\n}\n}\n.filter-panel-enter-active[data-v-6c2d3852],\n.filter-panel-leave-active[data-v-6c2d3852] {\n    transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-6c2d3852],\n.filter-panel-leave-to[data-v-6c2d3852] {\n    opacity: 0;\n    transform: translateY(-8px);\n}\n", ""]);
 
 // exports
 
