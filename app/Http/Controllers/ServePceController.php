@@ -8,9 +8,12 @@ use App\Models\Serves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 
 class ServePceController extends Controller
 {
+    use FiltersSortsAndPaginates;
+
     /**
      * Resolve (or create) the ServePce record for a given order — same
      * order-row quick-launch pattern as ServeBek::getByOrder() /
@@ -69,9 +72,11 @@ class ServePceController extends Controller
         $query = ServePce::with(['serveData.customer']); // Load customer through serveData
 
         // Apply filters if provided
-        if ($request->has('qvse_cid') && !empty($request->qvse_cid)) {
-            $query->whereHas('serveData', function($q) use ($request) {
-                $q->where('qvse_cid', 'like', '%' . $request->qvse_cid . '%');
+        $qvseCid = $request->input('qvse_cid');
+        if (is_scalar($qvseCid) && $qvseCid !== '') {
+            $escaped = addcslashes((string) $qvseCid, '%_\\');
+            $query->whereHas('serveData', function ($q) use ($escaped) {
+                $q->where('qvse_cid', 'LIKE', '%' . $escaped . '%');
             });
         }
 
@@ -110,8 +115,10 @@ class ServePceController extends Controller
             $query->where('date_start', '<=', $request->start_date_to);
         }
 
+        $this->resolveSortAndApply($query, $request, ['created_at', 'date_start'], 'created_at', 'id', [], 'desc');
+
         // Pagination
-        $perPage = $request->get('per_page', 15);
+        $perPage = $this->resolvePerPage($request, 15);
         $page = $request->get('page', 1);
 
         $servePces = $query->paginate($perPage, ['*'], 'page', $page);
@@ -121,16 +128,9 @@ class ServePceController extends Controller
             return $this->formatServePceItem($item);
         });
 
-        return response()->json([
-            'success' => true,
-            'data' => $transformedData,
-            'meta' => [
-                'total' => $servePces->total(),
-                'per_page' => $servePces->perPage(),
-                'current_page' => $servePces->currentPage(),
-                'last_page' => $servePces->lastPage(),
-            ]
-        ]);
+        $servePces->setCollection($transformedData);
+
+        return $this->paginatedResponse($servePces);
     }
 
     public function store(Request $request)
