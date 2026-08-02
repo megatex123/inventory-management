@@ -205,6 +205,123 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
+    /**
+     * "All Orders" page (allorder.vue) — paginated/sorted/filtered version of
+     * getorders(). A separate implementation, not a wrapper: getorders() has
+     * 8 other consumers (order-picker dropdowns elsewhere in the app) that
+     * expect a bare unpaginated array and must not be touched by this batch.
+     */
+    public function allOrders(Request $request)
+    {
+        $query = Order::with([
+                'customer',
+                'craft',
+                'serve',
+                'care',
+                'care_data'
+            ]);
+
+        $this->applyLikeFilter($query, $request, 'order_id', 'order.order_id');
+        $this->applyLikeFilter($query, $request, 'total', 'order.total');
+
+        if (is_scalar($request->input('customer_name')) && $request->input('customer_name') !== '') {
+            $escaped = addcslashes((string) $request->input('customer_name'), '%_\\');
+            $query->whereHas('customer', function ($q) use ($escaped) {
+                $q->where('full_name', 'LIKE', '%' . $escaped . '%');
+            });
+        }
+
+        if (is_scalar($request->input('customer_email')) && $request->input('customer_email') !== '') {
+            $escaped = addcslashes((string) $request->input('customer_email'), '%_\\');
+            $query->whereHas('customer', function ($q) use ($escaped) {
+                $q->where('email', 'LIKE', '%' . $escaped . '%');
+            });
+        }
+
+        // Tri-state approve filter, matching allorder.vue's <select>: '1' =
+        // Approved, '0' = Rejected, 'null' (or omitted) = no filter is NOT
+        // correct here -- the frontend's 'null' option means "Draft" (approve
+        // IS NULL), while an omitted/empty param means "All" (no filter).
+        $approve = $request->input('approve');
+        if ($approve === '1' || $approve === 1) {
+            $query->where('order.approve', 1);
+        } elseif ($approve === '0' || $approve === 0) {
+            $query->where('order.approve', 0);
+        } elseif ($approve === 'null') {
+            $query->whereNull('order.approve');
+        }
+
+        $dateFrom = $request->input('date_from');
+        if (is_scalar($dateFrom) && $dateFrom !== '') {
+            $query->whereDate('order.order_date', '>=', $dateFrom);
+        }
+        $dateTo = $request->input('date_to');
+        if (is_scalar($dateTo) && $dateTo !== '') {
+            $query->whereDate('order.order_date', '<=', $dateTo);
+        }
+
+        // customer_name can't go through resolveSortAndApply()'s flat
+        // allow-list since it's a joined column -- same hand-kept pattern as
+        // ServeDataController's customer_name special case (Batch 25).
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDir = $request->get('sort_dir', 'desc');
+        if (!in_array($sortDir, ['asc', 'desc'], true)) {
+            $sortDir = 'desc';
+        }
+
+        if ($sortBy === 'customer_name') {
+            $query->leftJoin('customers', 'customers.id', '=', 'order.customer_id')
+                ->orderBy('customers.full_name', $sortDir)
+                ->orderBy('order.id', $sortDir)
+                ->select('order.*');
+        } else {
+            $this->resolveSortAndApply(
+                $query,
+                $request,
+                ['order_id', 'total', 'order_date', 'created_at'],
+                'created_at',
+                'id',
+                ['total'],
+                'desc'
+            );
+        }
+
+        $perPage = $this->resolvePerPage($request);
+        $paginator = $query->paginate($perPage);
+
+        $paginator->getCollection()->transform(function ($order) {
+            if ($order->approved_at) {
+                $today = Carbon::now();
+                $approvedAt = Carbon::parse($order->approved_at);
+                $expiryDate = $approvedAt->copy()->addMonths(6);
+
+                // No CareData exists when the customer opted out
+                // (skip_quivicare) at checkout -- guard against the null.
+                $order->care_price = optional($order->care_data->first())->price;
+
+                if ($today->gt($expiryDate)) {
+                    $order->time_remaining = "Expired";
+                    $order->months_remaining = 0;
+                    $order->days_remaining = 0;
+                } else {
+                    $diff = $today->diff($expiryDate);
+
+                    $order->months_remaining = $diff->m + ($diff->y * 12);
+                    $order->days_remaining = $diff->d;
+
+                    $order->time_remaining = $order->months_remaining . " Months " . $order->days_remaining . " Days";
+                }
+            } else {
+                $order->time_remaining = "Not Approved";
+                $order->months_remaining = null;
+                $order->days_remaining = null;
+            }
+            return $order;
+        });
+
+        return $this->paginatedResponse($paginator);
+    }
+
     public function details($id)
     {
         $order = Order::with(['customer', 'craft', 'serve', 'care', 'serve_data.serve', 'care_data.care'])->findOrFail($id);

@@ -92,6 +92,7 @@ Route::post('/orderdone', 'PosController@orderdone');
 
 Route::get('/orders', 'OrderController@getorders');
 Route::get('/orders/today', 'OrderController@today');
+Route::get('/orders/all', 'OrderController@allOrders');
 Route::get('/orders/details/{id}', 'OrderController@details');
 Route::get('/orders/orderdetails/{id}', 'OrderController@orderdetails');
 Route::put('/order/{id}/approve', 'OrderController@updateApprove');
