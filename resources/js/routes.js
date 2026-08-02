@@ -140,9 +140,6 @@ let invcarecreate = require('./components/inv_care/create.vue').default;
 let invcareedit = require('./components/inv_care/edit.vue').default;
 
 //inv excl serve
-let invexclserve = require('./components/inv_excl_serve/index.vue').default;
-let invexclservecreate = require('./components/inv_excl_serve/create.vue').default;
-let invexclserveedit = require('./components/inv_excl_serve/edit.vue').default;
 
 //merch items
 let merchitems = require('./components/merch_items/index.vue').default;
@@ -346,11 +343,6 @@ export const routes=[
       { path: '/inv-care', component: invcare, name: 'invcare', meta: { layout: 'app' } },
       { path: '/inv-care/create', component: invcarecreate, name: 'invcarecreate', meta: { layout: 'app' } },
       { path: '/inv-care/edit/:id', component: invcareedit, name: 'invcareedit', meta: { layout: 'app' } },
-
-      // inv-excl-serve
-      { path: '/inv-excl-serve', component: invexclserve, name: 'invexclserve', meta: { layout: 'app' } },
-      { path: '/inv-excl-serve/create', component: invexclservecreate, name: 'invexclservecreate', meta: { layout: 'app' } },
-      { path: '/inv-excl-serve/edit/:id', component: invexclserveedit, name: 'invexclserveedit', meta: { layout: 'app' } },
 
       // merch-items
       { path: '/merch-items', component: merchitems, name: 'merchitems', meta: { layout: 'app' } },

@@ -16,7 +16,6 @@ flowchart TD
     D -- approve=1 --> F[QuiviCraft:<br/>pre-build QC / Craft Inspection]
     D -- approve=1 --> G[QuiviServe]
     D -- approve=1 --> H[QuiviCare]
-    G --> L[Inventory Movement:<br/>InvExclServe]
     H --> K[Inventory Movement:<br/>InvCare]
     C --> M[Inventory Movement:<br/>InvMove ledger]
     F --> N[Customer Progress]
@@ -37,7 +36,7 @@ flowchart TD
 5. **[[QuiviCare]]** — repair/RMA and warranty program, spare-parts issuance.
 6. **[[Customer-Progress]]** — free-form staff status updates, not tied to any tier system.
 7. **[[Product-Warranty]]** — a standalone per-serial warranty registry that looks like it should auto-link to orders but doesn't.
-8. **[[Inventory-Movement]]** — the spare-parts/stock catalog (`MasterSku`) and ledger (`InvMove`), plus the `InvCare`/`InvExclServe` pools consumed by QuiviCare/QuiviServe.
+8. **[[Inventory-Movement]]** — the spare-parts/stock catalog (`MasterSku`) and ledger (`InvMove`), plus the `InvCare` pool consumed by QuiviCare (its QuiviServe counterpart, `InvExclServe`, was removed 2026-08-02).
 9. **[[QuiviMerch]]**, **[[QuiviPlus]]**, **[[QuiviThread]]** — merch store, paid add-on services, and the custom-cable BOM configurator. Unlike Serve/Care, none of these three auto-create from order approval — they're opt-in and staff-initiated, with an optional link back to a `Customer`/`Order`.
 10. **[[HR-Operations]]** — `Employees`/`Salaries`/`Expenses`, entirely disconnected from the customer/order flow above.
 

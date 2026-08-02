@@ -340,21 +340,6 @@ Route::prefix('inv-care')->group(function () {
     });
 });
 
-Route::prefix('inv-excl-serve')->group(function () {
-    Route::get('/', 'InvExclServeController@index');
-    Route::post('/', 'InvExclServeController@store');
-    Route::get('/statistics', 'InvExclServeController@statistics');
-    Route::get('/search', 'InvExclServeController@search');
-
-    Route::prefix('{id}')->group(function () {
-        Route::get('/', 'InvExclServeController@show');
-        Route::get('/edit', 'InvExclServeController@edit');
-        Route::put('/', 'InvExclServeController@update');
-        Route::patch('/', 'InvExclServeController@update');
-        Route::delete('/', 'InvExclServeController@destroy');
-    });
-});
-
 Route::prefix('inventory-movements')->group(function () {
     Route::get('/', 'InventoryMovementController@index');
     Route::post('/', 'InventoryMovementController@store');

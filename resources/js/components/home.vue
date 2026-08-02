@@ -296,7 +296,6 @@ export default {
             careDistribution: [],
             inspectionStats: {},
             careStats: {},
-            serveStats: {},
             merchStats: {},
             plusStats: {},
             threadStats: {},
@@ -307,7 +306,6 @@ export default {
     computed: {
         totalLowStock() {
             return (this.careStats.low_stock_count || 0)
-                + (this.serveStats.low_stock_count || 0)
                 + (this.invMerchStats.low_stock_count || 0)
                 + (this.invThreadStats.low_stock_count || 0);
         }
@@ -316,7 +314,6 @@ export default {
         this.fetchOrderStats();
         this.fetchInspectionStats();
         this.fetchCareStats();
-        this.fetchServeStats();
         this.fetchMerchStats();
         this.fetchPlusStats();
         this.fetchThreadStats();
@@ -353,11 +350,6 @@ export default {
         fetchCareStats(){
             axios.get('/api/inv-care/statistics')
                 .then(res => { this.careStats = res.data.data || {}; })
-                .catch(() => {});
-        },
-        fetchServeStats(){
-            axios.get('/api/inv-excl-serve/statistics')
-                .then(res => { this.serveStats = res.data.data || {}; })
                 .catch(() => {});
         },
         fetchMerchStats(){

@@ -45,10 +45,6 @@ class MasterSku extends Model {
         return $this->hasMany(InvCare::class, 'sku_code', 'sku_code');
     }
 
-    public function invExclServe() {
-        return $this->hasMany(InvExclServe::class, 'sku_code', 'sku_code');
-    }
-
     public function invMoves() {
         return $this->hasMany(InvMove::class, 'master_sku_id');
     }
