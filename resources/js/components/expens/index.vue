@@ -34,14 +34,14 @@
                     <thead class="thead-light">
                       <tr>
                         <th>ID</th>
-                        <th>Amount</th>
-                        <th>Expens Date</th>
-                        <th>Details</th>
+                        <sortable-th label="Amount" sort-key="amount" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Expens Date" sort-key="expenses_date" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Details" sort-key="details" :current-sort="sortState" @sort="onSort" />
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for='(data,index) in filterSearch' :key="index" >
+                      <tr v-for='(data,index) in categories' :key="data.id" >
 
                         <td>{{index+1}}</td>
                         <td>{{data.amount}}</td>
@@ -57,6 +57,13 @@
                     </tbody>
                   </table>
                 </div>
+                <div class="card-footer" v-if="categories.length > 0">
+                    <pagination-control
+                        :meta="meta"
+                        @page-change="onPageChange"
+                        @per-page-change="onPerPageChange"
+                    />
+                </div>
                 </div>
                                     <div class="text-center">
                                     </div>
@@ -71,33 +78,62 @@
 </template>
 <script>
     import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+    import PaginationControl from '../shared/PaginationControl.vue';
+    import SortableTh from '../shared/SortableTh.vue';
+    import sortablePaginationMixin from '../../mixins/sortablePagination';
 
     export default {
-        components: { ColumnSearchPanel },
+        components: { ColumnSearchPanel, PaginationControl, SortableTh },
+        mixins: [sortablePaginationMixin],
         data() {
             return {
 categories: [],
+loading: false,
 showFilters: false,
 filterColumns: [
-    { key: 'details', label: 'Details', type: 'text' },
+    { key: 'search', label: 'Details', type: 'text' },
 ],
 filters: {
-    details: '',
+    search: '',
 },
+meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
+sortState: { key: 'created_at', dir: 'desc' },
             }
         },
         methods: {
-getEmp(){
-    axios.get('/api/expens')
+fetchList(){
+    this.loading = true;
+
+    const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search
+    };
+
+    Object.keys(params).forEach(key => {
+        if (params[key] === '' || params[key] === undefined) {
+            delete params[key];
+        }
+    });
+
+    axios.get('/api/expens', { params })
 .then(res => {
-    this.categories=res.data;
-    // console.log(res.data)
+    this.categories = res.data.data || [];
+    if (res.data.meta) {
+        this.meta = res.data.meta;
+    }
+    this.loading = false;
 })
 .catch(err => {
-    // console.error(err);
        notification.error();
-
+    this.loading = false;
 })
+},
+applyFilters(){
+    this.meta.current_page = 1;
+    this.fetchList();
 },
 deleteExpens(id){
 
@@ -131,12 +167,13 @@ axios.delete("/api/expens/"+id)
 })
 }
         },
-        computed: {
-filterSearch(){
-    return this.categories.filter(data=>{
-        return data.details.match(this.filters.details)
-    })
-}
+        watch: {
+            filters: {
+                handler() {
+                    this.applyFilters();
+                },
+                deep: true
+            }
         },
        created() {
             if (!User.loggedIn()) {
@@ -144,7 +181,7 @@ filterSearch(){
                     name: 'login'
                 })
             };
-             this.getEmp();
+             this.fetchList();
 
         },
     }

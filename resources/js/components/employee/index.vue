@@ -34,15 +34,15 @@
                     <thead class="thead-light">
                       <tr>
                         <th>Photo</th>
-                        <th>Name</th>
-                        <th>Phone</th>
+                        <sortable-th label="Name" sort-key="name" :current-sort="sortState" @sort="onSort" />
+                        <sortable-th label="Phone" sort-key="phone" :current-sort="sortState" @sort="onSort" />
                         <th>Sallery</th>
-                        <th>Joining Date</th>
+                        <sortable-th label="Joining Date" sort-key="join_date" :current-sort="sortState" @sort="onSort" />
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for='data in filterSearch' :key="data.id" >
+                      <tr v-for='data in employees' :key="data.id" >
 
                         <td><img :src="data.photo" class="img-fluid" width='40px' height='40px' /></td>
                         <td>{{data.name}}</td>
@@ -59,6 +59,13 @@
                     </tbody>
                   </table>
                 </div>
+                <div class="card-footer" v-if="employees.length > 0">
+                    <pagination-control
+                        :meta="meta"
+                        @page-change="onPageChange"
+                        @per-page-change="onPerPageChange"
+                    />
+                </div>
                 </div>
                                     <div class="text-center">
                                     </div>
@@ -73,33 +80,62 @@
 </template>
 <script>
     import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+    import PaginationControl from '../shared/PaginationControl.vue';
+    import SortableTh from '../shared/SortableTh.vue';
+    import sortablePaginationMixin from '../../mixins/sortablePagination';
 
     export default {
-        components: { ColumnSearchPanel },
+        components: { ColumnSearchPanel, PaginationControl, SortableTh },
+        mixins: [sortablePaginationMixin],
         data() {
             return {
 employees: [],
+loading: false,
 showFilters: false,
 filterColumns: [
-    { key: 'phone', label: 'Phone', type: 'text' },
+    { key: 'search', label: 'Name / Phone / Email', type: 'text' },
 ],
 filters: {
-    phone: '',
+    search: '',
 },
+meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 },
+sortState: { key: 'created_at', dir: 'desc' },
             }
         },
         methods: {
-getEmp(){
-    axios.get('/api/employee')
+fetchList(){
+    this.loading = true;
+
+    const params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search
+    };
+
+    Object.keys(params).forEach(key => {
+        if (params[key] === '' || params[key] === undefined) {
+            delete params[key];
+        }
+    });
+
+    axios.get('/api/employee', { params })
 .then(res => {
-    this.employees=res.data;
-    // console.log(res.data)
+    this.employees = res.data.data || [];
+    if (res.data.meta) {
+        this.meta = res.data.meta;
+    }
+    this.loading = false;
 })
 .catch(err => {
-    // console.error(err);
        notification.error();
-
+    this.loading = false;
 })
+},
+applyFilters(){
+    this.meta.current_page = 1;
+    this.fetchList();
 },
 deleteEmp(id){
 
@@ -133,12 +169,13 @@ axios.delete("/api/employee/"+id)
 })
 }
         },
-        computed: {
-filterSearch(){
-    return this.employees.filter(data=>{
-        return data.phone.match(this.filters.phone)
-    })
-}
+        watch: {
+            filters: {
+                handler() {
+                    this.applyFilters();
+                },
+                deep: true
+            }
         },
        created() {
             if (!User.loggedIn()) {
@@ -146,7 +183,7 @@ filterSearch(){
                     name: 'login'
                 })
             };
-             this.getEmp();
+             this.fetchList();
 
         },
     }

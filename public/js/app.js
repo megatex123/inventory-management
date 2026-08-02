@@ -9675,35 +9675,77 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__["default"]],
   data: function data() {
     return {
       employees: [],
+      loading: false,
       showFilters: false,
       filterColumns: [{
-        key: 'phone',
-        label: 'Phone',
+        key: 'search',
+        label: 'Name / Phone / Email',
         type: 'text'
       }],
       filters: {
-        phone: ''
+        search: ''
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
       }
     };
   },
   methods: {
-    getEmp: function getEmp() {
+    fetchList: function fetchList() {
       var _this = this;
-      axios.get('/api/employee').then(function (res) {
-        _this.employees = res.data;
-        // console.log(res.data)
-      })["catch"](function (err) {
-        // console.error(err);
-        notification.error();
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '' || params[key] === undefined) {
+          delete params[key];
+        }
       });
+      axios.get('/api/employee', {
+        params: params
+      }).then(function (res) {
+        _this.employees = res.data.data || [];
+        if (res.data.meta) {
+          _this.meta = res.data.meta;
+        }
+        _this.loading = false;
+      })["catch"](function (err) {
+        notification.error();
+        _this.loading = false;
+      });
+    },
+    applyFilters: function applyFilters() {
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     deleteEmp: function deleteEmp(id) {
       var _this2 = this;
@@ -9731,12 +9773,12 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
-  computed: {
-    filterSearch: function filterSearch() {
-      var _this3 = this;
-      return this.employees.filter(function (data) {
-        return data.phone.match(_this3.filters.phone);
-      });
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   created: function created() {
@@ -9746,7 +9788,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
     ;
-    this.getEmp();
+    this.fetchList();
   }
 });
 
@@ -9861,35 +9903,77 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
+
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_3__["default"]],
   data: function data() {
     return {
       categories: [],
+      loading: false,
       showFilters: false,
       filterColumns: [{
-        key: 'details',
+        key: 'search',
         label: 'Details',
         type: 'text'
       }],
       filters: {
-        details: ''
+        search: ''
+      },
+      meta: {
+        total: 0,
+        per_page: 10,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
       }
     };
   },
   methods: {
-    getEmp: function getEmp() {
+    fetchList: function fetchList() {
       var _this = this;
-      axios.get('/api/expens').then(function (res) {
-        _this.categories = res.data;
-        // console.log(res.data)
-      })["catch"](function (err) {
-        // console.error(err);
-        notification.error();
+      this.loading = true;
+      var params = {
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir,
+        search: this.filters.search
+      };
+      Object.keys(params).forEach(function (key) {
+        if (params[key] === '' || params[key] === undefined) {
+          delete params[key];
+        }
       });
+      axios.get('/api/expens', {
+        params: params
+      }).then(function (res) {
+        _this.categories = res.data.data || [];
+        if (res.data.meta) {
+          _this.meta = res.data.meta;
+        }
+        _this.loading = false;
+      })["catch"](function (err) {
+        notification.error();
+        _this.loading = false;
+      });
+    },
+    applyFilters: function applyFilters() {
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     deleteExpens: function deleteExpens(id) {
       var _this2 = this;
@@ -9917,12 +10001,12 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
-  computed: {
-    filterSearch: function filterSearch() {
-      var _this3 = this;
-      return this.categories.filter(function (data) {
-        return data.details.match(_this3.filters.details);
-      });
+  watch: {
+    filters: {
+      handler: function handler() {
+        this.applyFilters();
+      },
+      deep: true
     }
   },
   created: function created() {
@@ -9932,7 +10016,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
     ;
-    this.getEmp();
+    this.fetchList();
   }
 });
 
@@ -45619,7 +45703,36 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.filterSearch, function (data) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("Photo")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Phone",
+      "sort-key": "phone",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Sallery")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Joining Date",
+      "sort-key": "join_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Action")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.employees, function (data) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_c("img", {
@@ -45650,17 +45763,21 @@ var render = function render() {
         }
       }
     }, [_vm._v("Delete ")])], 1)]);
-  }), 0)])])], 1), _vm._v(" "), _c("div", {
+  }), 0)])]), _vm._v(" "), _vm.employees.length > 0 ? _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1) : _vm._e()], 1), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])])]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Photo")]), _vm._v(" "), _c("th", [_vm._v("Name")]), _vm._v(" "), _c("th", [_vm._v("Phone")]), _vm._v(" "), _c("th", [_vm._v("Sallery")]), _vm._v(" "), _c("th", [_vm._v("Joining Date")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 
@@ -46085,9 +46202,38 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.filterSearch, function (data, index) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Amount",
+      "sort-key": "amount",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Expens Date",
+      "sort-key": "expenses_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Details",
+      "sort-key": "details",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Action")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.categories, function (data, index) {
     return _c("tr", {
-      key: index
+      key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.amount))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.expenses_date))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.details))]), _vm._v(" "), _c("td", [_c("router-link", {
       staticClass: "btn btn-sm btn-primary",
       attrs: {
@@ -46109,17 +46255,21 @@ var render = function render() {
         }
       }
     }, [_vm._v("Delete ")])], 1)]);
-  }), 0)])])], 1), _vm._v(" "), _c("div", {
+  }), 0)])]), _vm._v(" "), _vm.categories.length > 0 ? _c("div", {
+    staticClass: "card-footer"
+  }, [_c("pagination-control", {
+    attrs: {
+      meta: _vm.meta
+    },
+    on: {
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
+    }
+  })], 1) : _vm._e()], 1), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])])]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("ID")]), _vm._v(" "), _c("th", [_vm._v("Amount")]), _vm._v(" "), _c("th", [_vm._v("Expens Date")]), _vm._v(" "), _c("th", [_vm._v("Details")]), _vm._v(" "), _c("th", [_vm._v("Action")])])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 
