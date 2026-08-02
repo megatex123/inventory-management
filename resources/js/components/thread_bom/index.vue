@@ -2,11 +2,11 @@
   <div class="container-fluid my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="mb-1"><i class="fas fa-project-diagram text-primary mr-2"></i>QuiviThread BOM</h2>
+        <h2 class="mb-1"><i class="fas fa-project-diagram text-primary mr-2"></i>QuiviThread Bill Of Materials</h2>
         <p class="text-muted mb-0">Cable component bill-of-materials, by PSU brand and cable type</p>
       </div>
       <router-link to="/thread-bom/create" class="btn btn-primary">
-        <i class="fas fa-plus-circle mr-2"></i> Add BOM
+        <i class="fas fa-plus-circle mr-2"></i> Add Bill Of Materials
       </router-link>
     </div>
 

@@ -3,7 +3,7 @@
     <div class="card shadow-sm form-card">
       <div class="card-header bg-warning text-dark">
         <div class="d-flex justify-content-between align-items-center">
-          <h4 class="mb-0"><i class="fas fa-edit mr-2"></i>Edit QuiviThread BOM</h4>
+          <h4 class="mb-0"><i class="fas fa-edit mr-2"></i>Edit QuiviThread Bill Of Materials</h4>
           <router-link to="/thread-bom" class="btn btn-light btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back to List</router-link>
         </div>
       </div>
