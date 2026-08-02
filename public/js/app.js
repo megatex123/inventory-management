@@ -25246,6 +25246,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
@@ -25257,9 +25258,11 @@ function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Sym
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
@@ -25269,8 +25272,11 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         search: '',
         feeRange: '',
         color: '',
-        codeStartsWith: '',
-        sortBy: 'name'
+        codeStartsWith: ''
+      },
+      sortState: {
+        key: 'name',
+        dir: 'asc'
       },
       expandedDescriptions: [],
       availableColors: [],
@@ -25387,12 +25393,11 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         search: '',
         feeRange: '',
         color: '',
-        codeStartsWith: '',
-        sortBy: 'name'
+        codeStartsWith: ''
       };
     },
     removeFilter: function removeFilter(filterKey) {
-      if (this.filters[filterKey] !== undefined && filterKey !== 'sortBy') {
+      if (this.filters[filterKey] !== undefined) {
         this.filters[filterKey] = '';
       }
     },
@@ -25403,14 +25408,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           'low': 'Low Fee',
           'medium': 'Medium Fee',
           'high': 'High Fee'
-        },
-        sortBy: {
-          'name': 'Name A-Z',
-          'name_desc': 'Name Z-A',
-          'fee_low': 'Fee Low to High',
-          'fee_high': 'Fee High to Low',
-          'code': 'Code A-Z',
-          'code_desc': 'Code Z-A'
         }
       };
       if (key === 'search') {
@@ -25433,32 +25430,30 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       }
     },
     sortServes: function sortServes(serves) {
-      switch (this.filters.sortBy) {
-        case 'name_desc':
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return b.name.localeCompare(a.name);
-          });
-        case 'fee_low':
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return parseFloat(a.fee) - parseFloat(b.fee);
-          });
-        case 'fee_high':
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return parseFloat(b.fee) - parseFloat(a.fee);
+      var dir = this.sortState.dir === 'desc' ? -1 : 1;
+      var sorted = _toConsumableArray(serves);
+      switch (this.sortState.key) {
+        case 'fee':
+          return sorted.sort(function (a, b) {
+            return dir * (parseFloat(a.fee) - parseFloat(b.fee));
           });
         case 'code':
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return a.code.localeCompare(b.code);
-          });
-        case 'code_desc':
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return b.code.localeCompare(a.code);
+          return sorted.sort(function (a, b) {
+            return dir * (a.code || '').localeCompare(b.code || '');
           });
         case 'name':
         default:
-          return _toConsumableArray(serves).sort(function (a, b) {
-            return parseFloat(a.fee) - parseFloat(b.fee);
+          return sorted.sort(function (a, b) {
+            return dir * (a.name || '').localeCompare(b.name || '');
           });
+      }
+    },
+    onSort: function onSort(key) {
+      if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortState.key = key;
+        this.sortState.dir = 'asc';
       }
     }
   },
@@ -25551,9 +25546,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         var _ref2 = _slicedToArray(_ref, 2),
           key = _ref2[0],
           value = _ref2[1];
-        if (key === 'sortBy') {
-          return value !== 'name'; // Only show if not default
-        }
         return value !== '';
       });
     },
@@ -25563,7 +25555,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         var _ref4 = _slicedToArray(_ref3, 2),
           key = _ref4[0],
           value = _ref4[1];
-        if (value !== '' && !(key === 'sortBy' && value === 'name')) {
+        if (value !== '') {
           active[key] = value;
         }
       });
@@ -73737,54 +73729,7 @@ var render = function render() {
         value: code
       }
     }, [_vm._v("\n                                                            " + _vm._s(code) + "\n                                                        ")]);
-  })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "col-md-3 mb-2"
-  }, [_c("label", {
-    staticClass: "small font-weight-bold text-muted"
-  }, [_vm._v("Sort By")]), _vm._v(" "), _c("select", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.filters.sortBy,
-      expression: "filters.sortBy"
-    }],
-    staticClass: "form-control form-control-sm",
-    on: {
-      change: [function ($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
-          return o.selected;
-        }).map(function (o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val;
-        });
-        _vm.$set(_vm.filters, "sortBy", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
-      }, _vm.applyFilters]
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "name"
-    }
-  }, [_vm._v("Name (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "name_desc"
-    }
-  }, [_vm._v("Name (Z-A)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "fee_low"
-    }
-  }, [_vm._v("Fee (Low to High)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "fee_high"
-    }
-  }, [_vm._v("Fee (High to Low)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "code"
-    }
-  }, [_vm._v("Code (A-Z)")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "code_desc"
-    }
-  }, [_vm._v("Code (Z-A)")])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  })], 2)])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "row mt-2"
   }, [_c("div", {
     staticClass: "col-12"
@@ -73811,7 +73756,44 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredServes, function (data, index) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("ID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Name",
+      "sort-key": "name",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Code",
+      "sort-key": "code",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Colour")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Fee (RM)",
+      "sort-key": "fee",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Description")]), _vm._v(" "), _c("th", {
+    staticClass: "align-top"
+  }, [_vm._v("Action")])], 1)]), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredServes, function (data, index) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_vm._v(_vm._s(index + 1))]), _vm._v(" "), _c("td", [_c("div", {
@@ -73892,7 +73874,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), _vm._v(" "), _vm.filteredServes.length === 0 ? _c("tr", [_vm._m(2)]) : _vm._e()], 2)])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm.filteredServes.length === 0 ? _c("tr", [_vm._m(1)]) : _vm._e()], 2)])])]), _vm._v(" "), _c("div", {
     staticClass: "text-center"
   })])])])])])]);
 };
@@ -73906,26 +73888,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-filter mr-2"
   }), _vm._v("Filters\n                                                    ")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("ID")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Name")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Code")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Colour")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Fee (RM)")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Description")]), _vm._v(" "), _c("th", {
-    staticClass: "align-top"
-  }, [_vm._v("Action")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -86286,7 +86248,7 @@ var staticRenderFns = [function () {
     staticClass: "mb-0"
   }, [_c("i", {
     staticClass: "fas fa-plus-circle mr-2"
-  }), _vm._v("Add QuiviThread BOM")]);
+  }), _vm._v("Add QuiviThread Bill Of Materials")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -86657,7 +86619,7 @@ var staticRenderFns = [function () {
     staticClass: "mb-0"
   }, [_c("i", {
     staticClass: "fas fa-edit mr-2"
-  }), _vm._v("Edit QuiviThread BOM")]);
+  }), _vm._v("Edit QuiviThread Bill Of Materials")]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -86705,7 +86667,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-plus-circle mr-2"
-  }), _vm._v(" Add BOM\n    ")])], 1), _vm._v(" "), _c("div", {
+  }), _vm._v(" Add Bill Of Materials\n    ")])], 1), _vm._v(" "), _c("div", {
     staticClass: "row mb-4"
   }, [_c("div", {
     staticClass: "col-xl-4 col-md-6 mb-3"
@@ -86874,7 +86836,7 @@ var staticRenderFns = [function () {
     staticClass: "mb-1"
   }, [_c("i", {
     staticClass: "fas fa-project-diagram text-primary mr-2"
-  }), _vm._v("QuiviThread BOM")]), _vm._v(" "), _c("p", {
+  }), _vm._v("QuiviThread Bill Of Materials")]), _vm._v(" "), _c("p", {
     staticClass: "text-muted mb-0"
   }, [_vm._v("Cable component bill-of-materials, by PSU brand and cable type")])]);
 }, function () {

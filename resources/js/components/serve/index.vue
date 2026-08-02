@@ -73,23 +73,6 @@
                                                             </option>
                                                         </select>
                                                     </div>
-
-                                                    <!-- Sort By Filter -->
-                                                    <div class="col-md-3 mb-2">
-                                                        <label class="small font-weight-bold text-muted">Sort By</label>
-                                                        <select
-                                                            v-model="filters.sortBy"
-                                                            class="form-control form-control-sm"
-                                                            @change="applyFilters"
-                                                        >
-                                                            <option value="name">Name (A-Z)</option>
-                                                            <option value="name_desc">Name (Z-A)</option>
-                                                            <option value="fee_low">Fee (Low to High)</option>
-                                                            <option value="fee_high">Fee (High to Low)</option>
-                                                            <option value="code">Code (A-Z)</option>
-                                                            <option value="code_desc">Code (Z-A)</option>
-                                                        </select>
-                                                    </div>
                                                 </div>
 
                                                 <!-- Active Filters Badges -->
@@ -127,10 +110,10 @@
                                         <thead class="thead-light">
                                             <tr>
                                                 <th class="align-top">ID</th>
-                                                <th class="align-top">Name</th>
-                                                <th class="align-top">Code</th>
+                                                <sortable-th label="Name" sort-key="name" :current-sort="sortState" @sort="onSort" />
+                                                <sortable-th label="Code" sort-key="code" :current-sort="sortState" @sort="onSort" />
                                                 <th class="align-top">Colour</th>
-                                                <th class="align-top">Fee (RM)</th>
+                                                <sortable-th label="Fee (RM)" sort-key="fee" :current-sort="sortState" @sort="onSort" />
                                                 <th class="align-top">Description</th>
                                                 <th class="align-top">Action</th>
                                             </tr>
@@ -228,9 +211,10 @@
 
 <script>
     import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue';
+    import SortableTh from '../shared/SortableTh.vue';
 
     export default {
-        components: { ColumnSearchPanel },
+        components: { ColumnSearchPanel, SortableTh },
         data() {
             return {
                 serves: [],
@@ -239,9 +223,9 @@
                     search: '',
                     feeRange: '',
                     color: '',
-                    codeStartsWith: '',
-                    sortBy: 'name'
+                    codeStartsWith: ''
                 },
+                sortState: { key: 'name', dir: 'asc' },
                 expandedDescriptions: [],
                 availableColors: [],
                 availableCodePrefixes: []
@@ -362,12 +346,11 @@
                     search: '',
                     feeRange: '',
                     color: '',
-                    codeStartsWith: '',
-                    sortBy: 'name'
+                    codeStartsWith: ''
                 };
             },
             removeFilter(filterKey) {
-                if (this.filters[filterKey] !== undefined && filterKey !== 'sortBy') {
+                if (this.filters[filterKey] !== undefined) {
                     this.filters[filterKey] = '';
                 }
             },
@@ -378,14 +361,6 @@
                         'low': 'Low Fee',
                         'medium': 'Medium Fee',
                         'high': 'High Fee'
-                    },
-                    sortBy: {
-                        'name': 'Name A-Z',
-                        'name_desc': 'Name Z-A',
-                        'fee_low': 'Fee Low to High',
-                        'fee_high': 'Fee High to Low',
-                        'code': 'Code A-Z',
-                        'code_desc': 'Code Z-A'
                     }
                 };
 
@@ -414,20 +389,24 @@
                 }
             },
             sortServes(serves) {
-                switch (this.filters.sortBy) {
-                    case 'name_desc':
-                        return [...serves].sort((a, b) => b.name.localeCompare(a.name));
-                    case 'fee_low':
-                        return [...serves].sort((a, b) => parseFloat(a.fee) - parseFloat(b.fee));
-                    case 'fee_high':
-                        return [...serves].sort((a, b) => parseFloat(b.fee) - parseFloat(a.fee));
+                const dir = this.sortState.dir === 'desc' ? -1 : 1;
+                const sorted = [...serves];
+                switch (this.sortState.key) {
+                    case 'fee':
+                        return sorted.sort((a, b) => dir * (parseFloat(a.fee) - parseFloat(b.fee)));
                     case 'code':
-                        return [...serves].sort((a, b) => a.code.localeCompare(b.code));
-                    case 'code_desc':
-                        return [...serves].sort((a, b) => b.code.localeCompare(a.code));
+                        return sorted.sort((a, b) => dir * (a.code || '').localeCompare(b.code || ''));
                     case 'name':
                     default:
-                        return [...serves].sort((a, b) => parseFloat(a.fee) - parseFloat(b.fee));
+                        return sorted.sort((a, b) => dir * (a.name || '').localeCompare(b.name || ''));
+                }
+            },
+            onSort(key) {
+                if (this.sortState.key === key) {
+                    this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortState.key = key;
+                    this.sortState.dir = 'asc';
                 }
             }
         },
@@ -490,17 +469,12 @@
                 return filtered;
             },
             hasActiveFilters() {
-                return Object.entries(this.filters).some(([key, value]) => {
-                    if (key === 'sortBy') {
-                        return value !== 'name'; // Only show if not default
-                    }
-                    return value !== '';
-                });
+                return Object.entries(this.filters).some(([key, value]) => value !== '');
             },
             activeFilters() {
                 const active = {};
                 Object.entries(this.filters).forEach(([key, value]) => {
-                    if (value !== '' && !(key === 'sortBy' && value === 'name')) {
+                    if (value !== '') {
                         active[key] = value;
                     }
                 });
