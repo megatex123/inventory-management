@@ -24623,8 +24623,17 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     getEmp: function getEmp() {
       var _this = this;
-      axios.get('/api/employee').then(function (res) {
-        _this.employees = res.data;
+      // GET /api/employee now returns {success, data, meta} (Batch 32 of the
+      // List Page Standardization initiative added pagination/sort/filter) --
+      // was previously a bare array. Also request a high per_page, since this
+      // picker page has no pagination UI of its own and expects to see every
+      // employee.
+      axios.get('/api/employee', {
+        params: {
+          per_page: 100
+        }
+      }).then(function (res) {
+        _this.employees = res.data.data || [];
         // console.log(res.data)
       })["catch"](function (err) {
         // console.error(err);
