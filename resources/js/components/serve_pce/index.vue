@@ -139,7 +139,7 @@
                     <i class="fas fa-redo mr-1"></i> Reset Filters
                   </button>
                   <span class="ml-3 text-muted">
-                    Showing {{ filteredServePces.length }} of {{ servePces.length }} records
+                    Showing {{ servePces.length }} of {{ meta.total }} records
                     <span v-if="hasActiveFilters"> (filtered)</span>
                   </span>
                 </div>
@@ -240,18 +240,19 @@
               <thead class="thead-light">
                 <tr>
                   <th>QVSE CID</th>
-                  <th>Start Date</th>
+                  <sortable-th label="Start Date" sort-key="date_start" :current-sort="sortState" @sort="onSort" />
                   <th>3 Year Warranty</th>
                   <th>Unlimited Troubleshooting</th>
                   <th>50% Troubleshooting</th>
                   <th>Cable Management</th>
                   <th>Annual Dust Cleaning</th>
                   <th>Promo Code</th>
+                  <sortable-th label="Created" sort-key="created_at" :current-sort="sortState" @sort="onSort" />
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in paginatedServePces" :key="item.id">
+                <tr v-for="item in servePces" :key="item.id">
                   <td>
                     <strong>{{ item.qvse_cid || 'N/A' }}</strong>
                   </td>
@@ -295,6 +296,9 @@
                     <span v-else class="text-muted">-</span>
                   </td>
                   <td>
+                    {{ formatDate(item.created_at) }}
+                  </td>
+                  <td>
                     <div class="btn-group">
                       <router-link
                         :to="`/serve-pce/edit/${item.id}`"
@@ -325,31 +329,12 @@
           </div>
 
           <!-- Pagination -->
-          <div class="card-footer" v-if="!loading && servePces.length > 0 && totalPages > 1">
-            <nav aria-label="Record navigation">
-              <ul class="pagination justify-content-center mb-0">
-                <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                  <button class="page-link" @click="prevPage">
-                    <i class="fas fa-chevron-left"></i>
-                  </button>
-                </li>
-                <li
-                  class="page-item"
-                  v-for="page in totalPages"
-                  :key="page"
-                  :class="{ active: page === currentPage }"
-                >
-                  <button class="page-link" @click="goToPage(page)">
-                    {{ page }}
-                  </button>
-                </li>
-                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                  <button class="page-link" @click="nextPage">
-                    <i class="fas fa-chevron-right"></i>
-                  </button>
-                </li>
-              </ul>
-            </nav>
+          <div class="card-footer" v-if="!loading && servePces.length > 0">
+            <pagination-control
+                :meta="meta"
+                @page-change="onPageChange"
+                @per-page-change="onPerPageChange"
+            />
           </div>
         </div>
       </div>
@@ -361,10 +346,14 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import ColumnSearchPanel from '../shared/ColumnSearchPanel.vue'
+import PaginationControl from '../shared/PaginationControl.vue'
+import SortableTh from '../shared/SortableTh.vue'
+import sortablePaginationMixin from '../../mixins/sortablePagination'
 
 export default {
   name: 'ServePceIndex',
-  components: { ColumnSearchPanel },
+  components: { ColumnSearchPanel, PaginationControl, SortableTh },
+  mixins: [sortablePaginationMixin],
   data() {
     return {
       servePces: [],
@@ -377,10 +366,8 @@ export default {
         start_date_from: '',
         start_date_to: ''
       },
-      sortField: 'id',
-      sortDirection: 'asc',
-      currentPage: 1,
-      itemsPerPage: 10,
+      meta: { total: 0, per_page: 15, current_page: 1, last_page: 1 },
+      sortState: { key: 'created_at', dir: 'desc' },
       statistics: {
         total_records: 0,
         active_warranty: 0,
@@ -388,15 +375,6 @@ export default {
         available_promo_codes: 0,
         active_warranty_percentage: 0,
         expired_warranty_percentage: 0
-      },
-      // Add pagination meta data
-      paginationMeta: {
-        current_page: 1,
-        last_page: 1,
-        per_page: 10,
-        total: 0,
-        from: 0,
-        to: 0
       }
     }
   },
@@ -417,74 +395,6 @@ export default {
           { value: 'generated', label: 'Generated' },
         ] },
       ]
-    },
-    totalPages() {
-      return this.paginationMeta.last_page || 1
-    },
-    // Filter records based on filters
-    filteredServePces() {
-      let filtered = [...this.servePces]
-
-      // Apply local filtering if needed (fallback)
-      if (this.filters.qvse_cid) {
-        const searchTerm = this.filters.qvse_cid.toLowerCase()
-        filtered = filtered.filter(item =>
-          item.qvse_cid && item.qvse_cid.toLowerCase().includes(searchTerm)
-        )
-      }
-
-      if (this.filters.warranty_status) {
-        filtered = filtered.filter(item => {
-          const status = this.getWarrantyStatus(item.date_start)
-          return status.status === this.filters.warranty_status
-        })
-      }
-
-      if (this.filters.promo_status) {
-        filtered = filtered.filter(item => {
-          if (this.filters.promo_status === 'available') {
-            return item.promo_code && !item.promo_claim
-          } else if (this.filters.promo_status === 'claimed') {
-            return item.promo_claim
-          } else if (this.filters.promo_status === 'generated') {
-            return item.generate_code && !item.promo_claim
-          }
-          return true
-        })
-      }
-
-      // Date filtering
-      if (this.filters.start_date_from) {
-        const fromDate = new Date(this.filters.start_date_from)
-        filtered = filtered.filter(item => {
-          if (!item.date_start) return false
-          const itemDate = new Date(item.date_start)
-          return itemDate >= fromDate
-        })
-      }
-
-      if (this.filters.start_date_to) {
-        const toDate = new Date(this.filters.start_date_to)
-        filtered = filtered.filter(item => {
-          if (!item.date_start) return false
-          const itemDate = new Date(item.date_start)
-          return itemDate <= toDate
-        })
-      }
-
-      return filtered
-    },
-    // Get paginated data for display
-    paginatedServePces() {
-      // If using API pagination, return current page data
-      if (this.servePces.length <= this.itemsPerPage) {
-        return this.servePces
-      }
-
-      // If local filtering applied, do local pagination
-      const start = (this.currentPage - 1) * this.itemsPerPage
-      const end = start + this.itemsPerPage
-      return this.filteredServePces.slice(start, end)
     }
   },
   watch: {
@@ -496,14 +406,15 @@ export default {
     }
   },
   methods: {
-    fetchServePces(page = 1) {
+    fetchList() {
       this.loading = true
-      this.currentPage = page
 
       // Build query parameters for index method
       const params = {
-        page: page,
-        per_page: this.itemsPerPage
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir
       }
 
       // Only add filters that have values
@@ -535,24 +446,7 @@ export default {
 
             // Check for pagination meta
             if (res.data.meta) {
-              this.paginationMeta = {
-                current_page: res.data.meta.current_page || 1,
-                last_page: res.data.meta.last_page || 1,
-                per_page: res.data.meta.per_page || this.itemsPerPage,
-                total: res.data.meta.total || 0,
-                from: res.data.meta.from || 0,
-                to: res.data.meta.to || 0
-              }
-            } else {
-              // Fallback if no meta data
-              this.paginationMeta = {
-                current_page: 1,
-                last_page: 1,
-                per_page: this.servePces.length,
-                total: this.servePces.length,
-                from: 1,
-                to: this.servePces.length
-              }
+              this.meta = res.data.meta
             }
 
             // Update statistics if available in response
@@ -650,8 +544,8 @@ export default {
 
     // Apply filters - refetch data with new filters
     applyFilters() {
-      this.currentPage = 1
-      this.fetchServePces()
+      this.meta.current_page = 1
+      this.fetchList()
     },
 
     // Reset filters to default
@@ -663,7 +557,7 @@ export default {
         start_date_from: '',
         start_date_to: ''
       }
-      this.currentPage = 1
+      this.meta.current_page = 1
     },
 
     // Clear specific filter
@@ -682,31 +576,9 @@ export default {
       this.resetFilters()
     },
 
-    // Pagination methods
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        this.fetchServePces(this.currentPage)
-      }
-    },
-
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        this.fetchServePces(this.currentPage)
-      }
-    },
-
-    goToPage(page) {
-      if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-        this.currentPage = page
-        this.fetchServePces(page)
-      }
-    },
-
     // Refresh data
     refreshData() {
-      this.fetchServePces(this.currentPage)
+      this.fetchList()
       this.fetchStatistics()
       Swal.fire({
         icon: 'success',
@@ -971,7 +843,7 @@ export default {
   },
   created() {
     // Initial fetch
-    this.fetchServePces()
+    this.fetchList()
     this.fetchStatistics()
   }
 }

@@ -30884,6 +30884,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/ColumnSearchPanel.vue */ "./resources/js/components/shared/ColumnSearchPanel.vue");
+/* harmony import */ var _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/PaginationControl.vue */ "./resources/js/components/shared/PaginationControl.vue");
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+/* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -30893,11 +30896,17 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 
 
 
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ServePceIndex',
   components: {
-    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    ColumnSearchPanel: _shared_ColumnSearchPanel_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    PaginationControl: _shared_PaginationControl_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
+  mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       servePces: [],
@@ -30910,10 +30919,16 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         start_date_from: '',
         start_date_to: ''
       },
-      sortField: 'id',
-      sortDirection: 'asc',
-      currentPage: 1,
-      itemsPerPage: 10,
+      meta: {
+        total: 0,
+        per_page: 15,
+        current_page: 1,
+        last_page: 1
+      },
+      sortState: {
+        key: 'created_at',
+        dir: 'desc'
+      },
       statistics: {
         total_records: 0,
         active_warranty: 0,
@@ -30921,15 +30936,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         available_promo_codes: 0,
         active_warranty_percentage: 0,
         expired_warranty_percentage: 0
-      },
-      // Add pagination meta data
-      paginationMeta: {
-        current_page: 1,
-        last_page: 1,
-        per_page: 10,
-        total: 0,
-        from: 0,
-        to: 0
       }
     };
   },
@@ -30970,71 +30976,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           label: 'Generated'
         }]
       }];
-    },
-    totalPages: function totalPages() {
-      return this.paginationMeta.last_page || 1;
-    },
-    // Filter records based on filters
-    filteredServePces: function filteredServePces() {
-      var _this = this;
-      var filtered = _toConsumableArray(this.servePces);
-
-      // Apply local filtering if needed (fallback)
-      if (this.filters.qvse_cid) {
-        var searchTerm = this.filters.qvse_cid.toLowerCase();
-        filtered = filtered.filter(function (item) {
-          return item.qvse_cid && item.qvse_cid.toLowerCase().includes(searchTerm);
-        });
-      }
-      if (this.filters.warranty_status) {
-        filtered = filtered.filter(function (item) {
-          var status = _this.getWarrantyStatus(item.date_start);
-          return status.status === _this.filters.warranty_status;
-        });
-      }
-      if (this.filters.promo_status) {
-        filtered = filtered.filter(function (item) {
-          if (_this.filters.promo_status === 'available') {
-            return item.promo_code && !item.promo_claim;
-          } else if (_this.filters.promo_status === 'claimed') {
-            return item.promo_claim;
-          } else if (_this.filters.promo_status === 'generated') {
-            return item.generate_code && !item.promo_claim;
-          }
-          return true;
-        });
-      }
-
-      // Date filtering
-      if (this.filters.start_date_from) {
-        var fromDate = new Date(this.filters.start_date_from);
-        filtered = filtered.filter(function (item) {
-          if (!item.date_start) return false;
-          var itemDate = new Date(item.date_start);
-          return itemDate >= fromDate;
-        });
-      }
-      if (this.filters.start_date_to) {
-        var toDate = new Date(this.filters.start_date_to);
-        filtered = filtered.filter(function (item) {
-          if (!item.date_start) return false;
-          var itemDate = new Date(item.date_start);
-          return itemDate <= toDate;
-        });
-      }
-      return filtered;
-    },
-    // Get paginated data for display
-    paginatedServePces: function paginatedServePces() {
-      // If using API pagination, return current page data
-      if (this.servePces.length <= this.itemsPerPage) {
-        return this.servePces;
-      }
-
-      // If local filtering applied, do local pagination
-      var start = (this.currentPage - 1) * this.itemsPerPage;
-      var end = start + this.itemsPerPage;
-      return this.filteredServePces.slice(start, end);
     }
   },
   watch: {
@@ -31046,16 +30987,16 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     }
   },
   methods: {
-    fetchServePces: function fetchServePces() {
-      var _this2 = this;
-      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    fetchList: function fetchList() {
+      var _this = this;
       this.loading = true;
-      this.currentPage = page;
 
       // Build query parameters for index method
       var params = {
-        page: page,
-        per_page: this.itemsPerPage
+        page: this.meta.current_page,
+        per_page: this.meta.per_page,
+        sort_by: this.sortState.key,
+        sort_dir: this.sortState.dir
       };
 
       // Only add filters that have values
@@ -31080,56 +31021,39 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         if (res.data && res.data.success) {
           // Check if data exists
           if (res.data.data) {
-            _this2.servePces = res.data.data;
+            _this.servePces = res.data.data;
           } else {
-            _this2.servePces = [];
+            _this.servePces = [];
           }
 
           // Check for pagination meta
           if (res.data.meta) {
-            _this2.paginationMeta = {
-              current_page: res.data.meta.current_page || 1,
-              last_page: res.data.meta.last_page || 1,
-              per_page: res.data.meta.per_page || _this2.itemsPerPage,
-              total: res.data.meta.total || 0,
-              from: res.data.meta.from || 0,
-              to: res.data.meta.to || 0
-            };
-          } else {
-            // Fallback if no meta data
-            _this2.paginationMeta = {
-              current_page: 1,
-              last_page: 1,
-              per_page: _this2.servePces.length,
-              total: _this2.servePces.length,
-              from: 1,
-              to: _this2.servePces.length
-            };
+            _this.meta = res.data.meta;
           }
 
           // Update statistics if available in response
           if (res.data.statistics) {
-            _this2.statistics = res.data.statistics;
+            _this.statistics = res.data.statistics;
           } else {
             // Calculate locally if not provided by API
-            _this2.calculateStatistics();
+            _this.calculateStatistics();
           }
         } else {
           // Handle case where success flag is false or missing
           if (Array.isArray(res.data)) {
-            _this2.servePces = res.data;
+            _this.servePces = res.data;
           } else if (res.data.data && Array.isArray(res.data.data)) {
-            _this2.servePces = res.data.data;
+            _this.servePces = res.data.data;
           } else {
-            _this2.servePces = [];
+            _this.servePces = [];
           }
-          _this2.calculateStatistics();
+          _this.calculateStatistics();
         }
-        _this2.loading = false;
+        _this.loading = false;
       })["catch"](function (err) {
         console.error('Error fetching serve PCEs:', err);
-        _this2.servePces = [];
-        _this2.loading = false;
+        _this.servePces = [];
+        _this.loading = false;
         var errorMessage = 'Failed to load Serve PCE records';
         if (err.response) {
           if (err.response.status === 404) {
@@ -31148,13 +31072,13 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     // Calculate statistics locally (fallback method)
     calculateStatistics: function calculateStatistics() {
-      var _this3 = this;
+      var _this2 = this;
       var total = this.servePces.length;
       var activeWarranty = 0;
       var expiredWarranty = 0;
       var availablePromoCodes = 0;
       this.servePces.forEach(function (item) {
-        var warrantyStatus = _this3.getWarrantyStatus(item.date_start);
+        var warrantyStatus = _this2.getWarrantyStatus(item.date_start);
         if (warrantyStatus.status === 'active') {
           activeWarranty++;
         } else if (warrantyStatus.status === 'expired') {
@@ -31179,21 +31103,21 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     // Fetch statistics from API endpoint
     fetchStatistics: function fetchStatistics() {
-      var _this4 = this;
+      var _this3 = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/serve-pce/statistics').then(function (res) {
         if (res.data && res.data.success && res.data.statistics) {
-          _this4.statistics = res.data.statistics;
+          _this3.statistics = res.data.statistics;
         }
       })["catch"](function (err) {
         console.error('Error fetching statistics:', err);
         // Fallback to calculated statistics
-        _this4.calculateStatistics();
+        _this3.calculateStatistics();
       });
     },
     // Apply filters - refetch data with new filters
     applyFilters: function applyFilters() {
-      this.currentPage = 1;
-      this.fetchServePces();
+      this.meta.current_page = 1;
+      this.fetchList();
     },
     // Reset filters to default
     resetFilters: function resetFilters() {
@@ -31204,7 +31128,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         start_date_from: '',
         start_date_to: ''
       };
-      this.currentPage = 1;
+      this.meta.current_page = 1;
     },
     // Clear specific filter
     clearFilter: function clearFilter(filterName) {
@@ -31219,28 +31143,9 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     clearAllFilters: function clearAllFilters() {
       this.resetFilters();
     },
-    // Pagination methods
-    prevPage: function prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-        this.fetchServePces(this.currentPage);
-      }
-    },
-    nextPage: function nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-        this.fetchServePces(this.currentPage);
-      }
-    },
-    goToPage: function goToPage(page) {
-      if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-        this.currentPage = page;
-        this.fetchServePces(page);
-      }
-    },
     // Refresh data
     refreshData: function refreshData() {
-      this.fetchServePces(this.currentPage);
+      this.fetchList();
       this.fetchStatistics();
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         icon: 'success',
@@ -31356,10 +31261,10 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     // Management claim flags (cable_management_claim1..4), not the
     // nonexistent cable_management_date field this used to check.
     getCableManagementStatus: function getCableManagementStatus(item) {
-      var _this5 = this;
+      var _this4 = this;
       var claims = [item.cable_management_claim1, item.cable_management_claim2, item.cable_management_claim3, item.cable_management_claim4];
       var claimedCount = claims.filter(function (c) {
-        return _this5.isClaimUsed(c);
+        return _this4.isClaimUsed(c);
       }).length;
       if (claimedCount === 0) {
         return {
@@ -31385,10 +31290,10 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     // Cleaning claim flags (annual_dust_cleaning_year1..3), not the
     // nonexistent last_dust_cleaning_date field this used to check.
     getAnnualDustCleaningStatus: function getAnnualDustCleaningStatus(item) {
-      var _this6 = this;
+      var _this5 = this;
       var claims = [item.annual_dust_cleaning_year1, item.annual_dust_cleaning_year2, item.annual_dust_cleaning_year3];
       var claimedCount = claims.filter(function (c) {
-        return _this6.isClaimUsed(c);
+        return _this5.isClaimUsed(c);
       }).length;
       if (claimedCount === 0) {
         return {
@@ -31412,7 +31317,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     // Export to Excel
     exportToExcel: function exportToExcel() {
-      var _this7 = this;
+      var _this6 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Export Records',
         text: 'Export all records to Excel?',
@@ -31424,8 +31329,8 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         if (result.isConfirmed) {
           // Create CSV data
           var headers = ['QVSE CID', 'Start Date', 'Warranty Status', 'Unlimited Troubleshooting', '50% Troubleshooting', 'Cable Management', 'Annual Dust Cleaning', 'Promo Code', 'Promo Status'];
-          var csvData = _this7.servePces.map(function (item) {
-            return [item.qvse_cid || '', _this7.formatDate(item.date_start), _this7.getWarrantyStatus(item.date_start).text, _this7.getUnlimitedTroubleshootingStatus(item.date_start).text, _this7.getTroubleshootingStatus(item.date_start).text, _this7.getCableManagementStatus(item).text, _this7.getAnnualDustCleaningStatus(item).text, item.promo_code || '', item.promo_claim ? 'Claimed' : item.generate_code ? 'Generated' : 'Not Generated'];
+          var csvData = _this6.servePces.map(function (item) {
+            return [item.qvse_cid || '', _this6.formatDate(item.date_start), _this6.getWarrantyStatus(item.date_start).text, _this6.getUnlimitedTroubleshootingStatus(item.date_start).text, _this6.getTroubleshootingStatus(item.date_start).text, _this6.getCableManagementStatus(item).text, _this6.getAnnualDustCleaningStatus(item).text, item.promo_code || '', item.promo_claim ? 'Claimed' : item.generate_code ? 'Generated' : 'Not Generated'];
           });
 
           // Combine headers and data
@@ -31474,7 +31379,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     },
     // Delete item
     deleteItem: function deleteItem(id) {
-      var _this8 = this;
+      var _this7 = this;
       sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
         title: 'Are you sure?',
         text: "This action cannot be undone!",
@@ -31489,10 +31394,10 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
           axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/serve-pce/".concat(id)).then(function (res) {
             if (res.data && res.data.success) {
               // Remove from local array
-              _this8.servePces = _this8.servePces.filter(function (item) {
+              _this7.servePces = _this7.servePces.filter(function (item) {
                 return item.id !== id;
               });
-              _this8.calculateStatistics();
+              _this7.calculateStatistics();
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default.a.fire({
                 icon: 'success',
                 title: 'Deleted!',
@@ -31522,7 +31427,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
   },
   created: function created() {
     // Initial fetch
-    this.fetchServePces();
+    this.fetchList();
     this.fetchStatistics();
   }
 });
@@ -83319,7 +83224,7 @@ var render = function render() {
     staticClass: "fas fa-redo mr-1"
   }), _vm._v(" Reset Filters\n                ")]), _vm._v(" "), _c("span", {
     staticClass: "ml-3 text-muted"
-  }, [_vm._v("\n                  Showing " + _vm._s(_vm.filteredServePces.length) + " of " + _vm._s(_vm.servePces.length) + " records\n                  "), _vm.hasActiveFilters ? _c("span", [_vm._v(" (filtered)")]) : _vm._e()])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
+  }, [_vm._v("\n                  Showing " + _vm._s(_vm.servePces.length) + " of " + _vm._s(_vm.meta.total) + " records\n                  "), _vm.hasActiveFilters ? _c("span", [_vm._v(" (filtered)")]) : _vm._e()])])])]), _vm._v(" "), _vm.hasActiveFilters ? _c("div", {
     staticClass: "mt-3 pt-3 border-top"
   }, [_c("div", {
     staticClass: "d-flex justify-content-between align-items-center"
@@ -83416,7 +83321,27 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(8), _vm._v(" "), _c("tbody", _vm._l(_vm.paginatedServePces, function (item) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Start Date",
+      "sort-key": "date_start",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("3 Year Warranty")]), _vm._v(" "), _c("th", [_vm._v("Unlimited Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("50% Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("Cable Management")]), _vm._v(" "), _c("th", [_vm._v("Annual Dust Cleaning")]), _vm._v(" "), _c("th", [_vm._v("Promo Code")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Created",
+      "sort-key": "created_at",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _c("tbody", _vm._l(_vm.servePces, function (item) {
     return _c("tr", {
       key: item.id
     }, [_c("td", [_c("strong", [_vm._v(_vm._s(item.qvse_cid || "N/A"))])]), _vm._v(" "), _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(item.date_start)) + "\n                ")]), _vm._v(" "), _c("td", [_c("span", {
@@ -83435,7 +83360,7 @@ var render = function render() {
       staticClass: "text-muted"
     }, [_vm._v("\n                      " + _vm._s(item.promo_claim ? "Claimed" : item.generate_code ? "Generated" : "Not Generated") + "\n                    ")])]) : _c("span", {
       staticClass: "text-muted"
-    }, [_vm._v("-")])]), _vm._v(" "), _c("td", [_c("div", {
+    }, [_vm._v("-")])]), _vm._v(" "), _c("td", [_vm._v("\n                  " + _vm._s(_vm.formatDate(item.created_at)) + "\n                ")]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "btn-group"
     }, [_c("router-link", {
       staticClass: "btn btn-sm btn-primary",
@@ -83470,54 +83395,17 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-trash"
     })])], 1)])]);
-  }), 0)])]), _vm._v(" "), !_vm.loading && _vm.servePces.length > 0 && _vm.totalPages > 1 ? _c("div", {
+  }), 0)])]), _vm._v(" "), !_vm.loading && _vm.servePces.length > 0 ? _c("div", {
     staticClass: "card-footer"
-  }, [_c("nav", {
+  }, [_c("pagination-control", {
     attrs: {
-      "aria-label": "Record navigation"
-    }
-  }, [_c("ul", {
-    staticClass: "pagination justify-content-center mb-0"
-  }, [_c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === 1
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
+      meta: _vm.meta
+    },
     on: {
-      click: _vm.prevPage
+      "page-change": _vm.onPageChange,
+      "per-page-change": _vm.onPerPageChange
     }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-left"
-  })])]), _vm._v(" "), _vm._l(_vm.totalPages, function (page) {
-    return _c("li", {
-      key: page,
-      staticClass: "page-item",
-      "class": {
-        active: page === _vm.currentPage
-      }
-    }, [_c("button", {
-      staticClass: "page-link",
-      on: {
-        click: function click($event) {
-          return _vm.goToPage(page);
-        }
-      }
-    }, [_vm._v("\n                  " + _vm._s(page) + "\n                ")])]);
-  }), _vm._v(" "), _c("li", {
-    staticClass: "page-item",
-    "class": {
-      disabled: _vm.currentPage === _vm.totalPages
-    }
-  }, [_c("button", {
-    staticClass: "page-link",
-    on: {
-      click: _vm.nextPage
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-chevron-right"
-  })])])], 2)])]) : _vm._e()])])])]);
+  })], 1) : _vm._e()])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -83588,12 +83476,6 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "sr-only"
   }, [_vm._v("Loading...")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("QVSE CID")]), _vm._v(" "), _c("th", [_vm._v("Start Date")]), _vm._v(" "), _c("th", [_vm._v("3 Year Warranty")]), _vm._v(" "), _c("th", [_vm._v("Unlimited Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("50% Troubleshooting")]), _vm._v(" "), _c("th", [_vm._v("Cable Management")]), _vm._v(" "), _c("th", [_vm._v("Annual Dust Cleaning")]), _vm._v(" "), _c("th", [_vm._v("Promo Code")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }];
 render._withStripped = true;
 
