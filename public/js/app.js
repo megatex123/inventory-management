@@ -19073,13 +19073,22 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    SortableTh: _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
       orders: [],
       searchItem: '',
-      loading: false
+      loading: false,
+      sortState: {
+        key: 'order_id',
+        dir: 'desc'
+      }
     };
   },
   computed: {
@@ -19140,7 +19149,12 @@ __webpack_require__.r(__webpack_exports__);
     getOrders: function getOrders() {
       var _this = this;
       this.loading = true;
-      axios.get('/api/orders/today').then(function (res) {
+      axios.get('/api/orders/today', {
+        params: {
+          sort_by: this.sortState.key,
+          sort_dir: this.sortState.dir
+        }
+      }).then(function (res) {
         _this.orders = res.data;
         _this.loading = false;
       })["catch"](function (err) {
@@ -19153,6 +19167,15 @@ __webpack_require__.r(__webpack_exports__);
           confirmButtonText: 'OK'
         });
       });
+    },
+    onSort: function onSort(key) {
+      if (this.sortState.key === key) {
+        this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortState.key = key;
+        this.sortState.dir = 'asc';
+      }
+      this.getOrders();
     },
     refreshData: function refreshData() {
       this.getOrders();
@@ -61808,7 +61831,36 @@ var render = function render() {
     staticClass: "table-responsive"
   }, [_c("table", {
     staticClass: "table align-items-center table-flush"
-  }, [_vm._m(5), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredOrders, function (data) {
+  }, [_c("thead", {
+    staticClass: "thead-light"
+  }, [_c("tr", [_c("sortable-th", {
+    attrs: {
+      label: "Order ID",
+      "sort-key": "order_id",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("Customer")]), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Payment",
+      "sort-key": "total",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("sortable-th", {
+    attrs: {
+      label: "Date",
+      "sort-key": "order_date",
+      "current-sort": _vm.sortState
+    },
+    on: {
+      sort: _vm.onSort
+    }
+  }), _vm._v(" "), _c("th", [_vm._v("QuiviCraft")]), _vm._v(" "), _c("th", [_vm._v("QuiviServe")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _c("tbody", [_vm._l(_vm.filteredOrders, function (data) {
     return _c("tr", {
       key: data.id
     }, [_c("td", [_c("span", {
@@ -61888,7 +61940,7 @@ var render = function render() {
     }, [_c("i", {
       staticClass: "fas fa-undo"
     })]) : _vm._e()], 1)])]);
-  }), _vm._v(" "), _vm.filteredOrders.length === 0 ? _c("tr", [_vm._m(6)]) : _vm._e()], 2)])])])])])])])])]);
+  }), _vm._v(" "), _vm.filteredOrders.length === 0 ? _c("tr", [_vm._m(5)]) : _vm._e()], 2)])])])])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -61932,12 +61984,6 @@ var staticRenderFns = [function () {
   }, [_c("i", {
     staticClass: "fas fa-clock"
   })]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("thead", {
-    staticClass: "thead-light"
-  }, [_c("tr", [_c("th", [_vm._v("Order ID")]), _vm._v(" "), _c("th", [_vm._v("Customer")]), _vm._v(" "), _c("th", [_vm._v("Payment")]), _vm._v(" "), _c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("QuiviCraft")]), _vm._v(" "), _c("th", [_vm._v("QuiviServe")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;

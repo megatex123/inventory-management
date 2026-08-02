@@ -115,10 +115,10 @@
                                     <table class="table align-items-center table-flush">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>Order ID</th>
+                                                <sortable-th label="Order ID" sort-key="order_id" :current-sort="sortState" @sort="onSort" />
                                                 <th>Customer</th>
-                                                <th>Payment</th>
-                                                <th>Date</th>
+                                                <sortable-th label="Payment" sort-key="total" :current-sort="sortState" @sort="onSort" />
+                                                <sortable-th label="Date" sort-key="order_date" :current-sort="sortState" @sort="onSort" />
                                                 <th>QuiviCraft</th>
                                                 <th>QuiviServe</th>
                                                 <th>QuiviCare</th>
@@ -234,13 +234,18 @@
 
 <script>
 import Swal from 'sweetalert2';
+import SortableTh from '../shared/SortableTh.vue';
 
 export default {
+    components: {
+        SortableTh
+    },
     data() {
         return {
             orders: [],
             searchItem: '',
-            loading: false
+            loading: false,
+            sortState: { key: 'order_id', dir: 'desc' }
         }
     },
     computed: {
@@ -307,7 +312,12 @@ export default {
     methods: {
         getOrders() {
             this.loading = true;
-            axios.get('/api/orders/today')
+            axios.get('/api/orders/today', {
+                params: {
+                    sort_by: this.sortState.key,
+                    sort_dir: this.sortState.dir
+                }
+            })
             .then(res => {
                 this.orders = res.data;
                 this.loading = false;
@@ -322,6 +332,15 @@ export default {
                     confirmButtonText: 'OK'
                 });
             });
+        },
+        onSort(key) {
+            if (this.sortState.key === key) {
+                this.sortState.dir = this.sortState.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortState.key = key;
+                this.sortState.dir = 'asc';
+            }
+            this.getOrders();
         },
         refreshData() {
             this.getOrders();
