@@ -332,11 +332,10 @@ class ProductsController extends Controller
         $photo= $products->image;
         if($photo){
          $ming=ltrim($photo, $photo[0]);
-            unlink($ming);
-            DB::table('products')->where('id',$id)->delete();
-        }else{
-          DB::table('products')->where('id',$id)->delete();
-
+            if (file_exists(public_path($ming))) {
+                unlink(public_path($ming));
+            }
         }
+        DB::table('products')->where('id',$id)->delete();
     }
 }
