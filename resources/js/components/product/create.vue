@@ -62,7 +62,10 @@
                                             <div class="form-row">
                                                 <div class="col-6">
                                                     <label>Brand</label>
-                                                    <input type="text" class="form-control" v-model='form.brand_id'>
+                                                    <select v-model='form.brand_id' class="form-control">
+                                                        <option :value="null">-- Select Brand --</option>
+                                                        <option :value="brand.id" v-for='brand in brands'>{{brand.name}}</option>
+                                                    </select>
                                                     <small class="text-danger" v-if='errors.brand_id'>
                                                         {{errors.brand_id[0]}}
                                                     </small>
@@ -209,6 +212,11 @@
                     this.suppliers = res.data;
                 })
 
+            axios.get('/api/brand')
+                .then(res => {
+                    this.brands = res.data.data || [];
+                })
+
         },
         data() {
             return {
@@ -232,6 +240,7 @@
                 errors: {},
                 categories: {},
                 suppliers: {},
+                brands: {},
             }
         },
         methods: {

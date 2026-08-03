@@ -23374,6 +23374,9 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
+    axios.get('/api/brand').then(function (res) {
+      _this.brands = res.data.data || [];
+    });
   },
   data: function data() {
     return {
@@ -23396,7 +23399,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       errors: {},
       categories: {},
-      suppliers: {}
+      suppliers: {},
+      brands: {}
     };
   },
   methods: {
@@ -23466,8 +23470,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
-    axios.get('/api/suppliers/all').then(function (res) {
-      _this.suppliers = res.data;
+    axios.get('/api/brand').then(function (res) {
+      _this.brands = res.data.data || [];
     });
   },
   data: function data() {
@@ -23491,7 +23495,8 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       },
       errors: {},
       categories: [],
-      suppliers: []
+      suppliers: [],
+      brands: []
     };
   },
   methods: {
@@ -69456,7 +69461,7 @@ var render = function render() {
     staticClass: "form-row"
   }, [_c("div", {
     staticClass: "col-6"
-  }, [_c("label", [_vm._v("Brand")]), _vm._v(" "), _c("input", {
+  }, [_c("label", [_vm._v("Brand")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -69464,19 +69469,28 @@ var render = function render() {
       expression: "form.brand_id"
     }],
     staticClass: "form-control",
-    attrs: {
-      type: "text"
-    },
-    domProps: {
-      value: _vm.form.brand_id
-    },
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "brand_id", $event.target.value);
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.form, "brand_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
       }
     }
-  }), _vm._v(" "), _vm.errors.brand_id ? _c("small", {
+  }, [_c("option", {
+    domProps: {
+      value: null
+    }
+  }, [_vm._v("-- Select Brand --")]), _vm._v(" "), _vm._l(_vm.brands, function (brand) {
+    return _c("option", {
+      domProps: {
+        value: brand.id
+      }
+    }, [_vm._v(_vm._s(brand.name))]);
+  })], 2), _vm._v(" "), _vm.errors.brand_id ? _c("small", {
     staticClass: "text-danger"
   }, [_vm._v("\n                                                    " + _vm._s(_vm.errors.brand_id[0]) + "\n                                                ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
@@ -69740,7 +69754,7 @@ var render = function render() {
     staticClass: "form-row"
   }, [_c("div", {
     staticClass: "col-6"
-  }, [_c("label", [_vm._v("Brand")]), _vm._v(" "), _c("input", {
+  }, [_c("label", [_vm._v("Brand")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -69748,19 +69762,28 @@ var render = function render() {
       expression: "form.brand_id"
     }],
     staticClass: "form-control",
-    attrs: {
-      type: "text"
-    },
-    domProps: {
-      value: _vm.form.brand_id
-    },
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "brand_id", $event.target.value);
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.form, "brand_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
       }
     }
-  }), _vm._v(" "), _vm.errors.brand_id ? _c("small", {
+  }, [_c("option", {
+    domProps: {
+      value: null
+    }
+  }, [_vm._v("-- Select Brand --")]), _vm._v(" "), _vm._l(_vm.brands, function (brand) {
+    return _c("option", {
+      domProps: {
+        value: brand.id
+      }
+    }, [_vm._v(_vm._s(brand.name))]);
+  })], 2), _vm._v(" "), _vm.errors.brand_id ? _c("small", {
     staticClass: "text-danger"
   }, [_vm._v("\n                                                    " + _vm._s(_vm.errors.brand_id[0]) + "\n                                                ")]) : _vm._e()])])]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
