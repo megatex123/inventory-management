@@ -228,16 +228,32 @@ class MerchOrderController extends Controller
 
     public function destroy($id)
     {
-        $order = MerchOrder::find($id);
+        $order = MerchOrder::with('items.merchItem')->find($id);
 
         if (!$order) {
             return response()->json(['success' => false, 'message' => 'Merch order not found'], 404);
         }
 
+        DB::beginTransaction();
         try {
+            foreach ($order->items as $item) {
+                if (!$item->merchItem) {
+                    continue;
+                }
+
+                $invMerch = InvMerch::where('sku_code', $item->merchItem->sku_code)->first();
+                if ($invMerch) {
+                    $invMerch->increment('current_stock', $item->qty);
+                }
+            }
+
             $order->delete();
+
+            DB::commit();
+
             return response()->json(['success' => true, 'message' => 'Merch order deleted successfully']);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Failed to delete merch order', 'error' => $e->getMessage()], 500);
         }
     }
