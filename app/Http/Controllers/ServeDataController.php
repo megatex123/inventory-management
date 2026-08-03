@@ -6,6 +6,7 @@ use App\Models\ServeData;
 use App\Models\Serves;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\InvMerch;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -268,7 +269,14 @@ class ServeDataController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
+            $skus = $this->serveTierSkus($serveData->lkp_serve_id);
+            InvMerch::whereIn('sku_code', $skus)->increment('current_stock', 1);
+
             $serveData->delete();
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -276,12 +284,27 @@ class ServeDataController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete serve data',
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    private function serveTierSkus(int $lkpServeId): array
+    {
+        if ($lkpServeId === 1) {
+            $skus = ['QVSKU 0001', 'QVSKU 0012'];
+        } elseif ($lkpServeId === 2) {
+            $skus = ['QVSKU 0002', 'QVSKU 0013'];
+        } else {
+            $skus = ['QVSKU 0003', 'QVSKU 0014', 'QVSKU 0011'];
+        }
+        $skus[] = 'QVSKU 0004';
+        return $skus;
     }
 
     // Get statistics

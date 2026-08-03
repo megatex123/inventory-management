@@ -17,6 +17,7 @@ use App\Models\OrderDraft;
 use App\Models\Customers;
 use App\Support\BusinessId;
 use App\Models\Products;
+use App\Models\InvMerch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -548,6 +549,43 @@ class OrderController extends Controller
         }
     }
 
+    private function serveTierSkus(int $lkpServeId, bool $keychainUpgrade = false): array
+    {
+        if ($lkpServeId === 1) {
+            $skus = ['QVSKU 0001', 'QVSKU 0012'];
+        } elseif ($lkpServeId === 2) {
+            $skus = ['QVSKU 0002', 'QVSKU 0013'];
+        } else {
+            $skus = ['QVSKU 0003', 'QVSKU 0014'];
+            $skus[] = $keychainUpgrade ? 'QVSKU 0010' : 'QVSKU 0011';
+        }
+        $skus[] = 'QVSKU 0004';
+        return $skus;
+    }
+
+    private function deductServeStock(int $lkpServeId, bool $keychainUpgrade)
+    {
+        $skus = $this->serveTierSkus($lkpServeId, $keychainUpgrade);
+        $rows = InvMerch::whereIn('sku_code', $skus)->get()->keyBy('sku_code');
+
+        $shortfalls = [];
+        foreach ($rows as $row) {
+            if ($row->current_stock < 1) {
+                $shortfalls[] = "Insufficient stock for {$row->item_name}: requested 1, only {$row->current_stock} available";
+            }
+        }
+
+        if (!empty($shortfalls)) {
+            return $shortfalls;
+        }
+
+        foreach ($rows as $row) {
+            $row->decrement('current_stock', 1);
+        }
+
+        return [];
+    }
+
     public function updateserve(Request $request, $order, $id)
     {
         try {
@@ -615,6 +653,16 @@ class OrderController extends Controller
                         'serve_data_id' => $serveData->id,
                     ]);
 
+                    $shortfalls = $this->deductServeStock($lkp_serve_id, (bool) $request->keychain_upgrade);
+                    if (!empty($shortfalls)) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Insufficient stock',
+                            'errors' => ['items' => $shortfalls],
+                        ], 422);
+                    }
+
                     DB::commit();
 
                     return response()->json([
@@ -633,6 +681,16 @@ class OrderController extends Controller
                         'serve_data_id' => $serveData->id,
                     ]);
 
+                    $shortfalls = $this->deductServeStock($lkp_serve_id, (bool) $request->keychain_upgrade);
+                    if (!empty($shortfalls)) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Insufficient stock',
+                            'errors' => ['items' => $shortfalls],
+                        ], 422);
+                    }
+
                     DB::commit();
 
                     return response()->json([
@@ -647,6 +705,16 @@ class OrderController extends Controller
                         'serve_pce_id' => $serve_pce_id,
                         'serve_data_id' => $serveData->id,
                     ]);
+
+                    $shortfalls = $this->deductServeStock($lkp_serve_id, (bool) $request->keychain_upgrade);
+                    if (!empty($shortfalls)) {
+                        DB::rollBack();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Insufficient stock',
+                            'errors' => ['items' => $shortfalls],
+                        ], 422);
+                    }
 
                     DB::commit();
 
