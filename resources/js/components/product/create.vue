@@ -171,6 +171,7 @@
                                                 <img v-if="form.photo" :src="form.photo" alt="photo">
                                                 <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
+                                            <small class="text-success d-block" v-if='photoFileName'>Uploaded: {{ photoFileName }}</small>
                                             <small class="text-danger d-block" v-if='errors.photo'>{{errors.photo[0]}}</small>
                                         </div>
 
@@ -229,7 +230,7 @@
                     selling_price: null,
                     supplier_id: null,
                     buying_date: null,
-                    image: null,
+                    photo: null,
                     product_qty: null,
                     brand_id: null,
                     price: null,
@@ -241,20 +242,21 @@
                 categories: {},
                 suppliers: {},
                 brands: {},
+                photoFileName: null,
             }
         },
         methods: {
             onFileSelect(event) {
                 let file = event.target.files[0];
+                if (!file) return;
 
                 if (file.size > 1048770) {
                     notification.Image_size()
                 } else {
                     let reader = new FileReader();
                     reader.onload = event => {
-                        this.form.photo = event.target.result
-                        console.log(event.target.result);
-
+                        this.$set(this.form, 'photo', event.target.result);
+                        this.photoFileName = file.name;
                     };
                     reader.readAsDataURL(file);
                 }

@@ -176,6 +176,7 @@
                                                 <img v-if="form.image" :src="form.image" alt="Product Image">
                                                 <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
+                                            <small class="text-success d-block" v-if='displayPhotoName'>Uploaded: {{ displayPhotoName }}</small>
                                             <small class="text-danger d-block" v-if='errors.image'>{{errors.image[0]}}</small>
                                         </div>
 
@@ -247,7 +248,21 @@ export default {
             categories: [],
             suppliers: [],
             brands: [],
+            newPhotoFileName: null,
         }
+    },
+    computed: {
+        // Shows the freshly-picked file's real name if one was just
+        // selected; otherwise derives a display name from the existing
+        // stored photo's path (not the original upload filename -- that
+        // isn't stored/returned separately by this API).
+        displayPhotoName() {
+            if (this.newPhotoFileName) return this.newPhotoFileName;
+            if (this.form.image && !this.form.image.startsWith('data:')) {
+                return this.form.image.split('/').pop();
+            }
+            return null;
+        },
     },
     methods: {
         onFileSelect(event) {
@@ -263,7 +278,7 @@ export default {
             let reader = new FileReader();
             reader.onload = event => {
                 this.form.image = event.target.result
-                console.log('New image selected');
+                this.newPhotoFileName = file.name;
             };
             reader.readAsDataURL(file);
         },

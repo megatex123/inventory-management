@@ -27,10 +27,12 @@
                 <a :href="`/storage/${existingDocument}`" target="_blank" class="text-primary">
                     View uploaded document
                 </a>
+                <small class="text-muted d-block">{{ existingDocument.split('/').pop() }}</small>
             </div>
 
             <label class="mt-2">Upload New Document</label>
             <input type="file" @change="handleFileUpload" class="form-control">
+            <small class="text-success d-block mt-1" v-if="form.document">Uploaded: {{ form.document.name }}</small>
 
             <button class="btn btn-success mt-3" :disabled="loading">
                 {{ loading ? 'Updating...' : 'Update' }}

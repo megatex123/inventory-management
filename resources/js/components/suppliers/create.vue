@@ -73,6 +73,7 @@
                                                         <img v-if="form.photo" :src="form.photo" alt="photo">
                                                         <input type="file" @change='onFileSelect' accept="image/jpeg,image/jpg,image/png">
                                                     </div>
+                                                    <small class="text-success d-block" v-if='photoFileName'>Uploaded: {{ photoFileName }}</small>
                                                     <small class="text-danger d-block" v-if='errors.photo'>{{ errors.photo[0] }}</small>
                                                     <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
                                                 </div>
@@ -186,9 +187,6 @@
                     this.form.photo = event.target.result;
                 };
                 reader.readAsDataURL(file);
-
-                // Update the label text
-                document.getElementById('photoLabel').textContent = file.name;
             },
 
             SupplierInsert() {

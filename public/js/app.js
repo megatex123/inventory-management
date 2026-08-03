@@ -7699,6 +7699,9 @@ __webpack_require__.r(__webpack_exports__);
     fileUrl: function fileUrl(file) {
       return URL.createObjectURL(file);
     },
+    fileName: function fileName(path) {
+      return path.split('/').pop();
+    },
     onFileChange: function onFileChange(event) {
       if (event.target.files && event.target.files.length) {
         this.$emit('add-photos', event.target.files);
@@ -9557,20 +9560,22 @@ __webpack_require__.r(__webpack_exports__);
         phone: null,
         photo: null
       },
-      errors: {}
+      errors: {},
+      photoFileName: null
     };
   },
   methods: {
     onFileSelect: function onFileSelect(event) {
       var _this = this;
       var file = event.target.files[0];
+      if (!file) return;
       if (file.size > 1048770) {
         notification.Image_size();
       } else {
         var reader = new FileReader();
         reader.onload = function (event) {
           _this.form.photo = event.target.result;
-          console.log(event.target.result);
+          _this.photoFileName = file.name;
         };
         reader.readAsDataURL(file);
       }
@@ -9629,20 +9634,35 @@ __webpack_require__.r(__webpack_exports__);
         phone: null,
         photo: null
       },
-      errors: {}
+      errors: {},
+      newPhotoFileName: null
     };
+  },
+  computed: {
+    // Shows the freshly-picked file's real name if one was just
+    // selected; otherwise derives a display name from the existing
+    // stored photo's path (not the original upload filename --
+    // that isn't stored/returned separately by this API).
+    displayPhotoName: function displayPhotoName() {
+      if (this.newPhotoFileName) return this.newPhotoFileName;
+      if (this.form.photo && !this.form.photo.startsWith('data:')) {
+        return this.form.photo.split('/').pop();
+      }
+      return null;
+    }
   },
   methods: {
     onFileSelect: function onFileSelect(event) {
       var _this2 = this;
       var file = event.target.files[0];
+      if (!file) return;
       if (file.size > 1048770) {
         notification.Image_size();
       } else {
         var reader = new FileReader();
         reader.onload = function (event) {
           _this2.form.photo = event.target.result;
-          console.log(event.target.result);
+          _this2.newPhotoFileName = file.name;
         };
         reader.readAsDataURL(file);
       }
@@ -23393,7 +23413,7 @@ __webpack_require__.r(__webpack_exports__);
         selling_price: null,
         supplier_id: null,
         buying_date: null,
-        image: null,
+        photo: null,
         product_qty: null,
         brand_id: null,
         price: null,
@@ -23404,20 +23424,22 @@ __webpack_require__.r(__webpack_exports__);
       errors: {},
       categories: {},
       suppliers: {},
-      brands: {}
+      brands: {},
+      photoFileName: null
     };
   },
   methods: {
     onFileSelect: function onFileSelect(event) {
       var _this2 = this;
       var file = event.target.files[0];
+      if (!file) return;
       if (file.size > 1048770) {
         notification.Image_size();
       } else {
         var reader = new FileReader();
         reader.onload = function (event) {
-          _this2.form.photo = event.target.result;
-          console.log(event.target.result);
+          _this2.$set(_this2.form, 'photo', event.target.result);
+          _this2.photoFileName = file.name;
         };
         reader.readAsDataURL(file);
       }
@@ -23504,8 +23526,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       errors: {},
       categories: [],
       suppliers: [],
-      brands: []
+      brands: [],
+      newPhotoFileName: null
     };
+  },
+  computed: {
+    // Shows the freshly-picked file's real name if one was just
+    // selected; otherwise derives a display name from the existing
+    // stored photo's path (not the original upload filename -- that
+    // isn't stored/returned separately by this API).
+    displayPhotoName: function displayPhotoName() {
+      if (this.newPhotoFileName) return this.newPhotoFileName;
+      if (this.form.image && !this.form.image.startsWith('data:')) {
+        return this.form.image.split('/').pop();
+      }
+      return null;
+    }
   },
   methods: {
     onFileSelect: function onFileSelect(event) {
@@ -23520,7 +23556,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       var reader = new FileReader();
       reader.onload = function (event) {
         _this2.form.image = event.target.result;
-        console.log('New image selected');
+        _this2.newPhotoFileName = file.name;
       };
       reader.readAsDataURL(file);
     },
@@ -31434,6 +31470,9 @@ __webpack_require__.r(__webpack_exports__);
     fileUrl: function fileUrl(file) {
       return URL.createObjectURL(file);
     },
+    fileName: function fileName(path) {
+      return path.split('/').pop();
+    },
     onFileChange: function onFileChange(event) {
       if (event.target.files && event.target.files.length) {
         this.$emit('add-photos', event.target.files);
@@ -32150,9 +32189,6 @@ __webpack_require__.r(__webpack_exports__);
         _this.form.photo = event.target.result;
       };
       reader.readAsDataURL(file);
-
-      // Update the label text
-      document.getElementById('photoLabel').textContent = file.name;
     },
     SupplierInsert: function SupplierInsert() {
       var _this2 = this;
@@ -32247,6 +32283,17 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
+    // Shows the freshly-picked file's real name if one was just
+    // selected; otherwise derives a display name from the existing
+    // stored photo's path (not the original upload filename --
+    // that isn't stored/returned separately by this API).
+    displayPhotoName: function displayPhotoName() {
+      if (this.photoFileName) return this.photoFileName;
+      if (this.originalPhoto && !this.originalPhoto.startsWith('data:')) {
+        return this.originalPhoto.split('/').pop();
+      }
+      return null;
+    },
     formattedPhone: {
       get: function get() {
         return this.form.phone;
@@ -32301,9 +32348,6 @@ __webpack_require__.r(__webpack_exports__);
         _this2.form.photo = event.target.result;
       };
       reader.readAsDataURL(file);
-
-      // Update the label text
-      document.getElementById('photoLabelEdit').textContent = file.name;
     },
     suppliersUpdate: function suppliersUpdate() {
       var _this3 = this;
@@ -42390,7 +42434,12 @@ var render = function render() {
           return _vm.$emit("remove-existing", path);
         }
       }
-    }, [_vm._v("×")])]);
+    }, [_vm._v("×")]), _vm._v(" "), _c("span", {
+      staticClass: "photo-filename",
+      attrs: {
+        title: _vm.fileName(path)
+      }
+    }, [_vm._v(_vm._s(_vm.fileName(path)))])]);
   }), _vm._v(" "), _vm._l(_vm.newPhotos, function (file, idx) {
     return _c("div", {
       key: "new-" + idx,
@@ -42410,7 +42459,12 @@ var render = function render() {
           return _vm.$emit("remove-new", idx);
         }
       }
-    }, [_vm._v("×")])]);
+    }, [_vm._v("×")]), _vm._v(" "), _c("span", {
+      staticClass: "photo-filename",
+      attrs: {
+        title: file.name
+      }
+    }, [_vm._v(_vm._s(file.name))])]);
   }), _vm._v(" "), _vm.existingPhotos.length + _vm.newPhotos.length < 2 ? _c("div", {
     staticClass: "photo-upload-btn"
   }, [_c("input", {
@@ -44353,7 +44407,9 @@ var render = function render() {
     on: {
       change: _vm.onFileChange
     }
-  }), _vm._v(" "), _c("small", {
+  }), _vm._v(" "), _vm.file ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.file.name))]) : _vm._e(), _vm._v(" "), _c("small", {
     staticClass: "form-text text-muted"
   }, [_vm._v("Progress photo or document — PDF, Word, Excel, PowerPoint, images, CSV, or ZIP — max 10MB.")])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
@@ -44702,7 +44758,9 @@ var render = function render() {
     on: {
       change: _vm.onFileChange
     }
-  }), _vm._v(" "), _c("small", {
+  }), _vm._v(" "), _vm.file ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.file.name))]) : _vm._e(), _vm._v(" "), _c("small", {
     staticClass: "form-text text-muted"
   }, [_vm._v("Leave blank to keep the current attachment. PDF, Word, Excel, PowerPoint, images, CSV, or ZIP — max 10MB.")])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
@@ -45397,7 +45455,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  })]), _vm._v(" "), _vm.photoFileName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.photoFileName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "text-center"
@@ -45693,7 +45753,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "text-center"
@@ -51588,7 +51650,9 @@ var render = function render() {
     on: {
       change: _vm.handleFileUpload
     }
-  })]), _vm._v(" "), _c("button", {
+  }), _vm._v(" "), _vm.form.document ? _c("small", {
+    staticClass: "text-success d-block mt-1"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.form.document.name))]) : _vm._e()]), _vm._v(" "), _c("button", {
     staticClass: "btn btn-success mt-3",
     attrs: {
       disabled: _vm.loading
@@ -51746,7 +51810,9 @@ var render = function render() {
       href: "/storage/".concat(_vm.existingDocument),
       target: "_blank"
     }
-  }, [_vm._v("\n                  View uploaded document\n              ")])]) : _vm._e(), _vm._v(" "), _c("label", {
+  }, [_vm._v("\n                  View uploaded document\n              ")]), _vm._v(" "), _c("small", {
+    staticClass: "text-muted d-block"
+  }, [_vm._v(_vm._s(_vm.existingDocument.split("/").pop()))])]) : _vm._e(), _vm._v(" "), _c("label", {
     staticClass: "mt-2"
   }, [_vm._v("Upload New Document")]), _vm._v(" "), _c("input", {
     staticClass: "form-control",
@@ -51756,7 +51822,9 @@ var render = function render() {
     on: {
       change: _vm.handleFileUpload
     }
-  }), _vm._v(" "), _c("button", {
+  }), _vm._v(" "), _vm.form.document ? _c("small", {
+    staticClass: "text-success d-block mt-1"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.form.document.name))]) : _vm._e(), _vm._v(" "), _c("button", {
     staticClass: "btn btn-success mt-3",
     attrs: {
       disabled: _vm.loading
@@ -69575,7 +69643,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  })]), _vm._v(" "), _vm.photoFileName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.photoFileName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "text-center"
@@ -69868,7 +69938,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.image ? _c("small", {
+  })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.image ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.image[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)])])])])])])])])]);
 };
@@ -82773,7 +82845,12 @@ var render = function render() {
           return _vm.$emit("remove-existing", path);
         }
       }
-    }, [_vm._v("×")])]);
+    }, [_vm._v("×")]), _vm._v(" "), _c("span", {
+      staticClass: "photo-filename",
+      attrs: {
+        title: _vm.fileName(path)
+      }
+    }, [_vm._v(_vm._s(_vm.fileName(path)))])]);
   }), _vm._v(" "), _vm._l(_vm.newPhotos, function (file, idx) {
     return _c("div", {
       key: "new-" + idx,
@@ -82793,7 +82870,12 @@ var render = function render() {
           return _vm.$emit("remove-new", idx);
         }
       }
-    }, [_vm._v("×")])]);
+    }, [_vm._v("×")]), _vm._v(" "), _c("span", {
+      staticClass: "photo-filename",
+      attrs: {
+        title: file.name
+      }
+    }, [_vm._v(_vm._s(file.name))])]);
   }), _vm._v(" "), _c("div", {
     staticClass: "photo-upload-btn"
   }, [_c("input", {
@@ -84181,7 +84263,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  })]), _vm._v(" "), _vm.photoFileName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.photoFileName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e(), _vm._v(" "), _c("small", {
     staticClass: "text-muted d-block"
@@ -84452,7 +84536,9 @@ var render = function render() {
     on: {
       change: _vm.onFileSelect
     }
-  })]), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
+    staticClass: "text-success d-block"
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e(), _vm._v(" "), _c("small", {
     staticClass: "text-muted d-block"
@@ -93916,7 +94002,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.print-only[data-v-d68c760c] {\n  display: none;\n}\n.photo-thumb[data-v-d68c760c] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  margin: 0 0.5rem 0.5rem 0;\n  border-radius: 6px;\n  overflow: hidden;\n  border: 1px solid #dee2e6;\n}\n.photo-thumb img[data-v-d68c760c] {\n  width: 100%;\n  height: 100%;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.remove-btn[data-v-d68c760c] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  background: rgba(220, 53, 69, 0.85);\n  color: #fff;\n  border: none;\n  width: 20px;\n  height: 20px;\n  line-height: 18px;\n  font-size: 14px;\n  cursor: pointer;\n}\n.photo-upload-btn[data-v-d68c760c] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  border: 1px dashed #adb5bd;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 0.5rem;\n}\n.photo-upload-btn input[type=\"file\"][data-v-d68c760c] {\n  font-size: 0;\n  width: 100%;\n  height: 100%;\n  opacity: 0;\n  cursor: pointer;\n  position: absolute;\n}\n.photo-upload-btn[data-v-d68c760c]::before {\n  content: '+';\n  font-size: 1.5rem;\n  color: #adb5bd;\n  pointer-events: none;\n}\n", ""]);
+exports.push([module.i, "\n.print-only[data-v-d68c760c] {\n  display: none;\n}\n.photo-thumb[data-v-d68c760c] {\n  position: relative;\n  width: 70px;\n  margin: 0 0.5rem 0.5rem 0;\n}\n.photo-thumb img[data-v-d68c760c] {\n  display: block;\n  width: 70px;\n  height: 70px;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 6px;\n  overflow: hidden;\n  border: 1px solid #dee2e6;\n}\n.photo-filename[data-v-d68c760c] {\n  display: block;\n  width: 70px;\n  margin-top: 2px;\n  font-size: 10px;\n  color: #6c757d;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  text-align: center;\n}\n.remove-btn[data-v-d68c760c] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  background: rgba(220, 53, 69, 0.85);\n  color: #fff;\n  border: none;\n  width: 20px;\n  height: 20px;\n  line-height: 18px;\n  font-size: 14px;\n  cursor: pointer;\n}\n.photo-upload-btn[data-v-d68c760c] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  border: 1px dashed #adb5bd;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 0.5rem;\n}\n.photo-upload-btn input[type=\"file\"][data-v-d68c760c] {\n  font-size: 0;\n  width: 100%;\n  height: 100%;\n  opacity: 0;\n  cursor: pointer;\n  position: absolute;\n}\n.photo-upload-btn[data-v-d68c760c]::before {\n  content: '+';\n  font-size: 1.5rem;\n  color: #adb5bd;\n  pointer-events: none;\n}\n", ""]);
 
 // exports
 
@@ -95835,7 +95921,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.photo-thumb[data-v-9190ad14] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  margin: 0 0.5rem 0.5rem 0;\n  border-radius: 6px;\n  overflow: hidden;\n  border: 1px solid #dee2e6;\n}\n.photo-thumb img[data-v-9190ad14] {\n  width: 100%;\n  height: 100%;\n  -o-object-fit: cover;\n     object-fit: cover;\n}\n.remove-btn[data-v-9190ad14] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  background: rgba(220, 53, 69, 0.85);\n  color: #fff;\n  border: none;\n  width: 20px;\n  height: 20px;\n  line-height: 18px;\n  font-size: 14px;\n  cursor: pointer;\n}\n.photo-upload-btn[data-v-9190ad14] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  border: 1px dashed #adb5bd;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 0.5rem;\n}\n.photo-upload-btn input[type=\"file\"][data-v-9190ad14] {\n  font-size: 0;\n  width: 100%;\n  height: 100%;\n  opacity: 0;\n  cursor: pointer;\n  position: absolute;\n}\n.photo-upload-btn[data-v-9190ad14]::before {\n  content: '+';\n  font-size: 1.5rem;\n  color: #adb5bd;\n  pointer-events: none;\n}\n", ""]);
+exports.push([module.i, "\n.photo-thumb[data-v-9190ad14] {\n  position: relative;\n  width: 70px;\n  margin: 0 0.5rem 0.5rem 0;\n}\n.photo-thumb img[data-v-9190ad14] {\n  display: block;\n  width: 70px;\n  height: 70px;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 6px;\n  overflow: hidden;\n  border: 1px solid #dee2e6;\n}\n.photo-filename[data-v-9190ad14] {\n  display: block;\n  width: 70px;\n  margin-top: 2px;\n  font-size: 10px;\n  color: #6c757d;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  text-align: center;\n}\n.remove-btn[data-v-9190ad14] {\n  position: absolute;\n  top: 0;\n  right: 0;\n  background: rgba(220, 53, 69, 0.85);\n  color: #fff;\n  border: none;\n  width: 20px;\n  height: 20px;\n  line-height: 18px;\n  font-size: 14px;\n  cursor: pointer;\n}\n.photo-upload-btn[data-v-9190ad14] {\n  position: relative;\n  width: 70px;\n  height: 70px;\n  border: 1px dashed #adb5bd;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin-bottom: 0.5rem;\n}\n.photo-upload-btn input[type=\"file\"][data-v-9190ad14] {\n  font-size: 0;\n  width: 100%;\n  height: 100%;\n  opacity: 0;\n  cursor: pointer;\n  position: absolute;\n}\n.photo-upload-btn[data-v-9190ad14]::before {\n  content: '+';\n  font-size: 1.5rem;\n  color: #adb5bd;\n  pointer-events: none;\n}\n", ""]);
 
 // exports
 

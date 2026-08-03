@@ -70,6 +70,7 @@
           <div class="form-group">
             <label class="form-label">Attachment (optional)</label>
             <input type="file" class="form-control-file" @change="onFileChange">
+            <small class="text-success d-block" v-if="file">Uploaded: {{ file.name }}</small>
             <small class="form-text text-muted">Progress photo or document — PDF, Word, Excel, PowerPoint, images, CSV, or ZIP — max 10MB.</small>
           </div>
 

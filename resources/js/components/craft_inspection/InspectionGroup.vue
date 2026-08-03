@@ -17,10 +17,12 @@
         <div v-for="path in existingPhotos" :key="path" class="photo-thumb">
           <img :src="`/storage/${path}`" alt="photo">
           <button type="button" class="remove-btn" @click="$emit('remove-existing', path)">&times;</button>
+          <span class="photo-filename" :title="fileName(path)">{{ fileName(path) }}</span>
         </div>
         <div v-for="(file, idx) in newPhotos" :key="'new-' + idx" class="photo-thumb">
           <img :src="fileUrl(file)" alt="new photo">
           <button type="button" class="remove-btn" @click="$emit('remove-new', idx)">&times;</button>
+          <span class="photo-filename" :title="file.name">{{ file.name }}</span>
         </div>
         <div v-if="(existingPhotos.length + newPhotos.length) < 2" class="photo-upload-btn">
           <input type="file" accept="image/*" multiple @change="onFileChange" ref="fileInput">
@@ -53,6 +55,9 @@ export default {
     fileUrl(file) {
       return URL.createObjectURL(file);
     },
+    fileName(path) {
+      return path.split('/').pop();
+    },
     onFileChange(event) {
       if (event.target.files && event.target.files.length) {
         this.$emit('add-photos', event.target.files);
@@ -70,16 +75,27 @@ export default {
 .photo-thumb {
   position: relative;
   width: 70px;
-  height: 70px;
   margin: 0 0.5rem 0.5rem 0;
+}
+.photo-thumb img {
+  display: block;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid #dee2e6;
 }
-.photo-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.photo-filename {
+  display: block;
+  width: 70px;
+  margin-top: 2px;
+  font-size: 10px;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 .remove-btn {
   position: absolute;

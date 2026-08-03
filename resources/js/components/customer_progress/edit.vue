@@ -77,6 +77,7 @@
           <div class="form-group">
             <label class="form-label">{{ currentFile.file_name ? 'Replace Attachment (optional)' : 'Attachment (optional)' }}</label>
             <input type="file" class="form-control-file" @change="onFileChange">
+            <small class="text-success d-block" v-if="file">Uploaded: {{ file.name }}</small>
             <small class="form-text text-muted">Leave blank to keep the current attachment. PDF, Word, Excel, PowerPoint, images, CSV, or ZIP — max 10MB.</small>
           </div>
 

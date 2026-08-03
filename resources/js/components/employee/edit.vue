@@ -83,6 +83,7 @@
                                                 <img v-if="form.photo" :src="form.photo" alt="photo">
                                                 <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
+                                            <small class="text-success d-block" v-if='displayPhotoName'>Uploaded: {{ displayPhotoName }}</small>
                                             <small class="text-danger d-block" v-if='errors.photo'>{{errors.photo[0]}}</small>
 
                                         </div>
@@ -136,12 +137,27 @@
                     photo:null,
 
                 },
-                errors: {}
+                errors: {},
+                newPhotoFileName: null,
             }
+        },
+        computed: {
+            // Shows the freshly-picked file's real name if one was just
+            // selected; otherwise derives a display name from the existing
+            // stored photo's path (not the original upload filename --
+            // that isn't stored/returned separately by this API).
+            displayPhotoName() {
+                if (this.newPhotoFileName) return this.newPhotoFileName;
+                if (this.form.photo && !this.form.photo.startsWith('data:')) {
+                    return this.form.photo.split('/').pop();
+                }
+                return null;
+            },
         },
         methods: {
             onFileSelect(event){
                 let file=event.target.files[0];
+                if(!file) return;
 
                 if(file.size> 1048770){
 notification.Image_size()
@@ -149,7 +165,7 @@ notification.Image_size()
           let reader=new FileReader();
           reader.onload=event=>{
               this.form.photo=event.target.result
-              console.log(event.target.result);
+              this.newPhotoFileName=file.name;
 
           };
           reader.readAsDataURL(file);

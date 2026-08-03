@@ -73,6 +73,7 @@
                                                         <img v-if="previewPhoto || form.photo" :src="previewPhoto || form.photo" alt="photo">
                                                         <input type="file" @change='onFileSelect' accept="image/jpeg,image/jpg,image/png">
                                                     </div>
+                                                    <small class="text-success d-block" v-if='displayPhotoName'>Uploaded: {{ displayPhotoName }}</small>
                                                     <small class="text-danger d-block" v-if='errors.photo'>{{ errors.photo[0] }}</small>
                                                     <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
                                                 </div>
@@ -142,6 +143,17 @@
             }
         },
         computed: {
+            // Shows the freshly-picked file's real name if one was just
+            // selected; otherwise derives a display name from the existing
+            // stored photo's path (not the original upload filename --
+            // that isn't stored/returned separately by this API).
+            displayPhotoName() {
+                if (this.photoFileName) return this.photoFileName;
+                if (this.originalPhoto && !this.originalPhoto.startsWith('data:')) {
+                    return this.originalPhoto.split('/').pop();
+                }
+                return null;
+            },
             formattedPhone: {
                 get() {
                     return this.form.phone;
@@ -198,9 +210,6 @@
                     this.form.photo = event.target.result;
                 };
                 reader.readAsDataURL(file);
-
-                // Update the label text
-                document.getElementById('photoLabelEdit').textContent = file.name;
             },
 
             suppliersUpdate() {

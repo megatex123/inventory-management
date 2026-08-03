@@ -31,6 +31,7 @@
             <div class="form-group">
                 <label class="mt-2">Upload Document</label>
                 <input type="file" @change="handleFileUpload" class="form-control">
+                <small class="text-success d-block mt-1" v-if="form.document">Uploaded: {{ form.document.name }}</small>
             </div>
 
             <button class="btn btn-success mt-3" :disabled="loading">
