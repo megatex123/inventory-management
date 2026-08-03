@@ -69,11 +69,12 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="small font-weight-bold text-muted">Photo</label>
-                                                    <div class="photo-upload-btn" :class="{ 'has-photo': previewPhoto || form.photo }">
+                                                    <div class="photo-upload-btn" :class="{ 'has-photo': previewPhoto || form.photo }" title="Click to change photo">
                                                         <img v-if="previewPhoto || form.photo" :src="previewPhoto || form.photo" alt="photo">
                                                         <input type="file" @change='onFileSelect' accept="image/jpeg,image/jpg,image/png">
                                                     </div>
                                                     <small class="text-success d-block" v-if='displayPhotoName'>Uploaded: {{ displayPhotoName }}</small>
+                                                    <small class="text-muted d-block" v-if='previewPhoto || form.photo'>Click the photo above to replace it</small>
                                                     <small class="text-danger d-block" v-if='errors.photo'>{{ errors.photo[0] }}</small>
                                                     <small class="text-muted d-block">Max size: 1MB. Supported: JPG, PNG, JPEG</small>
                                                 </div>

@@ -45739,6 +45739,9 @@ var render = function render() {
     staticClass: "photo-upload-btn",
     "class": {
       "has-photo": _vm.form.photo
+    },
+    attrs: {
+      title: "Click to change photo"
     }
   }, [_vm.form.photo ? _c("img", {
     attrs: {
@@ -45755,7 +45758,9 @@ var render = function render() {
     }
   })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
     staticClass: "text-success d-block"
-  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.form.photo ? _c("small", {
+    staticClass: "text-muted d-block"
+  }, [_vm._v("Click the photo above to replace it")]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "text-center"
@@ -51824,7 +51829,9 @@ var render = function render() {
     }
   }), _vm._v(" "), _vm.form.document ? _c("small", {
     staticClass: "text-success d-block mt-1"
-  }, [_vm._v("Uploaded: " + _vm._s(_vm.form.document.name))]) : _vm._e(), _vm._v(" "), _c("button", {
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.form.document.name))]) : _vm.existingDocument ? _c("small", {
+    staticClass: "text-muted d-block mt-1"
+  }, [_vm._v("Choosing a file here will replace the current document")]) : _vm._e(), _vm._v(" "), _c("button", {
     staticClass: "btn btn-success mt-3",
     attrs: {
       disabled: _vm.loading
@@ -84527,6 +84534,9 @@ var render = function render() {
     staticClass: "photo-upload-btn",
     "class": {
       "has-photo": _vm.previewPhoto || _vm.form.photo
+    },
+    attrs: {
+      title: "Click to change photo"
     }
   }, [_vm.previewPhoto || _vm.form.photo ? _c("img", {
     attrs: {
@@ -84543,7 +84553,9 @@ var render = function render() {
     }
   })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
     staticClass: "text-success d-block"
-  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.previewPhoto || _vm.form.photo ? _c("small", {
+    staticClass: "text-muted d-block"
+  }, [_vm._v("Click the photo above to replace it")]) : _vm._e(), _vm._v(" "), _vm.errors.photo ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.photo[0]))]) : _vm._e(), _vm._v(" "), _c("small", {
     staticClass: "text-muted d-block"

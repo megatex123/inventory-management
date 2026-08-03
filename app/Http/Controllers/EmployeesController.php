@@ -155,8 +155,12 @@ class EmployeesController extends Controller
 
             if($success){
                 $employees->photo='/'.$image_url;
-                $ming=ltrim($dbImg, $dbImg[0]);
-               $done= unlink($ming);
+                if ($dbImg) {
+                    $ming = ltrim($dbImg, $dbImg[0]);
+                    if (file_exists(public_path($ming))) {
+                        unlink(public_path($ming));
+                    }
+                }
                $employees->update();
             }
 
