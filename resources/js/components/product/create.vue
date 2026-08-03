@@ -24,7 +24,7 @@
                                                 </div>
                                                 <div class="col-6">
                                                     <label>Product Code</label>
-                                                    <input type="text" class="form-control" v-model='form.product_code'>
+                                                    <input type="text" class="form-control" value="(auto-generated on save)" disabled readonly>
                                                     <small class="text-danger" v-if='errors.product_code'>
                                                         {{errors.product_code[0]}}
                                                     </small>
