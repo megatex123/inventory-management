@@ -219,7 +219,7 @@ export default {
                 this.suppliers = res.data
             })
 
-        axios.get('/api/brand')
+        axios.get('/api/brand', { params: { per_page: 100 } })
             .then(res => {
                 this.brands = res.data.data || []
             })

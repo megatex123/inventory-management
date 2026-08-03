@@ -23374,7 +23374,11 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
-    axios.get('/api/brand').then(function (res) {
+    axios.get('/api/brand', {
+      params: {
+        per_page: 100
+      }
+    }).then(function (res) {
       _this.brands = res.data.data || [];
     });
   },
@@ -23470,7 +23474,11 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
     axios.get('/api/suppliers/all').then(function (res) {
       _this.suppliers = res.data;
     });
-    axios.get('/api/brand').then(function (res) {
+    axios.get('/api/brand', {
+      params: {
+        per_page: 100
+      }
+    }).then(function (res) {
       _this.brands = res.data.data || [];
     });
   },
