@@ -47,7 +47,7 @@ Before deleting the order, for every existing `merch_order_items` row on it: res
 
 ### 3. `update()` — unchanged
 
-`update()` is a generic field-patch (`customer_id`/`order_id`/`status`) with no line-item/stock awareness today. Since no `cancelled` status value exists anywhere in this app to react to, no stock-restoration logic is added here. A future "cancel without delete" workflow would need its own status value defined first (out of scope for this spec).
+`update()` has no line-item/stock awareness today — but it is NOT a plain field-patch as originally assumed here (correction added post-implementation, final review): it actually does a full delete-and-recreate of the order's line items (`$order->items()->delete()`, then rebuilds every line from the request) alongside the `customer_id`/`order_id`/`status` fields. No stock-restoration or re-validation logic is added to it in this spec's scope regardless — see `docs/QuiviTech/Work-In-Progress.md`'s "Known bug" entry for the real behavior and its consequences (including a compounding effect on `destroy()`'s restoration). Since no `cancelled` status value exists anywhere in this app to react to, no stock-restoration logic is added here. A future "cancel without delete" workflow would need its own status value defined first (out of scope for this spec).
 
 ### 4. Response shape
 
