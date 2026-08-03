@@ -269,7 +269,7 @@
                     })
 
                     .catch(err => {
-                        this.errors = err.response.data.errors;
+                        this.errors = (err.response && err.response.data && err.response.data.errors) || {};
                         notification.error();
                     })
             }

@@ -23430,7 +23430,7 @@ __webpack_require__.r(__webpack_exports__);
         });
         notification.success();
       })["catch"](function (err) {
-        _this3.errors = err.response.data.errors;
+        _this3.errors = err.response && err.response.data && err.response.data.errors || {};
         notification.error();
       });
     }
