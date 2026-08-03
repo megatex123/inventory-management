@@ -185,11 +185,10 @@ class EmployeesController extends Controller
       $photo= $employees->photo;
       if($photo){
        $ming=ltrim($photo, $photo[0]);
-          unlink($ming);
-          DB::table('employees')->where('id',$id)->delete();
-      }else{
-        DB::table('employees')->where('id',$id)->delete();
-
+          if (file_exists(public_path($ming))) {
+              unlink(public_path($ming));
+          }
       }
+      DB::table('employees')->where('id',$id)->delete();
     }
 }
