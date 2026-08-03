@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use App\Models\Categories;
+use App\Support\BusinessId;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -152,8 +153,7 @@ class ProductsController extends Controller
     {
         $category_name = Categories::where('id',$request->cat_id)->pluck('name')->first();
         $validateData=$request->validate([
-            'product_code' =>'required|unique:products|max:255',
-            'cat_id' =>'required',
+            'cat_id' =>'required|exists:categories,id',
             'brand_id' => 'nullable',
             'product_name' =>'required|unique:products|max:255',
             'capacity' =>'nullable',
@@ -173,6 +173,9 @@ class ProductsController extends Controller
 
         $validateData['category_name'] = $category_name;
 
+        $category = Categories::findOrFail($request->cat_id);
+        $productCode = BusinessId::next('products', 'product_code', $category->code . '-', 6);
+
         if($request->photo){
             $position=strpos($request->photo,';');
             $sub= substr($request->photo,0,$position);
@@ -185,7 +188,7 @@ class ProductsController extends Controller
             $img->save($image_url);
 
             $products= new Products;
-            $products->product_code=$request->product_code;
+            $products->product_code=$productCode;
             $products->cat_id=$request->cat_id;
             $products->brand_id=$request->brand_id;
             $products->product_name=$request->product_name;
@@ -206,7 +209,7 @@ class ProductsController extends Controller
             $products->save();
         }else{
             $products= new Products;
-            $products->product_code=$request->product_code;
+            $products->product_code=$productCode;
             $products->cat_id=$request->cat_id;
             $products->brand_id=$request->brand_id;
             $products->product_name=$request->product_name;
@@ -258,7 +261,6 @@ class ProductsController extends Controller
 
             // Validate the request data
             $validateData = $request->validate([
-                'product_code' => 'sometimes|required|max:255|unique:products,product_code,' . $id,
                 'cat_id' => 'sometimes|required|exists:categories,id',
                 'brand_id' => 'nullable|max:255',
                 'product_name' => 'sometimes|required|max:255|unique:products,product_name,' . $id,
