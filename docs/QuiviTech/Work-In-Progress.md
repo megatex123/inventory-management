@@ -88,6 +88,14 @@ Live-verified end-to-end: `POST /api/product` returns 200 for both the with-phot
 
 Root cause, for the record: either (a) a migration that was supposed to add the six phantom columns (or rename/replace them into the real spec-field columns `core`/`threads`/`vram`/`80_plus`/`atx`/`gen`/`pcie`/`storage`/`size`/`colour`/`back_connect`/etc.) was never written/run, or (b) this was stale controller code left over from before a schema change removed those columns in favor of the current generic spec-field set — see the `2021_06_02_174502_create_products_table` migration-staleness note in [[Domain-Models]], which documents the same six placeholder names being stale in the *migration file* too and is very likely the same root cause. Not investigated further since the fix (delete the dead writes) didn't require knowing which.
 
+## Known bug: `MerchOrderController::update()` doesn't touch `inv_merch.current_stock` when line items change (found 2026-08-03)
+
+Introduced/found while adding BOM-driven stock deduction to `store()`/`destroy()` — see [[QuiviMerch]] for the full design. `update()` does a full delete-and-recreate of an order's line items (`$order->items()->delete()`, then rebuilds every line fresh from the request) but has zero stock awareness: it never restores the stock that was deducted at the order's original quantities, and never validates or deducts against the new quantities either.
+
+Concretely: editing an existing merch order's item quantities via `PUT`/`PATCH` does not adjust `inv_merch.current_stock` at all. The stock deducted at creation time stays deducted at the OLD quantities forever, and the NEW quantities are never checked against or reflected in stock. This isn't a regression from today's work — `update()` never touched stock before either — but it's now more visible/consequential since `store()`/`destroy()` react correctly and `update()` doesn't, which could easily be mistaken for "already handled" by whoever reads this later. It wasn't fixed here deliberately: the approved design spec scoped stock logic to `store()`/`destroy()` only.
+
+Suggested fix direction for a future pass: `update()` needs the same restore-old-then-validate-and-deduct-new logic as the combination of `destroy()` + `store()`, applied atomically (restore stock for the order's existing lines, validate the new lines against the resulting `inv_merch.current_stock`, then deduct — all inside the existing transaction, rejecting the whole update with `422` if any new line is short, mirroring `store()`'s behavior).
+
 ## Related
 - [[Domain-Models]]
 - [[API-Routes]]

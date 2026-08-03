@@ -22,6 +22,18 @@ All four business codes are `Model::count() + 1`, zero-padded to 4 digits — se
 
 `MerchOrderController::store()` computes `unit_price` server-side from `MerchItem.retail_price` (or `.member_discount_price` if the line's `discount_applied` flag is set and a discount price exists) — the frontend just toggles a checkbox, it doesn't send a price. The discount-eligibility *window* described in the source data (`QuiviMerch_QVMR.csv`'s "364 days left" style expiry, presumably tied to Serve tier completion) is **not modeled** — `discount_applied` is a manual staff toggle in v1, not auto-computed from a customer's remaining membership window. Worth revisiting once/if a formal membership-duration concept exists elsewhere in the app.
 
+## BOM-driven stock deduction (2026-08-03)
+
+Module 1 of a larger BOM initiative — the other reference documents (`BOM_QVSE`/QuiviServe, `BOM_QVTD`/QuiviThread, `BOM_QVPL`/QuiviPlus) are separate, not-yet-started future work; see [[Work-In-Progress]]'s "Known gap: several inventory/BOM entities are named but unbuilt" entry, which this closes out for QuiviMerch specifically.
+
+**No new BOM table was needed.** The live schema already links `merch_items.sku_code` to `inv_merch.sku_code` 1:1, and every row in the `BOM_QVMR`/`BOM_DIS_QVMR` reference documents has `Qty Per Product = 1` — QuiviMerch has no multi-component assembly, unlike QuiviServe's tiered packages or QuiviThread's PSU-brand/colour-variant BOMs (each of those will need its own design pass later, since neither is a simple 1:1 link).
+
+`MerchOrderController::store()` now validates and deducts `inv_merch.current_stock` (matched via `merch_items.sku_code = inv_merch.sku_code`) when an order is placed. If any line's requested `qty` exceeds the matched `inv_merch` row's `current_stock`, the **whole order** is rejected with `422` (same response shape as existing validation failures — [[API-Routes]] confirms `resources/js/components/merch_orders/create.vue` needed zero frontend changes since it already consumes that shape). `destroy()` restores stock on (soft) delete, reversing what `store()` deducted.
+
+A `merch_items` row whose `sku_code` has no matching `inv_merch` row is **silently skipped** for stock purposes (not an error) — intentional, since `master_sku` has rows (e.g. `sku_code = 'test'`) with no live `inv_merch` counterpart, and blocking a sale over an unrelated data gap would be wrong.
+
+**Known gap, not fixed here:** `update()` has no stock awareness at all — see [[Work-In-Progress]]'s matching "Known bug" entry.
+
 ## Related
 - [[Workflow]]
 - [[QuiviServe]] — the tier system merch discounts are conceptually tied to
