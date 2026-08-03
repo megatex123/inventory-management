@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MerchOrder;
 use App\Models\MerchOrderItem;
 use App\Models\MerchItem;
+use App\Models\InvMerch;
 use App\Models\Customers;
 use App\Models\Order;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
@@ -90,6 +91,36 @@ class MerchOrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
+        // Pre-flight stock check -- resolve every line's inv_merch counterpart
+        // (via the shared sku_code) BEFORE creating anything. A merch_items
+        // row with no matching inv_merch row (e.g. its sku_code has no live
+        // inventory counterpart) has nothing to check/deduct against and is
+        // silently skipped, not treated as an error.
+        $stockErrors = [];
+        foreach ($request->items as $line) {
+            $merchItem = MerchItem::find($line['merch_item_id']);
+            if (!$merchItem) {
+                continue; // caught by the 'exists' rule above; defensive only
+            }
+
+            $invMerch = InvMerch::where('sku_code', $merchItem->sku_code)->first();
+            if (!$invMerch) {
+                continue;
+            }
+
+            if ($invMerch->current_stock < $line['qty']) {
+                $stockErrors[] = "Insufficient stock for {$merchItem->name}: requested {$line['qty']}, only {$invMerch->current_stock} available";
+            }
+        }
+
+        if (!empty($stockErrors)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock',
+                'errors' => ['items' => $stockErrors],
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
             $nextId = MerchOrder::count() + 1;
@@ -118,6 +149,11 @@ class MerchOrderController extends Controller
                     'discount_applied' => $discountApplied,
                     'line_total' => $unitPrice * $line['qty'],
                 ]);
+
+                $invMerch = InvMerch::where('sku_code', $merchItem->sku_code)->first();
+                if ($invMerch) {
+                    $invMerch->decrement('current_stock', $line['qty']);
+                }
             }
 
             DB::commit();
