@@ -616,7 +616,7 @@ CREATE TABLE `employees` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -645,7 +645,7 @@ CREATE TABLE `expenses` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -766,43 +766,6 @@ INSERT INTO `inv_care` VALUES
 (5,'IC-RAM-0001',8,'CINV-RAM-000001','G.SKILL Trident Z5 32GB Kit (Spare)',899,6,4,5,1,0,0,'2026-01-01 00:00:00',24,'2028-01-01 00:00:00','G.Skill','2026-08-02 04:23:38','2026-08-02 04:23:38',NULL),
 (6,'IC-GPU-0003',10,'CINV-GPU-000002','MSI Trio X White RTX 5080 16GB (Spare)',4999,3,1,3,1,0,0,'2026-01-01 00:00:00',36,'2029-01-01 00:00:00','MSI','2026-08-02 04:23:22','2026-08-02 04:23:22',NULL);
 /*!40000 ALTER TABLE `inv_care` ENABLE KEYS */;
-UNLOCK TABLES;
-commit;
-
---
--- Table structure for table `inv_excl_serve`
---
-
-DROP TABLE IF EXISTS `inv_excl_serve`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `inv_excl_serve` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `inv_excl_serve` varchar(255) NOT NULL,
-  `serve_data_id` int(11) NOT NULL,
-  `sku_code` varchar(100) NOT NULL,
-  `item_name` varchar(100) NOT NULL,
-  `unit_cost` int(11) NOT NULL,
-  `max_stock` int(11) NOT NULL,
-  `current_stock` int(11) NOT NULL,
-  `to_restock` int(11) NOT NULL,
-  `status` int(11) NOT NULL,
-  `generate_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `deleted_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `inv_excl_serve`
---
-
-LOCK TABLES `inv_excl_serve` WRITE;
-/*!40000 ALTER TABLE `inv_excl_serve` DISABLE KEYS */;
-set autocommit=0;
-/*!40000 ALTER TABLE `inv_excl_serve` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -1346,9 +1309,6 @@ INSERT INTO `menu_items` VALUES
 (95,77,'header','QuiviCare Inventory',NULL,NULL,2,1,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
 (96,95,'link','All QuiviCare Inventory',NULL,'/inv-care',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (97,95,'link','Add QuiviCare Inventory',NULL,'/inv-care/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(98,77,'header','QS Excl. Inventory',NULL,NULL,3,0,1,'2026-07-20 12:56:08','2026-07-23 17:27:23'),
-(99,98,'link','All QS Excl. Inventory',NULL,'/inv-excl-serve',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
-(100,98,'link','Add QS Excl. Inventory',NULL,'/inv-excl-serve/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (101,77,'header','QuiviMerch Inventory',NULL,NULL,4,0,1,'2026-07-20 12:56:08','2026-08-01 06:01:00'),
 (102,101,'link','All QuiviMerch Inventory',NULL,'/inv-merch',0,0,1,'2026-07-20 12:56:08','2026-08-01 06:01:00'),
 (103,101,'link','Add QM Inventory',NULL,'/inv-merch/create',1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -1500,7 +1460,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1595,7 +1555,8 @@ INSERT INTO `migrations` VALUES
 (105,'2026_07_28_160000_add_refunds_menu_item',41),
 (106,'2026_08_01_000000_create_order_drafts_table',42),
 (107,'2026_08_01_010000_merge_inv_excl_merch_into_inv_merch',43),
-(108,'2026_08_02_000000_add_business_id_columns_missing_from_history',44);
+(108,'2026_08_02_000000_add_business_id_columns_missing_from_history',44),
+(109,'2026_08_02_010000_remove_inv_excl_serve',45);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -3242,7 +3203,7 @@ CREATE TABLE `salaries` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3985,4 +3946,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-08-02  5:37:51
+-- Dump completed on 2026-08-03  0:55:25
