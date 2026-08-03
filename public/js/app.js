@@ -69924,6 +69924,9 @@ var render = function render() {
     staticClass: "photo-upload-btn",
     "class": {
       "has-photo": _vm.form.image
+    },
+    attrs: {
+      title: "Click to change photo"
     }
   }, [_vm.form.image ? _c("img", {
     attrs: {
@@ -69940,7 +69943,9 @@ var render = function render() {
     }
   })]), _vm._v(" "), _vm.displayPhotoName ? _c("small", {
     staticClass: "text-success d-block"
-  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.errors.image ? _c("small", {
+  }, [_vm._v("Uploaded: " + _vm._s(_vm.displayPhotoName))]) : _vm._e(), _vm._v(" "), _vm.form.image ? _c("small", {
+    staticClass: "text-muted d-block"
+  }, [_vm._v("Click the photo above to replace it")]) : _vm._e(), _vm._v(" "), _vm.errors.image ? _c("small", {
     staticClass: "text-danger d-block"
   }, [_vm._v(_vm._s(_vm.errors.image[0]))]) : _vm._e()]), _vm._v(" "), _vm._m(1)])])])])])])])])]);
 };

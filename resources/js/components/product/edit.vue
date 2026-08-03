@@ -172,11 +172,12 @@
                                         <!-- Image Upload -->
                                         <div class="form-group">
                                             <label class="small text-muted mb-1">Photo</label>
-                                            <div class="photo-upload-btn" :class="{ 'has-photo': form.image }">
+                                            <div class="photo-upload-btn" :class="{ 'has-photo': form.image }" title="Click to change photo">
                                                 <img v-if="form.image" :src="form.image" alt="Product Image">
                                                 <input type="file" accept="image/*" @change='onFileSelect'>
                                             </div>
                                             <small class="text-success d-block" v-if='displayPhotoName'>Uploaded: {{ displayPhotoName }}</small>
+                                            <small class="text-muted d-block" v-if='form.image'>Click the photo above to replace it</small>
                                             <small class="text-danger d-block" v-if='errors.image'>{{errors.image[0]}}</small>
                                         </div>
 
