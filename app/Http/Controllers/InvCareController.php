@@ -116,7 +116,7 @@ class InvCareController extends Controller
         DB::beginTransaction();
         try {
             $categoryName = optional(Categories::find($request->category))->name ?? 'MISC';
-            $invCareCode = BusinessId::next('inv_care', 'inv_care', "IC-{$categoryName}-", 4);
+            $invCareCode = BusinessId::next('inv_care', 'inv_care', "CINV-{$categoryName}-", 6);
 
             $invCare = InvCare::create([
                 'inv_care' => $invCareCode,
