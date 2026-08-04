@@ -6,6 +6,7 @@ use App\Models\ThreadOrder;
 use App\Models\ThreadOrderItem;
 use App\Models\ThreadBomHeader;
 use App\Models\Customers;
+use App\Models\InvThread;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +117,19 @@ class ThreadOrderController extends Controller
         return ['components' => $components, 'total_cost' => (float) $totalCost];
     }
 
+    private function aggregateComponentQty(array $componentLists): array
+    {
+        $totals = [];
+        foreach ($componentLists as $components) {
+            foreach ($components as $component) {
+                $sku = $component['sku_code'];
+                $qty = $component['qty_per_cable'] * ($component['line_qty'] ?? 1);
+                $totals[$sku] = ($totals[$sku] ?? 0) + $qty;
+            }
+        }
+        return $totals;
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -136,6 +150,52 @@ class ThreadOrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
+        // Resolve every line's components up front (before opening the
+        // transaction) so we can aggregate needed quantity per sku_code
+        // across the WHOLE order and validate stock before creating anything.
+        $resolvedByLine = [];
+        $componentListsForAggregation = [];
+        foreach ($request->items as $line) {
+            $resolved = $this->resolveComponents($line['psu_brand'], $line['cable_type'], $line['colour_variant'] ?? null);
+            $resolvedByLine[] = $resolved;
+
+            $withLineQty = array_map(function ($component) use ($line) {
+                $component['line_qty'] = $line['qty'];
+                return $component;
+            }, $resolved['components']);
+            $componentListsForAggregation[] = $withLineQty;
+        }
+
+        $neededBySku = $this->aggregateComponentQty($componentListsForAggregation);
+
+        $itemNames = [];
+        foreach ($componentListsForAggregation as $components) {
+            foreach ($components as $component) {
+                $itemNames[$component['sku_code']] = $component['item_name'];
+            }
+        }
+
+        $invRows = InvThread::whereIn('sku_code', array_keys($neededBySku))->get()->keyBy('sku_code');
+
+        $shortfalls = [];
+        foreach ($neededBySku as $sku => $needed) {
+            $invRow = $invRows->get($sku);
+            if (!$invRow) {
+                continue;
+            }
+            if ($invRow->current_stock < $needed) {
+                $shortfalls[] = "Insufficient stock for {$itemNames[$sku]}: requested {$needed}, only {$invRow->current_stock} available";
+            }
+        }
+
+        if (!empty($shortfalls)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insufficient stock',
+                'errors' => ['items' => $shortfalls],
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
             $nextId = ThreadOrder::count() + 1;
@@ -148,8 +208,8 @@ class ThreadOrderController extends Controller
                 'status' => $request->status ?? 'pending',
             ]);
 
-            foreach ($request->items as $line) {
-                $resolved = $this->resolveComponents($line['psu_brand'], $line['cable_type'], $line['colour_variant'] ?? null);
+            foreach ($request->items as $index => $line) {
+                $resolved = $resolvedByLine[$index];
                 $unitPrice = $line['unit_price'] ?? $resolved['total_cost'];
 
                 ThreadOrderItem::create([
@@ -164,6 +224,13 @@ class ThreadOrderController extends Controller
                     'unit_price' => $unitPrice,
                     'line_total' => $unitPrice * $line['qty'],
                 ]);
+            }
+
+            foreach ($neededBySku as $sku => $needed) {
+                $invRow = $invRows->get($sku);
+                if ($invRow) {
+                    $invRow->decrement('current_stock', $needed);
+                }
             }
 
             DB::commit();
@@ -251,16 +318,43 @@ class ThreadOrderController extends Controller
 
     public function destroy($id)
     {
-        $order = ThreadOrder::find($id);
+        $order = ThreadOrder::with('items')->find($id);
 
         if (!$order) {
             return response()->json(['success' => false, 'message' => 'Thread order not found'], 404);
         }
 
+        DB::beginTransaction();
         try {
+            $componentListsForAggregation = [];
+            foreach ($order->items as $item) {
+                $components = $item->resolved_components ?? [];
+                $withLineQty = array_map(function ($component) use ($item) {
+                    $component['line_qty'] = $item->qty;
+                    return $component;
+                }, $components);
+                $componentListsForAggregation[] = $withLineQty;
+            }
+
+            $toRestoreBySku = $this->aggregateComponentQty($componentListsForAggregation);
+
+            if (!empty($toRestoreBySku)) {
+                $invRows = InvThread::whereIn('sku_code', array_keys($toRestoreBySku))->get()->keyBy('sku_code');
+                foreach ($toRestoreBySku as $sku => $qty) {
+                    $invRow = $invRows->get($sku);
+                    if ($invRow) {
+                        $invRow->increment('current_stock', $qty);
+                    }
+                }
+            }
+
             $order->delete();
+
+            DB::commit();
+
             return response()->json(['success' => true, 'message' => 'Thread order deleted successfully']);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => 'Failed to delete thread order', 'error' => $e->getMessage()], 500);
         }
     }
