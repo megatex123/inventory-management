@@ -148,7 +148,6 @@ class CareWarrantyController extends Controller
 
         try {
             $validator = Validator::make($request->all(), [
-                'care_warranty_id' => 'required|string|max:255|unique:care_warranty,care_warranty_id',
                 'care_data_id' => 'required|exists:care_data,id',
                 'care_invoice_id' => 'required|string|max:255',
                 'product_id' => 'nullable|string|max:255',
@@ -184,6 +183,8 @@ class CareWarrantyController extends Controller
 
             // Set default values for boolean fields if not provided
             $data['reset_status'] = $data['reset_status'] ?? false;
+
+            $data['care_warranty_id'] = \App\Support\BusinessId::next('care_warranty', 'care_warranty_id', 'CARE-CLM-', 6);
 
             $CareWarranty = CareWarranty::create($data);
 
@@ -425,118 +426,4 @@ class CareWarrantyController extends Controller
         return $item;
     }
 
-    /**
-     * Get the next available warranty ID
-     */
-    public function getNextId()
-    {
-        try {
-            // Maximum number of warranty IDs (4 digits = 0001 to 9999)
-            $maxNumber = 9999;
-            $foundAvailableId = false;
-            $attempts = 0;
-            $maxAttempts = 100; // Prevent infinite loop
-            $nextNumber = 1;
-
-            // Keep trying until we find an available ID
-            while (!$foundAvailableId && $attempts < $maxAttempts) {
-                // Get the last warranty record ordered by ID descending
-                $lastWarranty = CareWarranty::orderBy('id', 'desc')->first();
-
-                if (!$lastWarranty || !$lastWarranty->care_warranty_id) {
-                    $nextNumber = 1;
-                } else {
-                    // Extract the number from the last ID (format: QV-CLA-XXXX)
-                    preg_match('/QV-CLA-(\d+)/', $lastWarranty->care_warranty_id, $matches);
-
-                    if (isset($matches[1]) && is_numeric($matches[1])) {
-                        $nextNumber = intval($matches[1]) + 1;
-                    } else {
-                        $nextNumber = 1;
-                    }
-                }
-
-                // Handle overflow
-                if ($nextNumber > $maxNumber) {
-                    // If we've exceeded the max, we need to find a gap
-                    $nextNumber = $this->findFirstAvailableWarrantyNumber();
-                    if ($nextNumber === null) {
-                        // No available numbers found
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'No available warranty IDs left',
-                            'data' => null
-                        ], 400);
-                    }
-                }
-
-                // Format with leading zeros
-                $warrantyId = 'QV-CLA-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-
-                // Check if this ID already exists (to prevent duplicates)
-                $existingWarranty = CareWarranty::where('care_warranty_id', $warrantyId)->first();
-
-                if (!$existingWarranty) {
-                    $foundAvailableId = true;
-                } else {
-                    // If it exists, increment and try again
-                    $nextNumber++;
-                    $attempts++;
-                }
-            }
-
-            if (!$foundAvailableId) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unable to find an available warranty ID after multiple attempts',
-                    'data' => null
-                ], 400);
-            }
-
-            // Prepare the response
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'warranty_id' => $warrantyId,      // For frontend expecting underscore
-                    'warrantyId' => $warrantyId,       // For frontend expecting camelCase
-                    'next_number' => $nextNumber,
-                    'nextNumber' => $nextNumber
-                ],
-                'message' => 'Warranty ID generated successfully'
-            ], 200);
-
-        } catch (\Exception $e) {
-            Log::error('Failed to generate warranty ID: ' . $e->getMessage(), [
-                'exception' => $e
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate warranty ID',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-                'data' => null
-            ], 500);
-        }
-    }
-
-    /**
-     * Helper method to find the first available warranty number
-     *
-     * @return int|null
-     */
-    private function findFirstAvailableWarrantyNumber()
-    {
-        $maxNumber = 9999;
-
-        for ($i = 1; $i <= $maxNumber; $i++) {
-            $warrantyId = 'QV-CLA-' . str_pad($i, 4, '0', STR_PAD_LEFT);
-            $exists = CareWarranty::where('care_warranty_id', $warrantyId)->exists();
-
-            if (!$exists) {
-                return $i;
-            }
-        }
-
-        return null; // No available numbers
-    }
 }

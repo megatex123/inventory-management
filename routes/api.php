@@ -297,7 +297,6 @@ Route::prefix('care-warranty')->group(function () {
     Route::get('/', 'CareWarrantyController@index');
     Route::post('/', 'CareWarrantyController@store');
     Route::get('/statistics', 'CareWarrantyController@statistics');
-    Route::get('/next-id', 'CareWarrantyController@getNextId');
     Route::get('/all', 'CareWarrantyController@all');
     Route::get('/{id}', 'CareWarrantyController@show');
     Route::put('/{id}', 'CareWarrantyController@update');

@@ -12,38 +12,6 @@
       <div class="card-body">
         <form @submit.prevent="saveWarranty">
           <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Warranty ID <span class="text-danger">*</span></label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="form.care_warranty_id"
-                    :class="{ 'is-invalid': errors.care_warranty_id }"
-                    readonly
-                    required
-                  >
-                  <div class="input-group-append">
-                    <button
-                      class="btn btn-outline-secondary"
-                      type="button"
-                      @click="generateNewId"
-                      title="Generate New ID"
-                    >
-                      <i class="fas fa-sync-alt"></i>
-                    </button>
-                  </div>
-                </div>
-                <small class="form-text text-muted">
-                  Auto-generated ID in format: QV-CLA-xxxx
-                </small>
-                <div v-if="errors.care_warranty_id" class="invalid-feedback d-block">
-                  {{ errors.care_warranty_id[0] }}
-                </div>
-              </div>
-            </div>
-
             <!-- Care Data Search -->
             <div class="col-md-4 mb-3">
               <label class="form-label">Care Data <span class="text-danger">*</span></label>
@@ -515,7 +483,6 @@ export default {
     return {
       debugMode: true,
       form: {
-        care_warranty_id: '',
         care_data_id: '',
         care_invoice_id: '',
         product_id: '',
@@ -534,7 +501,6 @@ export default {
       isLoadingCategories: false,
       errors: {},
       saving: false,
-      isGeneratingId: false,
       autoPopulatedInvoice: false,
       searchQuery: '',
       careDataResults: [],
@@ -561,7 +527,6 @@ export default {
   },
   mounted() {
     this.fetchCategories()
-    this.generateNewId()
     this.debouncedSearch = debounce(this.searchCareDataApi, 300)
   },
   methods: {
@@ -581,51 +546,6 @@ export default {
       if (!categoryId) return 'Unknown'
       const category = this.categories.find(c => c.id == categoryId)
       return category ? category.name : `ID: ${categoryId}`
-    },
-
-    async generateNewId() {
-      if (this.isGeneratingId) return
-
-      this.isGeneratingId = true
-      try {
-        const response = await axios.get('/api/care-warranties/next-id')
-        this.form.care_warranty_id = response.data.data.warranty_id
-      } catch (error) {
-        await this.generateLocalId()
-      } finally {
-        this.isGeneratingId = false
-      }
-    },
-
-    async generateLocalId() {
-      try {
-        const response = await axios.get('/api/care-warranty', {
-          params: {
-            per_page: 1,
-            sort_field: 'care_warranty_id',
-            sort_direction: 'desc'
-          }
-        })
-
-        let nextNumber = 1
-        if (response.data.data && response.data.data.length > 0) {
-          const lastId = response.data.data[0].care_warranty_id
-          const match = lastId.match(/QV-CLA-(\d+)/)
-          if (match) {
-            nextNumber = parseInt(match[1]) + 1
-          }
-        }
-
-        this.form.care_warranty_id = this.formatWarrantyId(nextNumber)
-      } catch (error) {
-        console.error('Error generating local ID:', error)
-        this.form.care_warranty_id = this.formatWarrantyId(Date.now() % 10000)
-      }
-    },
-
-    formatWarrantyId(number) {
-      const paddedNumber = String(number).padStart(4, '0')
-      return `QV-CLA-${paddedNumber}`
     },
 
     formatCurrency(value) {
@@ -954,9 +874,6 @@ export default {
       } catch (error) {
         if (error.response?.status === 422) {
           this.errors = error.response.data.errors || {}
-          if (this.errors.care_warranty_id) {
-            this.generateNewId()
-          }
         }
         if (this.$toast) {
           this.$toast.error(error.response?.data?.message || 'Failed to save warranty')
