@@ -639,30 +639,32 @@ export default {
       try {
         console.log('Loading warranty by ID:', warrantyId)
 
-        const response = await axios.get(`/api/product-warranty/${warrantyId}`)
+        const response = await axios.get(`/api/inv-care/${warrantyId}`)
 
         if (response.data.success) {
           const warranty = response.data.data
           console.log('Loaded warranty:', warranty)
+
+          const categoryName = warranty.categoryLookup ? warranty.categoryLookup.name : null
 
           // Store the warranty as selected
           this.selectedWarranty = warranty
           this.selectedWarrantyId = warranty.id
 
           // Auto-fill spare item fields
-          if (warranty.product_name) {
-            this.form.spare_item_name = warranty.product_name
+          if (warranty.item_name) {
+            this.form.spare_item_name = warranty.item_name
           }
 
-          if (warranty.category_name) {
-            this.form.spare_category_name = warranty.category_name
+          if (categoryName) {
+            this.form.spare_category_name = categoryName
           }
 
-          if (warranty.category_id) {
-            this.form.spare_category_id = warranty.category_id
-          } else if (warranty.category_name) {
+          if (warranty.category) {
+            this.form.spare_category_id = warranty.category
+          } else if (categoryName) {
             const category = this.categories.find(c =>
-              c.name.toLowerCase() === warranty.category_name.toLowerCase()
+              c.name.toLowerCase() === categoryName.toLowerCase()
             )
             if (category) {
               this.form.spare_category_id = category.id
