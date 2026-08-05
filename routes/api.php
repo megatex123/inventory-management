@@ -329,6 +329,7 @@ Route::prefix('inv-care')->group(function () {
     Route::post('/', 'InvCareController@store');
     Route::get('/statistics', 'InvCareController@statistics');
     Route::get('/search', 'InvCareController@search');
+    Route::get('/by-category', 'InvCareController@getByCategory');
 
     Route::prefix('{id}')->group(function () {
         Route::get('/', 'InvCareController@show');

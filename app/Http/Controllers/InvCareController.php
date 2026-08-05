@@ -64,6 +64,32 @@ class InvCareController extends Controller
         ]);
     }
 
+    public function getByCategory(Request $request)
+    {
+        $items = InvCare::with('categoryLookup')
+            ->where('category', $request->category_id)
+            ->where('current_stock', '>', 0)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'inv_care' => $item->inv_care,
+                    'item_name' => $item->item_name,
+                    'sku_code' => $item->sku_code,
+                    'current_stock' => $item->current_stock,
+                    'category_name' => optional($item->categoryLookup)->name,
+                    'category_id' => $item->category,
+                    'created_at' => $item->created_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $items,
+        ]);
+    }
+
     public function show($id)
     {
         $invCare = InvCare::with(['masterSku', 'categoryLookup'])->find($id);

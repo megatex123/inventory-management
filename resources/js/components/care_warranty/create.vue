@@ -325,7 +325,7 @@
                     <div class="warranty-card-body">
                       <!-- Warranty Header -->
                       <div class="d-flex justify-content-between align-items-start">
-                        <strong class="warranty-id">{{ warranty.product_name || ('Warranty #' + warranty.id) }}</strong>
+                        <strong class="warranty-id">{{ warranty.item_name || ('Warranty #' + warranty.id) }}</strong>
                         <span class="badge" :class="selectedWarrantyId === warranty.id ? 'badge-success' : 'badge-primary'">
                           ID: {{ warranty.id }}
                         </span>
@@ -333,21 +333,17 @@
 
                       <!-- Warranty Details -->
                       <div class="warranty-details mt-2">
-                        <div v-if="warranty.product_code" class="small">
+                        <div v-if="warranty.inv_care" class="small">
                           <i class="fas fa-qrcode mr-1"></i>
-                          <strong>Code:</strong> {{ warranty.product_code }}
+                          <strong>Tag:</strong> {{ warranty.inv_care }}
                         </div>
                         <div class="small">
-                          <i class="fas fa-hashtag mr-1"></i>
-                          <strong>Serial No:</strong> {{ warranty.serial_no || 'N/A' }}
+                          <i class="fas fa-boxes mr-1"></i>
+                          <strong>Stock:</strong> {{ warranty.current_stock }}
                         </div>
                         <div class="small">
                           <i class="fas fa-tag mr-1"></i>
                           <strong>Category:</strong> {{ warranty.category_name }}
-                        </div>
-                        <div v-if="warranty.warranty_id" class="small">
-                          <i class="fas fa-id-card mr-1"></i>
-                          <strong>Warranty:</strong> {{ warranty.warranty_id }}
                         </div>
                         <div class="small text-muted">
                           <i class="fas fa-calendar mr-1"></i>
@@ -730,7 +726,7 @@ export default {
       try {
         console.log('Fetching warranties for category ID:', categoryId)
 
-        const response = await axios.get('/api/product-warranty/by-category', {
+        const response = await axios.get('/api/inv-care/by-category', {
           params: {
             category_id: categoryId
           }
@@ -775,10 +771,9 @@ export default {
 
       const search = this.warrantySearch.toLowerCase()
       this.filteredWarranties = this.availableWarranties.filter(warranty =>
-        (warranty.warranty_id && warranty.warranty_id.toLowerCase().includes(search)) ||
-        (warranty.serial_no && warranty.serial_no.toLowerCase().includes(search)) ||
-        (warranty.product_name && warranty.product_name.toLowerCase().includes(search)) ||
-        (warranty.product_code && warranty.product_code.toLowerCase().includes(search))
+        (warranty.item_name && warranty.item_name.toLowerCase().includes(search)) ||
+        (warranty.sku_code && warranty.sku_code.toLowerCase().includes(search)) ||
+        (warranty.inv_care && warranty.inv_care.toLowerCase().includes(search))
       )
     },
 
@@ -788,8 +783,8 @@ export default {
       this.form.i_qvca_id = warranty.id.toString()
 
       // Auto-fill spare item name and category from the warranty
-      if (warranty.product_name) {
-        this.form.spare_item_name = warranty.product_name
+      if (warranty.item_name) {
+        this.form.spare_item_name = warranty.item_name
       }
 
       if (warranty.category_name) {
