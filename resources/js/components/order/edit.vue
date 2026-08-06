@@ -122,7 +122,7 @@
                           style="width: 50px;"
                           min="1"
                           :max="item.max_stock">
-                        <button @click="incrementQty(item)" class="btn btn-success btn-sm p-1 mr-1">+</button>
+                        <button v-if="canIncreaseQuantity(item)" @click="incrementQty(item)" class="btn btn-success btn-sm p-1 mr-1">+</button>
                       </td>
                       <td>{{ formatNumber(item.pro_price) }}</td>
                       <td>{{ formatNumber(item.sub_total) }}</td>
@@ -152,6 +152,13 @@
                       {{ customer.full_name }} - {{ customer.phone }}
                     </option>
                   </select>
+                </div>
+
+                <div v-if="cartValidationErrors.length > 0" class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>Cart Validation :</strong>
+                    <ul class="mb-0 mt-1">
+                        <li v-for="(error, index) in cartValidationErrors" :key="index">{{ error }}</li>
+                    </ul>
                 </div>
 
                 <div class="border-top pt-3">
@@ -188,7 +195,7 @@
                     <button class="btn btn-secondary" @click="cancelEdit">
                       Cancel
                     </button>
-                    <button class="btn btn-primary" @click="updateOrder" :disabled="isSaving || cartItems.length === 0">
+                    <button class="btn btn-primary" @click="updateOrder" :disabled="isSaving || cartItems.length === 0 || cartValidationErrors.length > 0">
                       <span v-if="isSaving">
                         <i class="fa fa-spinner fa-spin"></i> Saving...
                       </span>
@@ -251,7 +258,30 @@ export default {
       selectedSubCategoryId: null,
       showCurrentProducts: true,
       isSaving: false,
-      newOrderTotal: 0
+      newOrderTotal: 0,
+      categoryRules: {
+        'CPU': { min: 1, max: 1, description: 'Exactly 1 required' },
+        'MBD': { min: 1, max: 1, dependencies: ['CPU'], description: 'Exactly 1 required, needs CPU' },
+        'GPU': { min: 0, max: null, description: 'Optional' },
+        'RAM': { min: 1, description: 'Minimum 1 required' },
+        'SSD': { min: 0, exclusiveWith: ['HDD'], description: 'Optional, cannot have with HDD' },
+        'HDD': { min: 0, exclusiveWith: ['SSD'], description: 'Optional, cannot have with SSD' },
+        'AIO': { min: 1, max: 1, exclusiveWith: ['HSF'], description: 'Exactly 1 required, cannot have with HSF' },
+        'HSF': { min: 1, max: 1, exclusiveWith: ['AIO'], description: 'Exactly 1 required, cannot have with AIO' },
+        'PSU': { min: 1, max: null, description: 'Minimum 1 required' },
+        'CSE': { min: 1, max: 1, description: 'Exactly 1 required' },
+        'FAN': { description: 'No restrictions' },
+        'ACC-SAG': { description: 'No restrictions' },
+        'ACC-CTL': { description: 'No restrictions' },
+        'ACC-HUB': { description: 'No restrictions' },
+        'PER-MON': { description: 'No restrictions' },
+        'PER-MOU': { description: 'No restrictions' },
+        'PER-HDS': { description: 'No restrictions' },
+        'PER-MIC': { description: 'No restrictions' },
+        'PER-MSP': { description: 'No restrictions' },
+        'PER-KEY': { description: 'No restrictions' },
+        'PER-CAM': { description: 'No restrictions' },
+      }
     }
   },
   computed: {
@@ -295,6 +325,96 @@ export default {
         const qty = parseInt(item.pro_qty) || 0;
         return sum + (price * qty);
       }, 0);
+    },
+    // Get cart items grouped by category with quantities
+    cartByCategory() {
+      const categoryMap = {};
+      this.cartItems.forEach(item => {
+        if (!categoryMap[item.category_name]) {
+          categoryMap[item.category_name] = {
+            items: [],
+            totalQty: 0,
+            totalPrice: 0
+          };
+        }
+        categoryMap[item.category_name].items.push(item);
+        categoryMap[item.category_name].totalQty += parseInt(item.pro_qty);
+        categoryMap[item.category_name].totalPrice += parseFloat(item.sub_total);
+      });
+      return categoryMap;
+    },
+    // Check if cart meets all category rules
+    cartValidationErrors() {
+      const errors = [];
+      const categoryMap = this.cartByCategory;
+
+      // Check mandatory categories (min 1)
+      const mandatoryCategories = ['CPU', 'MBD', 'RAM', 'PSU'];
+      mandatoryCategories.forEach(catName => {
+        if (!categoryMap[catName]) {
+          errors.push(`${catName} is required (minimum 1)`);
+        }
+      });
+
+      // Check CPU exactly 1
+      if (categoryMap['CPU'] && categoryMap['CPU'].totalQty !== 1) {
+        errors.push('CPU: Exactly 1 required');
+      }
+
+      // Check MBD exactly 1
+      if (categoryMap['MBD'] && categoryMap['MBD'].totalQty !== 1) {
+        errors.push('MBD: Exactly 1 required');
+      }
+
+      // Check MBD dependency on CPU
+      if (categoryMap['MBD'] && !categoryMap['CPU']) {
+        errors.push('Motherboard (MBD) requires CPU');
+      }
+
+      // Check AIO/HSF requirement (one of them required)
+      const hasAIO = categoryMap['AIO'];
+      const hasHSF = categoryMap['HSF'];
+
+      if (!hasAIO && !hasHSF) {
+        errors.push('Either AIO or HSF is required');
+      }
+
+      // Check AIO exactly 1 if present
+      if (hasAIO && hasAIO.totalQty !== 1) {
+        errors.push('AIO: Exactly 1 required');
+      }
+
+      // Check HSF exactly 1 if present
+      if (hasHSF && hasHSF.totalQty !== 1) {
+        errors.push('HSF: Exactly 1 required');
+      }
+
+      // Check AIO/HSF mutual exclusivity
+      if (hasAIO && hasHSF) {
+        errors.push('Cannot have both AIO and HSF - choose one');
+      }
+
+      // Check SSD/HDD requirement (at least one)
+      const hasSSD = categoryMap['SSD'];
+      const hasHDD = categoryMap['HDD'];
+
+      if (!hasSSD && !hasHDD) {
+        errors.push('Either SSD or HDD is required');
+      }
+
+      // Check SSD/HDD mutual exclusivity
+      if (hasSSD && hasHDD) {
+        errors.push('Cannot have both SSD and HDD - choose one');
+      }
+
+      // Check CSE exactly 1
+      if (!categoryMap['CSE']) {
+        errors.push('CSE: Exactly 1 required');
+      } else if (categoryMap['CSE'].totalQty !== 1) {
+        errors.push('CSE: Exactly 1 required');
+      }
+
+      return errors;
     }
   },
   created() {
@@ -306,6 +426,36 @@ export default {
     this.loadAllData();
   },
   methods: {
+    // Get category rule safely
+    getCategoryRule(categoryName) {
+      return this.categoryRules[categoryName] || null;
+    },
+
+    canIncreaseQuantity(cartItem) {
+      const categoryName = cartItem.category_name;
+      const rule = this.getCategoryRule(categoryName);
+
+      // Check if this is a category with max 1 (exactly one required)
+      if (rule && rule.max === 1) {
+        if (cartItem.pro_qty >= 1) {
+          return false;
+        }
+      }
+
+      // Check if increasing would violate mutual exclusivity
+      if (rule && rule.exclusiveWith && rule.exclusiveWith.length > 0) {
+        for (const exclusiveCat of rule.exclusiveWith) {
+          const exclusiveQty = this.cartItems.filter(item => item.category_name === exclusiveCat)
+                                        .reduce((sum, item) => sum + parseInt(item.pro_qty), 0);
+          if (exclusiveQty > 0) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    },
+
     loadOrderData() {
       console.log('Fetching order detail with ID:', this.orderData.order_id);
       axios.get(`/api/order/get/${this.orderId}`)
@@ -407,6 +557,10 @@ export default {
     },
 
     incrementQty(item) {
+      if (!this.canIncreaseQuantity(item)) {
+        this.showNotification('This category is already at its limit', 'warning');
+        return;
+      }
       if (item.pro_qty < item.max_stock) {
         item.pro_qty++;
         this.updateItemTotal(item);
