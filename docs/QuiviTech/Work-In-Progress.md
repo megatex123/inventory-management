@@ -6,6 +6,10 @@ tags: [wip, status]
 
 Last checked 2026-07-10 — `git status` clean except vault edits and Laravel Mix build artifacts (`public/js/app.js`, `package-lock.json` always diff after `npm run dev`/`watch`, not real changes). No in-flight code changes right now.
 
+## Order edit gained the same cart-composition validation as POS (2026-08-06)
+
+`resources/js/components/order/edit.vue` previously had no build-composition validation at all when editing an existing order's cart — `pos/index.vue` (the create-order flow) enforces CPU/MBD/RAM/PSU minimum-1, CPU/MBD/AIO/HSF/CSE exactly-1, AIO-or-HSF required, SSD-or-HDD required (both pairs mutually exclusive), but none of this applied on edit. Ported `categoryRules`/`cartByCategory()`/`cartValidationErrors()`/`getCategoryRule()`/`canIncreaseQuantity()` verbatim (only `carts`→`cartItems` substituted) into `order/edit.vue`: a "Cart Validation" alert now renders the same error list, the "Update Order" button is disabled while any error exists, and the "+" quantity button hides once a max-1 category (or its mutually-exclusive counterpart) is already satisfied — full parity with `pos/index.vue`. Frontend-only, same as the POS version (no backend enforcement on either the create or edit save path). Spec: `docs/superpowers/specs/2026-08-06-order-edit-cart-validation-design.md`. Commit `da6e007`. **Not live-verified in a browser** — this session's sandbox has no Node/npm/browser; verification was a byte-level diff against `pos/index.vue`'s proven source plus a manual trace of `cartValidationErrors` against 3 representative cart states. Spot-check in an actual browser when one's available.
+
 ## Raw inventory / master SKU tracking — now COMPLETE
 
 The subsystem described in earlier versions of this note (`ProductRaw`, `MasterSku`, `InvMove`, `InvCare`, `InvExclServe`) was fully built and working:
