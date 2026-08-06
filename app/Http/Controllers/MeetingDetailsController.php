@@ -122,10 +122,8 @@ class MeetingDetailsController extends Controller
 
     public function store(Request $request)
     {
-        $requirementId = BusinessId::next('meeting_details', 'requirement_id', 'CONS-RQD-', 6);
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
-            'requirement_id' => $requirementId,
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',
@@ -148,6 +146,8 @@ class MeetingDetailsController extends Controller
             'target_build_date' => 'nullable|date',
             'target_location' => 'nullable|string|max:191',
         ]);
+
+        $validated['requirement_id'] = BusinessId::next('meeting_details', 'requirement_id', 'CONS-RQD-', 6);
 
         $meetingDetail = MeetingDetails::create($validated);
 
@@ -177,7 +177,6 @@ class MeetingDetailsController extends Controller
 
         $validated = $request->validate([
             'meeting_id' => 'required|exists:meetings,id',
-            'requirement_id' => 'required|exists:requirements,id',
             'initial_budget' => 'nullable|numeric|min:0',
             'reason' => 'required|in:1,2',
             'play_mode' => 'nullable|in:1,2',
