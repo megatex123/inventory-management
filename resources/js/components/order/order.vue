@@ -129,7 +129,9 @@
                                         <tbody>
                                             <tr v-for='data in filteredOrders' :key="data.id" >
                                                 <td>
-                                                    <span class="badge badge-light font-weight-bold">{{ data.order_id }}</span>
+                                                    <span class="badge badge-light font-weight-bold">{{ data.order_id }}</span><br>
+                                                    <small v-if="data.craft_data_id" class="text-muted d-block">{{ data.craft_data_id }}</small>
+                                                    <small v-if="data.reject_id" class="text-danger d-block">{{ data.reject_id }}</small>
                                                 </td>
                                                 <td>
                                                     <strong>{{ data.customer && data.customer.full_name ? data.customer.full_name : 'N/A' }}</strong><br>

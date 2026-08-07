@@ -110,7 +110,9 @@ public function orderdone(Request $request)
 
     $craftTagId = BusinessId::next('order', 'craft_tag_id', 'BLDP-DRF-', 6) . '-01';
 
-    $craftDataId = BusinessId::next('order', 'craft_data_id', 'QV-CRFT-', 6);
+    // craft_data_id is intentionally NOT generated here -- it's only
+    // assigned when the order is approved (OrderController::updateApprove()),
+    // never on creation or rejection.
     $data = [
         'order_id' => $orderId,
         'customer_id' => $request->customer_id,
@@ -126,7 +128,6 @@ public function orderdone(Request $request)
         'is_reason' => $request->is_reason,
         'craft_tag_id' => $craftTagId,
         'skip_quivicare' => $request->boolean('skip_quivicare'),
-        'craft_data_id' => $craftDataId,
     ];
 
     $order_id = DB::table('order')->insertGetId($data);

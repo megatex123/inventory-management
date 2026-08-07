@@ -150,7 +150,10 @@
                                         <tbody>
                                             <tr v-for='order in orders' :key="order.id">
                                                 <td>
-                                                    <span class="badge badge-light">{{ order.order_id }}</span><br><br>
+                                                    <span class="badge badge-light">{{ order.order_id }}</span><br>
+                                                    <small v-if="order.craft_data_id" class="text-muted d-block">{{ order.craft_data_id }}</small>
+                                                    <small v-if="order.reject_id" class="text-danger d-block">{{ order.reject_id }}</small>
+                                                    <br>
                                                     <!-- Reason -->
                                                     <div class="mb-1">
                                                         <span v-if="order.is_reason == 1" class="badge badge-primary">

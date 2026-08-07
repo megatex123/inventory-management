@@ -809,6 +809,13 @@ class OrderController extends Controller
             if ($approveValue == 1) {
                 $order->approved_at = now();
 
+                // Assign craft_data_id only on first approval -- never on
+                // creation or rejection, and never re-generated on a later
+                // re-approval once it's already set.
+                if (!$order->craft_data_id) {
+                    $order->craft_data_id = BusinessId::next('order', 'craft_data_id', 'QV-CRFT-', 6);
+                }
+
                 // Only create/update serve when approving
                 $serveResponse = $this->updateserve($request, $order, $id);
                 // dd($request->all());
