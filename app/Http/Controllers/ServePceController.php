@@ -51,6 +51,10 @@ class ServePceController extends Controller
                 $servePce = ServePce::create([
                     'serve_pce_id' => "{$serveTypeCode}-{$servePceNumber}",
                     'serve_data_id' => $serveData->id,
+                    // Connect to QuiviServe's own start date rather than leaving it blank.
+                    'date_start' => $serveData->start_serve_enabled && $serveData->start_serve_date
+                        ? $serveData->start_serve_date->format('Y-m-d')
+                        : null,
                 ]);
             }
 
