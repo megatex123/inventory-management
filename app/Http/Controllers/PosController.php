@@ -37,6 +37,8 @@ public function orderdone(Request $request)
         'total_amount' => 'required|numeric',
         'is_reason' => 'required|integer',
         'skip_quivicare' => 'nullable|boolean',
+        'build_way' => 'nullable|in:onsite,studio',
+        'tag_along' => 'nullable|boolean',
     ]);
 
     $cartProducts = DB::table('pos')->get();
@@ -128,6 +130,14 @@ public function orderdone(Request $request)
         'is_reason' => $request->is_reason,
         'craft_tag_id' => $craftTagId,
         'skip_quivicare' => $request->boolean('skip_quivicare'),
+        'build_way' => $request->build_way,
+        // The frontend always sends the tag_along key (Task 2 Step 6), with
+        // a JS value of null/true/false -- axios serializes null as an
+        // explicit JSON null, so $request->has('tag_along') is ALWAYS true
+        // here and cannot be used to detect "value is null". Check the
+        // value itself instead: $request->boolean() would otherwise
+        // silently convert a real null into false.
+        'tag_along' => is_null($request->tag_along) ? null : (bool) $request->tag_along,
     ];
 
     $order_id = DB::table('order')->insertGetId($data);

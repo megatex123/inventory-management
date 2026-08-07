@@ -260,6 +260,74 @@
                       <small class="text-muted">Select the purpose of this build (optional)</small>
                   </div>
 
+                  <!-- Build Ways Section - Radio Buttons -->
+                  <div class="mt-3">
+                      <label class="mb-2 font-weight-bold">Build Ways</label>
+                      <div class="d-flex">
+                      <div class="form-check mr-4">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="buildWay"
+                          id="buildOnsite"
+                          value="onsite"
+                          v-model="build_way"
+                          >
+                          <label class="form-check-label" for="buildOnsite">
+                          Onsite
+                          </label>
+                      </div>
+                      <div class="form-check">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="buildWay"
+                          id="buildStudio"
+                          value="studio"
+                          v-model="build_way"
+                          >
+                          <label class="form-check-label" for="buildStudio">
+                          Studio
+                          </label>
+                      </div>
+                      </div>
+                      <small class="text-muted">Select where this build will take place (optional)</small>
+                  </div>
+
+                  <!-- Tag Along Section - Radio Buttons, only when Onsite -->
+                  <div class="mt-3" v-if="build_way === 'onsite'">
+                      <label class="mb-2 font-weight-bold">Tag Along</label>
+                      <div class="d-flex">
+                      <div class="form-check mr-4">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="tagAlong"
+                          id="tagAlongYes"
+                          :value="true"
+                          v-model="tag_along"
+                          >
+                          <label class="form-check-label" for="tagAlongYes">
+                          Yes
+                          </label>
+                      </div>
+                      <div class="form-check">
+                          <input
+                          class="form-check-input"
+                          type="radio"
+                          name="tagAlong"
+                          id="tagAlongNo"
+                          :value="false"
+                          v-model="tag_along"
+                          >
+                          <label class="form-check-label" for="tagAlongNo">
+                          No
+                          </label>
+                      </div>
+                      </div>
+                      <small class="text-muted">Does the customer want to be present during the onsite build?</small>
+                  </div>
+
                   <!-- QuiviCare Opt-Out -->
                   <div class="mt-3">
                       <div class="custom-control custom-switch">
@@ -302,6 +370,8 @@ export default {
       selectedCategoryId: null,
       selectedSubCategoryId: null,
       build_type: null,
+      build_way: null,
+      tag_along: null,
       skip_quivicare: false,
       // Category rules configuration based on requirements
       categoryRules: {
@@ -887,7 +957,9 @@ export default {
         total_qty: this.totalCart,
         cart_items: this.carts,
         is_reason: this.build_type,
-        skip_quivicare: this.skip_quivicare
+        skip_quivicare: this.skip_quivicare,
+        build_way: this.build_way,
+        tag_along: this.tag_along
       };
 
       axios.post('/api/orderdone', data)
@@ -896,6 +968,8 @@ export default {
           this.carts = [];
           this.customer_id = '';
           this.build_type = null;
+          this.build_way = null;
+          this.tag_along = null;
           this.skip_quivicare = false;
           this.getCarts();
         })
@@ -903,6 +977,13 @@ export default {
           console.error('Error placing order:', err);
           notification.customNoti('Error placing order');
         });
+    }
+  },
+  watch: {
+    build_way(newVal) {
+      if (newVal !== 'onsite') {
+        this.tag_along = null;
+      }
     }
   },
   created() {
