@@ -630,7 +630,7 @@
                       </h5>
                       <div class="alert alert-info">
                         <i class="fas fa-info-circle mr-2"></i>
-                        50% Off Annual Dust Cleaning available for years 4-7
+                        50% Off Annual Dust Cleaning available for years 4-10
                       </div>
                       <div class="row">
                         <div class="col-md-12 mb-3">
@@ -643,7 +643,7 @@
                           >
                         </div>
 
-                        <template v-for="year in [4, 5, 6, 7]">
+                        <template v-for="year in [4, 5, 6, 7, 8, 9, 10]">
                           <div class="col-md-6 mb-3" :key="'dust50-check-' + year">
                             <label class="form-label">Annual Dust Cleaning Year {{ year }}</label>
                             <div class="form-check">
@@ -728,7 +728,7 @@
                       </h5>
                       <div class="alert alert-info">
                         <i class="fas fa-info-circle mr-2"></i>
-                        30% Off Annual Upgrade Service available for years 4-7
+                        30% Off Annual Upgrade Service available for years 4-10
                       </div>
                       <div class="row">
                         <div class="col-md-12 mb-3">
@@ -741,7 +741,7 @@
                           >
                         </div>
 
-                        <template v-for="year in [4, 5, 6, 7]">
+                        <template v-for="year in [4, 5, 6, 7, 8, 9, 10]">
                           <div class="col-md-6 mb-3" :key="'upgrade30-check-' + year">
                             <label class="form-label">Annual Upgrade Service Year {{ year }}</label>
                             <div class="form-check">
@@ -918,6 +918,12 @@ export default {
         dust_cleaning_50_claim_date_year6: '',
         dust_cleaning_50_year7: '0',
         dust_cleaning_50_claim_date_year7: '',
+        dust_cleaning_50_year8: '0',
+        dust_cleaning_50_claim_date_year8: '',
+        dust_cleaning_50_year9: '0',
+        dust_cleaning_50_claim_date_year9: '',
+        dust_cleaning_50_year10: '0',
+        dust_cleaning_50_claim_date_year10: '',
         upgrade_service_50_description: '50% Off Annual Upgrade Service',
         upgrade_service_50_year1: '0',
         upgrade_service_50_claim_date_year1: '',
@@ -934,6 +940,12 @@ export default {
         upgrade_service_30_claim_date_year6: '',
         upgrade_service_30_year7: '0',
         upgrade_service_30_claim_date_year7: '',
+        upgrade_service_30_year8: '0',
+        upgrade_service_30_claim_date_year8: '',
+        upgrade_service_30_year9: '0',
+        upgrade_service_30_claim_date_year9: '',
+        upgrade_service_30_year10: '0',
+        upgrade_service_30_claim_date_year10: '',
         promo_code: '',
         generate_code: '1',
         promo_claim: '0',

@@ -413,7 +413,7 @@
                         </div>
                         <div class="col-md-6 mb-3"></div>
 
-                        <div class="col-md-6 mb-3" v-for="year in [4, 5, 6, 7]" :key="'dust50-year' + year">
+                        <div class="col-md-6 mb-3" v-for="year in [4, 5, 6, 7, 8, 9, 10]" :key="'dust50-year' + year">
                           <label class="form-label">Year {{ year }} Claim</label>
                           <div class="d-flex align-items-center">
                             <div class="form-check form-check-inline mr-3">
@@ -497,7 +497,7 @@
                         </div>
                         <div class="col-md-6 mb-3"></div>
 
-                        <div class="col-md-6 mb-3" v-for="year in [4, 5, 6, 7]" :key="'upgrade30-year' + year">
+                        <div class="col-md-6 mb-3" v-for="year in [4, 5, 6, 7, 8, 9, 10]" :key="'upgrade30-year' + year">
                           <label class="form-label">Year {{ year }} Claim</label>
                           <div class="d-flex align-items-center">
                             <div class="form-check form-check-inline mr-3">
@@ -659,6 +659,12 @@ export default {
         dust_cleaning_50_claim_date_year6: '',
         dust_cleaning_50_year7: 'No',
         dust_cleaning_50_claim_date_year7: '',
+        dust_cleaning_50_year8: 'No',
+        dust_cleaning_50_claim_date_year8: '',
+        dust_cleaning_50_year9: 'No',
+        dust_cleaning_50_claim_date_year9: '',
+        dust_cleaning_50_year10: 'No',
+        dust_cleaning_50_claim_date_year10: '',
         upgrade_service_50_description: '',
         upgrade_service_50_year1: 'No',
         upgrade_service_50_claim_date_year1: '',
@@ -675,6 +681,12 @@ export default {
         upgrade_service_30_claim_date_year6: '',
         upgrade_service_30_year7: 'No',
         upgrade_service_30_claim_date_year7: '',
+        upgrade_service_30_year8: 'No',
+        upgrade_service_30_claim_date_year8: '',
+        upgrade_service_30_year9: 'No',
+        upgrade_service_30_claim_date_year9: '',
+        upgrade_service_30_year10: 'No',
+        upgrade_service_30_claim_date_year10: '',
         promo_code: '',
         generate_code: '0',
         promo_claim: '0'
@@ -926,6 +938,12 @@ export default {
             dust_cleaning_50_claim_date_year6: data.dust_cleaning_50_claim_date_year6 || '',
             dust_cleaning_50_year7: this.toYesNo(data.dust_cleaning_50_year7),
             dust_cleaning_50_claim_date_year7: data.dust_cleaning_50_claim_date_year7 || '',
+            dust_cleaning_50_year8: this.toYesNo(data.dust_cleaning_50_year8),
+            dust_cleaning_50_claim_date_year8: data.dust_cleaning_50_claim_date_year8 || '',
+            dust_cleaning_50_year9: this.toYesNo(data.dust_cleaning_50_year9),
+            dust_cleaning_50_claim_date_year9: data.dust_cleaning_50_claim_date_year9 || '',
+            dust_cleaning_50_year10: this.toYesNo(data.dust_cleaning_50_year10),
+            dust_cleaning_50_claim_date_year10: data.dust_cleaning_50_claim_date_year10 || '',
             upgrade_service_50_description: data.upgrade_service_50_description || '',
             upgrade_service_50_year1: this.toYesNo(data.upgrade_service_50_year1),
             upgrade_service_50_claim_date_year1: data.upgrade_service_50_claim_date_year1 || '',
@@ -942,6 +960,12 @@ export default {
             upgrade_service_30_claim_date_year6: data.upgrade_service_30_claim_date_year6 || '',
             upgrade_service_30_year7: this.toYesNo(data.upgrade_service_30_year7),
             upgrade_service_30_claim_date_year7: data.upgrade_service_30_claim_date_year7 || '',
+            upgrade_service_30_year8: this.toYesNo(data.upgrade_service_30_year8),
+            upgrade_service_30_claim_date_year8: data.upgrade_service_30_claim_date_year8 || '',
+            upgrade_service_30_year9: this.toYesNo(data.upgrade_service_30_year9),
+            upgrade_service_30_claim_date_year9: data.upgrade_service_30_claim_date_year9 || '',
+            upgrade_service_30_year10: this.toYesNo(data.upgrade_service_30_year10),
+            upgrade_service_30_claim_date_year10: data.upgrade_service_30_claim_date_year10 || '',
             promo_code: data.promo_code || '',
             generate_code: data.generate_code || '0',
             promo_claim: data.promo_claim || '0'
@@ -1064,8 +1088,10 @@ export default {
           'cable_management_claim1', 'cable_management_claim2', 'cable_management_claim3', 'cable_management_claim4',
           'annual_dust_cleaning_year1', 'annual_dust_cleaning_year2', 'annual_dust_cleaning_year3',
           'dust_cleaning_50_year4', 'dust_cleaning_50_year5', 'dust_cleaning_50_year6', 'dust_cleaning_50_year7',
+          'dust_cleaning_50_year8', 'dust_cleaning_50_year9', 'dust_cleaning_50_year10',
           'upgrade_service_50_year1', 'upgrade_service_50_year2', 'upgrade_service_50_year3',
           'upgrade_service_30_year4', 'upgrade_service_30_year5', 'upgrade_service_30_year6', 'upgrade_service_30_year7',
+          'upgrade_service_30_year8', 'upgrade_service_30_year9', 'upgrade_service_30_year10',
           'generate_code', 'promo_claim'
         ]
 
