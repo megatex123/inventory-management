@@ -213,7 +213,7 @@
                                             RM {{ formatNumber(order.craft.fee ? order.craft.fee : 0) }}
                                         </td>
                                     </tr>
-                                    <tr class="table-active" v-if="order.approve != 1">
+                                    <tr class="table-active" v-if="order.approve !== null">
                                         <td colspan="6" class="font-weight-bold text-uppercase">Total Deposit Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                         RM {{ formatNumber(totalPayAmount) }}
