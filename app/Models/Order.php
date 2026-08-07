@@ -46,6 +46,17 @@ class Order extends Model
 
     protected $dates = ['deleted_at'];
 
+    protected $casts = [
+        // Without this, `tag_along` (tinyint(1)) comes back from Eloquent as
+        // a raw PHP int (1/0), which serializes to JSON as 1/0 rather than
+        // true/false. order/edit.vue's Tag Along radios use
+        // :value="true"/:value="false" with strict v-model comparison, so a
+        // loaded 1 never matches true -- the radio looked unselected even
+        // when the DB value was saved correctly, making it look like the
+        // save silently failed.
+        'tag_along' => 'boolean',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customers::class);
