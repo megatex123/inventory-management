@@ -43,9 +43,9 @@ Every perk column follows the same pattern: a boolean "eligible/active" flag (mo
 - `three_year_warranty`, `unlimited_troubleshooting`, `troubleshooting` — descriptive/flag columns (varchar, not boolean — check current usage before assuming Yes/No semantics)
 - `cable_management` + `_claim1`..`_claim4` (+dates) — claimable **four times**
 - `annual_dust_cleaning` description + `_year1`/`_year2`/`_year3` + `claim_date_year1..3` — free annual deep cleaning, years 1–3
-- `dust_cleaning_50_description` + `_year4`..`_year7` + matching claim dates — 50% off dust cleaning, years 4–7
+- `dust_cleaning_50_description` + `_year4`..`_year10` + matching claim dates — 50% off dust cleaning, years 4–10 (extended from years 4–7 as of 2026-08-07 — the 2026-07-11 restructure undershot the tier's documented "3 years unlimited, next 7 years = 50% off" perk text, which means years 4–10, not 4–7; see `serves` id=3's own `description` field for the source wording)
 - `upgrade_service_50_description` + `_year1`..`_year3` + matching claim dates — 50% off upgrade service, years 1–3
-- `upgrade_service_30_description` + `_year4`..`_year7` + matching claim dates — 30% off upgrade service, years 4–7
+- `upgrade_service_30_description` + `_year4`..`_year10` + matching claim dates — 30% off upgrade service, years 4–10 (same 2026-08-07 extension)
 - `promo_code` (actual code string) + `generate_code` + `promo_claim`
 
 **Don't confuse a `*_claim`/`*_next_build`/`promo_code` string column with the adjacent `*_claim`/`promo_claim` *boolean* column** — a rendering bug that displayed the claim boolean (`true`) instead of the actual code string was found and fixed in `serve_mps/index.vue`'s Promo Code column; the same column-name-similarity trap exists in `ServePce`.
