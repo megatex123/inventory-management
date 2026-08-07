@@ -565,6 +565,8 @@ class ServeBekController extends Controller
             'serve_data' => $item->serveData ? [
                 'id' => $item->serveData->id,
                 'qvse_cid' => $item->serveData->qvse_cid,
+                'start_serve_enabled' => (bool) $item->serveData->start_serve_enabled,
+                'start_serve_date' => $item->serveData->start_serve_date ? $item->serveData->start_serve_date->format('Y-m-d') : null,
                 // Add other serve_data fields as needed
             ] : null,
         ];

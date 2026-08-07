@@ -83,6 +83,12 @@
                           <div v-if="errors.date_start" class="invalid-feedback">
                             {{ errors.date_start[0] }}
                           </div>
+                          <small v-if="linkedServeData && linkedServeData.start_serve_enabled" class="form-text text-muted">
+                            QuiviServe's start date is {{ linkedServeData.start_serve_date.slice(0, 10) }}.
+                          </small>
+                          <small v-else-if="linkedServeData" class="form-text text-warning">
+                            QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.
+                          </small>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -624,6 +630,7 @@ export default {
       servePceId: this.id,
       loading: false,
       errors: {},
+      linkedServeData: null,
       form: {
         id: '',
         serve_data_id: '',
@@ -969,6 +976,17 @@ export default {
             promo_code: data.promo_code || '',
             generate_code: data.generate_code || '0',
             promo_claim: data.promo_claim || '0'
+          }
+
+          this.linkedServeData = data.serve_data || null
+
+          // Records created via the order's quick-launch button never got a
+          // date_start set -- backfill from QuiviServe's start date once we
+          // know it, matching serve_mps/edit.vue's precedent. Never clobbers
+          // a date the record already has.
+          if (!this.form.date_start && this.linkedServeData &&
+              this.linkedServeData.start_serve_enabled && this.linkedServeData.start_serve_date) {
+            this.form.date_start = this.linkedServeData.start_serve_date.slice(0, 10)
           }
 
           // If qvse_cid is still empty but serve_data exists, try to get it from there

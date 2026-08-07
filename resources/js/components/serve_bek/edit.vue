@@ -73,6 +73,12 @@
                 <div v-if="errors.date_start" class="invalid-feedback">
                   {{ errors.date_start }}
                 </div>
+                <small v-if="serveBekData.serve_data && serveBekData.serve_data.start_serve_enabled" class="form-text text-muted">
+                  QuiviServe's start date is {{ serveBekData.serve_data.start_serve_date }}.
+                </small>
+                <small v-else-if="serveBekData.serve_data" class="form-text text-warning">
+                  QuiviServe hasn't been marked as started yet for this record — set it on the QuiviServe entry first if the dates should match.
+                </small>
               </div>
             </div>
           </div>
@@ -535,6 +541,15 @@ export default {
         fifty_percent_off_dust_cleaning_claim_1: dustCleaning.claimed || false,
         fifty_percent_off_dust_cleaning_claim_1_date: dustCleaning.claim_date || '',
       };
+
+      // Records created via the order's quick-launch button never got a
+      // date_start set -- backfill from QuiviServe's start date once we know
+      // it, matching serve_mps/edit.vue's precedent. Never clobbers a date
+      // the record already has.
+      const serveData = this.serveBekData.serve_data;
+      if (!this.form.date_start && serveData && serveData.start_serve_enabled && serveData.start_serve_date) {
+        this.form.date_start = serveData.start_serve_date;
+      }
 
       // Store original form for reset
       this.originalForm = JSON.parse(JSON.stringify(this.form));
