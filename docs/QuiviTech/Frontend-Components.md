@@ -12,6 +12,8 @@ One folder per feature, mirroring the API modules in [[API-Routes]]:
 
 - **`resources/js/components/refunds/`** — `index.vue` (list + stat cards + delete), `create.vue`/`edit.vue` (customer + an optional single "Linked To" picker across Order/Plus Order/Merch Order/Thread Order, since a refund can attach to at most one), `print.vue` (letterhead receipt view, `window.print()` only — no PDF library). See [[QuiviRefund]].
 
+- **`resources/js/components/pos/index.vue`** gained "Build Ways" (Onsite/Studio radio) and "Tag Along" (Yes/No radio, conditionally shown only when Build Way is Onsite) fields as of 2026-08-07, backed by new `order.build_way`/`order.tag_along` columns and `POST /api/orderdone` validation (see [[API-Routes]]). New `data()` fields `build_way`/`tag_along` (both default `null`), included in the `orderdone()` submit payload and reset to `null` on success alongside the existing `build_type`/`skip_quivicare` reset. A `watch: { build_way(newVal) { ... } }` block (new top-level property — this component had no prior `watch`) clears a stale `tag_along` selection whenever `build_way` changes away from `'onsite'`. Compiled bundle not rebuilt at time of writing — needs `npm run dev`/`watch` to appear in the browser.
+
 ## Shared Components
 
 ### ColumnSearchPanel.vue
