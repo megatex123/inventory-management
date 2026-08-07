@@ -918,6 +918,7 @@ class OrderController extends Controller
                 'is_reason' => 'nullable|integer',
                 'build_way' => 'nullable|in:onsite,studio',
                 'tag_along' => 'nullable|boolean',
+                'skip_quivicare' => 'nullable|boolean',
             ]);
 
             // Get current order details to restore stock
@@ -1024,13 +1025,19 @@ class OrderController extends Controller
                 'serve_id' => $serveTierId,
                 'care_id' => $careTierId,
                 'craft_tag_id' => $updateCraftTag,
-                'is_reason' => $request->is_reason,
+                // is_reason is NOT NULL on the order table (always set at
+                // creation by PosController::orderdone()'s 'required' rule) --
+                // unlike build_way/tag_along, an omitted/null value here must
+                // fall back to the existing value, never overwrite it with
+                // NULL (would violate the column constraint with a 500).
+                'is_reason' => $request->is_reason ?? $order->is_reason,
                 'build_way' => $request->build_way,
                 // Same is_null() pattern as PosController::orderdone() -- the
                 // frontend always sends the tag_along key (even as JSON
                 // null), so $request->has('tag_along') is always true and
                 // can't distinguish "explicitly null" from a real boolean.
                 'tag_along' => is_null($request->tag_along) ? null : (bool) $request->tag_along,
+                'skip_quivicare' => $request->boolean('skip_quivicare'),
             ]);
 
             // Snapshot this edit as a new draft revision -- see

@@ -256,6 +256,22 @@
                     <small class="text-muted">Does the customer want to be present during the onsite build?</small>
                 </div>
 
+                <!-- QuiviCare Opt-Out -->
+                <div class="mt-3">
+                    <div class="custom-control custom-switch">
+                        <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="editSkipQuiviCare"
+                        v-model="skip_quivicare"
+                        >
+                        <label class="custom-control-label" for="editSkipQuiviCare">
+                        Customer doesn't want QuiviCare
+                        </label>
+                    </div>
+                    <small class="text-muted">When checked, QuiviCare won't be created when this order is confirmed</small>
+                </div>
+
                 <div v-if="cartValidationErrors.length > 0" class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong>Cart Validation :</strong>
                     <ul class="mb-0 mt-1">
@@ -358,6 +374,7 @@ export default {
       is_reason: null,
       build_way: null,
       tag_along: null,
+      skip_quivicare: false,
       searchItem: '',
       selectedCategoryId: null,
       selectedSubCategoryId: null,
@@ -572,6 +589,7 @@ export default {
             this.is_reason = res.data.order.is_reason;
             this.build_way = res.data.order.build_way;
             this.tag_along = res.data.order.tag_along;
+            this.skip_quivicare = !!res.data.order.skip_quivicare;
 
             if (res.data.details && res.data.details.length > 0) {
               this.cartItems = res.data.details.map(item => {
@@ -745,7 +763,8 @@ export default {
         total_qty: this.totalCart,
         is_reason: this.is_reason,
         build_way: this.build_way,
-        tag_along: this.tag_along
+        tag_along: this.tag_along,
+        skip_quivicare: this.skip_quivicare
       })
       .then(res => {
         console.log('Update response:', res.data); // Debug log
