@@ -39,7 +39,9 @@ class Order extends Model
         'approved_at',
         'is_reason',
         'skip_quivicare',
-        'craft_data_id'
+        'craft_data_id',
+        'build_way',
+        'tag_along'
     ];
 
     protected $dates = ['deleted_at'];

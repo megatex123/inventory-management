@@ -154,6 +154,108 @@
                   </select>
                 </div>
 
+                <!-- Build Type Section - Radio Buttons -->
+                <div class="mt-3">
+                    <label class="mb-2 font-weight-bold">Build Type</label>
+                    <div class="d-flex">
+                    <div class="form-check mr-4">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="buildType"
+                        id="editBuildWorking"
+                        :value="1"
+                        v-model="is_reason"
+                        >
+                        <label class="form-check-label" for="editBuildWorking">
+                        Workstation
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="buildType"
+                        id="editBuildGaming"
+                        :value="2"
+                        v-model="is_reason"
+                        >
+                        <label class="form-check-label" for="editBuildGaming">
+                        Gaming
+                        </label>
+                    </div>
+                    </div>
+                    <small class="text-muted">Select the purpose of this build (optional)</small>
+                </div>
+
+                <!-- Build Ways Section - Radio Buttons -->
+                <div class="mt-3">
+                    <label class="mb-2 font-weight-bold">Build Ways</label>
+                    <div class="d-flex">
+                    <div class="form-check mr-4">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="buildWay"
+                        id="editBuildOnsite"
+                        value="onsite"
+                        v-model="build_way"
+                        >
+                        <label class="form-check-label" for="editBuildOnsite">
+                        Onsite
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="buildWay"
+                        id="editBuildStudio"
+                        value="studio"
+                        v-model="build_way"
+                        >
+                        <label class="form-check-label" for="editBuildStudio">
+                        Studio
+                        </label>
+                    </div>
+                    </div>
+                    <small class="text-muted">Select where this build will take place (optional)</small>
+                </div>
+
+                <!-- Tag Along Section - Radio Buttons, only when Onsite -->
+                <div class="mt-3" v-if="build_way === 'onsite'">
+                    <label class="mb-2 font-weight-bold">Tag Along</label>
+                    <div class="d-flex">
+                    <div class="form-check mr-4">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="tagAlong"
+                        id="editTagAlongYes"
+                        :value="true"
+                        v-model="tag_along"
+                        >
+                        <label class="form-check-label" for="editTagAlongYes">
+                        Yes
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                        class="form-check-input"
+                        type="radio"
+                        name="tagAlong"
+                        id="editTagAlongNo"
+                        :value="false"
+                        v-model="tag_along"
+                        >
+                        <label class="form-check-label" for="editTagAlongNo">
+                        No
+                        </label>
+                    </div>
+                    </div>
+                    <small class="text-muted">Does the customer want to be present during the onsite build?</small>
+                </div>
+
                 <div v-if="cartValidationErrors.length > 0" class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong>Cart Validation :</strong>
                     <ul class="mb-0 mt-1">
@@ -253,6 +355,9 @@ export default {
       cartItems: [],
       originalCartItems: [],
       customer_id: '',
+      is_reason: null,
+      build_way: null,
+      tag_along: null,
       searchItem: '',
       selectedCategoryId: null,
       selectedSubCategoryId: null,
@@ -464,6 +569,9 @@ export default {
           if (res.data.success && res.data.order) {
             this.orderData = res.data.order;
             this.customer_id = res.data.order.customer_id || '';
+            this.is_reason = res.data.order.is_reason;
+            this.build_way = res.data.order.build_way;
+            this.tag_along = res.data.order.tag_along;
 
             if (res.data.details && res.data.details.length > 0) {
               this.cartItems = res.data.details.map(item => {
@@ -634,7 +742,10 @@ export default {
         customer_id: this.customer_id,
         products: productsData,
         total_amount: this.totalSub,
-        total_qty: this.totalCart
+        total_qty: this.totalCart,
+        is_reason: this.is_reason,
+        build_way: this.build_way,
+        tag_along: this.tag_along
       })
       .then(res => {
         console.log('Update response:', res.data); // Debug log
@@ -766,6 +877,11 @@ export default {
         console.log('Cart items changed:', this.cartItems);
         console.log('Total Sub:', this.totalSub);
         console.log('Total Cart:', this.totalCart);
+      }
+    },
+    build_way(newVal) {
+      if (newVal !== 'onsite') {
+        this.tag_along = null;
       }
     }
   }

@@ -915,6 +915,9 @@ class OrderController extends Controller
                 'products.*.id' => 'required|exists:products,id',
                 'products.*.qty' => 'required|integer|min:1',
                 'products.*.price' => 'required|numeric|min:0',
+                'is_reason' => 'nullable|integer',
+                'build_way' => 'nullable|in:onsite,studio',
+                'tag_along' => 'nullable|boolean',
             ]);
 
             // Get current order details to restore stock
@@ -1020,7 +1023,14 @@ class OrderController extends Controller
                 'craft_id' => $craftId,
                 'serve_id' => $serveTierId,
                 'care_id' => $careTierId,
-                'craft_tag_id' => $updateCraftTag
+                'craft_tag_id' => $updateCraftTag,
+                'is_reason' => $request->is_reason,
+                'build_way' => $request->build_way,
+                // Same is_null() pattern as PosController::orderdone() -- the
+                // frontend always sends the tag_along key (even as JSON
+                // null), so $request->has('tag_along') is always true and
+                // can't distinguish "explicitly null" from a real boolean.
+                'tag_along' => is_null($request->tag_along) ? null : (bool) $request->tag_along,
             ]);
 
             // Snapshot this edit as a new draft revision -- see
