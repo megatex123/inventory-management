@@ -250,7 +250,7 @@
                                         <td class="text-right">{{ care.code }}</td>
                                         <td class="text-left">Warranty Fee</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(care.care_charge) }}
+                                            RM {{ formatNumber(careLineItemPrice) }}
                                         </td>
                                     </tr>
                                     <tr v-else-if="order.care_data && order.care_data[0] && order.care_data[0].care">
@@ -387,6 +387,26 @@ export default {
         }
 
       return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
+    },
+    careLineItemPrice() {
+      if (!this.order) return 0;
+
+      // Same source-of-truth rule as grandTotalAmount: prefer the
+      // persisted, actually-charged CareData.price (which already
+      // includes any Upgrade PCE bump) over the live tier lookup's
+      // static base rate. Before this, the QuiviCare line item always
+      // showed the un-bumped `care.care_charge` even when Upgrade PCE
+      // was enabled and the totals below it already reflected the
+      // bump -- the line item and the totals disagreed on the same page.
+      if (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price) {
+        return Number(this.order.care_data[0].price);
+      }
+
+      let base = this.care && this.care.care_charge ? Number(this.care.care_charge) : 0;
+      if (this.order.upgrade_pce_enabled) {
+        base += 69.90;
+      }
+      return base;
     }
   },
   methods: {
