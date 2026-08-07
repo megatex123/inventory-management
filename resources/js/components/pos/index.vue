@@ -344,6 +344,32 @@
                       <small class="text-muted">When checked, QuiviCare won't be created when this order is confirmed</small>
                   </div>
 
+                  <!-- Upgrade PCE -->
+                  <div class="mt-3" v-if="!skip_quivicare">
+                      <div class="custom-control custom-switch">
+                          <input
+                          type="checkbox"
+                          class="custom-control-input"
+                          id="upgradePceEnabled"
+                          v-model="upgrade_pce_enabled"
+                          >
+                          <label class="custom-control-label" for="upgradePceEnabled">
+                          {{ upgrade_pce_enabled ? 'Upgrade PCE Enabled (+RM69.90)' : 'Upgrade PCE Disabled' }}
+                          </label>
+                      </div>
+                      <div v-if="upgrade_pce_enabled" class="mt-2">
+                          <label class="form-label small">Upgrade PCE Notes <span class="text-danger">*</span></label>
+                          <textarea
+                          v-model="upgrade_pce_notes"
+                          class="form-control"
+                          rows="3"
+                          :maxlength="500"
+                          ></textarea>
+                          <small class="form-text text-muted" v-if="upgrade_pce_notes">{{ upgrade_pce_notes.length }}/500 characters</small>
+                      </div>
+                      <small class="text-muted">Only applies if this order ends up on the Collector's Edition tier at approval — adds RM69.90 to the QuiviCare warranty fee</small>
+                  </div>
+
                   <button class="btn btn-primary mt-3" type="submit" :disabled="carts.length === 0 || cartValidationErrors.length > 0">Submit Order</button>
                 </form>
               </div>
@@ -372,6 +398,8 @@ export default {
       build_type: null,
       build_way: null,
       tag_along: null,
+      upgrade_pce_enabled: null,
+      upgrade_pce_notes: '',
       skip_quivicare: false,
       // Category rules configuration based on requirements
       categoryRules: {
@@ -951,6 +979,11 @@ export default {
         return;
       }
 
+      if (this.upgrade_pce_enabled && !this.upgrade_pce_notes.trim()) {
+        notification.customNoti('Upgrade PCE notes are required when upgrade is enabled');
+        return;
+      }
+
       const data = {
         customer_id: this.customer_id,
         total_amount: this.totalSub,
@@ -959,7 +992,9 @@ export default {
         is_reason: this.build_type,
         skip_quivicare: this.skip_quivicare,
         build_way: this.build_way,
-        tag_along: this.tag_along
+        tag_along: this.tag_along,
+        upgrade_pce_enabled: this.upgrade_pce_enabled,
+        upgrade_pce_notes: this.upgrade_pce_notes
       };
 
       axios.post('/api/orderdone', data)
@@ -971,6 +1006,8 @@ export default {
           this.build_way = null;
           this.tag_along = null;
           this.skip_quivicare = false;
+          this.upgrade_pce_enabled = null;
+          this.upgrade_pce_notes = '';
           this.getCarts();
         })
         .catch(err => {

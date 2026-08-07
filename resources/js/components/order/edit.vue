@@ -272,6 +272,32 @@
                     <small class="text-muted">When checked, QuiviCare won't be created when this order is confirmed</small>
                 </div>
 
+                <!-- Upgrade PCE -->
+                <div class="mt-3" v-if="!skip_quivicare">
+                    <div class="custom-control custom-switch">
+                        <input
+                        type="checkbox"
+                        class="custom-control-input"
+                        id="editUpgradePceEnabled"
+                        v-model="upgrade_pce_enabled"
+                        >
+                        <label class="custom-control-label" for="editUpgradePceEnabled">
+                        {{ upgrade_pce_enabled ? 'Upgrade PCE Enabled (+RM69.90)' : 'Upgrade PCE Disabled' }}
+                        </label>
+                    </div>
+                    <div v-if="upgrade_pce_enabled" class="mt-2">
+                        <label class="form-label small">Upgrade PCE Notes <span class="text-danger">*</span></label>
+                        <textarea
+                        v-model="upgrade_pce_notes"
+                        class="form-control"
+                        rows="3"
+                        :maxlength="500"
+                        ></textarea>
+                        <small class="form-text text-muted" v-if="upgrade_pce_notes">{{ upgrade_pce_notes.length }}/500 characters</small>
+                    </div>
+                    <small class="text-muted">Only applies if this order ends up on the Collector's Edition tier at approval — adds RM69.90 to the QuiviCare warranty fee</small>
+                </div>
+
                 <div v-if="cartValidationErrors.length > 0" class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong>Cart Validation :</strong>
                     <ul class="mb-0 mt-1">
@@ -374,6 +400,8 @@ export default {
       is_reason: null,
       build_way: null,
       tag_along: null,
+      upgrade_pce_enabled: null,
+      upgrade_pce_notes: '',
       skip_quivicare: false,
       searchItem: '',
       selectedCategoryId: null,
@@ -589,6 +617,8 @@ export default {
             this.is_reason = res.data.order.is_reason;
             this.build_way = res.data.order.build_way;
             this.tag_along = res.data.order.tag_along;
+            this.upgrade_pce_enabled = res.data.order.upgrade_pce_enabled;
+            this.upgrade_pce_notes = res.data.order.upgrade_pce_notes || '';
             this.skip_quivicare = !!res.data.order.skip_quivicare;
 
             if (res.data.details && res.data.details.length > 0) {
@@ -747,6 +777,11 @@ export default {
         return;
       }
 
+      if (this.upgrade_pce_enabled && !this.upgrade_pce_notes.trim()) {
+        this.showNotification('Upgrade PCE notes are required when upgrade is enabled', 'error');
+        return;
+      }
+
       this.isSaving = true;
 
       // Prepare products data
@@ -764,7 +799,9 @@ export default {
         is_reason: this.is_reason,
         build_way: this.build_way,
         tag_along: this.tag_along,
-        skip_quivicare: this.skip_quivicare
+        skip_quivicare: this.skip_quivicare,
+        upgrade_pce_enabled: this.upgrade_pce_enabled,
+        upgrade_pce_notes: this.upgrade_pce_notes
       })
       .then(res => {
         console.log('Update response:', res.data); // Debug log

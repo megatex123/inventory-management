@@ -41,7 +41,9 @@ class Order extends Model
         'skip_quivicare',
         'craft_data_id',
         'build_way',
-        'tag_along'
+        'tag_along',
+        'upgrade_pce_enabled',
+        'upgrade_pce_notes'
     ];
 
     protected $dates = ['deleted_at'];
@@ -55,6 +57,8 @@ class Order extends Model
         // when the DB value was saved correctly, making it look like the
         // save silently failed.
         'tag_along' => 'boolean',
+        // Same reasoning applies to upgrade_pce_enabled's checkbox v-model.
+        'upgrade_pce_enabled' => 'boolean',
     ];
 
     public function customer()

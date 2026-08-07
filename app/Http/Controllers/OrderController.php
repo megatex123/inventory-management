@@ -487,6 +487,10 @@ class OrderController extends Controller
                 $care_part_price = $eligibleTotal;
                 $care_charge = $careServiceCharge['care_charge'];
 
+                if ($order->upgrade_pce_enabled) {
+                    $care_charge += 69.90;
+                }
+
                 if ($careData) {
                     $careData->update([
                         'customer_id' => $order->customer_id,
@@ -636,6 +640,8 @@ class OrderController extends Controller
                     'customer_id' => $order->customer_id,
                     'order_id' => $order->id,
                     'lkp_serve_id' => $lkp_serve_id,
+                    'upgrade_pce_enabled' => $order->upgrade_pce_enabled,
+                    'upgrade_pce_notes' => $order->upgrade_pce_notes,
                 ]);
                 DB::commit();
                 $serveData->load(['customer', 'order', 'serve']);
@@ -919,6 +925,8 @@ class OrderController extends Controller
                 'build_way' => 'nullable|in:onsite,studio',
                 'tag_along' => 'nullable|boolean',
                 'skip_quivicare' => 'nullable|boolean',
+                'upgrade_pce_enabled' => 'nullable|boolean',
+                'upgrade_pce_notes' => 'nullable|string|max:500',
             ]);
 
             // Get current order details to restore stock
@@ -1038,6 +1046,8 @@ class OrderController extends Controller
                 // can't distinguish "explicitly null" from a real boolean.
                 'tag_along' => is_null($request->tag_along) ? null : (bool) $request->tag_along,
                 'skip_quivicare' => $request->boolean('skip_quivicare'),
+                'upgrade_pce_enabled' => is_null($request->upgrade_pce_enabled) ? null : (bool) $request->upgrade_pce_enabled,
+                'upgrade_pce_notes' => $request->upgrade_pce_notes,
             ]);
 
             // Snapshot this edit as a new draft revision -- see

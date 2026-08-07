@@ -39,6 +39,8 @@ public function orderdone(Request $request)
         'skip_quivicare' => 'nullable|boolean',
         'build_way' => 'nullable|in:onsite,studio',
         'tag_along' => 'nullable|boolean',
+        'upgrade_pce_enabled' => 'nullable|boolean',
+        'upgrade_pce_notes' => 'nullable|string|max:500',
     ]);
 
     $cartProducts = DB::table('pos')->get();
@@ -138,6 +140,8 @@ public function orderdone(Request $request)
         // value itself instead: $request->boolean() would otherwise
         // silently convert a real null into false.
         'tag_along' => is_null($request->tag_along) ? null : (bool) $request->tag_along,
+        'upgrade_pce_enabled' => is_null($request->upgrade_pce_enabled) ? null : (bool) $request->upgrade_pce_enabled,
+        'upgrade_pce_notes' => $request->upgrade_pce_notes,
     ];
 
     $order_id = DB::table('order')->insertGetId($data);
