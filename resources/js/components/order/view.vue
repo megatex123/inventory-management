@@ -267,16 +267,10 @@
                                         <td colspan="5" class="text-center">-</td>
                                     </tr>
                                     </template>
-                                    <tr class="table-active" v-if="order.approve != 1">
+                                    <tr class="table-active">
                                         <td colspan="6" class="font-weight-bold text-uppercase">Grand Total Amount</td>
                                         <td class="text-right font-weight-bold text-primary">
                                          RM {{ formatNumber(grandTotalAmount) }}
-                                        </td>
-                                    </tr>
-                                    <tr class="table-active" v-else>
-                                        <td colspan="6" class="font-weight-bold text-uppercase">Grand Total Amount</td>
-                                        <td class="text-right font-weight-bold text-primary">
-                                        RM {{ formatNumber(totalPayAmount) }}
                                         </td>
                                     </tr>
                                     </tbody>
@@ -340,15 +334,14 @@ export default {
       return this.details.reduce((sum, item) => sum + Number(item.sub_total || 0), 0);
     },
     totalPayAmount() {
+      // Total Deposit Amount = Total Product Payment + QuiviCraft
+      // Building Fee only -- it does NOT include QuiviServe/QuiviCare
+      // fees, those are added afterward to reach Grand Total Amount.
       if (!this.order) return 0;
 
       const craftFee = this.order.craft && this.order.craft.fee ? Number(this.order.craft.fee) : 0;
-      const serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
-          ? Number(this.order.serve_data[0].serve.fee)
-          : 0;
-      const carePrice = this.order.skip_quivicare ? 0 : this.careLineItemPrice;
 
-      return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
+      return Number(this.grandTotalPrice) + craftFee;
     },
     grandTotalAmount() {
       if (!this.order) return 0;
