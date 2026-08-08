@@ -1,9 +1,28 @@
--- Quivi DB dump
--- Generated: 2026-08-05T10:04:36.532991
-SET FOREIGN_KEY_CHECKS=0;
-SET NAMES utf8mb4;
+/*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19-12.1.2-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: quivi
+-- ------------------------------------------------------
+-- Server version	12.1.2-MariaDB-ubu2404
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
+
+--
+-- Table structure for table `brand`
+--
 
 DROP TABLE IF EXISTS `brand`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `brand` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -12,9 +31,16 @@ CREATE TABLE `brand` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `brand`
+--
 
 LOCK TABLES `brand` WRITE;
-INSERT INTO `brand` (`id`,`name`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `brand` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `brand` VALUES
 (1,'SAMSUNG','2026-01-04 14:55:58','2026-01-04 14:55:58',NULL),
 (2,'WESTERN DIGITAL','2026-01-04 14:55:58','2026-01-04 14:55:58',NULL),
 (3,'ACER','2026-01-04 14:55:58','2026-01-04 14:55:58',NULL),
@@ -32,9 +58,17 @@ INSERT INTO `brand` (`id`,`name`,`created_at`,`updated_at`,`deleted_at`) VALUES
 (15,'JONSBO','2026-02-11 17:47:57','2026-02-11 17:47:57',NULL),
 (16,'HAVN','2026-02-11 17:47:57','2026-02-11 17:47:57',NULL),
 (17,'G.SKILL','2026-02-11 17:47:57','2026-02-11 17:47:57',NULL);
+/*!40000 ALTER TABLE `brand` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `care`
+--
 
 DROP TABLE IF EXISTS `care`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `care` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -46,15 +80,30 @@ CREATE TABLE `care` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `care`
+--
 
 LOCK TABLES `care` WRITE;
-INSERT INTO `care` (`id`,`name`,`code`,`fee`,`period`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `care` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `care` VALUES
 (1,'COR3','COR3-1402','1479.00','3 years','2025-12-30 05:16:42','2026-01-22 01:01:40',NULL),
 (2,'RI5E','RI5E-2109','1499.00','5 years','2025-12-30 05:16:42','2026-01-21 06:54:59',NULL),
 (3,'VIS10N','VIS10N-2712','2499.00','10 years','2025-12-30 05:16:42','2026-01-21 06:55:15',NULL);
+/*!40000 ALTER TABLE `care` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `care_data`
+--
 
 DROP TABLE IF EXISTS `care_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `care_data` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `care_id` varchar(50) NOT NULL,
@@ -71,10 +120,29 @@ CREATE TABLE `care_data` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `care_id` (`care_id`) USING BTREE,
   KEY `idx_start_serve_enabled` (`update_membership`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `care_data`
+--
+
+LOCK TABLES `care_data` WRITE;
+/*!40000 ALTER TABLE `care_data` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `care_data` VALUES
+(1,'VIS10N-2712-0001','QV-CARE-000001',6,17,3,'20860','2218.9',0,'2026-08-07 04:16:24','2026-08-07 23:04:16',NULL);
+/*!40000 ALTER TABLE `care_data` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `care_warranty`
+--
 
 DROP TABLE IF EXISTS `care_warranty`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `care_warranty` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `care_warranty_id` varchar(255) NOT NULL,
@@ -96,18 +164,52 @@ CREATE TABLE `care_warranty` (
   PRIMARY KEY (`id`),
   KEY `idx_care_data` (`care_data_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `care_warranty`
+--
+
+LOCK TABLES `care_warranty` WRITE;
+/*!40000 ALTER TABLE `care_warranty` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `care_warranty` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `carts`
+--
 
 DROP TABLE IF EXISTS `carts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `carts` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `carts`
+--
+
+LOCK TABLES `carts` WRITE;
+/*!40000 ALTER TABLE `carts` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `carts` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `categories`
+--
 
 DROP TABLE IF EXISTS `categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -117,9 +219,16 @@ CREATE TABLE `categories` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14124 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categories`
+--
 
 LOCK TABLES `categories` WRITE;
-INSERT INTO `categories` (`id`,`name`,`code`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `categories` VALUES
 (1,'CPU','PART-CPU','2025-12-30 02:49:27','2026-02-05 08:01:28',NULL),
 (2,'SSD','PART-SSD','2026-01-03 21:49:40','2026-02-05 08:03:10',NULL),
 (3,'GPU','PART-GPU','2026-01-03 21:49:40','2026-02-05 08:01:38',NULL),
@@ -141,9 +250,17 @@ INSERT INTO `categories` (`id`,`name`,`code`,`created_at`,`updated_at`,`deleted_
 (19,'PER-MSP','PART-PER-MSP','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
 (20,'PER-KEY','PART-PER-KEY','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL),
 (21,'PER-CAM','PART-PER-CAM','2026-02-28 07:02:21','2026-02-28 07:02:21',NULL);
+/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `craft`
+--
 
 DROP TABLE IF EXISTS `craft`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `craft` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -154,16 +271,31 @@ CREATE TABLE `craft` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `craft`
+--
 
 LOCK TABLES `craft` WRITE;
-INSERT INTO `craft` (`id`,`name`,`code`,`fee`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `craft` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `craft` VALUES
 (1,'BASIC','BASIC','600.00','2026-01-03 21:47:46','2026-03-17 23:42:03',NULL),
 (2,'PREMIUM','PREMIUM','600.00','2026-01-03 21:48:07','2026-03-17 23:42:27',NULL),
 (3,'MEDIUM','MEDIUM','600.00','2026-01-03 21:48:29','2026-03-17 23:42:16',NULL),
 (4,'ULTRA','ULTRA','600.00','2026-03-17 23:42:46','2026-03-17 23:42:46',NULL);
+/*!40000 ALTER TABLE `craft` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `craft_inspection_items`
+--
 
 DROP TABLE IF EXISTS `craft_inspection_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `craft_inspection_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `craft_inspection_id` bigint(20) unsigned NOT NULL,
@@ -192,9 +324,26 @@ CREATE TABLE `craft_inspection_items` (
   CONSTRAINT `craft_inspection_items_craft_inspection_id_foreign` FOREIGN KEY (`craft_inspection_id`) REFERENCES `craft_inspections` (`id`) ON DELETE CASCADE,
   CONSTRAINT `craft_inspection_items_order_detail_id_foreign` FOREIGN KEY (`order_detail_id`) REFERENCES `order_details` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `craft_inspection_items`
+--
+
+LOCK TABLES `craft_inspection_items` WRITE;
+/*!40000 ALTER TABLE `craft_inspection_items` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `craft_inspection_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `craft_inspections`
+--
 
 DROP TABLE IF EXISTS `craft_inspections`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `craft_inspections` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned NOT NULL,
@@ -208,9 +357,26 @@ CREATE TABLE `craft_inspections` (
   KEY `craft_inspections_order_id_foreign` (`order_id`),
   CONSTRAINT `craft_inspections_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `craft_inspections`
+--
+
+LOCK TABLES `craft_inspections` WRITE;
+/*!40000 ALTER TABLE `craft_inspections` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `craft_inspections` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `customer_progress`
+--
 
 DROP TABLE IF EXISTS `customer_progress`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer_progress` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `customer_id` bigint(20) unsigned NOT NULL,
@@ -233,9 +399,26 @@ CREATE TABLE `customer_progress` (
   KEY `customer_progress_order_id_index` (`order_id`),
   KEY `customer_progress_status_index` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `customer_progress`
+--
+
+LOCK TABLES `customer_progress` WRITE;
+/*!40000 ALTER TABLE `customer_progress` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `customer_progress` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `customers`
+--
 
 DROP TABLE IF EXISTS `customers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customers` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `customer_id` varchar(191) NOT NULL,
@@ -262,17 +445,32 @@ CREATE TABLE `customers` (
   UNIQUE KEY `customers_customer_id_unique` (`customer_id`),
   UNIQUE KEY `customers_update_token_unique` (`update_token`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customers`
+--
 
 LOCK TABLES `customers` WRITE;
-INSERT INTO `customers` (`id`,`customer_id`,`full_name`,`preferred_name`,`email`,`phone`,`address`,`contact_method`,`contact_other`,`feedback`,`hear_about`,`hear_about_other`,`referred_by`,`consent`,`approve`,`approved_at`,`update_token`,`update_used`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `customers` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `customers` VALUES
 (3,'QV-VIES-000001','MUHAMMAD FARIS ISKANDAR BIN SHAMSIR','BruhRis','fariskandar99@gmail.com','+60172109876','47810','WhatsApp',NULL,'Custom PC build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-07-09 15:30:49','ac450a3c-93a4-4e70-aaac-5a46e5d11578',1,'2025-12-29 20:54:33','2026-07-09 15:30:49',NULL),
 (4,'QV-VIES-000002','MUHAMMAD NAJMI NOOR ZAIRUL','Najmi','najminoorzairul@gmail.com','+60197017321','A-1-10, Cita Damansara, Jalan PJU 3/27, Sunway Damansara','WhatsApp',NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'711774c2-478a-4c85-808e-18848a78e45a',1,'2025-12-29 21:32:12','2025-12-30 00:04:11',NULL),
 (5,'QV-VIES-000003','NURSYAZWANI BINTI AHMAD NIZAM','Wani','wannieq8@gmail.com','+60197266130','A-1-10','WhatsApp',NULL,NULL,'TikTok',NULL,NULL,1,1,'2026-07-09 15:30:43','9f8be78c-9ba9-4218-9e1c-c3028a74a8a6',1,'2025-12-29 21:33:04','2026-07-09 15:30:43',NULL),
 (6,'QV-VIES-000004','MUHAMMAD EIRFAN BIN NOOR ZAIRUL','Epan','eirfan019@gmail.com','+60197091129','No 2&4, Jalan Perdana 2/42, Taman Bukit Perdana 2, 83000, Batu Pahat,Johor','WhatsApp',NULL,'Nice',NULL,NULL,NULL,1,1,'2026-01-11 07:13:03','01064af6-083e-4e5e-9722-b05921e9876f',1,'2025-12-29 22:30:09','2026-01-11 07:13:03',NULL),
 (7,'QV-VIES-000005','MUHAMMAD IZZHAZIQ BIN MOHD RAJIL','Izz','Izzhaziq1117@gmail.com','+601126605294','A-404, Tingkat 3, Palma Perak Apartment, Jalan Cecawi 6/6, 47810,Petaling Jaya, Selangor','WhatsApp',NULL,'Pc build','Friend / Referral',NULL,'Najmi Zairul',1,1,'2026-01-11 07:05:43','420c2946-d5da-45d3-ac54-75f521152dbc',1,'2025-12-29 21:35:06','2026-01-11 07:05:43',NULL);
+/*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `destination`
+--
 
 DROP TABLE IF EXISTS `destination`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `destination` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
@@ -282,15 +480,30 @@ CREATE TABLE `destination` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `destination`
+--
 
 LOCK TABLES `destination` WRITE;
-INSERT INTO `destination` (`id`,`description`,`status`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `destination` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `destination` VALUES
 (1,'IE_QVSE',1,'2026-07-02 12:06:14','2026-07-02 12:06:14',NULL),
 (2,'I_QVTD',1,'2026-07-02 12:07:01','2026-07-02 12:07:01',NULL),
 (3,'I_QVMR',1,'2026-07-11 15:12:49','2026-07-11 15:12:49',NULL);
+/*!40000 ALTER TABLE `destination` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `documents`
+--
 
 DROP TABLE IF EXISTS `documents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `documents` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(191) NOT NULL,
@@ -306,9 +519,26 @@ CREATE TABLE `documents` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `documents`
+--
+
+LOCK TABLES `documents` WRITE;
+/*!40000 ALTER TABLE `documents` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `documents` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `employees`
+--
 
 DROP TABLE IF EXISTS `employees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employees` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -323,9 +553,26 @@ CREATE TABLE `employees` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `employees`
+--
+
+LOCK TABLES `employees` WRITE;
+/*!40000 ALTER TABLE `employees` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `employees` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `expenses`
+--
 
 DROP TABLE IF EXISTS `expenses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `expenses` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `details` text NOT NULL,
@@ -335,9 +582,26 @@ CREATE TABLE `expenses` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `expenses`
+--
+
+LOCK TABLES `expenses` WRITE;
+/*!40000 ALTER TABLE `expenses` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `expenses` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `extras`
+--
 
 DROP TABLE IF EXISTS `extras`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `extras` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `vat` int(11) DEFAULT NULL,
@@ -350,9 +614,26 @@ CREATE TABLE `extras` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `extras`
+--
+
+LOCK TABLES `extras` WRITE;
+/*!40000 ALTER TABLE `extras` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `extras` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `failed_jobs`
+--
 
 DROP TABLE IF EXISTS `failed_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `connection` text NOT NULL,
@@ -362,34 +643,76 @@ CREATE TABLE `failed_jobs` (
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `failed_jobs`
+--
+
+LOCK TABLES `failed_jobs` WRITE;
+/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `inv_care`
+--
 
 DROP TABLE IF EXISTS `inv_care`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inv_care` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `inv_care` varchar(255) NOT NULL,
   `care_id` int(20) NOT NULL,
   `sku_code` varchar(100) NOT NULL,
   `item_name` varchar(100) NOT NULL,
-  `unit_cost` int(20) NOT NULL,
+  `unit_cost` decimal(12,2) NOT NULL DEFAULT 0.00,
   `max_stock` int(20) NOT NULL,
   `current_stock` int(20) NOT NULL,
   `category` int(20) NOT NULL,
   `status` int(20) NOT NULL,
   `generate_id` int(20) NOT NULL,
-  `serial_label` int(20) NOT NULL,
-  `warranty_starts` datetime NOT NULL,
+  `serial_label` int(20) DEFAULT NULL,
+  `warranty_starts` datetime DEFAULT NULL,
   `warranty_duration` int(20) NOT NULL,
-  `warranty_ends` datetime NOT NULL,
-  `manufacturer` varchar(100) NOT NULL,
+  `warranty_ends` datetime DEFAULT NULL,
+  `manufacturer` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `inv_care`
+--
+
+LOCK TABLES `inv_care` WRITE;
+/*!40000 ALTER TABLE `inv_care` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `inv_care` VALUES
+(1,'CINV-CPU-000001',0,'QV-MSKU-000056','AMD Ryzen 9 9950x3D',3394.13,1,1,1,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(2,'CINV-MBD-000001',0,'QV-MSKU-000057','ASUS ROG Crosshair X870e HERO',3787.70,1,1,6,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(3,'CINV-RAM-000001',0,'QV-MSKU-000062','G.Skill Trident Z5 Royal Gold Neo 32GB * 2 CL26 6000Mhz',2025.34,1,1,5,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(4,'CINV-SSD-000001',0,'QV-MSKU-000058','Samsung 9100 Pro 2 TB NVMe M.2',1222.10,1,1,2,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(5,'CINV-AIO-000001',0,'QV-MSKU-000059','NZXT Kraken Elite 360 RGB V2 White',1349.00,1,1,11,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(6,'CINV-PSU-000001',0,'QV-MSKU-000060','Corsair RM1000x Shift White',959.00,1,1,7,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL),
+(7,'CINV-CSE-000001',0,'QV-MSKU-000061','NZXT H9 Flow RGB',753.00,1,1,9,1,0,NULL,NULL,0,NULL,NULL,'2026-08-08 14:56:05','2026-08-08 14:56:05',NULL);
+/*!40000 ALTER TABLE `inv_care` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `inv_merch`
+--
 
 DROP TABLE IF EXISTS `inv_merch`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inv_merch` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `inv_merch_id` varchar(50) NOT NULL,
@@ -409,9 +732,26 @@ CREATE TABLE `inv_merch` (
   UNIQUE KEY `inv_merch_inv_merch_id_unique` (`inv_merch_id`),
   KEY `inv_merch_sku_code_index` (`sku_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `inv_merch`
+--
+
+LOCK TABLES `inv_merch` WRITE;
+/*!40000 ALTER TABLE `inv_merch` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `inv_merch` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `inv_move`
+--
 
 DROP TABLE IF EXISTS `inv_move`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inv_move` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `movement_id` varchar(50) NOT NULL,
@@ -432,9 +772,26 @@ CREATE TABLE `inv_move` (
   KEY `inv_move_destination_id_index` (`destination_id`),
   KEY `inv_move_order_id_index` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `inv_move`
+--
+
+LOCK TABLES `inv_move` WRITE;
+/*!40000 ALTER TABLE `inv_move` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `inv_move` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `inv_thread`
+--
 
 DROP TABLE IF EXISTS `inv_thread`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inv_thread` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `inv_thread_id` varchar(50) NOT NULL,
@@ -453,9 +810,26 @@ CREATE TABLE `inv_thread` (
   UNIQUE KEY `inv_thread_inv_thread_id_unique` (`inv_thread_id`),
   KEY `inv_thread_sku_code_index` (`sku_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `inv_thread`
+--
+
+LOCK TABLES `inv_thread` WRITE;
+/*!40000 ALTER TABLE `inv_thread` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `inv_thread` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `master_sku`
+--
 
 DROP TABLE IF EXISTS `master_sku`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `master_sku` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sku_code` varchar(50) NOT NULL,
@@ -470,68 +844,90 @@ CREATE TABLE `master_sku` (
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `master_sku`
+--
 
 LOCK TABLES `master_sku` WRITE;
-INSERT INTO `master_sku` (`id`,`sku_code`,`supplier_id`,`product_raw_id`,`product_name`,`from`,`cost`,`unit_type`,`lkp_status_sku`,`created_at`,`updated_at`,`deleted_at`) VALUES
-(4,'test',2,NULL,'Test 1','Malaysia','1000.00','pcs',4,'2026-07-09 14:57:30','2026-07-09 14:57:30',NULL),
-(6,'QVSKU 0001',NULL,NULL,'Quivitech Essential Kit Box',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(7,'QVSKU 0002',NULL,NULL,'Quivitech Prime Series Box',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(8,'QVSKU 0003',NULL,NULL,'Quivitech Collector\'s Edition Box',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(9,'QVSKU 0004',NULL,NULL,'Quivitech The Stash Screw Box',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(10,'QVSKU 0005',NULL,NULL,'Quivitech White Embroidery Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(11,'QVSKU 0006',NULL,NULL,'Quivitech Red Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(12,'QVSKU 0007',NULL,NULL,'Quivitech Yellow Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(13,'QVSKU 0008',NULL,NULL,'Quivitech Blue Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(14,'QVSKU 0009',NULL,NULL,'Quivitech Pink Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(15,'QVSKU 0010',NULL,NULL,'Quivitech Carbon Fiber Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(16,'QVSKU 0011',NULL,NULL,'Quivitech Full Grain Leather Keychain',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(17,'QVSKU 0012',NULL,NULL,'Quivitech Essential Kit Perk Card',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(18,'QVSKU 0013',NULL,NULL,'Quivitech Prime Series Perk Card',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(19,'QVSKU 0014',NULL,NULL,'Quivitech Collector\'s Edition Perk Card',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(20,'QVSKU 0016',NULL,NULL,'Quivitech 2cm x 15cm Velcro Back to Back',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(21,'QVSKU 0017',NULL,NULL,'Quivitech 1" x 6" Velcro OneWrap',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(22,'QVSKU 0018',NULL,NULL,'Quivitech Microfiber Pouch',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(23,'QVSKU 0019',NULL,NULL,'Quivitech Polymer Pouch',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(24,'QVSKU 0020',NULL,NULL,'Quivitech Neoprene Pouch',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(25,'QVSKU 0021',NULL,NULL,'MOLEX Black 8 EPS Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(26,'QVSKU 0022',NULL,NULL,'MOLEX Blue 8 EPS Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(27,'QVSKU 0023',NULL,NULL,'MOLEX Blue 10 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(28,'QVSKU 0024',NULL,NULL,'MOLEX Black 10 MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(29,'QVSKU 0025',NULL,NULL,'MOLEX Black 12V 2x6 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(30,'QVSKU 0026',NULL,NULL,'MDPC-X 12V 2x6 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(31,'QVSKU 0027',NULL,NULL,'MOLEX Blue 18 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(32,'QVSKU 0028',NULL,NULL,'MDPC-X  18  MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(33,'QVSKU 0029',NULL,NULL,'MOLEX Blue 24 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(34,'QVSKU 0030',NULL,NULL,'MDPC-X  24  MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(35,'QVSKU 0031',NULL,NULL,'MDPC-X 8 Pin Cable Comb',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(36,'QVSKU 0032',NULL,NULL,'MDPC-X 12V 2x6 PCIe Pin Cable Comb',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(37,'QVSKU 0033',NULL,NULL,'MDPC-X 24 Pin Cable Comb',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(38,'QVSKU 0034',NULL,NULL,'MDPC-X 4:1 Heatshrink Small',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(39,'QVSKU 0035',NULL,NULL,'MDPC-X 15 AWG Pin Terminal',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(40,'QVSKU 0036',NULL,NULL,'MDPC-X 17 AWG Pin Terminal',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(41,'QVSKU 0038',NULL,NULL,'MDPC-X Blackest Black Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(42,'QVSKU 0039',NULL,NULL,'MDPC-X XXX White Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(43,'QVSKU 0040',NULL,NULL,'MDPC-X Gold Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(44,'QVSKU 0041',NULL,NULL,'MDPC-X Blackest Black Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(45,'QVSKU 0042',NULL,NULL,'MDPC-X XXX White Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(46,'QVSKU 0043',NULL,NULL,'MDPC-X Gold Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(47,'QVSKU 0044',NULL,NULL,'MDPC-X Platinum X Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(48,'QVSKU 0045',NULL,NULL,'MDPC-X Perfect Pink Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(49,'QVSKU 0046',NULL,NULL,'MDPC-X White 15-AWG Wire',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(50,'QVSKU 0047',NULL,NULL,'MDPC-X Grey 17-AWG Wire',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(51,'QVSKU 0048',NULL,NULL,'MDPC-X Black 23-AWG Wire',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(52,'QVSKU 0049',NULL,NULL,'MDPC-X 3:1 Heatshrink Micro',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(53,'QVSKU 0050',NULL,NULL,'MDPC-X 8 PCIe Pin  ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(54,'QVSKU 0051',NULL,NULL,'MOLEX Black 8 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-07-11 15:48:17','2026-07-11 15:48:17',NULL),
-(56,'CINV-CPU-000001',NULL,NULL,'AMD Ryzen 7 9800X3D (Spare/RMA Unit)',NULL,'2399','pcs',1,'2026-08-02 04:19:02','2026-08-02 04:19:02',NULL),
-(57,'CINV-CPU-000002',NULL,NULL,'INTEL Core Ultra 7 265 (Spare/RMA Unit)',NULL,'1699','pcs',1,'2026-08-02 04:19:16','2026-08-02 04:19:16',NULL),
-(58,'CINV-GPU-000002',NULL,NULL,'MSI Trio X White RTX 5080 16GB (Spare/RMA Unit)',NULL,'4999','pcs',1,'2026-08-02 04:18:32','2026-08-02 04:18:32',NULL),
-(59,'CINV-GPU-000001',NULL,NULL,'ASUS ROG Strix RTX 5070 Ti 16GB (Spare/RMA Unit)',NULL,'3799','pcs',1,'2026-08-02 04:16:47','2026-08-02 04:16:47',NULL),
-(60,'CINV-RAM-000001',NULL,NULL,'G.SKILL Trident Z5 32GB (Spare)',NULL,'899','pcs',1,'2026-08-02 04:14:07','2026-08-02 04:14:07',NULL);
+/*!40000 ALTER TABLE `master_sku` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `master_sku` VALUES
+(4,'QV-MSKU-000001',2,NULL,'Test 1','Malaysia','1000.00','pcs',4,'2026-08-08 14:56:05','2026-07-09 14:57:30',NULL),
+(6,'QV-MSKU-000002',NULL,NULL,'Quivitech Essential Kit Box',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(7,'QV-MSKU-000003',NULL,NULL,'Quivitech Prime Series Box',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(8,'QV-MSKU-000004',NULL,NULL,'Quivitech Collector\'s Edition Box',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(9,'QV-MSKU-000005',NULL,NULL,'Quivitech The Stash Screw Box',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(10,'QV-MSKU-000006',NULL,NULL,'Quivitech White Embroidery Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(11,'QV-MSKU-000007',NULL,NULL,'Quivitech Red Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(12,'QV-MSKU-000008',NULL,NULL,'Quivitech Yellow Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(13,'QV-MSKU-000009',NULL,NULL,'Quivitech Blue Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(14,'QV-MSKU-000010',NULL,NULL,'Quivitech Pink Eagle Hook Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(15,'QV-MSKU-000011',NULL,NULL,'Quivitech Carbon Fiber Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(16,'QV-MSKU-000012',NULL,NULL,'Quivitech Full Grain Leather Keychain',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(17,'QV-MSKU-000013',NULL,NULL,'Quivitech Essential Kit Perk Card',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(18,'QV-MSKU-000014',NULL,NULL,'Quivitech Prime Series Perk Card',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(19,'QV-MSKU-000015',NULL,NULL,'Quivitech Collector\'s Edition Perk Card',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(20,'QV-MSKU-000016',NULL,NULL,'Quivitech 2cm x 15cm Velcro Back to Back',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(21,'QV-MSKU-000017',NULL,NULL,'Quivitech 1\" x 6\" Velcro OneWrap',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(22,'QV-MSKU-000018',NULL,NULL,'Quivitech Microfiber Pouch',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(23,'QV-MSKU-000019',NULL,NULL,'Quivitech Polymer Pouch',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(24,'QV-MSKU-000020',NULL,NULL,'Quivitech Neoprene Pouch',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(25,'QV-MSKU-000021',NULL,NULL,'MOLEX Black 8 EPS Pin  ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(26,'QV-MSKU-000022',NULL,NULL,'MOLEX Blue 8 EPS Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(27,'QV-MSKU-000023',NULL,NULL,'MOLEX Blue 10 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(28,'QV-MSKU-000024',NULL,NULL,'MOLEX Black 10 MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(29,'QV-MSKU-000025',NULL,NULL,'MOLEX Black 12V 2x6 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(30,'QV-MSKU-000026',NULL,NULL,'MDPC-X 12V 2x6 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(31,'QV-MSKU-000027',NULL,NULL,'MOLEX Blue 18 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(32,'QV-MSKU-000028',NULL,NULL,'MDPC-X  18  MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(33,'QV-MSKU-000029',NULL,NULL,'MOLEX Blue 24 MB Pin  ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(34,'QV-MSKU-000030',NULL,NULL,'MDPC-X  24  MB Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(35,'QV-MSKU-000031',NULL,NULL,'MDPC-X 8 Pin Cable Comb',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(36,'QV-MSKU-000032',NULL,NULL,'MDPC-X 12V 2x6 PCIe Pin Cable Comb',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(37,'QV-MSKU-000033',NULL,NULL,'MDPC-X 24 Pin Cable Comb',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(38,'QV-MSKU-000034',NULL,NULL,'MDPC-X 4:1 Heatshrink Small',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(39,'QV-MSKU-000035',NULL,NULL,'MDPC-X 15 AWG Pin Terminal',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(40,'QV-MSKU-000036',NULL,NULL,'MDPC-X 17 AWG Pin Terminal',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(41,'QV-MSKU-000037',NULL,NULL,'MDPC-X Blackest Black Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(42,'QV-MSKU-000038',NULL,NULL,'MDPC-X XXX White Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(43,'QV-MSKU-000039',NULL,NULL,'MDPC-X Gold Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(44,'QV-MSKU-000040',NULL,NULL,'MDPC-X Blackest Black Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(45,'QV-MSKU-000041',NULL,NULL,'MDPC-X XXX White Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(46,'QV-MSKU-000042',NULL,NULL,'MDPC-X Gold Cable Sleeve MICRO',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(47,'QV-MSKU-000043',NULL,NULL,'MDPC-X Platinum X Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(48,'QV-MSKU-000044',NULL,NULL,'MDPC-X Perfect Pink Cable Sleeve XTC',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(49,'QV-MSKU-000045',NULL,NULL,'MDPC-X White 15-AWG Wire',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(50,'QV-MSKU-000046',NULL,NULL,'MDPC-X Grey 17-AWG Wire',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(51,'QV-MSKU-000047',NULL,NULL,'MDPC-X Black 23-AWG Wire',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(52,'QV-MSKU-000048',NULL,NULL,'MDPC-X 3:1 Heatshrink Micro',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(53,'QV-MSKU-000049',NULL,NULL,'MDPC-X 8 PCIe Pin  ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(54,'QV-MSKU-000050',NULL,NULL,'MOLEX Black 8 PCIe Pin ATX Connector',NULL,NULL,NULL,1,'2026-08-08 14:56:05','2026-07-11 15:48:17',NULL),
+(56,'QV-MSKU-000051',NULL,NULL,'AMD Ryzen 7 9800X3D (Spare/RMA Unit)',NULL,'2399','pcs',1,'2026-08-08 14:56:05','2026-08-02 04:19:02',NULL),
+(57,'QV-MSKU-000052',NULL,NULL,'INTEL Core Ultra 7 265 (Spare/RMA Unit)',NULL,'1699','pcs',1,'2026-08-08 14:56:05','2026-08-02 04:19:16',NULL),
+(58,'QV-MSKU-000053',NULL,NULL,'MSI Trio X White RTX 5080 16GB (Spare/RMA Unit)',NULL,'4999','pcs',1,'2026-08-08 14:56:05','2026-08-02 04:18:32',NULL),
+(59,'QV-MSKU-000054',NULL,NULL,'ASUS ROG Strix RTX 5070 Ti 16GB (Spare/RMA Unit)',NULL,'3799','pcs',1,'2026-08-08 14:56:05','2026-08-02 04:16:47',NULL),
+(60,'QV-MSKU-000055',NULL,NULL,'G.SKILL Trident Z5 32GB (Spare)',NULL,'899','pcs',1,'2026-08-08 14:56:05','2026-08-02 04:14:07',NULL),
+(61,'QV-MSKU-000056',NULL,NULL,'AMD Ryzen 9 9950x3D',NULL,'3394.13','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:08',NULL),
+(62,'QV-MSKU-000057',NULL,NULL,'ASUS ROG Crosshair X870e HERO',NULL,'3787.7','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:08',NULL),
+(63,'QV-MSKU-000058',NULL,NULL,'Samsung 9100 Pro 2 TB NVMe M.2',NULL,'1222.1','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:09',NULL),
+(64,'QV-MSKU-000059',NULL,NULL,'NZXT Kraken Elite 360 RGB V2 White',NULL,'1349','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:09',NULL),
+(65,'QV-MSKU-000060',NULL,NULL,'Corsair RM1000x Shift White',NULL,'959','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:09',NULL),
+(66,'QV-MSKU-000061',NULL,NULL,'NZXT H9 Flow RGB',NULL,'753','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:09',NULL),
+(67,'QV-MSKU-000062',NULL,NULL,'G.Skill Trident Z5 Royal Gold 32GBx2 6000MHz',NULL,'2025.34','pcs',1,'2026-08-08 14:56:05','2026-08-08 12:12:27',NULL);
+/*!40000 ALTER TABLE `master_sku` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `meeting_details`
+--
 
 DROP TABLE IF EXISTS `meeting_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `meeting_details` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `meeting_id` bigint(20) unsigned NOT NULL,
@@ -564,9 +960,26 @@ CREATE TABLE `meeting_details` (
   KEY `meeting_details_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `meeting_details_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `meeting_details`
+--
+
+LOCK TABLES `meeting_details` WRITE;
+/*!40000 ALTER TABLE `meeting_details` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `meeting_details` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `meetings`
+--
 
 DROP TABLE IF EXISTS `meetings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `meetings` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `meeting_id` varchar(191) NOT NULL,
@@ -582,9 +995,26 @@ CREATE TABLE `meetings` (
   KEY `meetings_customer_id_foreign` (`customer_id`),
   CONSTRAINT `meetings_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `meetings`
+--
+
+LOCK TABLES `meetings` WRITE;
+/*!40000 ALTER TABLE `meetings` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `meetings` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `menu_items`
+--
 
 DROP TABLE IF EXISTS `menu_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `menu_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` bigint(20) unsigned DEFAULT NULL,
@@ -601,9 +1031,16 @@ CREATE TABLE `menu_items` (
   KEY `menu_items_parent_id_foreign` (`parent_id`),
   CONSTRAINT `menu_items_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `menu_items` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `menu_items`
+--
 
 LOCK TABLES `menu_items` WRITE;
-INSERT INTO `menu_items` (`id`,`parent_id`,`type`,`label`,`icon`,`route`,`sort_order`,`divider_before`,`is_active`,`created_at`,`updated_at`) VALUES
+/*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `menu_items` VALUES
 (1,NULL,'link','Dashboard','fas fa-fw fa-tachometer-alt','/dashboard',0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (2,NULL,'group','Customer','fas fa-users',NULL,1,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
 (3,2,'header','Customer Management',NULL,NULL,0,0,1,'2026-07-20 12:56:08','2026-07-20 12:56:08'),
@@ -716,9 +1153,17 @@ INSERT INTO `menu_items` (`id`,`parent_id`,`type`,`label`,`icon`,`route`,`sort_o
 (116,115,'header','Refund Management',NULL,NULL,0,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04'),
 (117,116,'link','All Refunds',NULL,'/refunds',0,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04'),
 (118,116,'link','Add Refund',NULL,'/refunds/create',1,0,1,'2026-07-27 13:40:04','2026-07-27 13:40:04');
+/*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `merch_items`
+--
 
 DROP TABLE IF EXISTS `merch_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `merch_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `item_code` varchar(50) NOT NULL,
@@ -735,24 +1180,39 @@ CREATE TABLE `merch_items` (
   UNIQUE KEY `merch_items_item_code_unique` (`item_code`),
   KEY `merch_items_sku_code_index` (`sku_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `merch_items`
+--
 
 LOCK TABLES `merch_items` WRITE;
-INSERT INTO `merch_items` (`id`,`item_code`,`sku_code`,`name`,`retail_price`,`member_discount_price`,`is_exclusive`,`status`,`created_at`,`updated_at`,`deleted_at`) VALUES
-(1,'MI-QVMR-0001','QVSKU 0005','Quivitech White Embroidery Keychain','19.90','10.90',1,1,'2026-07-14 16:03:44','2026-07-21 08:19:00',NULL),
-(2,'MI-QVMR-0002','QVSKU 0006','Quivitech Red Eagle Hook Keychain','29.90','15.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(3,'MI-QVMR-0003','QVSKU 0007','Quivitech Yellow Eagle Hook Keychain','29.90','15.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(4,'MI-QVMR-0004','QVSKU 0008','Quivitech Blue Eagle Hook Keychain','29.90','15.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(5,'MI-QVMR-0005','QVSKU 0009','Quivitech Pink Eagle Hook Keychain','29.90','15.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(6,'MI-QVMR-0006','QVSKU 0016','Quivitech 2cm x 15cm Velcro Back to Back','9.90','6.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(7,'MI-QVMR-0007','QVSKU 0017','Quivitech 1" x 6" Velcro OneWrap','34.90',NULL,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(8,'MI-QVMR-0008','QVSKU 0018','Quivitech Microfiber Pouch','19.90','13.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(9,'MI-QVMR-0009','QVSKU 0019','Quivitech Polymer Pouch','29.90','15.90',0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(10,'MI-QVMR-0010','QVSKU 0010','Quivitech Carbon Fiber Keychain','199.90',NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(11,'MI-QVMR-0011','QVSKU 0011','Quivitech Full Grain Leather Keychain','69.90',NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
-(12,'MI-QVMR-0012','QVSKU 0020','Quivitech Neoprene Pouch','79.90',NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL);
+/*!40000 ALTER TABLE `merch_items` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `merch_items` VALUES
+(1,'MI-QVMR-0001','QV-MSKU-000006','Quivitech White Embroidery Keychain',19.90,10.90,1,1,'2026-07-14 16:03:44','2026-07-21 08:19:00',NULL),
+(2,'MI-QVMR-0002','QV-MSKU-000007','Quivitech Red Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(3,'MI-QVMR-0003','QV-MSKU-000008','Quivitech Yellow Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(4,'MI-QVMR-0004','QV-MSKU-000009','Quivitech Blue Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(5,'MI-QVMR-0005','QV-MSKU-000010','Quivitech Pink Eagle Hook Keychain',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(6,'MI-QVMR-0006','QV-MSKU-000016','Quivitech 2cm x 15cm Velcro Back to Back',9.90,6.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(7,'MI-QVMR-0007','QV-MSKU-000017','Quivitech 1\" x 6\" Velcro OneWrap',34.90,NULL,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(8,'MI-QVMR-0008','QV-MSKU-000018','Quivitech Microfiber Pouch',19.90,13.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(9,'MI-QVMR-0009','QV-MSKU-000019','Quivitech Polymer Pouch',29.90,15.90,0,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(10,'MI-QVMR-0010','QV-MSKU-000011','Quivitech Carbon Fiber Keychain',199.90,NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(11,'MI-QVMR-0011','QV-MSKU-000012','Quivitech Full Grain Leather Keychain',69.90,NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL),
+(12,'MI-QVMR-0012','QV-MSKU-000020','Quivitech Neoprene Pouch',79.90,NULL,1,1,'2026-07-14 16:03:44','2026-07-14 16:03:44',NULL);
+/*!40000 ALTER TABLE `merch_items` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `merch_order_items`
+--
 
 DROP TABLE IF EXISTS `merch_order_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `merch_order_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `merch_order_id` bigint(20) unsigned NOT NULL,
@@ -769,9 +1229,26 @@ CREATE TABLE `merch_order_items` (
   CONSTRAINT `merch_order_items_merch_item_id_foreign` FOREIGN KEY (`merch_item_id`) REFERENCES `merch_items` (`id`),
   CONSTRAINT `merch_order_items_merch_order_id_foreign` FOREIGN KEY (`merch_order_id`) REFERENCES `merch_orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `merch_order_items`
+--
+
+LOCK TABLES `merch_order_items` WRITE;
+/*!40000 ALTER TABLE `merch_order_items` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `merch_order_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `merch_orders`
+--
 
 DROP TABLE IF EXISTS `merch_orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `merch_orders` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `merch_order_id` varchar(50) NOT NULL,
@@ -787,18 +1264,42 @@ CREATE TABLE `merch_orders` (
   KEY `merch_orders_customer_id_index` (`customer_id`),
   KEY `merch_orders_order_id_index` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `merch_orders`
+--
+
+LOCK TABLES `merch_orders` WRITE;
+/*!40000 ALTER TABLE `merch_orders` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `merch_orders` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `migrations`
+--
 
 DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `migrations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `migration` varchar(191) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
 
 LOCK TABLES `migrations` WRITE;
-INSERT INTO `migrations` (`id`,`migration`,`batch`) VALUES
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `migrations` VALUES
 (17,'2014_10_12_000000_create_users_table',1),
 (18,'2014_10_12_100000_create_password_resets_table',1),
 (19,'2019_08_19_000000_create_failed_jobs_table',1),
@@ -886,10 +1387,23 @@ INSERT INTO `migrations` (`id`,`migration`,`batch`) VALUES
 (108,'2026_08_02_000000_add_business_id_columns_missing_from_history',44),
 (109,'2026_08_02_010000_remove_inv_excl_serve',45),
 (110,'2026_08_03_000000_fix_mbd_category_code_and_accessory_cat_ids',46),
-(111,'2026_08_03_010000_make_products_sub_cat_id_and_brand_id_nullable',47);
+(111,'2026_08_03_010000_make_products_sub_cat_id_and_brand_id_nullable',47),
+(112,'2026_08_04_000000_add_quiviserve_inv_merch_rows',48),
+(113,'2026_08_07_000000_add_build_way_and_tag_along_to_order_table',48),
+(114,'2026_08_07_100000_extend_serve_pce_annual_services_to_year10',49),
+(115,'2026_08_08_000000_add_upgrade_pce_to_order_table',50),
+(116,'2026_08_08_100000_fix_inv_care_column_constraints',51);
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `onsite_handovers`
+--
 
 DROP TABLE IF EXISTS `onsite_handovers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `onsite_handovers` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned NOT NULL,
@@ -993,10 +1507,29 @@ CREATE TABLE `onsite_handovers` (
   UNIQUE KEY `onsite_handovers_order_id_round_unique` (`order_id`,`round`),
   UNIQUE KEY `onsite_handovers_report_id_unique` (`report_id`),
   CONSTRAINT `onsite_handovers_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `onsite_handovers`
+--
+
+LOCK TABLES `onsite_handovers` WRITE;
+/*!40000 ALTER TABLE `onsite_handovers` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `onsite_handovers` VALUES
+(1,17,1,'OSH-QVCT-0001',NULL,'in_progress',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-08-08 04:39:11','2026-08-08 04:39:11',NULL);
+/*!40000 ALTER TABLE `onsite_handovers` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `onsite_handovers_studio`
+--
 
 DROP TABLE IF EXISTS `onsite_handovers_studio`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `onsite_handovers_studio` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned NOT NULL,
@@ -1058,10 +1591,29 @@ CREATE TABLE `onsite_handovers_studio` (
   UNIQUE KEY `onsite_handovers_studio_order_id_round_unique` (`order_id`,`round`),
   UNIQUE KEY `onsite_handovers_studio_report_id_unique` (`report_id`),
   CONSTRAINT `onsite_handovers_studio_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `onsite_handovers_studio`
+--
+
+LOCK TABLES `onsite_handovers_studio` WRITE;
+/*!40000 ALTER TABLE `onsite_handovers_studio` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `onsite_handovers_studio` VALUES
+(1,17,1,'OSH-STD-0001',NULL,'in_progress',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-08-08 04:33:50','2026-08-08 04:33:50',NULL);
+/*!40000 ALTER TABLE `onsite_handovers_studio` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `order`
+--
 
 DROP TABLE IF EXISTS `order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` varchar(191) NOT NULL,
@@ -1087,14 +1639,37 @@ CREATE TABLE `order` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   `is_reason` tinyint(1) NOT NULL COMMENT '1: Work, 2: Gaming',
+  `build_way` varchar(255) DEFAULT NULL,
+  `tag_along` tinyint(1) DEFAULT NULL,
+  `upgrade_pce_enabled` tinyint(1) DEFAULT NULL,
+  `upgrade_pce_notes` text DEFAULT NULL,
   `craft_tag_id` varchar(255) DEFAULT NULL,
   `reject_id` varchar(255) DEFAULT NULL,
   `craft_data_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `order`
+--
+
+LOCK TABLES `order` WRITE;
+/*!40000 ALTER TABLE `order` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `order` VALUES
+(17,'QV-BLDP-000001','QVT-INV-2608-17',6,'14','20860',NULL,'20860',NULL,NULL,NULL,'2026-08-06 13:26:20','August','2026',4,3,3,0,NULL,NULL,'2026-08-06 13:26:20','2026-08-08 05:43:16',NULL,2,'onsite',1,1,'nnnnhhu','BLDP-DRF-000001-17',NULL,'QV-CRFT-000001');
+/*!40000 ALTER TABLE `order` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `order_details`
+--
 
 DROP TABLE IF EXISTS `order_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_details` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` int(11) DEFAULT NULL,
@@ -1107,10 +1682,39 @@ CREATE TABLE `order_details` (
   `serial_no` varchar(191) DEFAULT NULL,
   `start_warranty_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=399 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `order_details`
+--
+
+LOCK TABLES `order_details` WRITE;
+/*!40000 ALTER TABLE `order_details` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `order_details` VALUES
+(388,17,42,'1','89','89','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(389,17,53,'1','3000','3000','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(390,17,40,'2','0','0','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(391,17,3,'1','0','0','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(392,17,9,'1','0','0','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(393,17,25,'2','6109','12218','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(394,17,14,'2','959','1918','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(395,17,20,'1','639','639','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(396,17,12,'1','1499','1499','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(397,17,29,'1','899','899','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL),
+(398,17,32,'1','598','598','2026-08-08 05:42:58','2026-08-08 05:42:58',NULL,NULL);
+/*!40000 ALTER TABLE `order_details` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `order_drafts`
+--
 
 DROP TABLE IF EXISTS `order_drafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_drafts` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned NOT NULL,
@@ -1128,19 +1732,70 @@ CREATE TABLE `order_drafts` (
   UNIQUE KEY `order_drafts_draft_id_unique` (`draft_id`),
   KEY `order_drafts_order_id_index` (`order_id`),
   CONSTRAINT `order_drafts_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `order_drafts`
+--
+
+LOCK TABLES `order_drafts` WRITE;
+/*!40000 ALTER TABLE `order_drafts` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `order_drafts` VALUES
+(1,17,'BLDP-DRF-000001-01',6,15,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-06 13:34:36'),
+(4,17,'BLDP-DRF-000001-02',6,15,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":\"89.00\",\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":\"3000.00\",\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":2,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":\"6109.00\",\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":\"959.00\",\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":\"639.00\",\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":\"1499.00\",\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":\"899.00\",\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":\"598.00\",\"sub_total\":598}]','2026-08-07 09:09:30'),
+(5,17,'BLDP-DRF-000001-03',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-07 16:59:51'),
+(6,17,'BLDP-DRF-000001-04',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-07 17:00:01'),
+(7,17,'BLDP-DRF-000001-05',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":\"89.00\",\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":\"3000.00\",\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":\"0.00\",\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":\"6109.00\",\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":\"959.00\",\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":\"639.00\",\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":\"1499.00\",\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":\"899.00\",\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":\"598.00\",\"sub_total\":598}]','2026-08-07 22:50:16'),
+(8,17,'BLDP-DRF-000001-06',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-07 22:55:15'),
+(9,17,'BLDP-DRF-000001-07',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-07 23:05:16'),
+(10,17,'BLDP-DRF-000001-08',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-07 23:26:15'),
+(11,17,'BLDP-DRF-000001-09',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:15:03'),
+(12,17,'BLDP-DRF-000001-10',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:16:22'),
+(13,17,'BLDP-DRF-000001-11',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:16:51'),
+(14,17,'BLDP-DRF-000001-12',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:17:52'),
+(15,17,'BLDP-DRF-000001-13',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:24:19'),
+(16,17,'BLDP-DRF-000001-14',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 03:34:07'),
+(17,17,'BLDP-DRF-000001-15',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 05:25:57'),
+(18,17,'BLDP-DRF-000001-16',6,14,20860.00,20860.00,4,3,3,'[{\"pro_id\":42,\"product_name\":\"LIAN LI Edge Hub\",\"pro_qty\":1,\"pro_price\":89,\"sub_total\":89},{\"pro_id\":53,\"product_name\":\"test 1\",\"pro_qty\":1,\"pro_price\":3000,\"sub_total\":3000},{\"pro_id\":40,\"product_name\":\"ASUS ROG Wingwall\",\"pro_qty\":2,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":3,\"product_name\":\"AMD Ryzen 7 7800X3D\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":9,\"product_name\":\"ASUS ROG Crosshair X870e Hero\",\"pro_qty\":1,\"pro_price\":0,\"sub_total\":0},{\"pro_id\":25,\"product_name\":\"G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)\",\"pro_qty\":2,\"pro_price\":6109,\"sub_total\":12218},{\"pro_id\":14,\"product_name\":\"CORSAIR RM1000X Shift\",\"pro_qty\":2,\"pro_price\":959,\"sub_total\":1918},{\"pro_id\":20,\"product_name\":\"ARCTIC Liquid Freezer III Pro ARGB 360\",\"pro_qty\":1,\"pro_price\":639,\"sub_total\":639},{\"pro_id\":12,\"product_name\":\"SAMSUNG 9100 Pro 2TB\",\"pro_qty\":1,\"pro_price\":1499,\"sub_total\":1499},{\"pro_id\":29,\"product_name\":\"HAVN HS 420\",\"pro_qty\":1,\"pro_price\":899,\"sub_total\":899},{\"pro_id\":32,\"product_name\":\"NZXT F360\",\"pro_qty\":1,\"pro_price\":598,\"sub_total\":598}]','2026-08-08 05:42:58');
+/*!40000 ALTER TABLE `order_drafts` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `password_resets`
+--
 
 DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `password_resets` (
   `email` varchar(191) NOT NULL,
   `token` varchar(191) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `password_resets`
+--
+
+LOCK TABLES `password_resets` WRITE;
+/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_checklist_items`
+--
 
 DROP TABLE IF EXISTS `performance_test_checklist_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_checklist_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1157,9 +1812,26 @@ CREATE TABLE `performance_test_checklist_items` (
   KEY `performance_test_checklist_items_performance_test_id_foreign` (`performance_test_id`),
   CONSTRAINT `performance_test_checklist_items_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=481 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_checklist_items`
+--
+
+LOCK TABLES `performance_test_checklist_items` WRITE;
+/*!40000 ALTER TABLE `performance_test_checklist_items` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_checklist_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cooling_performance_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_cooling_performance_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_cooling_performance_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1193,9 +1865,26 @@ CREATE TABLE `performance_test_cooling_performance_results` (
   UNIQUE KEY `pt_cooling_performance_results_pt_id_unique` (`performance_test_id`),
   CONSTRAINT `pt_cooling_performance_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_cooling_performance_results`
+--
+
+LOCK TABLES `performance_test_cooling_performance_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cooling_performance_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_cooling_performance_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cooling_system_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_cooling_system_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_cooling_system_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1236,9 +1925,26 @@ CREATE TABLE `performance_test_cooling_system_results` (
   UNIQUE KEY `pt_cooling_system_results_pt_id_unique` (`performance_test_id`),
   CONSTRAINT `pt_cooling_system_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_cooling_system_results`
+--
+
+LOCK TABLES `performance_test_cooling_system_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cooling_system_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_cooling_system_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_cpu_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_cpu_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_cpu_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1283,9 +1989,26 @@ CREATE TABLE `performance_test_cpu_results` (
   UNIQUE KEY `performance_test_cpu_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_cpu_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_cpu_results`
+--
+
+LOCK TABLES `performance_test_cpu_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_cpu_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_cpu_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_display_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_display_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_display_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1315,9 +2038,26 @@ CREATE TABLE `performance_test_display_results` (
   UNIQUE KEY `performance_test_display_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_display_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_display_results`
+--
+
+LOCK TABLES `performance_test_display_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_display_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_display_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_gpu_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_gpu_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_gpu_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1363,9 +2103,26 @@ CREATE TABLE `performance_test_gpu_results` (
   UNIQUE KEY `performance_test_gpu_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_gpu_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_gpu_results`
+--
+
+LOCK TABLES `performance_test_gpu_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_gpu_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_gpu_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_memory_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_memory_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_memory_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1406,9 +2163,26 @@ CREATE TABLE `performance_test_memory_results` (
   UNIQUE KEY `performance_test_memory_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_memory_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_memory_results`
+--
+
+LOCK TABLES `performance_test_memory_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_memory_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_memory_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_network_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_network_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_network_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1441,9 +2215,26 @@ CREATE TABLE `performance_test_network_results` (
   UNIQUE KEY `performance_test_network_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_network_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_network_results`
+--
+
+LOCK TABLES `performance_test_network_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_network_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_network_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_storage_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_storage_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_storage_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1481,9 +2272,26 @@ CREATE TABLE `performance_test_storage_results` (
   UNIQUE KEY `performance_test_storage_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_storage_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_storage_results`
+--
+
+LOCK TABLES `performance_test_storage_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_storage_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_storage_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_system_stability_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_system_stability_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_system_stability_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1528,9 +2336,26 @@ CREATE TABLE `performance_test_system_stability_results` (
   UNIQUE KEY `pt_system_stability_results_pt_id_unique` (`performance_test_id`),
   CONSTRAINT `pt_system_stability_results_pt_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_system_stability_results`
+--
+
+LOCK TABLES `performance_test_system_stability_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_system_stability_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_system_stability_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_usb_ports`
+--
 
 DROP TABLE IF EXISTS `performance_test_usb_ports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_usb_ports` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1546,9 +2371,26 @@ CREATE TABLE `performance_test_usb_ports` (
   KEY `performance_test_usb_ports_performance_test_id_foreign` (`performance_test_id`),
   CONSTRAINT `performance_test_usb_ports_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_usb_ports`
+--
+
+LOCK TABLES `performance_test_usb_ports` WRITE;
+/*!40000 ALTER TABLE `performance_test_usb_ports` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_usb_ports` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_test_usb_results`
+--
 
 DROP TABLE IF EXISTS `performance_test_usb_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_test_usb_results` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `performance_test_id` bigint(20) unsigned NOT NULL,
@@ -1570,9 +2412,26 @@ CREATE TABLE `performance_test_usb_results` (
   UNIQUE KEY `performance_test_usb_results_performance_test_id_unique` (`performance_test_id`),
   CONSTRAINT `performance_test_usb_results_performance_test_id_foreign` FOREIGN KEY (`performance_test_id`) REFERENCES `performance_tests` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_test_usb_results`
+--
+
+LOCK TABLES `performance_test_usb_results` WRITE;
+/*!40000 ALTER TABLE `performance_test_usb_results` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_test_usb_results` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `performance_tests`
+--
 
 DROP TABLE IF EXISTS `performance_tests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `performance_tests` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned NOT NULL,
@@ -1620,9 +2479,26 @@ CREATE TABLE `performance_tests` (
   KEY `performance_tests_order_id_foreign` (`order_id`),
   CONSTRAINT `performance_tests_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `performance_tests`
+--
+
+LOCK TABLES `performance_tests` WRITE;
+/*!40000 ALTER TABLE `performance_tests` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `performance_tests` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `plus_order_items`
+--
 
 DROP TABLE IF EXISTS `plus_order_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `plus_order_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `plus_order_id` bigint(20) unsigned NOT NULL,
@@ -1638,9 +2514,26 @@ CREATE TABLE `plus_order_items` (
   CONSTRAINT `plus_order_items_plus_order_id_foreign` FOREIGN KEY (`plus_order_id`) REFERENCES `plus_orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `plus_order_items_plus_service_id_foreign` FOREIGN KEY (`plus_service_id`) REFERENCES `plus_services` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `plus_order_items`
+--
+
+LOCK TABLES `plus_order_items` WRITE;
+/*!40000 ALTER TABLE `plus_order_items` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `plus_order_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `plus_orders`
+--
 
 DROP TABLE IF EXISTS `plus_orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `plus_orders` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `plus_order_id` varchar(50) NOT NULL,
@@ -1658,9 +2551,26 @@ CREATE TABLE `plus_orders` (
   KEY `plus_orders_customer_id_index` (`customer_id`),
   KEY `plus_orders_order_id_index` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `plus_orders`
+--
+
+LOCK TABLES `plus_orders` WRITE;
+/*!40000 ALTER TABLE `plus_orders` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `plus_orders` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `plus_services`
+--
 
 DROP TABLE IF EXISTS `plus_services`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `plus_services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `service_code` varchar(50) NOT NULL,
@@ -1674,9 +2584,26 @@ CREATE TABLE `plus_services` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `plus_services_service_code_unique` (`service_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `plus_services`
+--
+
+LOCK TABLES `plus_services` WRITE;
+/*!40000 ALTER TABLE `plus_services` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `plus_services` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `pos`
+--
 
 DROP TABLE IF EXISTS `pos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pos` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pro_id` int(11) NOT NULL,
@@ -1687,10 +2614,27 @@ CREATE TABLE `pos` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `pos`
+--
+
+LOCK TABLES `pos` WRITE;
+/*!40000 ALTER TABLE `pos` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `pos` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `product_raw`
+--
 
 DROP TABLE IF EXISTS `product_raw`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_raw` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `product_id` int(11) NOT NULL,
@@ -1710,9 +2654,26 @@ CREATE TABLE `product_raw` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `product_raw`
+--
+
+LOCK TABLES `product_raw` WRITE;
+/*!40000 ALTER TABLE `product_raw` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `product_raw` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `product_warranty`
+--
 
 DROP TABLE IF EXISTS `product_warranty`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_warranty` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `product_id` int(11) NOT NULL,
@@ -1724,9 +2685,26 @@ CREATE TABLE `product_warranty` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `product_warranty`
+--
+
+LOCK TABLES `product_warranty` WRITE;
+/*!40000 ALTER TABLE `product_warranty` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `product_warranty` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `products`
+--
 
 DROP TABLE IF EXISTS `products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `products` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `is_care` int(11) DEFAULT NULL,
@@ -1768,41 +2746,48 @@ CREATE TABLE `products` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `products`
+--
 
 LOCK TABLES `products` WRITE;
-INSERT INTO `products` (`id`,`is_care`,`product_code`,`cat_id`,`category_name`,`sub_cat_id`,`brand_id`,`product_name`,`core`,`threads`,`max_usage`,`type`,`include_fans`,`frequency`,`support`,`latency`,`additional`,`vram`,`80_plus`,`atx`,`gen`,`pcie`,`storage`,`size`,`colour`,`back_connect`,`price`,`price_updated_at`,`available`,`available_local`,`supplier_id`,`buying_date`,`image`,`product_qty`,`product_loan`,`created_at`,`updated_at`,`deleted_at`) VALUES
-(1,1,'PART-CPU-000001',1,NULL,2,6,'AMD Ryzen 7 9800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2799.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103563.png',34,NULL,'2026-02-11 18:18:32','2026-08-03 08:13:16',NULL),
+/*!40000 ALTER TABLE `products` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `products` VALUES
+(1,1,'PART-CPU-000001',1,NULL,2,6,'AMD Ryzen 7 9800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2799.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103563.png',31,NULL,'2026-02-11 18:18:32','2026-08-07 22:50:48',NULL),
 (2,1,'PART-CPU-000002',1,'CPU',2,6,'AMD Ryzen 9 9950X3D',16,32,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3699.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103599.png',26,NULL,'2026-02-11 18:18:32','2026-02-26 03:00:01',NULL),
-(3,1,'PART-CPU-000003',1,'CPU',2,6,'AMD Ryzen 7 7800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103498.png',45,NULL,'2026-02-11 18:18:32','2026-07-09 14:17:47',NULL),
+(3,1,'PART-CPU-000003',1,'CPU',2,6,'AMD Ryzen 7 7800X3D',8,16,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103498.png',27,NULL,'2026-02-11 18:18:32','2026-08-08 05:42:58',NULL),
 (4,1,'PART-CPU-000004',1,'CPU',4,7,'INTEL Core Ultra 5 245KF',14,20,'1440P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1039.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159321.png',44,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:41',NULL),
 (5,1,'PART-CPU-000005',1,'CPU',4,7,'INTEL Core Ultra 7 265',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159303.png',46,NULL,'2026-02-11 18:18:32','2026-02-26 18:28:23',NULL),
 (6,1,'PART-CPU-000006',1,'CPU',4,7,'INTEL Core Ultra 7 265KF',20,28,'2160P',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'1779.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159286.png',41,NULL,'2026-02-11 18:18:32','2026-08-01 05:23:51',NULL),
 (7,1,'PART-MBD-000001',6,'MBD',11,8,'GIGABYTE Aorus X870 ELite Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158386.png',41,NULL,'2026-02-11 18:53:57','2026-07-09 15:36:25',NULL),
 (8,1,'PART-MBD-000002',6,'MBD',11,8,'GIGABYTE Aorus X870 Stealth Ice',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,1,'1899.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772158365.png',17,NULL,'2026-02-11 18:53:57','2026-07-09 14:17:47',NULL),
-(9,1,'PART-MBD-000003',6,'MBD',11,9,'ASUS ROG Crosshair X870e Hero',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131661.png',40,NULL,'2026-02-11 18:53:57','2026-08-01 05:23:51',NULL),
+(9,1,'PART-MBD-000003',6,'MBD',11,9,'ASUS ROG Crosshair X870e Hero',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'ATX',NULL,0,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131661.png',20,NULL,'2026-02-11 18:53:57','2026-08-08 05:42:58',NULL),
 (10,1,'PART-SSD-000001',2,'SSD',56,1,'SAMSUNG 990 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 4',NULL,'2TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131569.png',43,NULL,'2026-02-11 19:04:35','2026-07-09 15:36:25',NULL),
 (11,1,'PART-MBD-000002',2,'SSD',55,1,'SAMSUNG 9100 Pro 1TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'1TB',NULL,NULL,NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103110.png',39,NULL,'2026-02-11 19:04:35','2026-08-01 05:23:51',NULL),
-(12,1,'PART-MBD-000003',2,'SSD',56,1,'SAMSUNG 9100 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'2TB',NULL,NULL,NULL,'1499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103086.png',19,NULL,'2026-02-11 19:04:35','2026-07-09 14:17:47',NULL),
+(12,1,'PART-MBD-000003',2,'SSD',56,1,'SAMSUNG 9100 Pro 2TB',0,NULL,NULL,'NVME',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,'Gen 5',NULL,'2TB',NULL,NULL,NULL,'1499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103086.png',1,NULL,'2026-02-11 19:04:35','2026-08-08 05:42:58',NULL),
 (13,1,'PART-PSU-000001',7,'PSU',50,8,'GIGABYTE Aorus Elite AE850W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159225.png',36,NULL,'2026-02-11 19:12:30','2026-08-01 05:23:51',NULL),
-(14,1,'PART-PSU-000002',7,'PSU',51,10,'CORSAIR RM1000X Shift',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Gold','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'959.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159043.png',26,NULL,'2026-02-11 19:12:30','2026-02-26 18:24:03',NULL),
+(14,1,'PART-PSU-000002',7,'PSU',51,10,'CORSAIR RM1000X Shift',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Gold','3.1',NULL,'5.1',NULL,NULL,'White',NULL,'959.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159043.png',-10,NULL,'2026-02-11 19:12:30','2026-08-08 05:42:58',NULL),
 (15,1,'PART-PSU-000003',7,'PSU',52,9,'ASUS ROG Thor III 1200W',0,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,NULL,'Platinum','3.1',NULL,'5.1',NULL,NULL,'Black',NULL,'2499.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772159078.png',35,NULL,'2026-02-11 19:12:30','2026-07-09 14:17:47',NULL),
 (16,1,'PART-GPU-000001',3,'GPU',40,9,'ASUS ROG Strix RTX 5070 Ti 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'8GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131755.png',42,NULL,'2026-02-12 02:36:59','2026-07-09 15:36:25',NULL),
 (17,1,'PART-GPU-000002',3,'GPU',42,9,'ASUS ROG Astral RTX 5090 32GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'12GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'19399.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131722.png',38,NULL,'2026-02-12 02:36:59','2026-08-01 05:23:51',NULL),
 (18,1,'PART-GPU-000003',3,'GPU',41,11,'MSI Trio X White RTX 5080 16GB',0,NULL,NULL,'NVIDIA',NULL,NULL,NULL,'',NULL,'16GB',NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'7099.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131106.png',32,NULL,'2026-02-12 02:36:59','2026-08-01 04:54:25',NULL),
 (19,1,'PART-GPU-000004',3,'GPU',38,11,'MSI Ventus 2X OC PLUS RTX 5060 Ti 16GB',0,NULL,NULL,'AMD',NULL,NULL,NULL,'',NULL,'32GB',NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'2999.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772130424.png',45,NULL,'2026-02-12 02:36:59','2026-02-26 10:27:04',NULL),
-(20,1,'PART-AIO-000001',11,'AIO',46,14,'ARCTIC Liquid Freezer III Pro ARGB 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','None',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'639.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131017.png',34,NULL,'2026-02-12 02:45:27','2026-07-09 15:36:25',NULL),
+(20,1,'PART-AIO-000001',11,'AIO',46,14,'ARCTIC Liquid Freezer III Pro ARGB 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','None',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'639.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131017.png',16,NULL,'2026-02-12 02:45:27','2026-08-08 05:42:58',NULL),
 (21,1,'PART-AIO-000002',11,'AIO',46,12,'NZXT Kraken Elite 360',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772103657.png',44,NULL,'2026-02-12 02:45:27','2026-02-26 03:00:59',NULL),
 (22,1,'PART-AIO-000003',11,'AIO',46,13,'LIAN LI Hydroshift ii LCD-C 360 Fanless',0,NULL,NULL,NULL,NULL,NULL,NULL,'','Screen',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'769.00','2026-02-12 02:48:35',NULL,NULL,1,NULL,'/backend/products/1772131504.png',19,NULL,'2026-02-12 02:45:27','2026-08-01 05:23:51',NULL),
 (23,1,'PART-RAM-000001',5,'RAM',28,17,'G.SKILL Trident Z5 Neo RGB DDR5 CL30 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL30',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158970.png',43,NULL,'2026-02-12 02:56:11','2026-07-09 15:36:25',NULL),
 (24,1,'PART-RAM-000002',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo GOLD RGB DDR5 CL26 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL26',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','Gold',NULL,'0.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158918.png',23,NULL,'2026-02-12 02:56:11','2026-08-01 05:23:51',NULL),
-(25,1,'PART-RAM-000003',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL28',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'6109.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158950.png',11,NULL,'2026-02-12 02:56:11','2026-02-26 18:22:30',NULL),
+(25,1,'PART-RAM-000003',5,'RAM',28,17,'G.SKILL Trident Z5 Royal Neo SILVER RGB DDR5 CL28 6000 (32GB X 2)',0,NULL,NULL,NULL,NULL,6000,NULL,'CL28',NULL,NULL,NULL,NULL,'DDR5',NULL,NULL,'2 x 32GB','White',NULL,'6109.00','2026-02-12 02:56:11',NULL,NULL,1,NULL,'/backend/products/1772158950.png',-25,NULL,'2026-02-12 02:56:11','2026-08-08 05:42:58',NULL),
 (26,1,'PART-CSE-000001',9,'CSE',20,12,'NZXT H9 Elite',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772130298.png',43,NULL,'2026-02-12 03:06:31','2026-07-09 15:36:25',NULL),
 (27,1,'PART-CSE-000002',9,'CSE',20,12,'NZXT H9 Flow RGB',0,NULL,NULL,NULL,1,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'0.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772103870.png',40,NULL,'2026-02-12 03:06:31','2026-08-01 05:23:51',NULL),
 (28,1,'PART-CSE-000003',9,'CSE',20,13,'LIAN LI O11 Vision Compact',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX, Back Connect',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'539.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131463.png',29,NULL,'2026-02-12 03:06:31','2026-02-26 10:44:23',NULL),
-(29,1,'PART-CSE-000004',9,'CSE',19,16,'HAVN HS 420',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'899.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772159360.png',34,NULL,'2026-02-12 03:06:31','2026-07-09 14:17:47',NULL),
+(29,1,'PART-CSE-000004',9,'CSE',19,16,'HAVN HS 420',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX, ATX, E-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'899.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772159360.png',16,NULL,'2026-02-12 03:06:31','2026-08-08 05:42:58',NULL),
 (30,1,'PART-CSE-000005',9,'CSE',21,15,'JONSBO D31 Screen',0,NULL,NULL,NULL,0,NULL,'ITX, M-ATX',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'439.00','2026-02-12 03:06:31',NULL,NULL,1,NULL,'/backend/products/1772131185.png',46,NULL,'2026-02-12 03:06:31','2026-02-26 10:39:45',NULL),
 (31,0,'PART-FAN-000001',10,'FAN',22,14,'ARCTIC P12 PWM',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','Black',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130982.png',50,NULL,'2026-02-12 03:23:12','2026-02-26 10:36:22',NULL),
-(32,0,'PART-FAN-000002',10,'FAN',22,12,'NZXT F360',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB, 3x',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'598.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130370.png',41,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:10',NULL),
+(32,0,'PART-FAN-000002',10,'FAN',22,12,'NZXT F360',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB, 3x',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'598.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130370.png',24,NULL,'2026-02-12 03:23:12','2026-08-08 05:42:58',NULL),
 (33,0,'PART-FAN-000003',10,'FAN',22,12,'NZXT F120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'None',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130392.png',48,NULL,'2026-02-12 03:23:12','2026-02-26 10:26:32',NULL),
 (34,0,'PART-FAN-000004',10,'FAN',22,13,'LIAN LI SL INF 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130933.png',35,NULL,'2026-02-12 03:23:12','2026-07-09 14:17:47',NULL),
 (35,0,'PART-FAN-000005',10,'FAN',24,13,'LIAN LI SL INF REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'RGB',NULL,NULL,NULL,NULL,NULL,NULL,'24','White',NULL,'199.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159471.png',36,NULL,'2026-02-12 03:23:12','2026-02-26 18:31:11',NULL),
@@ -1810,13 +2795,21 @@ INSERT INTO `products` (`id`,`is_care`,`product_code`,`cat_id`,`category_name`,`
 (37,0,'PART-FAN-000007',10,'FAN',22,13,'LIAN LI TL LCD REV 120',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'22','White',NULL,'269.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159443.png',46,NULL,'2026-02-12 03:23:12','2026-02-26 18:30:43',NULL),
 (38,0,'PART-FAN-000008',10,'FAN',23,13,'LIAN LI TL LCD 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772130678.png',32,NULL,'2026-02-12 03:23:12','2026-07-09 15:36:25',NULL),
 (39,0,'PART-FAN-000009',10,'FAN',23,13,'LIAN LI TL LCD REV 140',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Screen, RGB',NULL,NULL,NULL,NULL,NULL,NULL,'23','White',NULL,'0.00','2026-02-12 03:23:12',NULL,NULL,1,NULL,'/backend/products/1772159425.png',9,NULL,'2026-02-12 03:23:12','2026-08-01 05:23:51',NULL),
-(40,0,'PART-ACC-SAG-000001',12,'ACC',31,9,'ASUS ROG Wingwall',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130575.png',46,NULL,'2026-02-12 03:26:48','2026-02-26 10:29:35',NULL),
+(40,0,'PART-ACC-SAG-000001',12,'ACC',31,9,'ASUS ROG Wingwall',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Black',NULL,'0.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130575.png',11,NULL,'2026-02-12 03:26:48','2026-08-08 05:42:58',NULL),
 (41,0,'PART-ACC-CTL-000001',13,'ACC',33,13,'LIAN LI L- Wireless Controller',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'95.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130539.png',42,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:59',NULL),
-(42,0,'PART-ACC-HUB-000001',14,'ACC',32,13,'LIAN LI Edge Hub',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'89.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130511.png',37,NULL,'2026-02-12 03:26:48','2026-02-26 10:28:31',NULL),
-(53,NULL,'PART-GPU-000005',3,'GPU',NULL,6,'test 1',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3000.00','2026-08-03 10:36:33',NULL,NULL,9,NULL,'/backend/products/1785754947.png',23,NULL,'2026-08-03 10:36:33','2026-08-03 11:02:27',NULL);
+(42,0,'PART-ACC-HUB-000001',14,'ACC',32,13,'LIAN LI Edge Hub',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'White',NULL,'89.00','2026-02-12 03:26:48',NULL,NULL,1,NULL,'/backend/products/1772130511.png',19,NULL,'2026-02-12 03:26:48','2026-08-08 05:42:58',NULL),
+(53,NULL,'PART-GPU-000005',3,'GPU',NULL,6,'test 1',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3000.00','2026-08-03 10:36:33',NULL,NULL,9,NULL,'/backend/products/1786022911.jpeg',5,NULL,'2026-08-03 10:36:33','2026-08-08 05:42:58',NULL);
+/*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `refunds`
+--
 
 DROP TABLE IF EXISTS `refunds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `refunds` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `refund_id` varchar(50) NOT NULL,
@@ -1842,9 +2835,26 @@ CREATE TABLE `refunds` (
   KEY `refunds_merch_order_id_index` (`merch_order_id`),
   KEY `refunds_thread_order_id_index` (`thread_order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `refunds`
+--
+
+LOCK TABLES `refunds` WRITE;
+/*!40000 ALTER TABLE `refunds` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `refunds` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `salaries`
+--
 
 DROP TABLE IF EXISTS `salaries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `salaries` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `emp_id` int(11) NOT NULL,
@@ -1856,9 +2866,26 @@ CREATE TABLE `salaries` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `salaries`
+--
+
+LOCK TABLES `salaries` WRITE;
+/*!40000 ALTER TABLE `salaries` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `salaries` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `serve_bek`
+--
 
 DROP TABLE IF EXISTS `serve_bek`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `serve_bek` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `serve_bek_id` varchar(50) NOT NULL,
@@ -1879,10 +2906,27 @@ CREATE TABLE `serve_bek` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_serve_data` (`serve_data_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `serve_bek`
+--
+
+LOCK TABLES `serve_bek` WRITE;
+/*!40000 ALTER TABLE `serve_bek` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `serve_bek` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `serve_data`
+--
 
 DROP TABLE IF EXISTS `serve_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `serve_data` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `serve_id` varchar(50) NOT NULL,
@@ -1904,10 +2948,29 @@ CREATE TABLE `serve_data` (
   KEY `idx_start_serve_enabled` (`start_serve_enabled`),
   KEY `idx_upgrade_pce_enabled` (`upgrade_pce_enabled`),
   KEY `idx_start_serve_date` (`start_serve_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `serve_data`
+--
+
+LOCK TABLES `serve_data` WRITE;
+/*!40000 ALTER TABLE `serve_data` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `serve_data` VALUES
+(1,'QV-SRV-000001','PCE-2610-0001',6,17,3,1,'2026-08-07 21:25:00',1786166700000,1,'nnnnhhu','2026-08-07 04:16:24','2026-08-08 05:43:16',NULL);
+/*!40000 ALTER TABLE `serve_data` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `serve_mps`
+--
 
 DROP TABLE IF EXISTS `serve_mps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `serve_mps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `serve_mps_id` varchar(50) NOT NULL,
@@ -1942,9 +3005,26 @@ CREATE TABLE `serve_mps` (
   PRIMARY KEY (`id`),
   KEY `idx_qvse_cid` (`serve_data_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `serve_mps`
+--
+
+LOCK TABLES `serve_mps` WRITE;
+/*!40000 ALTER TABLE `serve_mps` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `serve_mps` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `serve_pce`
+--
 
 DROP TABLE IF EXISTS `serve_pce`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `serve_pce` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `serve_pce_id` varchar(50) NOT NULL,
@@ -1978,6 +3058,12 @@ CREATE TABLE `serve_pce` (
   `dust_cleaning_50_claim_date_year6` date DEFAULT NULL,
   `dust_cleaning_50_year7` tinyint(4) DEFAULT NULL,
   `dust_cleaning_50_claim_date_year7` date DEFAULT NULL,
+  `dust_cleaning_50_year8` tinyint(4) DEFAULT NULL,
+  `dust_cleaning_50_claim_date_year8` date DEFAULT NULL,
+  `dust_cleaning_50_year9` tinyint(4) DEFAULT NULL,
+  `dust_cleaning_50_claim_date_year9` date DEFAULT NULL,
+  `dust_cleaning_50_year10` tinyint(4) DEFAULT NULL,
+  `dust_cleaning_50_claim_date_year10` date DEFAULT NULL,
   `upgrade_service_50_description` varchar(100) DEFAULT NULL,
   `upgrade_service_50_year1` tinyint(4) DEFAULT NULL,
   `upgrade_service_50_claim_date_year1` date DEFAULT NULL,
@@ -1994,6 +3080,12 @@ CREATE TABLE `serve_pce` (
   `upgrade_service_30_claim_date_year6` date DEFAULT NULL,
   `upgrade_service_30_year7` tinyint(4) DEFAULT NULL,
   `upgrade_service_30_claim_date_year7` date DEFAULT NULL,
+  `upgrade_service_30_year8` tinyint(4) DEFAULT NULL,
+  `upgrade_service_30_claim_date_year8` date DEFAULT NULL,
+  `upgrade_service_30_year9` tinyint(4) DEFAULT NULL,
+  `upgrade_service_30_year10` tinyint(4) DEFAULT NULL,
+  `upgrade_service_30_claim_date_year10` date DEFAULT NULL,
+  `upgrade_service_30_claim_date_year9` date DEFAULT NULL,
   `promo_code` varchar(50) DEFAULT NULL,
   `generate_code` tinyint(4) DEFAULT NULL,
   `promo_claim` tinyint(1) DEFAULT NULL,
@@ -2001,10 +3093,31 @@ CREATE TABLE `serve_pce` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `serve_pce`
+--
+
+LOCK TABLES `serve_pce` WRITE;
+/*!40000 ALTER TABLE `serve_pce` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `serve_pce` VALUES
+(1,'PCE-2610-0001',1,NULL,'Yes','Yes','Yes',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-08-07 09:47:41','2026-08-07 09:47:41',NULL),
+(3,'PCE-2610-0002',4,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-08-08 05:24:51','2026-08-08 05:24:51','2026-08-08 05:24:51'),
+(4,'PCE-2610-0003',5,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2026-08-08 05:24:55','2026-08-08 05:24:55','2026-08-08 05:24:55');
+/*!40000 ALTER TABLE `serve_pce` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `serves`
+--
 
 DROP TABLE IF EXISTS `serves`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `serves` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -2017,15 +3130,30 @@ CREATE TABLE `serves` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `serves`
+--
 
 LOCK TABLES `serves` WRITE;
-INSERT INTO `serves` (`id`,`name`,`code`,`colour`,`fee`,`description`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `serves` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `serves` VALUES
 (1,'Essential Kit','BEK-2304','#BF40BF','0.00','### **Eligibility:**\n`Total Build Price < RM 7,000`\n### **Customer-Facing ID Format:**\nBEK-2304-XXXX\n### **Perks:**\n* 1-year assembly warranty\n* 1Ã onsite troubleshoot (within 90 days)\n* 1Ã basic cable refresh\n* Remote support: 3â5 working days\n* 50% off 1Ã dust cleaning (Year 1)','2025-12-30 02:27:06','2025-12-31 18:28:01',NULL),
 (2,'Prime Series','MPS-0407','#FFFFFF','200.00','### **Eligibility:**\n`RM 7,000 - RM 9,999`\n### **Customer-Facing ID Format:**\nMPS-0407-XXXX\n### **Perks:**\n* 2-year assembly warranty\n* 2Ã onsite troubleshoot sessions (within 6 months)\n* 2Ã advanced cable refresh\n* 1Ã free cleaning (Year 1), 50% off next year\n* 30% off upgrade labor (Year 1)\n* RM100 promo code\n* Merch discounts','2025-12-30 02:49:27','2026-07-10 17:41:51',NULL),
 (3,'Collector\'s Edition','PCE-2610','#FFD700','400.00','### **Eligibility:**\n`>= RM 10,000`\n### **Customer-Facing ID Format:**\nPCE-2610-XXXX\n### **Perks:**\n* 3 years unlimited troubleshooting\n* Next 7 years = 50% off troubleshooting\n* 4Ã premium cable refresh (first 2 years)\n* Free annual cleaning (first 3 years)\n* Premium merch discounts\n* RM200 promo code\n* Express Lab access\n* Optional upgrade:\n  **Collector + Carbon Fiber Keychain = RM469.90**\n  (only for Collector customers)','2025-12-30 02:59:49','2026-07-10 17:41:36',NULL);
+/*!40000 ALTER TABLE `serves` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `sub_categories`
+--
 
 DROP TABLE IF EXISTS `sub_categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sub_categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `cat_id` int(11) DEFAULT NULL,
@@ -2036,9 +3164,16 @@ CREATE TABLE `sub_categories` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sub_categories`
+--
 
 LOCK TABLES `sub_categories` WRITE;
-INSERT INTO `sub_categories` (`id`,`cat_id`,`name`,`code`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `sub_categories` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `sub_categories` VALUES
 (1,1,'AM4','AM4','2025-12-30 02:27:06','2026-01-03 21:49:00',NULL),
 (2,1,'AM5','AM5','2025-12-30 02:49:27','2026-01-03 21:49:08',NULL),
 (3,1,'LGA 1700','LGA 1700','2025-12-30 02:59:49','2026-01-03 22:34:45',NULL),
@@ -2096,9 +3231,17 @@ INSERT INTO `sub_categories` (`id`,`cat_id`,`name`,`code`,`created_at`,`updated_
 (57,2,'4TB','4TB','2026-02-11 16:19:47','2026-02-11 16:19:47',NULL),
 (58,2,'8TB','8TB','2026-02-11 16:19:47','2026-02-11 16:19:47',NULL),
 (59,123,'BOX','BOX-1','2026-03-11 13:12:47','2026-03-11 13:12:47',NULL);
+/*!40000 ALTER TABLE `sub_categories` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `suppliers`
+--
 
 DROP TABLE IF EXISTS `suppliers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `suppliers` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `supplier_id` varchar(191) NOT NULL,
@@ -2113,9 +3256,16 @@ CREATE TABLE `suppliers` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `suppliers`
+--
 
 LOCK TABLES `suppliers` WRITE;
-INSERT INTO `suppliers` (`id`,`supplier_id`,`name`,`email`,`phone`,`address`,`photo`,`shopname`,`created_at`,`updated_at`,`deleted_at`) VALUES
+/*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `suppliers` VALUES
 (1,'QV-SUPP-000001','Magic Print','sales@imagemagic.com.my','018-2388238','Malaysia','/backend/suppliers/1784743462.jpeg','Magic Print','2026-07-27 08:40:49','2026-07-22 18:04:22',NULL),
 (2,'QV-SUPP-000002','RaffleStag','sales@rafflestag.com.my','017-8496166','Malaysia','/backend/suppliers/1784742955.png','RaffleStag','2026-07-27 08:40:49','2026-07-22 17:55:55',NULL),
 (3,'QV-SUPP-000003','CamiSasca','sales@camincusa.com','949-4520195','USA','/backend/suppliers/1784742769.jpeg','CamiSasca','2026-07-27 08:40:49','2026-07-22 17:52:49',NULL),
@@ -2128,9 +3278,17 @@ INSERT INTO `suppliers` (`id`,`supplier_id`,`name`,`email`,`phone`,`address`,`ph
 (10,'QV-SUPP-000010','Gift Market','hello@gifting.com.sg','019-2643897','Singapore','/backend/suppliers/1784743554.jpeg','Gift Market','2026-07-27 08:40:49','2026-07-22 18:05:54',NULL),
 (11,'QV-SUPP-000011','Digikey','orders@t.digikey.com','180-0344453','USA','/backend/suppliers/1784742835.png','Digikey','2026-07-27 08:40:49','2026-07-22 17:53:55',NULL),
 (12,'QV-SUPP-000012','MDPC-X','contact@Cable-Sleeving.com','491-7697416','Germany','/backend/suppliers/1784743105.png','MDPC-X','2026-07-27 08:40:49','2026-07-22 17:58:25',NULL);
+/*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `thread_bom_headers`
+--
 
 DROP TABLE IF EXISTS `thread_bom_headers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thread_bom_headers` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `psu_brand` varchar(100) NOT NULL,
@@ -2143,9 +3301,26 @@ CREATE TABLE `thread_bom_headers` (
   PRIMARY KEY (`id`),
   KEY `thread_bom_headers_psu_brand_cable_type_index` (`psu_brand`,`cable_type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `thread_bom_headers`
+--
+
+LOCK TABLES `thread_bom_headers` WRITE;
+/*!40000 ALTER TABLE `thread_bom_headers` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `thread_bom_headers` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `thread_bom_lines`
+--
 
 DROP TABLE IF EXISTS `thread_bom_lines`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thread_bom_lines` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `thread_bom_header_id` bigint(20) unsigned NOT NULL,
@@ -2160,9 +3335,26 @@ CREATE TABLE `thread_bom_lines` (
   KEY `thread_bom_lines_sku_code_index` (`sku_code`),
   CONSTRAINT `thread_bom_lines_thread_bom_header_id_foreign` FOREIGN KEY (`thread_bom_header_id`) REFERENCES `thread_bom_headers` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `thread_bom_lines`
+--
+
+LOCK TABLES `thread_bom_lines` WRITE;
+/*!40000 ALTER TABLE `thread_bom_lines` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `thread_bom_lines` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `thread_order_items`
+--
 
 DROP TABLE IF EXISTS `thread_order_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thread_order_items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `thread_order_id` bigint(20) unsigned NOT NULL,
@@ -2181,9 +3373,26 @@ CREATE TABLE `thread_order_items` (
   KEY `thread_order_items_thread_order_id_foreign` (`thread_order_id`),
   CONSTRAINT `thread_order_items_thread_order_id_foreign` FOREIGN KEY (`thread_order_id`) REFERENCES `thread_orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `thread_order_items`
+--
+
+LOCK TABLES `thread_order_items` WRITE;
+/*!40000 ALTER TABLE `thread_order_items` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `thread_order_items` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `thread_orders`
+--
 
 DROP TABLE IF EXISTS `thread_orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thread_orders` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `thread_order_id` varchar(50) NOT NULL,
@@ -2200,9 +3409,26 @@ CREATE TABLE `thread_orders` (
   KEY `thread_orders_customer_id_index` (`customer_id`),
   KEY `thread_orders_order_id_index` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `thread_orders`
+--
+
+LOCK TABLES `thread_orders` WRITE;
+/*!40000 ALTER TABLE `thread_orders` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `thread_orders` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `uat_meeting`
+--
 
 DROP TABLE IF EXISTS `uat_meeting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `uat_meeting` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `meeting_id` bigint(20) unsigned NOT NULL,
@@ -2235,9 +3461,26 @@ CREATE TABLE `uat_meeting` (
   KEY `uat_meeting_meeting_id_foreign` (`meeting_id`),
   CONSTRAINT `uat_meeting_meeting_id_foreign` FOREIGN KEY (`meeting_id`) REFERENCES `meetings` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `uat_meeting`
+--
+
+LOCK TABLES `uat_meeting` WRITE;
+/*!40000 ALTER TABLE `uat_meeting` DISABLE KEYS */;
+set autocommit=0;
+/*!40000 ALTER TABLE `uat_meeting` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `users`
+--
 
 DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(191) NOT NULL,
@@ -2250,10 +3493,32 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
 
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` (`id`,`name`,`email`,`email_verified_at`,`password`,`remember_token`,`created_at`,`updated_at`) VALUES
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `users` VALUES
 (1,'admin','admin@admin.com',NULL,'$2y$10$.A0YCAMkmd7ymLb94Vzfye88awFJPBytM4D/JdXsrQs18LqKRV3c6',NULL,'2025-12-26 03:23:11','2025-12-26 03:23:11');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+commit;
 
-SET FOREIGN_KEY_CHECKS=1;
+--
+-- Dumping routines for database 'quivi'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
+
+-- Dump completed on 2026-08-08 15:31:23
