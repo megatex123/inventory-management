@@ -226,7 +226,7 @@
                                         <td class="text-right">{{ serve.code }}</td>
                                         <td class="text-left">Service Fee</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(serve.fee) }}
+                                            RM {{ formatNumber(serveLineItemPrice) }}
                                         </td>
                                     </tr>
                                     <tr v-else-if="order.serve_data && order.serve_data[0] && order.serve_data[0].serve">
@@ -235,7 +235,7 @@
                                         <td class="text-right">{{ order.serve_data[0].serve.code }}</td>
                                         <td class="text-left">Service Fee</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(order.serve_data[0].serve.fee) }}
+                                            RM {{ formatNumber(serveLineItemPrice) }}
                                         </td>
                                     </tr>
                                     <tr v-else>
@@ -347,45 +347,46 @@ export default {
       if (!this.order) return 0;
 
       const craftFee = this.order.craft && this.order.craft.fee ? Number(this.order.craft.fee) : 0;
-
-      let serveFee = 0;
-        if (this.serve){
-            serveFee = this.serve && this.serve.fee ? Number(this.serve.fee) : 0;
-        }
-        else{
-            serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
-            ? Number(this.order.serve_data[0].serve.fee)
-            : 0;
-        }
-
       const carePrice = this.order.skip_quivicare ? 0 : this.careLineItemPrice;
 
-      return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
+      return Number(this.grandTotalPrice) + craftFee + this.serveLineItemPrice + carePrice;
     },
-    careLineItemPrice() {
+    serveLineItemPrice() {
+      // QuiviServe's fee is a flat, per-tier rate (Serves.fee) -- it's
+      // never recalculated per order the way QuiviCare's is, so there's
+      // no staleness/approval-gating concern here: just add the
+      // Upgrade PCE bump live, based on the order's current flag.
       if (!this.order) return 0;
 
-      // While the order is still pending/rejected (not yet approved),
-      // CareData.price -- if it exists at all -- is a snapshot from
-      // whenever it was first created and does NOT get recalculated
-      // when upgrade_pce_enabled is toggled afterward (updatecare()
-      // only computes price once, on create). So for anything short of
-      // an actual approval, show a LIVE preview: base tier rate + 69.90
-      // if the order's *current* upgrade_pce_enabled flag is on. Only
-      // once the order is approved (order.approve === 1) do we trust
-      // the persisted price as the real, final charged amount.
-      if (this.order.approve === 1 && this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price) {
-        return Number(this.order.care_data[0].price);
+      let base = 0;
+      if (this.serve && this.serve.fee) {
+        base = Number(this.serve.fee);
+      } else if (this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee) {
+        base = Number(this.order.serve_data[0].serve.fee);
       }
 
-      let base = this.care && this.care.care_charge ? Number(this.care.care_charge)
-          : (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].care && this.order.care_data[0].care.fee
-              ? Number(this.order.care_data[0].care.fee)
-              : 0);
+      // Upgrade PCE's +RM69.90 applies to the QuiviServe service fee,
+      // not the QuiviCare warranty fee.
       if (this.order.upgrade_pce_enabled) {
         base += 69.90;
       }
       return base;
+    },
+    careLineItemPrice() {
+      if (!this.order) return 0;
+
+      // Prefer the persisted, actually-charged CareData.price once the
+      // order is approved (order.approve === 1) -- the real, final
+      // amount -- else fall back to the live tier lookup's base rate.
+      // No Upgrade PCE bump here; that applies to serveLineItemPrice.
+      if (this.order.approve === 1 && this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price) {
+        return Number(this.order.care_data[0].price);
+      }
+
+      return this.care && this.care.care_charge ? Number(this.care.care_charge)
+          : (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].care && this.order.care_data[0].care.fee
+              ? Number(this.order.care_data[0].care.fee)
+              : 0);
     }
   },
   methods: {

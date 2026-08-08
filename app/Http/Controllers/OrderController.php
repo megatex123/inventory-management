@@ -485,11 +485,10 @@ class OrderController extends Controller
 
                 $lkp_care_id = $careServiceCharge['lkp_care_id'];
                 $care_part_price = $eligibleTotal;
+                // Upgrade PCE's +RM69.90 applies to the QuiviServe service
+                // fee, not the QuiviCare warranty fee -- see updateserve()
+                // and order/view.vue's serveFee calculation.
                 $care_charge = $careServiceCharge['care_charge'];
-
-                if ($order->upgrade_pce_enabled) {
-                    $care_charge += 69.90;
-                }
 
                 if ($careData) {
                     $careData->update([
