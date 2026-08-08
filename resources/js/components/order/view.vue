@@ -346,9 +346,7 @@ export default {
       const serveFee = this.order.serve_data && this.order.serve_data[0] && this.order.serve_data[0].serve && this.order.serve_data[0].serve.fee
           ? Number(this.order.serve_data[0].serve.fee)
           : 0;
-      const carePrice = this.order.skip_quivicare ? 0 : (this.careCharge || (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
-          ? Number(this.order.care_data[0].price)
-          : 0));
+      const carePrice = this.order.skip_quivicare ? 0 : this.careLineItemPrice;
 
       return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     },
@@ -367,42 +365,30 @@ export default {
             : 0;
         }
 
-      // carePrice must reflect the order's ACTUAL charged fee
-      // (order.care_data[0].price -- the per-order amount computed by
-      // OrderController::updatecare(), including any Upgrade PCE bump),
-      // not the generic Care tier lookup's base care_charge. Previously
-      // this branch preferred `this.care.care_charge` (the static
-      // COR3/RI5E/VIS10N tier rate) whenever it was truthy, which meant
-      // grandTotalAmount silently ignored the real per-order price and
-      // disagreed with totalPayAmount ("TOTAL DEPOSIT AMOUNT") above --
-      // the two totals could show different QuiviCare amounts for the
-      // same order. Matches totalPayAmount's carePrice source exactly.
-      let carePrice = 0;
-        if (this.order.skip_quivicare) {
-            carePrice = 0;
-        } else {
-            carePrice = this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price
-                ? Number(this.order.care_data[0].price)
-                : (this.care && this.care.care_charge ? Number(this.care.care_charge) : 0);
-        }
+      const carePrice = this.order.skip_quivicare ? 0 : this.careLineItemPrice;
 
       return Number(this.grandTotalPrice) + craftFee + serveFee + carePrice;
     },
     careLineItemPrice() {
       if (!this.order) return 0;
 
-      // Same source-of-truth rule as grandTotalAmount: prefer the
-      // persisted, actually-charged CareData.price (which already
-      // includes any Upgrade PCE bump) over the live tier lookup's
-      // static base rate. Before this, the QuiviCare line item always
-      // showed the un-bumped `care.care_charge` even when Upgrade PCE
-      // was enabled and the totals below it already reflected the
-      // bump -- the line item and the totals disagreed on the same page.
-      if (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price) {
+      // While the order is still pending/rejected (not yet approved),
+      // CareData.price -- if it exists at all -- is a snapshot from
+      // whenever it was first created and does NOT get recalculated
+      // when upgrade_pce_enabled is toggled afterward (updatecare()
+      // only computes price once, on create). So for anything short of
+      // an actual approval, show a LIVE preview: base tier rate + 69.90
+      // if the order's *current* upgrade_pce_enabled flag is on. Only
+      // once the order is approved (order.approve === 1) do we trust
+      // the persisted price as the real, final charged amount.
+      if (this.order.approve === 1 && this.order.care_data && this.order.care_data[0] && this.order.care_data[0].price) {
         return Number(this.order.care_data[0].price);
       }
 
-      let base = this.care && this.care.care_charge ? Number(this.care.care_charge) : 0;
+      let base = this.care && this.care.care_charge ? Number(this.care.care_charge)
+          : (this.order.care_data && this.order.care_data[0] && this.order.care_data[0].care && this.order.care_data[0].care.fee
+              ? Number(this.order.care_data[0].care.fee)
+              : 0);
       if (this.order.upgrade_pce_enabled) {
         base += 69.90;
       }
