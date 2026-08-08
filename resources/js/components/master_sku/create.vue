@@ -12,8 +12,10 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label class="form-label">SKU Code <span class="text-danger">*</span></label>
-                <input type="text" v-model="form.sku_code" class="form-control" required maxlength="50">
+                <label class="form-label">SKU Code</label>
+                <div class="form-control-plaintext bg-light p-2 rounded text-muted">
+                  Auto-generated on save (QV-MSKU-000001, ...)
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Item Name</label>
@@ -85,7 +87,7 @@ export default {
         { value: 6, label: 'Out of Stock' },
         { value: 7, label: 'Archived' }
       ],
-      form: { sku_code: '', product_name: '', supplier_id: '', from: '', cost: '', unit_type: '', lkp_status_sku: 1 },
+      form: { product_name: '', supplier_id: '', from: '', cost: '', unit_type: '', lkp_status_sku: 1 },
       loading: false,
       errors: []
     };
@@ -112,8 +114,9 @@ export default {
       this.errors = [];
 
       axios.post('/api/master-sku', this.form)
-        .then(() => {
-          Swal.fire({ title: 'Success!', text: 'Master SKU created successfully', icon: 'success', timer: 1500, showConfirmButton: false })
+        .then(res => {
+          const skuCode = res.data?.data?.sku_code || '';
+          Swal.fire({ title: 'Success!', text: `Master SKU ${skuCode} created successfully`, icon: 'success', timer: 2000, showConfirmButton: false })
             .then(() => this.$router.push('/master-sku'));
         })
         .catch(error => {

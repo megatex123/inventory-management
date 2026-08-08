@@ -95,7 +95,6 @@ class MasterSkuController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'sku_code' => 'required|string|max:50|unique:master_sku,sku_code',
             'product_name' => 'nullable|string|max:50',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'product_raw_id' => 'nullable|exists:product_raw,id',
@@ -111,8 +110,12 @@ class MasterSkuController extends Controller
 
         DB::beginTransaction();
         try {
+            // sku_code is always system-generated, never client-supplied --
+            // QV-MSKU-000001, QV-MSKU-000002, ... (see BusinessId::next()).
+            $skuCode = \App\Support\BusinessId::next('master_sku', 'sku_code', 'QV-MSKU-', 6);
+
             $masterSku = MasterSku::create([
-                'sku_code' => $request->sku_code,
+                'sku_code' => $skuCode,
                 'product_name' => $request->product_name,
                 'supplier_id' => $request->supplier_id,
                 'product_raw_id' => $request->product_raw_id,
