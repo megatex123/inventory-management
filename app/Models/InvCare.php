@@ -30,7 +30,7 @@ class InvCare extends Model {
 
     protected $casts = [
         'care_id' => 'integer',
-        'unit_cost' => 'integer',
+        'unit_cost' => 'decimal:2',
         'max_stock' => 'integer',
         'current_stock' => 'integer',
         'category' => 'integer',

@@ -155,11 +155,13 @@ class InvCareController extends Controller
                 'category' => $request->category ?? 0,
                 'status' => $request->status ?? 1,
                 'generate_id' => $request->generate_id ?? 0,
-                'serial_label' => $request->serial_label ?? 0,
-                'warranty_starts' => $request->warranty_starts ?? now(),
+                'serial_label' => $request->serial_label,
+                // Leave unset -- fabricating "now" here silently claims a
+                // warranty period that was never actually assigned yet.
+                'warranty_starts' => $request->warranty_starts,
                 'warranty_duration' => $request->warranty_duration ?? 0,
-                'warranty_ends' => $request->warranty_ends ?? now(),
-                'manufacturer' => $request->manufacturer ?? '',
+                'warranty_ends' => $request->warranty_ends,
+                'manufacturer' => $request->manufacturer,
             ]);
 
             DB::commit();
