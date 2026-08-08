@@ -109,7 +109,10 @@
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
                 <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
-                <td class="align-middle font-weight-bold">{{ item.item_name }}</td>
+                <td class="align-middle font-weight-bold">
+                  <small class="d-block text-muted font-weight-normal">{{ item.inv_care }}</small>
+                  {{ item.item_name }}
+                </td>
                 <td class="align-middle">{{ item.sku_code }}</td>
                 <td class="align-middle">{{ item.category_lookup ? item.category_lookup.name : (item.categoryLookup ? item.categoryLookup.name : 'N/A') }}</td>
                 <td class="align-middle text-right">RM{{ formatNumber(item.unit_cost) }}</td>
