@@ -63,11 +63,6 @@
                     <div class="card-body">
                       <h6 class="card-title">{{ product.product_name }}</h6>
                       <h7 class="card-title">RM {{ formatNumber(product.price) }}</h7>
-                      <h7 class="card-title">{{ formatDate(product.price_updated_at) }}</h7>
-                      <span class="badge badge-success" v-if="product.product_qty >= 1">
-                        Available: {{ product.product_qty }}
-                      </span>
-                      <span class="badge badge-danger" v-else>Stock Out</span>
                     </div>
                   </div>
                 </button>
@@ -841,13 +836,6 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
-    },
-
-    formatDate(dateString) {
-        if (!dateString) return 'N/A';
-
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-MY');
     },
 
     // Unified notification handler

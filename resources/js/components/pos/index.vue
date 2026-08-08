@@ -79,10 +79,7 @@
                         <div class="popup-info">
                           <h6>{{ product.product_name }}</h6>
                           <p><strong>Price:</strong> RM {{ formatNumber(product.price) }}</p>
-                          <p><strong>Last Updated:</strong> {{ formatDate(product.price_updated_at) }}</p>
                           <p><strong>Category:</strong> {{ product.category_name }}</p>
-                          <p v-if="product.product_qty < 1" class="text-danger"><strong>Status:</strong> Stock Out</p>
-                          <p v-else><strong>Status:</strong> In Stock</p>
                           <!-- Show restriction warning in popup -->
                           <p v-if="getCategoryRestrictionMessage(product)" class="text-warning restriction-warning">
                             ⚠️ {{ getCategoryRestrictionMessage(product) }}
@@ -94,10 +91,6 @@
                       <h6 class="card-title text-truncate" :title="product.product_name">{{ product.product_name }}</h6>
                       <div class="d-flex flex-wrap align-items-center gap-2">
                         <span class="badge badge-success price-badge">RM {{ formatNumber(product.price) }}</span>
-                        <span class="badge badge-primary date-badge">
-                            Updated: {{ formatDate(product.price_updated_at) }}
-                        </span>
-                        <span class="badge badge-danger stock-badge" v-if="product.product_qty < 1">Stock Out</span>
                         <!-- Show category restriction badge -->
                         <span v-if="getCategoryRestrictionMessage(product)" class="badge badge-warning restriction-badge">
                             Restricted
@@ -567,16 +560,6 @@ export default {
     }
   },
   methods: {
-    formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-MY', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    },
-
     formatNumber(value) {
       return Number(value).toLocaleString('en-US', {
         minimumFractionDigits: 2,
