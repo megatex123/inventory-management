@@ -1049,6 +1049,17 @@ class OrderController extends Controller
                 'upgrade_pce_notes' => $request->upgrade_pce_notes,
             ]);
 
+            // Keep QuiviServe's own Upgrade PCE fields (serve_data.upgrade_pce_enabled/
+            // upgrade_pce_notes -- used by serve_data/edit.vue's own separate
+            // Package Price calculation) in sync with the order-level toggle.
+            // ServeData::create() only seeds these once, at creation (see
+            // updateserve()) -- without this, editing the order's Upgrade PCE
+            // afterward silently desyncs the two records.
+            ServeData::where('order_id', $order->id)->update([
+                'upgrade_pce_enabled' => $order->upgrade_pce_enabled,
+                'upgrade_pce_notes' => $order->upgrade_pce_notes,
+            ]);
+
             // Snapshot this edit as a new draft revision -- see
             // docs/superpowers/specs/2026-08-01-quivicraft-draft-history-design.md.
             // Every successful edit produces exactly one new revision
