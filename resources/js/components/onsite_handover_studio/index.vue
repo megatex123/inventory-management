@@ -9,6 +9,11 @@
           <h4 class="mb-0">OnSite Handover (Studio) — {{ order.order_id }}</h4>
           <small class="text-muted">Report {{ onsiteHandoverStudio.report_id }} · Round {{ onsiteHandoverStudio.round }}</small>
         </div>
+        <div>
+          <button class="btn btn-success" @click="printPdf">
+            <i class="fas fa-file-pdf mr-1"></i> Print / PDF
+          </button>
+        </div>
       </div>
 
       <report-info-section
@@ -150,6 +155,89 @@ export default {
     onCustomerAcceptanceSaved(data) {
       Object.assign(this.onsiteHandoverStudio, data);
     },
+    printPdf() {
+      window.print();
+    },
   },
 };
 </script>
+
+<style>
+@media print {
+    #accordionSidebar,
+    #sidebarToggleTop,
+    .topbar,
+    .scroll-to-top {
+        display: none !important;
+    }
+
+    .btn,
+    .no-print,
+    .photo-upload-btn,
+    .remove-btn {
+        display: none !important;
+    }
+
+    html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #wrapper,
+    #content-wrapper,
+    #content,
+    #container-wrapper {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 0.5in !important;
+        padding-right: 0.5in !important;
+        box-sizing: border-box !important;
+    }
+
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    .table-bordered,
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #000 !important;
+    }
+
+    .text-primary {
+        color: #000 !important;
+    }
+
+    .badge {
+        border: 1px solid #000 !important;
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+
+    .form-control {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .print-only {
+        display: inline !important;
+        font-weight: 700;
+    }
+}
+</style>
