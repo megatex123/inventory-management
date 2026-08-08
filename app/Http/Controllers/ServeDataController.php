@@ -238,6 +238,15 @@ class ServeDataController extends Controller
                 'upgrade_pce_notes' => $request->upgrade_pce_notes
             ]);
 
+            // Keep the order-level Upgrade PCE fields (used by pos/index.vue
+            // and order/edit.vue) in sync with this record -- the reverse
+            // direction of OrderController::updateOrderDetails()'s sync into
+            // ServeData, so either edit page stays consistent with the other.
+            Order::where('id', $serveData->order_id)->update([
+                'upgrade_pce_enabled' => $serveData->upgrade_pce_enabled,
+                'upgrade_pce_notes' => $serveData->upgrade_pce_notes,
+            ]);
+
             // Load relationships
             $serveData->load(['customer', 'order', 'serve']);
 
