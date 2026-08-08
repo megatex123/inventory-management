@@ -250,7 +250,7 @@
                                         <td class="text-right">{{ care.code }}</td>
                                         <td class="text-left">Warranty Fee</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(careBaseLineItemPrice) }}
+                                            RM {{ formatNumber(careLineItemPrice) }}
                                         </td>
                                     </tr>
                                     <tr v-else-if="order.care_data && order.care_data[0] && order.care_data[0].care">
@@ -259,19 +259,12 @@
                                         <td class="text-right">{{ order.care_data[0].care.code }}</td>
                                         <td class="text-left">Warranty Fee</td>
                                         <td class="text-right">
-                                            RM {{ formatNumber(careBaseLineItemPrice) }}
+                                            RM {{ formatNumber(careLineItemPrice) }}
                                         </td>
                                     </tr>
                                     <tr v-else>
                                         <td class="font-weight-bold">QuiviCare</td>
                                         <td colspan="5" class="text-center">-</td>
-                                    </tr>
-                                    <tr v-if="order.upgrade_pce_enabled">
-                                        <td colspan="4" class="font-weight-bold">Upgrade PCE</td>
-                                        <td class="text-left">Upgrade Fee</td>
-                                        <td class="text-right">
-                                            RM {{ formatNumber(69.90) }}
-                                        </td>
                                     </tr>
                                     </template>
                                     <tr class="table-active" v-if="order.approve != 1">
@@ -414,15 +407,6 @@ export default {
         base += 69.90;
       }
       return base;
-    },
-    careBaseLineItemPrice() {
-      // The warranty-fee row shows the base tier rate only -- the
-      // RM69.90 Upgrade PCE bump is shown as its own separate row
-      // below it, rather than folded invisibly into this number, so
-      // "Warranty Fee + Upgrade Fee" reads the same way visually as
-      // it's summed into the Grand Total.
-      const full = this.careLineItemPrice;
-      return this.order.upgrade_pce_enabled ? full - 69.90 : full;
     }
   },
   methods: {
