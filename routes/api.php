@@ -162,6 +162,7 @@ Route::prefix('order/{orderId}/onsite-handover/{round}')->group(function () {
     Route::post('/post-build-software', 'OnsiteHandoverController@updatePostBuildSoftware');
     Route::post('/customer-acceptance', 'OnsiteHandoverController@updateCustomerAcceptance');
     Route::post('/acknowledgement', 'OnsiteHandoverController@updateAcknowledgement');
+    Route::post('/complete', 'OnsiteHandoverController@complete');
 });
 
 /*
@@ -178,6 +179,7 @@ Route::prefix('order/{orderId}/onsite-handover-studio/{round}')->group(function 
     Route::post('/post-transport', 'OnsiteHandoverStudioController@updatePostTransport');
     Route::post('/post-handover', 'OnsiteHandoverStudioController@updatePostHandover');
     Route::post('/customer-acceptance', 'OnsiteHandoverStudioController@updateCustomerAcceptance');
+    Route::post('/complete', 'OnsiteHandoverStudioController@complete');
 });
 
 /*

@@ -573,6 +573,24 @@ class OnsiteHandoverController extends Controller
         }
     }
 
+    public function complete($orderId, $round = 1)
+    {
+        $handover = OnsiteHandover::where('order_id', $orderId)->where('round', $round)->first();
+
+        if (!$handover) {
+            return response()->json(['success' => false, 'message' => 'Onsite handover not found'], 404);
+        }
+
+        $handover->status = 'completed';
+        $handover->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Onsite handover marked as completed',
+            'data' => $handover,
+        ]);
+    }
+
     private function storePhotos(Request $request, $field)
     {
         if (!$request->hasFile($field)) {

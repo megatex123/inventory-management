@@ -10,8 +10,17 @@
           <small class="text-muted">Report {{ onsiteHandoverStudio.report_id }} · Round {{ onsiteHandoverStudio.round }}</small>
         </div>
         <div>
-          <button class="btn btn-success" @click="printPdf">
+          <router-link to="/orders/all" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i> Back to Orders</router-link>
+          <button class="btn btn-success mr-2" @click="printPdf">
             <i class="fas fa-file-pdf mr-1"></i> Print / PDF
+          </button>
+          <button
+            class="btn btn-success"
+            :disabled="!onsiteHandoverStudio || onsiteHandoverStudio.status === 'completed'"
+            @click="markComplete"
+          >
+            <i class="fas fa-check-circle mr-1"></i>
+            {{ onsiteHandoverStudio && onsiteHandoverStudio.status === 'completed' ? 'Completed' : 'Mark Complete' }}
           </button>
         </div>
       </div>
@@ -68,6 +77,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import ReportInfoSection from './ReportInfoSection.vue';
 import BuildInfoSection from './BuildInfoSection.vue';
 import StudioDocsSection from './StudioDocsSection.vue';
@@ -157,6 +167,14 @@ export default {
     },
     printPdf() {
       window.print();
+    },
+    markComplete() {
+      axios.post(`${this.apiBase}/complete`)
+        .then(res => {
+          this.onsiteHandoverStudio = res.data.data;
+          Swal.fire('Marked Complete!', 'This onsite handover is now marked as completed.', 'success');
+        })
+        .catch(() => Swal.fire('Error!', 'Failed to mark onsite handover complete', 'error'));
     },
   },
 };
