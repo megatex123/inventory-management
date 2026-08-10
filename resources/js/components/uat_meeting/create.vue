@@ -1,262 +1,175 @@
 <template>
   <div class="container my-5">
     <div class="card shadow-sm form-card">
-      <div class="card-body">
-        <div class="text-center mb-4">
-          <h2>Create UAT Meeting</h2>
+      <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="mb-0"><i class="fas fa-plus-circle mr-2"></i>Create UAT Meeting</h4>
+          <router-link to="/uat-meeting" class="btn btn-light btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back to List</router-link>
         </div>
-        <form @submit.prevent="submitUatMeetings">
-          <!-- Row 1 -->
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-4">
-                <label class="mt-2">Meeting *</label>
+      </div>
+      <div class="card-body">
+        <form @submit.prevent="submit">
+          <h5 class="mb-3">Header</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label">Meeting <span class="text-danger">*</span></label>
                 <select v-model="form.meeting_id" class="form-control" required>
                   <option value="">Select Meeting</option>
-                  <option v-for="m in meetings" :key="m.id" :value="m.id">
-                    {{ m.meeting_id }}
-                  </option>
+                  <option v-for="m in meetings" :key="m.id" :value="m.id">{{ m.meeting_id }}</option>
                 </select>
               </div>
-
-              <div class="col-4">
-                <label class="mt-2">Initial Budget (MYR)</label>
-                <input
-                  type="number"
-                  v-model.number="form.initial_budget"
-                  class="form-control"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                >
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label">Require Meeting ID</label>
+                <select v-model="form.requirement_id" class="form-control">
+                  <option value="">Select Require Meeting ID</option>
+                  <option v-for="r in requirementMeetings" :key="r.id" :value="r.requirement_id">{{ r.requirement_id }}</option>
+                </select>
               </div>
-
-              <div class="col-4">
-                <label class="mt-2">Reason *</label>
-                <select v-model.number="form.reason" class="form-control" required>
-                  <option value="">Select a reason</option>
-                  <option :value="1">Work</option>
-                  <option :value="2">Gaming</option>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label">QV-BLDP ID</label>
+                <select v-model="form.order_id" class="form-control">
+                  <option value="">Select Order</option>
+                  <option v-for="o in orders" :key="o.id" :value="o.order_id">{{ o.order_id }}</option>
                 </select>
               </div>
             </div>
           </div>
-
-          <!-- Row 2 -->
           <div class="form-group">
-            <div class="form-row">
-              <div v-if="form.reason == 2" class="col-4">
-                <label class="mt-2">Play Mode</label>
-                <select v-model.number="form.play_mode" class="form-control">
-                  <option value="">Select Play Mode</option>
-                  <option :value="1">Multiplayer</option>
-                  <option :value="2">Singleplayer</option>
-                </select>
-              </div>
-
-              <div class="col-4">
-                <label class="mt-2">Theme Style</label>
-                <input
-                  type="text"
-                  v-model="form.theme_style"
-                  class="form-control"
-                  placeholder="e.g., Minimalist, RGB, etc."
-                >
-              </div>
-
-              <div class="col-4">
-                <div class="form-group">
-                    <label class="mt-2 d-block">Include Peripheral</label>
-
-                    <!-- Bootstrap-style toggle switch -->
-                    <div class="custom-control custom-switch mb-2">
-                    <input
-                        type="checkbox"
-                        class="custom-control-input"
-                        id="includePeripheralToggle"
-                        v-model="form.include_monitor"
-                    >
-                    <label
-                        class="custom-control-label"
-                        for="includePeripheralToggle"
-                    >
-                        {{ form.include_monitor ? 'Yes' : 'No' }}
-                    </label>
-                    </div>
-
-                    <!-- Conditional input field -->
-                    <div v-if="form.include_monitor" class="mt-2">
-                    <input
-                        type="text"
-                        v-model="form.include_notes"
-                        class="form-control"
-                        placeholder="Describe peripheral (e.g., Monitor, Keyboard, Mouse)"
-                    >
-                    </div>
-                </div>
-              </div>
-
+            <label class="form-label">UAT Meeting ID</label>
+            <div class="form-control-plaintext bg-light p-2 rounded text-muted">
+              Auto-generated on save (UAT-000001, ...)
             </div>
           </div>
 
-          <!-- Row 3 -->
+          <hr>
+          <h5 class="mb-3">Changes Requested</h5>
           <div class="form-group">
-            <div class="form-row">
-              <div class="col-4">
-                <label class="mt-2">Preference</label>
-                <input
-                  type="text"
-                  v-model="form.preference"
-                  class="form-control"
-                  placeholder="Specific preferences"
-                >
-              </div>
+            <label class="form-label">Budget Change</label>
+            <textarea v-model="form.budget_change" class="form-control" rows="2" placeholder="New budget / budget adjustment"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Parts Changes</label>
+            <textarea v-model="form.parts_changes" class="form-control" rows="2" placeholder="Existing proposed parts customer wants changed"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Add-on Parts</label>
+            <textarea v-model="form.add_on_parts" class="form-control" rows="2" placeholder="Additional parts requested"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Parts Notes</label>
+            <textarea v-model="form.parts_notes" class="form-control" rows="2" placeholder="Reason/preferences regarding the changes"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Case Size Change</label>
+            <input type="text" v-model="form.case_size_change" class="form-control" maxlength="191" placeholder="New case-size requirement">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Overall Notes</label>
+            <textarea v-model="form.overall_notes" class="form-control" rows="2" placeholder="Anything else discussed"></textarea>
+          </div>
 
-              <div class="col-4">
-                <label class="mt-2">Exemption</label>
-                <input
-                  type="text"
-                  v-model="form.exemption"
-                  class="form-control"
-                  placeholder="Any exemptions"
-                >
+          <hr>
+          <h5 class="mb-3">Build Details</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Target Build Date</label>
+                <input type="date" v-model="form.target_build_date" class="form-control">
               </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Target Location</label>
+                <input type="text" v-model="form.target_location" class="form-control" maxlength="191">
+              </div>
+            </div>
+          </div>
 
-              <div class="col-4">
-                <label class="mt-2">Case Size</label>
-                <select v-model.number="form.case_size" class="form-control">
-                  <option value="">Select Case Size</option>
-                  <option :value="1">ITX</option>
-                  <option :value="2">MATX</option>
-                  <option :value="3">ATX</option>
-                  <option :value="4">EATX</option>
+          <hr>
+          <h5 class="mb-3">Service Changes</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">QuiviCare</label>
+                <select v-model="form.quivicare_change" class="form-control">
+                  <option value="no_change">No Change</option>
+                  <option value="add">Add</option>
+                  <option value="remove">Remove</option>
+                  <option value="change_plan">Change Plan</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">QuiviThread</label>
+                <select v-model="form.quivithread_change" class="form-control">
+                  <option value="no_change">No Change</option>
+                  <option value="add">Add</option>
+                  <option value="remove">Remove</option>
+                  <option value="change_option">Change Option</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <!-- Row 4: Notes -->
-          <div class="form-group">
-            <label>Notes</label>
-            <textarea
-              v-model="form.notes"
-              class="form-control"
-              rows="3"
-              placeholder="Additional notes..."
-            ></textarea>
-          </div>
-
-          <!-- Row 5: Boolean Fields -->
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.future_proof" class="custom-control-input" id="future_proof">
-                  <label class="custom-control-label" for="future_proof">Future Proof</label>
-                </div>
+          <hr>
+          <h5 class="mb-3">UAT Result</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label class="form-label">Changes Required</label>
+                <select v-model="form.changes_required" class="form-control">
+                  <option :value="null">-</option>
+                  <option :value="true">Yes</option>
+                  <option :value="false">No</option>
+                </select>
               </div>
-
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.okay_with_aio" class="custom-control-input" id="okay_with_aio">
-                  <label class="custom-control-label" for="okay_with_aio">Okay with AIO</label>
-                </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label class="form-label">New Proposal Required</label>
+                <select v-model="form.new_proposal_required" class="form-control">
+                  <option :value="null">-</option>
+                  <option :value="true">Yes</option>
+                  <option :value="false">No</option>
+                </select>
               </div>
-
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.need_rgb" class="custom-control-input" id="need_rgb">
-                  <label class="custom-control-label" for="need_rgb">Need RGB</label>
-                </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label class="form-label">Customer Approval</label>
+                <select v-model="form.customer_approval" class="form-control">
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
               </div>
-
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.gpu_sag" class="custom-control-input" id="gpu_sag">
-                  <label class="custom-control-label" for="gpu_sag">GPU Sag Concern</label>
-                </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label class="form-label">Follow-up Required</label>
+                <select v-model="form.follow_up_required" class="form-control">
+                  <option :value="null">-</option>
+                  <option :value="true">Yes</option>
+                  <option :value="false">No</option>
+                </select>
               </div>
             </div>
           </div>
 
-          <!-- Row 6: QV Fields -->
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.qvcrf_tag" class="custom-control-input" id="qvcrf_tag">
-                  <label class="custom-control-label" for="qvcrf_tag">QVCRF Tag Along</label>
-                </div>
-              </div>
-
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.qvse" class="custom-control-input" id="qvse">
-                  <label class="custom-control-label" for="qvse">QVSE</label>
-                </div>
-              </div>
-
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.qvca" class="custom-control-input" id="qvca">
-                  <label class="custom-control-label" for="qvca">QVCA</label>
-                </div>
-              </div>
-            </div>
+          <div v-if="errors.length > 0" class="alert alert-danger mt-3">
+            <ul class="mb-0 pl-3"><li v-for="error in errors" :key="error">{{ error }}</li></ul>
           </div>
 
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-3">
-                <div class="custom-control custom-checkbox mt-3">
-                  <input type="checkbox" v-model="form.qvtd" class="custom-control-input" id="qvtd">
-                  <label class="custom-control-label" for="qvtd">QVTD</label>
-                </div>
-              </div>
-
-              <div v-if="form.qvtd" class="mt-2">
-                    <input
-                        type="text"
-                        v-model="form.qvtd_notes"
-                        class="form-control"
-                        placeholder="Describe qvtd"
-                    >
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 7: Date and Location -->
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-6">
-                <label class="mt-2">Target Build Date</label>
-                <input
-                  type="datetime-local"
-                  v-model="form.target_build_date"
-                  class="form-control"
-                >
-              </div>
-
-              <div class="col-6">
-                <label class="mt-2">Target Location</label>
-                <input
-                  type="text"
-                  v-model="form.target_location"
-                  class="form-control"
-                  placeholder="Build location"
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- Submit Buttons -->
-          <div class="form-group mt-4">
-            <button class="btn btn-success" :disabled="loading">
-              {{ loading ? 'Saving...' : 'Save UAT Meeting' }}
-            </button>
-            <router-link to="/uat-meeting" class="btn btn-secondary ml-2">Back</router-link>
-            <button type="button" class="btn btn-outline-secondary ml-2" @click="resetForm">
-              Reset Form
+          <div class="form-actions mt-4 pt-3 border-top">
+            <button type="submit" class="btn btn-primary" :disabled="loading">
+              <span v-if="loading" class="spinner-border spinner-border-sm mr-2"></span>
+              <i v-else class="fas fa-save mr-2"></i> Create UAT Meeting
             </button>
           </div>
         </form>
@@ -267,159 +180,90 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
     return {
       meetings: [],
+      requirementMeetings: [],
+      orders: [],
       loading: false,
+      errors: [],
       form: {
-        // Required fields
         meeting_id: '',
-        reason: '',
-
-        // Optional fields
-        initial_budget: null,
-        play_mode: null,
-        include_monitor: '',
-        include_notes: '',
-        notes: '',
-        theme_style: '',
-        preference: '',
-        exemption: '',
-        future_proof: false,
-        case_size: null,
-        okay_with_aio: false,
-        need_rgb: false,
-        gpu_sag: null,
-        qvcrf_tag: false,
-        qvse: false,
-        qvca: false,
-        qvtd: false,
-        qvtd_notes: '',
+        requirement_id: '',
+        order_id: '',
+        budget_change: '',
+        parts_changes: '',
+        add_on_parts: '',
+        parts_notes: '',
+        case_size_change: '',
+        overall_notes: '',
+        quivicare_change: 'no_change',
+        quivithread_change: 'no_change',
+        changes_required: null,
+        new_proposal_required: null,
+        customer_approval: 'pending',
+        follow_up_required: null,
         target_build_date: '',
         target_location: '',
-      }
+      },
     };
   },
   mounted() {
     this.fetchMeetings();
-  },
-  watch: {
-    'form.reason': function(newVal) {
-      if (newVal != 2) {
-        this.form.play_mode = null;
-      }
-    }
+    this.fetchRequirementMeetings();
+    this.fetchOrders();
   },
   methods: {
     fetchMeetings() {
       axios.get('/api/meetings/all')
-        .then(res => {
-          this.meetings = res.data;
-        })
-        .catch(error => {
-          console.error('Error fetching meetings:', error);
-          alert('Failed to load meetings');
-        });
+        .then(res => { this.meetings = res.data; })
+        .catch(() => Swal.fire('Error!', 'Failed to load meetings', 'error'));
     },
-
-    submitUatMeetings() {
+    fetchRequirementMeetings() {
+      axios.get('/api/meeting-details/all')
+        .then(res => { this.requirementMeetings = res.data; })
+        .catch(() => Swal.fire('Error!', 'Failed to load requirement meetings', 'error'));
+    },
+    fetchOrders() {
+      axios.get('/api/orders')
+        .then(res => { this.orders = res.data.data || res.data; })
+        .catch(() => Swal.fire('Error!', 'Failed to load orders', 'error'));
+    },
+    submit() {
       this.loading = true;
+      this.errors = [];
 
-      // Prepare data for submission
-      const formData = { ...this.form };
-
-      // Convert empty strings to null for optional fields
-      Object.keys(formData).forEach(key => {
-        if (formData[key] === '') {
-          formData[key] = null;
-        }
+      const payload = { ...this.form };
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === '') payload[key] = null;
       });
 
-      // Convert checkboxes from true/false to 1/0 for database
-      const booleanFields = [
-        'future_proof', 'okay_with_aio', 'need_rgb', 'gpu_sag',
-        'qvcrf_tag', 'qvse', 'qvca', 'qvtd'
-      ];
-
-      booleanFields.forEach(field => {
-        if (formData[field] === true) {
-          formData[field] = 1;
-        } else if (formData[field] === false) {
-          formData[field] = 0;
-        }
-      });
-
-      axios.post('/api/uat-meeting', formData)
-        .then(() => {
-          alert('UAT meeting created successfully!');
-          this.$router.push('/uat-meeting');
+      axios.post('/api/uat-meeting', payload)
+        .then(res => {
+          Swal.fire({ title: 'Success!', text: `UAT Meeting ${res.data.data.uat_id} created successfully`, icon: 'success', timer: 2000, showConfirmButton: false })
+            .then(() => this.$router.push('/uat-meeting'));
         })
         .catch(error => {
-          console.error('Error creating UAT meeting:', error);
-          alert('Failed to create UAT meeting');
+          if (error.response && error.response.status === 422) {
+            const validationErrors = error.response.data.errors;
+            for (const field in validationErrors) {
+              this.errors.push(`${field}: ${validationErrors[field].join(', ')}`);
+            }
+          } else {
+            this.errors.push(error.response?.data?.message || 'Failed to create UAT meeting');
+          }
+          Swal.fire('Error!', this.errors.join('<br>'), 'error');
         })
-        .finally(() => {
-          this.loading = false;
-        });
+        .finally(() => { this.loading = false; });
     },
-
-    resetForm() {
-      if (confirm('Are you sure you want to reset the form?')) {
-        this.form = {
-          meeting_id: '',
-          reason: '',
-          initial_budget: null,
-          play_mode: null,
-          include_monitor: '',
-          include_notes: '',
-          notes: '',
-          theme_style: '',
-          preference: '',
-          exemption: '',
-          future_proof: false,
-          case_size: null,
-          okay_with_aio: false,
-          need_rgb: false,
-          gpu_sag: null,
-          qvcrf_tag: false,
-          qvse: false,
-          qvca: false,
-          qvtd: false,
-          qvtd_notes: '',
-          target_build_date: '',
-          target_location: '',
-        };
-      }
-    }
-  }
+  },
 };
 </script>
 
 <style scoped>
-.form-card {
-  border-radius: 10px;
-}
-
-.custom-checkbox {
-  padding-left: 1.5rem;
-}
-
-.custom-control-input:checked ~ .custom-control-label::before {
-  border-color: #28a745;
-  background-color: #28a745;
-}
-
-.mt-2 {
-  margin-top: 0.5rem !important;
-}
-
-.mt-3 {
-  margin-top: 1rem !important;
-}
-
-.ml-2 {
-  margin-left: 0.5rem !important;
-}
+.form-card { border-radius: 10px; border: none; }
+.form-label { font-weight: 600; color: #495057; }
 </style>

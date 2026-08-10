@@ -85,208 +85,37 @@
         <table class="table align-items-center table-flush">
           <thead class="thead-light">
             <tr>
-              <th class="text-center align-top">Meeting ID</th>
-              <th class="text-center align-top">UAT ID</th>
-              <sortable-th label="Budget (RM)" sort-key="initial_budget" :current-sort="sortState" @sort="onSort" />
-              <th class="text-center align-top">Reason & Play Mode</th>
-              <th class="text-center align-top">Include Peripheral</th>
-              <th class="text-center align-top">Theme Style</th>
-              <th class="text-center align-top">Preference</th>
-              <th class="text-center align-top">Exemption</th>
-              <th class="text-center align-top">Features</th>
-              <th class="text-center align-top">QV</th>
-              <sortable-th label="Target Date" sort-key="target_build_date" :current-sort="sortState" @sort="onSort" />
-              <th class="text-center align-top">Target Location</th>
+              <th class="text-center align-top">#</th>
+              <th class="text-center align-top">UAT Meeting ID</th>
+              <th class="text-center align-top">Meeting</th>
+              <th class="text-center align-top">QV-BLDP ID</th>
+              <th class="text-center align-top">Customer Approval</th>
+              <th class="text-center align-top">Changes Required</th>
+              <sortable-th label="Target Build Date" sort-key="target_build_date" :current-sort="sortState" @sort="onSort" />
               <th class="text-center align-top">Actions</th>
             </tr>
           </thead>
 
           <tbody v-if="loading">
-            <tr><td colspan="12" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+            <tr><td colspan="8" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
           </tbody>
           <tbody v-else>
-            <tr v-for="detail in uatMeetings" :key="detail.id">
-              <!-- Meeting ID -->
-              <td class="text-center">
-                <span v-if="detail.meeting && detail.meeting.meeting_id">
-                  {{ detail.meeting.meeting_id }}<br>
-                  {{ detail.meeting.customer.full_name }}
-                </span>
-                <span v-else-if="detail.meeting_id">
-                  {{ detail.meeting_id }}
-                </span>
-                <span v-else class="text-muted">N/A</span>
+            <tr v-for="(detail, index) in uatMeetings" :key="detail.id">
+              <td class="align-middle text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
+              <td class="align-middle font-weight-bold">{{ detail.uat_id }}</td>
+              <td class="align-middle">{{ detail.meeting ? detail.meeting.meeting_id : '-' }}</td>
+              <td class="align-middle">{{ detail.order_id || '-' }}</td>
+              <td class="align-middle">
+                <span :class="{
+                  'badge badge-warning': detail.customer_approval === 'pending',
+                  'badge badge-success': detail.customer_approval === 'approved',
+                  'badge badge-danger': detail.customer_approval === 'rejected',
+                }">{{ detail.customer_approval || 'pending' }}</span>
               </td>
-
-              <!-- Uat ID -->
-              <td class="text-center">
-                {{ detail.uat_id }}
+              <td class="align-middle text-center">
+                <span :class="detail.changes_required ? 'badge badge-info' : 'badge badge-secondary'">{{ detail.changes_required ? 'Yes' : 'No' }}</span>
               </td>
-
-              <!-- Budget -->
-              <td class="text-center">
-                RM {{ formatPrice(detail.initial_budget) }}
-              </td>
-
-              <!-- Combined Reason & Play Mode -->
-              <td class="text-center">
-                <div class="d-flex flex-column align-items-center">
-                  <!-- Reason -->
-                  <div class="mb-1">
-                    <span v-if="detail.reason == 1" class="badge badge-primary">
-                      <i class="fas fa-briefcase mr-1"></i> Work
-                    </span>
-                    <span v-else-if="detail.reason == 2" class="badge badge-success">
-                      <i class="fas fa-gamepad mr-1"></i> Gaming
-                    </span>
-                    <span v-else class="text-muted">-</span>
-                  </div>
-
-                  <!-- Play Mode (only show if reason is Gaming) -->
-                  <div v-if="detail.reason == 2">
-                    <span v-if="detail.play_mode == 1" class="badge badge-info badge-sm">
-                      <i class="fas fa-users mr-1"></i> Multiplayer
-                    </span>
-                    <span v-else-if="detail.play_mode == 2" class="badge badge-warning badge-sm">
-                      <i class="fas fa-user mr-1"></i> Singleplayer
-                    </span>
-                    <span v-else class="badge badge-secondary badge-sm">
-                      <i class="fas fa-question mr-1"></i> Not Specified
-                    </span>
-                  </div>
-                </div>
-              </td>
-
-              <!-- Include Monitor -->
-              <td class="text-center">
-                <span v-if="detail.include_monitor" class="badge badge-light">
-                    <div class="feature-value">
-                        <span :class="detail.include_monitor == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                        {{ detail.include_monitor == 1 ? 'Yes' : 'No' }}
-                        </span>
-                    </div>
-                    <template v-if="detail.include_monitor == 1 ">
-                        {{ detail.include_notes }}
-                    </template>
-                </span>
-                <span v-else class="text-muted">-</span>
-              </td>
-
-              <!-- Theme Style -->
-              <td class="text-center">
-                <span v-if="detail.theme_style" class="badge badge-dark">
-                  {{ detail.theme_style }}
-                </span>
-                <span v-else class="text-muted">-</span>
-              </td>
-
-              <!-- Preference -->
-              <td class="text-center">
-                {{ detail.preference || '-' }}
-              </td>
-
-              <!-- Exemption -->
-              <td class="text-center">
-                {{ detail.exemption || '-' }}
-              </td>
-
-              <!-- Features -->
-              <td class="text-center" style="min-width: 200px;">
-                <div class="features-table">
-                  <div class="feature-row d-flex justify-content-between mb-2">
-                    <div class="feature-label">
-                      <i class="fas fa-shield-alt mr-1"></i>
-                      <span class="font-weight-bold">Future Proof</span>
-                    </div>
-                    <div class="feature-value">
-                      <span :class="detail.future_proof == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                        {{ detail.future_proof == 1 ? 'Yes' : 'No' }}
-                      </span>
-                    </div>
-                  </div>
-                  <div class="feature-row d-flex justify-content-between mb-2">
-                    <div class="feature-label">
-                      <i class="fas fa-box mr-1"></i>
-                      <span class="font-weight-bold">Case</span>
-                    </div>
-                    <div class="feature-value">
-                      <span v-if="detail.case_size == 1" class="badge badge-info">ITX</span>
-                      <span v-else-if="detail.case_size == 2" class="badge badge-info">MATX</span>
-                      <span v-else-if="detail.case_size == 3" class="badge badge-info">ATX</span>
-                      <span v-else-if="detail.case_size == 4" class="badge badge-info">EATX</span>
-                      <span v-else class="badge badge-secondary">-</span>
-                    </div>
-                  </div>
-                  <div class="feature-row d-flex justify-content-between mb-2">
-                    <div class="feature-label">
-                      <i class="fas fa-water mr-1"></i>
-                      <span class="font-weight-bold">AIO</span>
-                    </div>
-                    <div class="feature-value">
-                      <span :class="detail.okay_with_aio == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                        {{ detail.okay_with_aio == 1 ? 'Yes' : 'No' }}
-                      </span>
-                    </div>
-                  </div>
-                  <div class="feature-row d-flex justify-content-between">
-                    <div class="feature-label">
-                      <i class="fas fa-server mr-1"></i>
-                      <span class="font-weight-bold">GPU Sag</span>
-                    </div>
-                    <div class="feature-value">
-                      <span :class="detail.gpu_sag == 1 ? 'badge badge-success' : 'badge badge-danger'">
-                        {{ detail.gpu_sag == 1 ? 'Yes' : 'No' }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </td>
-
-              <!-- QV Tags -->
-              <td class="text-center">
-                <div class="d-flex flex-column">
-                  <small class="mb-1">
-                    <span :class="detail.qvcrf_tag == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                      QVCRF: {{ detail.qvcrf_tag == 1 ? 'Yes' : 'No' }}
-                    </span>
-                  </small>
-                  <small class="mb-1">
-                    <span :class="detail.qvse == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                      QVSE: {{ detail.qvse == 1 ? 'Yes' : 'No' }}
-                    </span>
-                  </small>
-                  <small class="mb-1">
-                    <span :class="detail.qvca == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                      QVCA: {{ detail.qvca == 1 ? 'Yes' : 'No' }}
-                    </span>
-                  </small>
-                  <small>
-                    <span :class="detail.qvtd == 1 ? 'badge badge-success badge-sm' : 'badge badge-danger badge-sm'">
-                      QVTD: {{ detail.qvtd == 1 ? 'Yes' : 'No' }}
-                      <br>
-                      <template v-if="detail.qvtd == 1 ">
-                        Notes: {{ detail.qvtd_notes }}
-                      </template>
-                    </span>
-                  </small>
-                </div>
-              </td>
-
-              <!-- Target Date -->
-              <td class="text-center">
-                <span v-if="detail.target_build_date" class="badge badge-dark">
-                  {{ formatDate(detail.target_build_date) }}
-                </span>
-                <span v-else class="text-muted">-</span>
-              </td>
-
-              <!-- Target Location -->
-              <td class="text-center">
-                <span v-if="detail.target_location" class="badge badge-primary">
-                  {{ detail.target_location }}
-                </span>
-                <span v-else class="text-muted">-</span>
-              </td>
+              <td class="align-middle">{{ detail.target_build_date ? detail.target_build_date.slice(0, 10) : '-' }}</td>
 
               <!-- Actions -->
               <td class="text-center">
@@ -310,7 +139,7 @@
             </tr>
 
             <tr v-if="uatMeetings.length === 0">
-              <td colspan="12" class="text-center text-muted py-4">
+              <td colspan="8" class="text-center text-muted py-4">
                 <i class="fas fa-inbox fa-2x mb-2"></i><br>
                 No UAT meetings found.
               </td>
@@ -335,10 +164,8 @@ import sortablePaginationMixin from '../../mixins/sortablePagination';
 
 const EMPTY_FILTERS = {
   search: '',
-  reason: '',
-  budgetRange: '',
-  caseSize: '',
-  features: ''
+  customerApproval: '',
+  changesRequired: '',
 };
 
 export default {
@@ -349,35 +176,26 @@ export default {
       uatMeetings: [],
       loading: true,
       showFilters: false,
-      filterColumns: [
-        { key: 'search', label: 'Meeting ID / UAT ID / Theme / Preference / Exemption / Location', type: 'text' },
-        { key: 'reason', label: 'Reason', type: 'select', options: [
-          { value: '1', label: 'Work' },
-          { value: '2', label: 'Gaming' },
-        ] },
-        { key: 'budgetRange', label: 'Budget Range', type: 'select', options: [
-          { value: 'low', label: 'Low (< RM 7,000)' },
-          { value: 'medium', label: 'Medium (RM 7,000 - 10,000)' },
-          { value: 'high', label: 'High (> RM 10,000)' },
-        ] },
-        { key: 'caseSize', label: 'Case Size', type: 'select', options: [
-          { value: '1', label: 'ITX' },
-          { value: '2', label: 'MATX' },
-          { value: '3', label: 'ATX' },
-        ] },
-        { key: 'features', label: 'Features', type: 'select', options: [
-          { value: 'future_proof', label: 'Future Proof' },
-          { value: 'aio', label: 'AIO Compatible' },
-          { value: 'gpu_sag', label: 'GPU Sag Concern' },
-          { value: 'rgb', label: 'RGB Needed' },
-        ] },
-      ],
       filters: { ...EMPTY_FILTERS },
       sortState: { key: 'created_at', dir: 'desc' },
       meta: { total: 0, per_page: 10, current_page: 1, last_page: 1 }
     };
   },
   computed: {
+    filterColumns() {
+      return [
+        { key: 'search', label: 'UAT ID / Budget Change / Parts Changes / Notes', type: 'text' },
+        { key: 'customerApproval', label: 'Customer Approval', type: 'select', options: [
+          { value: 'pending', label: 'Pending' },
+          { value: 'approved', label: 'Approved' },
+          { value: 'rejected', label: 'Rejected' },
+        ] },
+        { key: 'changesRequired', label: 'Changes Required', type: 'select', options: [
+          { value: '1', label: 'Yes' },
+          { value: '0', label: 'No' },
+        ] },
+      ];
+    },
     hasActiveFilters() {
       return Object.values(this.filters).some(value => value !== '');
     },
@@ -392,27 +210,6 @@ export default {
     }
   },
   methods: {
-    formatPrice(value) {
-      return value ? Number(value).toLocaleString('en-MY', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }) : '0.00';
-    },
-    formatDate(date) {
-      if (!date) return '';
-      try {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return date;
-
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-
-        return `${day}-${month}-${year}`;
-      } catch (error) {
-        return date;
-      }
-    },
     fetchList() {
       this.loading = true;
       const params = {
@@ -421,10 +218,8 @@ export default {
         sort_by: this.sortState.key,
         sort_dir: this.sortState.dir,
         search: this.filters.search,
-        reason: this.filters.reason,
-        budgetRange: this.filters.budgetRange,
-        caseSize: this.filters.caseSize,
-        features: this.filters.features,
+        customerApproval: this.filters.customerApproval,
+        changesRequired: this.filters.changesRequired,
       };
       Object.keys(params).forEach(key => {
         if (params[key] === '') delete params[key];
@@ -457,25 +252,14 @@ export default {
     },
     getFilterLabel(key, value) {
       const labels = {
-        reason: {
-          '1': 'Work',
-          '2': 'Gaming'
+        customerApproval: {
+          'pending': 'Pending',
+          'approved': 'Approved',
+          'rejected': 'Rejected'
         },
-        budgetRange: {
-          'low': 'Low Budget',
-          'medium': 'Medium Budget',
-          'high': 'High Budget'
-        },
-        caseSize: {
-          '1': 'ITX',
-          '2': 'MATX',
-          '3': 'ATX'
-        },
-        features: {
-          'future_proof': 'Future Proof',
-          'aio': 'AIO Compatible',
-          'gpu_sag': 'GPU Sag Concern',
-          'rgb': 'RGB Needed'
+        changesRequired: {
+          '1': 'Yes',
+          '0': 'No'
         }
       };
 
@@ -523,16 +307,6 @@ export default {
         }
       });
     },
-    getReasonText(reason, playMode) {
-      if (reason == 1) return 'Work';
-      if (reason == 2) {
-        let text = 'Gaming';
-        if (playMode == 1) text += ' (Multiplayer)';
-        else if (playMode == 2) text += ' (Singleplayer)';
-        return text;
-      }
-      return 'Not Specified';
-    }
   },
   watch: {
     filters: {
