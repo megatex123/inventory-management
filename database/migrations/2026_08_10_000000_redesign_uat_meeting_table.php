@@ -9,34 +9,30 @@ class RedesignUatMeetingTable extends Migration
 {
     public function up()
     {
-        // Disable strict mode temporarily to handle the CURRENT_TIMESTAMP issue in MariaDB
-        DB::statement("SET SQL_MODE=''");
-
-        // Drop the old columns
-        DB::statement("
-            ALTER TABLE uat_meeting
-            DROP COLUMN initial_budget,
-            DROP COLUMN reason,
-            DROP COLUMN play_mode,
-            DROP COLUMN include_monitor,
-            DROP COLUMN include_notes,
-            DROP COLUMN notes,
-            DROP COLUMN theme_style,
-            DROP COLUMN preference,
-            DROP COLUMN exemption,
-            DROP COLUMN future_proof,
-            DROP COLUMN case_size,
-            DROP COLUMN okay_with_aio,
-            DROP COLUMN gpu_sag,
-            DROP COLUMN need_rgb,
-            DROP COLUMN qvcrf_tag,
-            DROP COLUMN qvse,
-            DROP COLUMN qvca,
-            DROP COLUMN qvtd,
-            DROP COLUMN qvtd_notes
+        // Step 1: Normalize created_at/updated_at's invalid zero-date defaults to valid ones
+        // The table predates Laravel migrations and has '0000-00-00 00:00:00' defaults which
+        // cause MariaDB strict mode to reject any ALTER TABLE that rebuilds the table.
+        // This fix is idempotent: only runs if the invalid default is still present.
+        $columns = DB::select("
+            SELECT COLUMN_NAME, COLUMN_DEFAULT
+            FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'uat_meeting'
+            AND COLUMN_NAME IN ('created_at', 'updated_at')
         ");
 
-        // Now add the new columns
+        foreach ($columns as $col) {
+            // Check if default contains the invalid zero-date
+            if (strpos($col->COLUMN_DEFAULT, '0000-00-00') !== false) {
+                if ($col->COLUMN_NAME === 'created_at') {
+                    DB::statement("ALTER TABLE uat_meeting MODIFY created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+                } elseif ($col->COLUMN_NAME === 'updated_at') {
+                    DB::statement("ALTER TABLE uat_meeting MODIFY updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                }
+            }
+        }
+
+        // Step 2: Add the new columns
         Schema::table('uat_meeting', function (Blueprint $table) {
             if (!Schema::hasColumn('uat_meeting', 'requirement_id')) {
                 $table->string('requirement_id')->nullable()->after('uat_id');
@@ -84,6 +80,21 @@ class RedesignUatMeetingTable extends Migration
                 $table->boolean('follow_up_required')->nullable()->after('customer_approval');
             }
         });
+
+        // Step 3: Drop the old columns with per-column guards for idempotency
+        $oldColumns = [
+            'initial_budget', 'reason', 'play_mode', 'include_monitor', 'include_notes',
+            'notes', 'theme_style', 'preference', 'exemption', 'future_proof', 'case_size',
+            'okay_with_aio', 'gpu_sag', 'need_rgb', 'qvcrf_tag', 'qvse', 'qvca', 'qvtd', 'qvtd_notes'
+        ];
+
+        foreach ($oldColumns as $column) {
+            Schema::table('uat_meeting', function (Blueprint $table) use ($column) {
+                if (Schema::hasColumn('uat_meeting', $column)) {
+                    $table->dropColumn($column);
+                }
+            });
+        }
     }
 
     public function down()
