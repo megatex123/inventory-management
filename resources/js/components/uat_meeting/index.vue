@@ -103,7 +103,10 @@
             <tr v-for="(detail, index) in uatMeetings" :key="detail.id">
               <td class="align-middle text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
               <td class="align-middle font-weight-bold">{{ detail.uat_id }}</td>
-              <td class="align-middle">{{ detail.meeting ? detail.meeting.meeting_id : '-' }}</td>
+              <td class="align-middle">
+                {{ detail.meeting ? detail.meeting.meeting_id : '-' }}
+                <small v-if="detail.meeting && detail.meeting.customer" class="d-block text-muted">{{ detail.meeting.customer.full_name }}</small>
+              </td>
               <td class="align-middle">{{ detail.order_id || '-' }}</td>
               <td class="align-middle">
                 <span :class="{
@@ -113,7 +116,11 @@
                 }">{{ detail.customer_approval || 'pending' }}</span>
               </td>
               <td class="align-middle text-center">
-                <span :class="detail.changes_required ? 'badge badge-info' : 'badge badge-secondary'">{{ detail.changes_required ? 'Yes' : 'No' }}</span>
+                <span :class="{
+                  'badge badge-info': detail.changes_required === true,
+                  'badge badge-secondary': detail.changes_required === false,
+                  'badge badge-light': detail.changes_required === null || detail.changes_required === undefined,
+                }">{{ detail.changes_required === true ? 'Yes' : (detail.changes_required === false ? 'No' : '-') }}</span>
               </td>
               <td class="align-middle">{{ detail.target_build_date ? detail.target_build_date.slice(0, 10) : '-' }}</td>
 

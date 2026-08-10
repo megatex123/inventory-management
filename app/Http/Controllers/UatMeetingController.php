@@ -13,7 +13,7 @@ class UatMeetingController extends Controller
 
     public function index(Request $request)
     {
-        $query = UatMeeting::with(['meeting.customer', 'requirementMeeting', 'order']);
+        $query = UatMeeting::with('meeting.customer');
 
         $search = $request->input('search');
         if (is_scalar($search) && $search !== '') {
