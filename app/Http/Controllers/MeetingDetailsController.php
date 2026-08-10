@@ -93,6 +93,13 @@ class MeetingDetailsController extends Controller
         return $this->paginatedResponse($paginated);
     }
 
+    public function all()
+    {
+        return response()->json(
+            MeetingDetails::with('meeting.customer')->latest()->get()
+        );
+    }
+
     /**
      * Whole-table statistics, unaffected by the list's active filters --
      * matches the pre-migration client-side calculateStatistics().

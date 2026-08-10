@@ -231,6 +231,7 @@ Route::delete('/meetings/{meeting}', 'MeetingController@destroy');
 |--------------------------------------------------------------------------
 */
 Route::get('/meeting-details', 'MeetingDetailsController@index');
+Route::get('/meeting-details/all', 'MeetingDetailsController@all');
 Route::get('/meeting-details/statistics', 'MeetingDetailsController@statistics');
 Route::get('/meeting-details/{id}', 'MeetingDetailsController@show');
 Route::post('/meeting-details', 'MeetingDetailsController@store');
