@@ -88,13 +88,13 @@ class RedesignUatMeetingTable extends Migration
             'okay_with_aio', 'gpu_sag', 'need_rgb', 'qvcrf_tag', 'qvse', 'qvca', 'qvtd', 'qvtd_notes'
         ];
 
-        foreach ($oldColumns as $column) {
-            Schema::table('uat_meeting', function (Blueprint $table) use ($column) {
+        Schema::table('uat_meeting', function (Blueprint $table) use ($oldColumns) {
+            foreach ($oldColumns as $column) {
                 if (Schema::hasColumn('uat_meeting', $column)) {
                     $table->dropColumn($column);
                 }
-            });
-        }
+            }
+        });
     }
 
     public function down()
