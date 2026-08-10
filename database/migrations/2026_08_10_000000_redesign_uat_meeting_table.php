@@ -12,7 +12,14 @@ class RedesignUatMeetingTable extends Migration
         // Step 1: Normalize created_at/updated_at's invalid zero-date defaults to valid ones
         // The table predates Laravel migrations and has '0000-00-00 00:00:00' defaults which
         // cause MariaDB strict mode to reject any ALTER TABLE that rebuilds the table.
-        // This fix is idempotent: only runs if the invalid default is still present.
+        // This fix is idempotent: only runs if an invalid default is still present.
+        //
+        // Both columns MUST be fixed in a single ALTER statement, not two separate
+        // ones -- MariaDB strict mode re-validates every column's default on each
+        // ALTER TABLE, so fixing created_at alone still fails as long as updated_at's
+        // default is still invalid (and vice versa). Confirmed live on staging: two
+        // separate MODIFY statements produced "Invalid default value for 'updated_at'"
+        // while only touching created_at.
         $columns = DB::select("
             SELECT COLUMN_NAME, COLUMN_DEFAULT
             FROM information_schema.COLUMNS
@@ -21,15 +28,19 @@ class RedesignUatMeetingTable extends Migration
             AND COLUMN_NAME IN ('created_at', 'updated_at')
         ");
 
+        $needsFix = false;
         foreach ($columns as $col) {
-            // Check if default contains the invalid zero-date
-            if (strpos($col->COLUMN_DEFAULT, '0000-00-00') !== false) {
-                if ($col->COLUMN_NAME === 'created_at') {
-                    DB::statement("ALTER TABLE uat_meeting MODIFY created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
-                } elseif ($col->COLUMN_NAME === 'updated_at') {
-                    DB::statement("ALTER TABLE uat_meeting MODIFY updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-                }
+            if ($col->COLUMN_DEFAULT !== null && strpos($col->COLUMN_DEFAULT, '0000-00-00') !== false) {
+                $needsFix = true;
             }
+        }
+
+        if ($needsFix) {
+            DB::statement("
+                ALTER TABLE uat_meeting
+                MODIFY created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                MODIFY updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ");
         }
 
         // Step 2: Add the new columns
