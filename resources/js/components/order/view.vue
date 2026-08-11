@@ -157,6 +157,14 @@
                                             <td class="text-muted">
                                                 <span v-if="data.is_care == 1" class="badge badge-success">Covered</span>
                                                 <span v-else class="badge badge-secondary">Not Covered</span>
+                                                <button
+                                                    v-if="data.is_care == 1 && onsiteHandoverCompleted"
+                                                    class="btn btn-sm btn-outline-warning ml-1 py-0 px-1"
+                                                    title="Register a warranty replacement for this item"
+                                                    @click="goToCreateCareWarranty(data)"
+                                                >
+                                                    <i class="fas fa-wrench"></i>
+                                                </button>
                                             </td>
 
                                             <td class="text-center">
@@ -314,6 +322,7 @@ export default {
       care: null,
       careCharge: 0,  // Add this to store care charge
       details: [],
+      onsiteHandoverCompleted: false,
       showOrder: true,
       showProducts: true,
       showPayment: true,
@@ -400,6 +409,7 @@ export default {
           this.order = res.data.order;
           this.serve = res.data.serve;
           this.care = res.data.care;
+          this.onsiteHandoverCompleted = !!res.data.onsite_handover_completed;
           this.loading = false;
         })
         .catch(error => {
@@ -415,6 +425,12 @@ export default {
         .catch(error => {
           console.error('Error fetching order products:', error);
         });
+    },
+    goToCreateCareWarranty(data) {
+      this.$router.push({
+        path: '/care-warranty/create',
+        query: { order_id: this.order.id, pro_id: data.pro_id }
+      });
     },
     toggleOrder() {
       this.showOrder = !this.showOrder;

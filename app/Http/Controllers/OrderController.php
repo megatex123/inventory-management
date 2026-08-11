@@ -18,6 +18,8 @@ use App\Models\Customers;
 use App\Support\BusinessId;
 use App\Models\Products;
 use App\Models\InvMerch;
+use App\Models\OnsiteHandover;
+use App\Models\OnsiteHandoverStudio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -357,10 +359,22 @@ class OrderController extends Controller
             'care_charge' => $careTier['care_charge']
         ]);
 
+        // Read-only checks -- do NOT call OnsiteHandoverController::show()/
+        // OnsiteHandoverStudioController::show() here, both auto-create an
+        // 'in_progress' record on first access, which would spuriously mark
+        // every viewed order as having a handover in progress.
+        $onsiteHandoverCompleted = OnsiteHandover::where('order_id', $order->id)
+            ->where('status', 'completed')
+            ->exists()
+            || OnsiteHandoverStudio::where('order_id', $order->id)
+                ->where('status', 'completed')
+                ->exists();
+
         return response()->json([
             'order' => $order,
             'serve' => $serve,
-            'care' => $care
+            'care' => $care,
+            'onsite_handover_completed' => $onsiteHandoverCompleted,
         ]);
     }
 

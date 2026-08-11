@@ -524,6 +524,11 @@ export default {
   mounted() {
     this.fetchCategories()
     this.debouncedSearch = debounce(this.searchCareDataApi, 300)
+
+    const { order_id: orderId, pro_id: proId } = this.$route.query
+    if (orderId) {
+      this.prefillFromOrder(orderId, proId)
+    }
   },
   methods: {
     async fetchCategories() {
@@ -645,6 +650,30 @@ export default {
     selectHighlighted() {
       if (this.highlightedIndex >= 0 && this.careDataResults[this.highlightedIndex]) {
         this.selectCareData(this.careDataResults[this.highlightedIndex])
+      }
+    },
+
+    async prefillFromOrder(orderId, proId) {
+      try {
+        const response = await axios.get(`/api/care-data/order/${orderId}`)
+        const careDataList = response.data.data || []
+        const careData = careDataList[0]
+
+        if (!careData) {
+          console.error('No QuiviCare warranty record found for this order')
+          return
+        }
+
+        await this.selectCareData(careData)
+
+        if (proId) {
+          const product = this.orderProducts.find(p => p.pro_id == proId)
+          if (product) {
+            await this.selectProduct(product)
+          }
+        }
+      } catch (error) {
+        console.error('Error prefilling from order:', error)
       }
     },
 

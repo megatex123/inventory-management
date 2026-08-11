@@ -5017,6 +5017,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   mounted: function mounted() {
     this.fetchCategories();
     this.debouncedSearch = lodash_debounce__WEBPACK_IMPORTED_MODULE_1___default()(this.searchCareDataApi, 300);
+    var _this$$route$query = this.$route.query,
+      orderId = _this$$route$query.order_id,
+      proId = _this$$route$query.pro_id;
+    if (orderId) {
+      this.prefillFromOrder(orderId, proId);
+    }
   },
   methods: {
     fetchCategories: function fetchCategories() {
@@ -5164,186 +5170,236 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         this.selectCareData(this.careDataResults[this.highlightedIndex]);
       }
     },
-    selectCareData: function selectCareData(item) {
+    prefillFromOrder: function prefillFromOrder(orderId, proId) {
       var _this4 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        var response, careDataList, careData, product, _t3;
         return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.n) {
+          while (1) switch (_context3.p = _context3.n) {
             case 0:
-              _this4.selectedCareData = item;
-              _this4.form.care_data_id = item.id;
-              _this4.searchQuery = item.care_id;
-              if (!(item.order && item.order.invoice_id)) {
+              _context3.p = 0;
+              _context3.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/care-data/order/".concat(orderId));
+            case 1:
+              response = _context3.v;
+              careDataList = response.data.data || [];
+              careData = careDataList[0];
+              if (careData) {
                 _context3.n = 2;
                 break;
               }
-              _this4.form.care_invoice_id = item.order.invoice_id;
-              _this4.autoPopulatedInvoice = true;
-              _context3.n = 1;
-              return _this4.fetchOrderProducts(item.order.id);
-            case 1:
-              _context3.n = 3;
-              break;
+              console.error('No QuiviCare warranty record found for this order');
+              return _context3.a(2);
             case 2:
-              _this4.form.care_invoice_id = '';
-              _this4.autoPopulatedInvoice = false;
-              _this4.orderProducts = [];
-              _this4.selectedProduct = null;
-              _this4.selectedProductId = null;
-              _this4.form.product_id = '';
-              _this4.clearWarrantySelection();
+              _context3.n = 3;
+              return _this4.selectCareData(careData);
             case 3:
-              _this4.careDataResults = [];
-              _this4.showDropdown = false;
-              _this4.highlightedIndex = -1;
+              if (!proId) {
+                _context3.n = 4;
+                break;
+              }
+              product = _this4.orderProducts.find(function (p) {
+                return p.pro_id == proId;
+              });
+              if (!product) {
+                _context3.n = 4;
+                break;
+              }
+              _context3.n = 4;
+              return _this4.selectProduct(product);
             case 4:
+              _context3.n = 6;
+              break;
+            case 5:
+              _context3.p = 5;
+              _t3 = _context3.v;
+              console.error('Error prefilling from order:', _t3);
+            case 6:
               return _context3.a(2);
           }
-        }, _callee3);
+        }, _callee3, null, [[0, 5]]);
       }))();
     },
-    fetchOrderProducts: function fetchOrderProducts(orderId) {
+    selectCareData: function selectCareData(item) {
       var _this5 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-        var response, _t3;
         return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
+          while (1) switch (_context4.n) {
             case 0:
-              _this5.loadingProducts = true;
+              _this5.selectedCareData = item;
+              _this5.form.care_data_id = item.id;
+              _this5.searchQuery = item.care_id;
+              if (!(item.order && item.order.invoice_id)) {
+                _context4.n = 2;
+                break;
+              }
+              _this5.form.care_invoice_id = item.order.invoice_id;
+              _this5.autoPopulatedInvoice = true;
+              _context4.n = 1;
+              return _this5.fetchOrderProducts(item.order.id);
+            case 1:
+              _context4.n = 3;
+              break;
+            case 2:
+              _this5.form.care_invoice_id = '';
+              _this5.autoPopulatedInvoice = false;
               _this5.orderProducts = [];
               _this5.selectedProduct = null;
               _this5.selectedProductId = null;
               _this5.form.product_id = '';
               _this5.clearWarrantySelection();
-              _context4.p = 1;
-              _context4.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/order/with-details/".concat(orderId));
-            case 2:
-              response = _context4.v;
-              if (response.data.success) {
-                if (response.data.details && Array.isArray(response.data.details)) {
-                  _this5.orderProducts = response.data.details;
-                } else if (response.data.data && response.data.data.details) {
-                  _this5.orderProducts = response.data.data.details;
-                } else if (response.data.data && Array.isArray(response.data.data)) {
-                  _this5.orderProducts = response.data.data;
-                } else if (Array.isArray(response.data)) {
-                  _this5.orderProducts = response.data;
-                }
-                console.log('Order products loaded:', _this5.orderProducts);
-              }
-              _context4.n = 4;
-              break;
             case 3:
-              _context4.p = 3;
-              _t3 = _context4.v;
-              console.error('Error fetching order details:', _t3);
+              _this5.careDataResults = [];
+              _this5.showDropdown = false;
+              _this5.highlightedIndex = -1;
             case 4:
-              _context4.p = 4;
-              _this5.loadingProducts = false;
-              return _context4.f(4);
-            case 5:
               return _context4.a(2);
           }
-        }, _callee4, null, [[1, 3, 4, 5]]);
+        }, _callee4);
+      }))();
+    },
+    fetchOrderProducts: function fetchOrderProducts(orderId) {
+      var _this6 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+        var response, _t4;
+        return _regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
+            case 0:
+              _this6.loadingProducts = true;
+              _this6.orderProducts = [];
+              _this6.selectedProduct = null;
+              _this6.selectedProductId = null;
+              _this6.form.product_id = '';
+              _this6.clearWarrantySelection();
+              _context5.p = 1;
+              _context5.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/order/with-details/".concat(orderId));
+            case 2:
+              response = _context5.v;
+              if (response.data.success) {
+                if (response.data.details && Array.isArray(response.data.details)) {
+                  _this6.orderProducts = response.data.details;
+                } else if (response.data.data && response.data.data.details) {
+                  _this6.orderProducts = response.data.data.details;
+                } else if (response.data.data && Array.isArray(response.data.data)) {
+                  _this6.orderProducts = response.data.data;
+                } else if (Array.isArray(response.data)) {
+                  _this6.orderProducts = response.data;
+                }
+                console.log('Order products loaded:', _this6.orderProducts);
+              }
+              _context5.n = 4;
+              break;
+            case 3:
+              _context5.p = 3;
+              _t4 = _context5.v;
+              console.error('Error fetching order details:', _t4);
+            case 4:
+              _context5.p = 4;
+              _this6.loadingProducts = false;
+              return _context5.f(4);
+            case 5:
+              return _context5.a(2);
+          }
+        }, _callee5, null, [[1, 3, 4, 5]]);
       }))();
     },
     selectProduct: function selectProduct(product) {
-      var _this6 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.n) {
+      var _this7 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+        return _regenerator().w(function (_context6) {
+          while (1) switch (_context6.n) {
             case 0:
-              _this6.selectedProduct = product;
-              _this6.selectedProductId = product.pro_id;
-              _this6.form.product_id = product.pro_id.toString();
-              _this6.form.category_id = product.cat;
+              _this7.selectedProduct = product;
+              _this7.selectedProductId = product.pro_id;
+              _this7.form.product_id = product.pro_id.toString();
+              _this7.form.category_id = product.cat;
               console.log('Selected product category ID:', product.cat);
 
               // Clear previous warranty selection
-              _this6.clearWarrantySelection();
+              _this7.clearWarrantySelection();
 
               // Fetch available warranties for this product's category
-              _context5.n = 1;
-              return _this6.fetchAvailableWarranties(product.cat);
+              _context6.n = 1;
+              return _this7.fetchAvailableWarranties(product.cat);
             case 1:
-              return _context5.a(2);
+              return _context6.a(2);
           }
-        }, _callee5);
+        }, _callee6);
       }))();
     },
     fetchAvailableWarranties: function fetchAvailableWarranties(categoryId) {
-      var _this7 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var response, _t4;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.p = _context6.n) {
+      var _this8 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+        var response, _t5;
+        return _regenerator().w(function (_context7) {
+          while (1) switch (_context7.p = _context7.n) {
             case 0:
-              _this7.loadingWarranties = true;
-              _this7.availableWarranties = [];
-              _this7.filteredWarranties = [];
-              _context6.p = 1;
+              _this8.loadingWarranties = true;
+              _this8.availableWarranties = [];
+              _this8.filteredWarranties = [];
+              _context7.p = 1;
               console.log('Fetching warranties for category ID:', categoryId);
-              _context6.n = 2;
+              _context7.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/inv-care/by-category', {
                 params: {
                   category_id: categoryId
                 }
               });
             case 2:
-              response = _context6.v;
+              response = _context7.v;
               console.log('Warranties response:', response.data);
               if (response.data.success) {
-                _this7.availableWarranties = response.data.data || [];
-                _this7.filteredWarranties = _toConsumableArray(_this7.availableWarranties);
-                console.log("Found ".concat(_this7.availableWarranties.length, " warranties for category ").concat(categoryId));
+                _this8.availableWarranties = response.data.data || [];
+                _this8.filteredWarranties = _toConsumableArray(_this8.availableWarranties);
+                console.log("Found ".concat(_this8.availableWarranties.length, " warranties for category ").concat(categoryId));
               }
-              _context6.n = 4;
+              _context7.n = 4;
               break;
             case 3:
-              _context6.p = 3;
-              _t4 = _context6.v;
-              console.error('Error fetching warranties:', _t4);
+              _context7.p = 3;
+              _t5 = _context7.v;
+              console.error('Error fetching warranties:', _t5);
             case 4:
-              _context6.p = 4;
-              _this7.loadingWarranties = false;
-              return _context6.f(4);
+              _context7.p = 4;
+              _this8.loadingWarranties = false;
+              return _context7.f(4);
             case 5:
-              return _context6.a(2);
+              return _context7.a(2);
           }
-        }, _callee6, null, [[1, 3, 4, 5]]);
+        }, _callee7, null, [[1, 3, 4, 5]]);
       }))();
     },
     checkProductWarranties: function checkProductWarranties() {
-      var _this8 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
-        var response, _this8$selectedProduc2, cpuWarranties, _t5;
-        return _regenerator().w(function (_context7) {
-          while (1) switch (_context7.p = _context7.n) {
+      var _this9 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+        var response, _this9$selectedProduc2, cpuWarranties, _t6;
+        return _regenerator().w(function (_context8) {
+          while (1) switch (_context8.p = _context8.n) {
             case 0:
-              _context7.p = 0;
-              _context7.n = 1;
+              _context8.p = 0;
+              _context8.n = 1;
               return axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/product-warranty');
             case 1:
-              response = _context7.v;
+              response = _context8.v;
               console.log('All product warranties:', response.data);
               if (response.data.success) {
                 cpuWarranties = response.data.data.filter(function (w) {
-                  var _this8$selectedProduc;
-                  return w.category_id == ((_this8$selectedProduc = _this8.selectedProduct) === null || _this8$selectedProduc === void 0 ? void 0 : _this8$selectedProduc.cat_id);
+                  var _this9$selectedProduc;
+                  return w.category_id == ((_this9$selectedProduc = _this9.selectedProduct) === null || _this9$selectedProduc === void 0 ? void 0 : _this9$selectedProduc.cat_id);
                 });
-                console.log("Warranties for category ".concat((_this8$selectedProduc2 = _this8.selectedProduct) === null || _this8$selectedProduc2 === void 0 ? void 0 : _this8$selectedProduc2.cat_id, ":"), cpuWarranties);
+                console.log("Warranties for category ".concat((_this9$selectedProduc2 = _this9.selectedProduct) === null || _this9$selectedProduc2 === void 0 ? void 0 : _this9$selectedProduc2.cat_id, ":"), cpuWarranties);
               }
-              _context7.n = 3;
+              _context8.n = 3;
               break;
             case 2:
-              _context7.p = 2;
-              _t5 = _context7.v;
-              console.error('Error checking warranties:', _t5);
+              _context8.p = 2;
+              _t6 = _context8.v;
+              console.error('Error checking warranties:', _t6);
             case 3:
-              return _context7.a(2);
+              return _context8.a(2);
           }
-        }, _callee7, null, [[0, 2]]);
+        }, _callee8, null, [[0, 2]]);
       }))();
     },
     filterWarranties: function filterWarranties() {
@@ -5420,61 +5476,61 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     },
     onSearchBlur: function onSearchBlur() {
-      var _this9 = this;
+      var _this0 = this;
       setTimeout(function () {
-        if (!_this9.$el.querySelector('.search-dropdown:hover')) {
-          _this9.showDropdown = false;
+        if (!_this0.$el.querySelector('.search-dropdown:hover')) {
+          _this0.showDropdown = false;
         }
       }, 200);
     },
     saveWarranty: function saveWarranty() {
-      var _this0 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-        var response, _error$response, _error$response2, _t6;
-        return _regenerator().w(function (_context8) {
-          while (1) switch (_context8.p = _context8.n) {
+      var _this1 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
+        var response, _error$response, _error$response2, _t7;
+        return _regenerator().w(function (_context9) {
+          while (1) switch (_context9.p = _context9.n) {
             case 0:
-              _this0.saving = true;
-              _this0.errors = {};
-              _context8.p = 1;
-              _context8.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/care-warranty', _this0.form);
+              _this1.saving = true;
+              _this1.errors = {};
+              _context9.p = 1;
+              _context9.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/api/care-warranty', _this1.form);
             case 2:
-              response = _context8.v;
+              response = _context9.v;
               if (response.data.success) {
-                if (_this0.$toast) {
-                  _this0.$toast.success('Warranty created successfully');
+                if (_this1.$toast) {
+                  _this1.$toast.success('Warranty created successfully');
                 }
-                _this0.$router.push('/care-warranty');
+                _this1.$router.push('/care-warranty');
               }
-              _context8.n = 4;
+              _context9.n = 4;
               break;
             case 3:
-              _context8.p = 3;
-              _t6 = _context8.v;
-              if (((_error$response = _t6.response) === null || _error$response === void 0 ? void 0 : _error$response.status) === 422) {
-                _this0.errors = _t6.response.data.errors || {};
+              _context9.p = 3;
+              _t7 = _context9.v;
+              if (((_error$response = _t7.response) === null || _error$response === void 0 ? void 0 : _error$response.status) === 422) {
+                _this1.errors = _t7.response.data.errors || {};
               }
-              if (_this0.$toast) {
-                _this0.$toast.error(((_error$response2 = _t6.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to save warranty');
+              if (_this1.$toast) {
+                _this1.$toast.error(((_error$response2 = _t7.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message) || 'Failed to save warranty');
               }
             case 4:
-              _context8.p = 4;
-              _this0.saving = false;
-              return _context8.f(4);
+              _context9.p = 4;
+              _this1.saving = false;
+              return _context9.f(4);
             case 5:
-              return _context8.a(2);
+              return _context9.a(2);
           }
-        }, _callee8, null, [[1, 3, 4, 5]]);
+        }, _callee9, null, [[1, 3, 4, 5]]);
       }))();
     }
   },
   watch: {
     showDropdown: function showDropdown(val) {
-      var _this1 = this;
+      var _this10 = this;
       if (val) {
         setTimeout(function () {
-          document.addEventListener('click', _this1.handleClickOutside);
+          document.addEventListener('click', _this10.handleClickOutside);
         }, 0);
       } else {
         document.removeEventListener('click', this.handleClickOutside);
@@ -5485,10 +5541,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     }
   },
   created: function created() {
-    var _this10 = this;
+    var _this11 = this;
     this.handleClickOutside = function (event) {
       if (!event.target.closest('.input-group') && !event.target.closest('.search-dropdown')) {
-        _this10.showDropdown = false;
+        _this11.showDropdown = false;
       }
     };
   },
@@ -19247,6 +19303,7 @@ __webpack_require__.r(__webpack_exports__);
       careCharge: 0,
       // Add this to store care charge
       details: [],
+      onsiteHandoverCompleted: false,
       showOrder: true,
       showProducts: true,
       showPayment: true,
@@ -19330,6 +19387,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.order = res.data.order;
         _this.serve = res.data.serve;
         _this.care = res.data.care;
+        _this.onsiteHandoverCompleted = !!res.data.onsite_handover_completed;
         _this.loading = false;
       })["catch"](function (error) {
         console.error('Error fetching order details:', error);
@@ -19341,6 +19399,15 @@ __webpack_require__.r(__webpack_exports__);
         _this.details = res.data;
       })["catch"](function (error) {
         console.error('Error fetching order products:', error);
+      });
+    },
+    goToCreateCareWarranty: function goToCreateCareWarranty(data) {
+      this.$router.push({
+        path: '/care-warranty/create',
+        query: {
+          order_id: this.order.id,
+          pro_id: data.pro_id
+        }
       });
     },
     toggleOrder: function toggleOrder() {
@@ -61625,7 +61692,19 @@ var render = function render() {
       staticClass: "badge badge-success"
     }, [_vm._v("Covered")]) : _c("span", {
       staticClass: "badge badge-secondary"
-    }, [_vm._v("Not Covered")])]), _vm._v(" "), _c("td", {
+    }, [_vm._v("Not Covered")]), _vm._v(" "), data.is_care == 1 && _vm.onsiteHandoverCompleted ? _c("button", {
+      staticClass: "btn btn-sm btn-outline-warning ml-1 py-0 px-1",
+      attrs: {
+        title: "Register a warranty replacement for this item"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.goToCreateCareWarranty(data);
+        }
+      }
+    }, [_c("i", {
+      staticClass: "fas fa-wrench"
+    })]) : _vm._e()]), _vm._v(" "), _c("td", {
       staticClass: "text-center"
     }, [_vm._v("\n                                        " + _vm._s(data.pro_qty) + "\n                                        ")]), _vm._v(" "), _c("td", {
       staticClass: "text-right"
