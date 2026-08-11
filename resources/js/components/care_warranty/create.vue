@@ -101,7 +101,7 @@
                             </span>
                           </div>
                           <div v-if="item.customer" class="small mt-1" :class="{ 'text-white': highlightedIndex === index }">
-                            <div><i class="fas fa-user mr-1"></i> {{ item.customer.name }}</div>
+                            <div><i class="fas fa-user mr-1"></i> {{ item.customer.full_name }}</div>
                             <div v-if="item.customer.email"><i class="fas fa-envelope mr-1"></i> {{ item.customer.email }}</div>
                           </div>
                           <div v-if="item.order && item.order.invoice_id" class="small mt-1" :class="{ 'text-white': highlightedIndex === index }">
@@ -144,7 +144,7 @@
                 <div class="customer-info bg-light p-3 rounded">
                   <div class="d-flex align-items-center mb-2">
                     <i class="fas fa-user text-primary mr-2"></i>
-                    <strong>{{ selectedCareData.customer.name || 'N/A' }}</strong>
+                    <strong>{{ selectedCareData.customer.full_name || 'N/A' }}</strong>
                   </div>
                   <div class="d-flex align-items-center mb-2">
                     <i class="fas fa-envelope text-primary mr-2"></i>

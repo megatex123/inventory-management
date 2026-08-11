@@ -39185,7 +39185,7 @@ var render = function render() {
       }
     }, [_c("div", [_c("i", {
       staticClass: "fas fa-user mr-1"
-    }), _vm._v(" " + _vm._s(item.customer.name))]), _vm._v(" "), item.customer.email ? _c("div", [_c("i", {
+    }), _vm._v(" " + _vm._s(item.customer.full_name))]), _vm._v(" "), item.customer.email ? _c("div", [_c("i", {
       staticClass: "fas fa-envelope mr-1"
     }), _vm._v(" " + _vm._s(item.customer.email))]) : _vm._e()]) : _vm._e(), _vm._v(" "), item.order && item.order.invoice_id ? _c("div", {
       staticClass: "small mt-1",
@@ -39244,7 +39244,7 @@ var render = function render() {
     staticClass: "d-flex align-items-center mb-2"
   }, [_c("i", {
     staticClass: "fas fa-user text-primary mr-2"
-  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.selectedCareData.customer.name || "N/A"))])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.selectedCareData.customer.full_name || "N/A"))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex align-items-center mb-2"
   }, [_c("i", {
     staticClass: "fas fa-envelope text-primary mr-2"
@@ -39948,7 +39948,7 @@ var render = function render() {
       }
     }, [_c("div", [_c("i", {
       staticClass: "fas fa-user mr-1"
-    }), _vm._v(" " + _vm._s(item.customer.name))]), _vm._v(" "), item.customer.email ? _c("div", [_c("i", {
+    }), _vm._v(" " + _vm._s(item.customer.full_name))]), _vm._v(" "), item.customer.email ? _c("div", [_c("i", {
       staticClass: "fas fa-envelope mr-1"
     }), _vm._v(" " + _vm._s(item.customer.email))]) : _vm._e()]) : _vm._e(), _vm._v(" "), item.order && item.order.invoice_id ? _c("div", {
       staticClass: "small mt-1",
@@ -40007,7 +40007,7 @@ var render = function render() {
     staticClass: "d-flex align-items-center mb-2"
   }, [_c("i", {
     staticClass: "fas fa-user text-primary mr-2"
-  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.selectedCareData.customer.name || "N/A"))])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _c("strong", [_vm._v(_vm._s(_vm.selectedCareData.customer.full_name || "N/A"))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex align-items-center mb-2"
   }, [_c("i", {
     staticClass: "fas fa-envelope text-primary mr-2"
