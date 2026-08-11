@@ -464,7 +464,6 @@ export default {
 </script>
 
 <style>
-    /* Your existing styles remain the same */
     @media print {
         #accordionSidebar,
         #sidebarToggleTop,
@@ -473,18 +472,36 @@ export default {
             display: none !important;
         }
 
-        .btn {
+        .btn,
+        .no-print {
             display: none !important;
         }
 
-        .card {
-            border: 1px solid #ddd !important;
-            box-shadow: none !important;
+        html, body {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
-        #content-wrapper {
-            margin-left: 0 !important;
+        #wrapper,
+        #content-wrapper,
+        #content,
+        #container-wrapper {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
             width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .container-fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 0.3in !important;
+            padding-right: 0.3in !important;
+            box-sizing: border-box !important;
         }
 
         .my-5 {
@@ -492,13 +509,40 @@ export default {
             margin-bottom: 0 !important;
         }
 
-        .table-bordered {
-            border: 1px solid #000 !important;
+        .card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
         }
 
+        .table-responsive {
+            overflow: visible !important;
+        }
+
+        .table-bordered,
         .table-bordered th,
         .table-bordered td {
             border: 1px solid #000 !important;
+        }
+
+        table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            font-size: 10px !important;
+        }
+
+        th, td {
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            padding: 3px 4px !important;
+        }
+
+        /* Fixed pixel widths (e.g. style="width: 100px") make sense on
+           screen but force a too-wide table in print, pushing columns
+           onto extra pages -- let the print table-layout above resize
+           columns proportionally instead. */
+        th[style*="width"], td[style*="width"] {
+            width: auto !important;
         }
 
         .text-primary {
@@ -509,6 +553,10 @@ export default {
             border: 1px solid #000 !important;
             background-color: #fff !important;
             color: #000 !important;
+        }
+
+        tr {
+            page-break-inside: avoid;
         }
     }
 </style>
