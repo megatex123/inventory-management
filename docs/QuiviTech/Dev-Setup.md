@@ -57,7 +57,10 @@ Run these with `--network host` so the container can reach `127.0.0.1:3306` (the
 docker run --rm --network host -v "$(pwd):/var/www/html" quivitech-im:local composer install
 docker run --rm --network host -v "$(pwd):/var/www/html" quivitech-im:local php artisan key:generate
 docker run --rm --network host -v "$(pwd):/var/www/html" quivitech-im:local php artisan migrate
+docker run --rm --network host -v "$(pwd):/var/www/html" quivitech-im:local php artisan storage:link
 ```
+
+**Known gotcha: uploaded photos 404 / show broken image icons.** The `Dockerfile` creates `public/storage -> storage/app/public` at build time (`ln -sf`, see its "Set permissions & create storage link" step), but every dev command here bind-mounts the host repo directory over `/var/www/html` — which hides that image-baked symlink, since the host checkout doesn't have it (correctly gitignored, it's environment-specific). Staging/production are unaffected (their `docker-compose.yaml` runs the built image with no bind mount, so the Dockerfile's symlink survives). Any time a fresh dev container is created against a fresh bind-mounted checkout, re-run `php artisan storage:link` (either the line above, or `docker exec quivitech-im-dev php artisan storage:link` if the container's already up) — otherwise every photo upload feature (craft inspection, onsite handover, performance testing, etc.) silently 404s.
 
 `vendor/` gets written to the host filesystem this way (useful for editor tooling) rather than being sealed inside the image.
 
