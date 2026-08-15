@@ -138,13 +138,12 @@
               <sortable-th label="Category" sort-key="category" :current-sort="sortState" @sort="onSort" />
               <sortable-th label="Price (RM)" sort-key="price" :current-sort="sortState" @sort="onSort" />
               <th>Status</th>
-              <sortable-th label="Product Quantity" sort-key="product_qty" :current-sort="sortState" @sort="onSort" />
               <sortable-th label="Created At" sort-key="created_at" :current-sort="sortState" @sort="onSort" />
               <th>Action</th>
             </tr>
           </thead>
           <tbody v-if="loading">
-            <tr><td colspan="9" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+            <tr><td colspan="8" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
           </tbody>
           <tbody v-else>
             <tr v-for='data in products' :key="data.id">
@@ -157,7 +156,6 @@
                 <span v-if='data.product_qty >= 1' class="badge badge-pill badge-success">Stock Available</span>
                 <span v-else class="badge badge-pill badge-danger">Stock Out</span>
               </td>
-              <td>{{ data.product_qty }}</td>
               <td><small class="text-muted">{{ formatDate(data.created_at) }}</small></td>
               <td>
                 <router-link :to="{name:'Productedit', params:{id:data.id}}" class="btn btn-sm btn-primary">Edit</router-link>
@@ -165,7 +163,7 @@
               </td>
             </tr>
             <tr v-if="products.length === 0">
-              <td colspan="9" class="text-center text-muted py-4">No product found.</td>
+              <td colspan="8" class="text-center text-muted py-4">No product found.</td>
             </tr>
           </tbody>
         </table>

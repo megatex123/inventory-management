@@ -71117,15 +71117,6 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("sortable-th", {
     attrs: {
-      label: "Product Quantity",
-      "sort-key": "product_qty",
-      "current-sort": _vm.sortState
-    },
-    on: {
-      sort: _vm.onSort
-    }
-  }), _vm._v(" "), _c("sortable-th", {
-    attrs: {
       label: "Created At",
       "sort-key": "created_at",
       "current-sort": _vm.sortState
@@ -71147,7 +71138,7 @@ var render = function render() {
       staticClass: "badge badge-pill badge-success"
     }, [_vm._v("Stock Available")]) : _c("span", {
       staticClass: "badge badge-pill badge-danger"
-    }, [_vm._v("Stock Out")])]), _vm._v(" "), _c("td", [_vm._v(_vm._s(data.product_qty))]), _vm._v(" "), _c("td", [_c("small", {
+    }, [_vm._v("Stock Out")])]), _vm._v(" "), _c("td", [_c("small", {
       staticClass: "text-muted"
     }, [_vm._v(_vm._s(_vm.formatDate(data.created_at)))])]), _vm._v(" "), _c("td", [_c("router-link", {
       staticClass: "btn btn-sm btn-primary",
@@ -71173,7 +71164,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.products.length === 0 ? _c("tr", [_c("td", {
     staticClass: "text-center text-muted py-4",
     attrs: {
-      colspan: "9"
+      colspan: "8"
     }
   }, [_vm._v("No product found.")])]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "card-footer"
@@ -71203,7 +71194,7 @@ var staticRenderFns = [function () {
   return _c("tr", [_c("td", {
     staticClass: "text-center py-4",
     attrs: {
-      colspan: "9"
+      colspan: "8"
     }
   }, [_c("div", {
     staticClass: "spinner-border text-primary",
