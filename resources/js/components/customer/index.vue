@@ -77,12 +77,13 @@
                 <th>Consent</th>
                 <th>Approve</th>
                 <th>QuiviCare Membership</th>
+                <th>QuiviServe Membership</th>
                 <th>Actions</th>
             </tr>
           </thead>
 
           <tbody v-if="loading">
-            <tr><td colspan="9" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
+            <tr><td colspan="10" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>
           </tbody>
           <tbody v-else>
             <tr v-for="customer in customers" :key="customer.id">
@@ -145,6 +146,12 @@
                     </div>
                 </td>
                 <td>
+                    <span v-if="customer.serve_membership_tier" class="badge badge-info">
+                        {{ customer.serve_membership_tier }} &middot; {{ customer.serve_membership_duration }}
+                    </span>
+                    <span v-else class="badge badge-secondary">No QuiviServe</span>
+                </td>
+                <td>
                     <div class="btn-group" role="group">
                         <router-link :to="{ name: 'customeredit', params: { id: customer.id } }" class="btn btn-sm btn-primary">
                             <i class="fas fa-edit text-white"></i>
@@ -162,7 +169,7 @@
             </tr>
 
             <tr v-if="customers.length === 0">
-                <td colspan="9" class="text-center text-muted">
+                <td colspan="10" class="text-center text-muted">
                 No customers found.
                 </td>
             </tr>

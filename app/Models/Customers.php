@@ -43,6 +43,11 @@ class Customers extends Model
         return $this->hasMany(CareData::class, 'customer_id');
     }
 
+    public function serveData()
+    {
+        return $this->hasMany(ServeData::class, 'customer_id');
+    }
+
     public function progressEntries()
     {
         return $this->hasMany(CustomerProgress::class, 'customer_id');

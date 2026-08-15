@@ -44136,7 +44136,7 @@ var render = function render() {
     on: {
       sort: _vm.onSort
     }
-  }), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare Membership")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.customers, function (customer) {
+  }), _vm._v(" "), _c("th", [_vm._v("Email/Phone")]), _vm._v(" "), _c("th", [_vm._v("Feedback")]), _vm._v(" "), _c("th", [_vm._v("Contact Method/Hear About")]), _vm._v(" "), _c("th", [_vm._v("Consent")]), _vm._v(" "), _c("th", [_vm._v("Approve")]), _vm._v(" "), _c("th", [_vm._v("QuiviCare Membership")]), _vm._v(" "), _c("th", [_vm._v("QuiviServe Membership")]), _vm._v(" "), _c("th", [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(1)]) : _c("tbody", [_vm._l(_vm.customers, function (customer) {
     return _c("tr", {
       key: customer.id
     }, [_c("td", [_vm._v(_vm._s(customer.customer_id))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(customer.full_name) + " "), _c("br"), _vm._v(" "), _c("span", {
@@ -44197,7 +44197,11 @@ var render = function render() {
       staticClass: "badge badge-secondary"
     }, [_vm._v("No QuiviCare")]), _vm._v(" "), customer.care_membership_tier ? _c("div", {
       staticClass: "small text-muted mt-1"
-    }, [_vm._v("\n                      " + _vm._s(customer.care_membership_active ? customer.care_membership_remaining + " left" : "Expired " + _vm.formatDate(customer.care_membership_expiry)) + "\n                  ")]) : _vm._e()]), _vm._v(" "), _c("td", [_c("div", {
+    }, [_vm._v("\n                      " + _vm._s(customer.care_membership_active ? customer.care_membership_remaining + " left" : "Expired " + _vm.formatDate(customer.care_membership_expiry)) + "\n                  ")]) : _vm._e()]), _vm._v(" "), _c("td", [customer.serve_membership_tier ? _c("span", {
+      staticClass: "badge badge-info"
+    }, [_vm._v("\n                      " + _vm._s(customer.serve_membership_tier) + " · " + _vm._s(customer.serve_membership_duration) + "\n                  ")]) : _c("span", {
+      staticClass: "badge badge-secondary"
+    }, [_vm._v("No QuiviServe")])]), _vm._v(" "), _c("td", [_c("div", {
       staticClass: "btn-group",
       attrs: {
         role: "group"
@@ -44236,7 +44240,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.customers.length === 0 ? _c("tr", [_c("td", {
     staticClass: "text-center text-muted",
     attrs: {
-      colspan: "9"
+      colspan: "10"
     }
   }, [_vm._v("\n              No customers found.\n              ")])]) : _vm._e()], 2)])]), _vm._v(" "), _c("div", {
     staticClass: "card-footer"
@@ -44266,7 +44270,7 @@ var staticRenderFns = [function () {
   return _c("tr", [_c("td", {
     staticClass: "text-center py-4",
     attrs: {
-      colspan: "9"
+      colspan: "10"
     }
   }, [_c("div", {
     staticClass: "spinner-border text-primary",

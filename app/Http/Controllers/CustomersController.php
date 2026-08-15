@@ -50,7 +50,7 @@ class CustomersController extends Controller
         $this->resolveSortAndApply($query, $request, ['full_name', 'customer_id', 'created_at'], 'created_at', 'id', [], 'desc');
 
         $perPage = $this->resolvePerPage($request);
-        $paginated = $query->with(['careData.care', 'careData.order'])->paginate($perPage);
+        $paginated = $query->with(['careData.care', 'careData.order', 'serveData.serve'])->paginate($perPage);
 
         $paginated->getCollection()->transform(function ($customer) {
             if ($customer->approved_at) {
@@ -76,6 +76,7 @@ class CustomersController extends Controller
             }
 
             $this->attachLongestCareMembership($customer);
+            $this->attachLongestServeMembership($customer);
 
             return $customer;
         });
@@ -94,7 +95,7 @@ class CustomersController extends Controller
      */
     public function all()
     {
-        $customers = Customers::with(['careData.care', 'careData.order'])
+        $customers = Customers::with(['careData.care', 'careData.order', 'serveData.serve'])
             ->latest()
             ->get()
             ->map(function($customer) {
@@ -121,6 +122,7 @@ class CustomersController extends Controller
                 }
 
                 $this->attachLongestCareMembership($customer);
+            $this->attachLongestServeMembership($customer);
 
                 return $customer;
             });
@@ -150,6 +152,30 @@ class CustomersController extends Controller
         $customer->care_membership_order_id = optional($longest)->order_id;
 
         $customer->unsetRelation('careData');
+    }
+
+    /**
+     * QuiviServe tier maps 1:1 to a fixed membership duration -- Essential
+     * Kit (BEK) = 1 year, Prime Series (MPS) = 2 years, Collector's Edition
+     * (PCE) = 10 years -- matching the assembly-warranty field names on
+     * each tier's own record (ServeBek.one_year_assembly_warranty,
+     * ServeMps.two_year_assembly_warranty, ServePce's year1..year10
+     * annual service fields). Unlike QuiviCare, there's no computed
+     * active/expired concept for QuiviServe today, so this just surfaces
+     * the tier + its duration.
+     */
+    private function attachLongestServeMembership($customer)
+    {
+        $latest = $customer->serveData
+            ->sortByDesc(fn($serveData) => $serveData->created_at)
+            ->first();
+
+        $durations = [1 => '1 Year', 2 => '2 Years', 3 => '10 Years'];
+
+        $customer->serve_membership_tier = optional(optional($latest)->serve)->name;
+        $customer->serve_membership_duration = $latest ? ($durations[$latest->lkp_serve_id] ?? null) : null;
+
+        $customer->unsetRelation('serveData');
     }
 
     public function getActiveCustomers()
