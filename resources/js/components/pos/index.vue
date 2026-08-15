@@ -338,7 +338,7 @@
                   </div>
 
                   <!-- Upgrade PCE -->
-                  <div class="mt-3" v-if="!skip_quivicare">
+                  <div class="mt-3" v-if="!skip_quivicare && totalSub > 10000.00">
                       <div class="custom-control custom-switch">
                           <input
                           type="checkbox"
@@ -1003,6 +1003,15 @@ export default {
     build_way(newVal) {
       if (newVal !== 'onsite') {
         this.tag_along = null;
+      }
+    },
+    totalSub(newVal) {
+      // Upgrade PCE is only offered above RM10,000 -- if the cart drops
+      // back under the threshold, clear any selection so a hidden toggle
+      // can't silently submit as still enabled.
+      if (newVal <= 10000.00) {
+        this.upgrade_pce_enabled = null;
+        this.upgrade_pce_notes = '';
       }
     }
   },

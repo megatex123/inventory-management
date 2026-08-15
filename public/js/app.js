@@ -19010,6 +19010,15 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       if (newVal !== 'onsite') {
         this.tag_along = null;
       }
+    },
+    totalSub: function totalSub(newVal) {
+      // Upgrade PCE is only offered above RM10,000 -- if the cart drops
+      // back under the threshold, clear any selection so a hidden toggle
+      // can't silently submit as still enabled.
+      if (newVal <= 10000.00) {
+        this.upgrade_pce_enabled = null;
+        this.upgrade_pce_notes = '';
+      }
     }
   }
 });
@@ -23649,6 +23658,15 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     build_way: function build_way(newVal) {
       if (newVal !== 'onsite') {
         this.tag_along = null;
+      }
+    },
+    totalSub: function totalSub(newVal) {
+      // Upgrade PCE is only offered above RM10,000 -- if the cart drops
+      // back under the threshold, clear any selection so a hidden toggle
+      // can't silently submit as still enabled.
+      if (newVal <= 10000.00) {
+        this.upgrade_pce_enabled = null;
+        this.upgrade_pce_notes = '';
       }
     }
   },
@@ -60987,7 +61005,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                      Customer doesn't want QuiviCare\n                      ")])]), _vm._v(" "), _c("small", {
     staticClass: "text-muted"
-  }, [_vm._v("When checked, QuiviCare won't be created when this order is confirmed")])]), _vm._v(" "), !_vm.skip_quivicare ? _c("div", {
+  }, [_vm._v("When checked, QuiviCare won't be created when this order is confirmed")])]), _vm._v(" "), !_vm.skip_quivicare && _vm.totalSub > 10000.0 ? _c("div", {
     staticClass: "mt-3"
   }, [_c("div", {
     staticClass: "custom-control custom-switch"
@@ -69979,7 +69997,7 @@ var render = function render() {
     }
   }, [_vm._v("\n                        Customer doesn't want QuiviCare\n                        ")])]), _vm._v(" "), _c("small", {
     staticClass: "text-muted"
-  }, [_vm._v("When checked, QuiviCare won't be created when this order is confirmed")])]), _vm._v(" "), !_vm.skip_quivicare ? _c("div", {
+  }, [_vm._v("When checked, QuiviCare won't be created when this order is confirmed")])]), _vm._v(" "), !_vm.skip_quivicare && _vm.totalSub > 10000.0 ? _c("div", {
     staticClass: "mt-3"
   }, [_c("div", {
     staticClass: "custom-control custom-switch"
