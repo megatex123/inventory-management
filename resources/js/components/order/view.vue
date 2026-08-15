@@ -219,7 +219,7 @@
                                             <small v-if="order.build_way" class="d-block text-muted text-uppercase">{{ order.build_way }}</small>
                                             <small v-if="order.tag_along" class="d-block text-muted">Tag Along</small>
                                         </td>
-                                        <td class="text-right">{{ order.craft_tag_id || '-' }}</td>
+                                        <td class="text-right"></td>
                                         <td class="text-left">Building Fee</td>
                                         <td class="text-right">
                                             RM {{ formatNumber(order.craft.fee ? order.craft.fee : 0) }}

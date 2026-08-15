@@ -61800,7 +61800,7 @@ var render = function render() {
     staticClass: "d-block text-muted"
   }, [_vm._v("Tag Along")]) : _vm._e()]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
-  }, [_vm._v(_vm._s(_vm.order.craft_tag_id || "-"))]), _vm._v(" "), _c("td", {
+  }), _vm._v(" "), _c("td", {
     staticClass: "text-left"
   }, [_vm._v("Building Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
