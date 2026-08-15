@@ -545,7 +545,16 @@ class ServeBekController extends Controller
             'id' => $item->id,
             'serve_data_id' => $item->serveData ? $item->serveData->serve_id : null,
             'qvse_cid' => $item->qvse_cid,
-            'date_start' => $item->date_start ? $item->date_start->format('Y-m-d') : null,
+            // Fall back to QuiviServe's own start date when this record's
+            // own date_start was never seeded (e.g. rows created before
+            // getByOrder()'s date_start seeding was added) -- matches
+            // serve_bek/edit.vue's display-side backfill so the list and
+            // edit pages agree on what a record's start date actually is.
+            'date_start' => $item->date_start
+                ? $item->date_start->format('Y-m-d')
+                : (($item->serveData && $item->serveData->start_serve_enabled && $item->serveData->start_serve_date)
+                    ? $item->serveData->start_serve_date->format('Y-m-d')
+                    : null),
             'warranty' => [
                 'one_year_assembly_warranty' => (bool) $item->one_year_assembly_warranty,
             ],

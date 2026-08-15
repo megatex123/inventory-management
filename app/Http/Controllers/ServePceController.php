@@ -545,6 +545,15 @@ class ServePceController extends Controller
             $item['serve_data'] = $servePce->serveData;
             $item['serve_data_id'] = $servePce->serveData->serve_id;
 
+            // Fall back to QuiviServe's own start date when this record's
+            // own date_start was never seeded (e.g. rows created before
+            // getByOrder()'s date_start seeding was added) -- matches
+            // serve_pce/edit.vue's display-side backfill so the list and
+            // edit pages agree.
+            if (!$item['date_start'] && $servePce->serveData->start_serve_enabled && $servePce->serveData->start_serve_date) {
+                $item['date_start'] = $servePce->serveData->start_serve_date->format('Y-m-d');
+            }
+
             // Add customer info if loaded
             if ($servePce->serveData->relationLoaded('customer') && $servePce->serveData->customer) {
                 $item['customer'] = [

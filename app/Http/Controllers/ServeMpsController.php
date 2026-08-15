@@ -109,6 +109,7 @@ class ServeMpsController extends Controller
             $transformedData = [];
             foreach ($serveMps->items() as $item) {
                 $customerInfo = null;
+                $serveData = null;
                 if ($item->serve_data_id) {
                     $serveData = ServeData::with('customer')->find($item->serve_data_id);
                     if ($serveData && $serveData->customer) {
@@ -124,7 +125,16 @@ class ServeMpsController extends Controller
                     'id' => $item->id,
                     'serve_data_id' => $item->serve_data_id,
                     'qvse_cid' => $item->qvse_cid,
-                    'date_start' => $item->date_start ? $item->date_start->format('Y-m-d') : null,
+                    // Fall back to QuiviServe's own start date when this
+                    // record's own date_start was never seeded (e.g. rows
+                    // created before getByOrder()'s date_start seeding was
+                    // added) -- matches serve_mps/edit.vue's display-side
+                    // backfill so the list and edit pages agree.
+                    'date_start' => $item->date_start
+                        ? $item->date_start->format('Y-m-d')
+                        : (($serveData && $serveData->start_serve_enabled && $serveData->start_serve_date)
+                            ? $serveData->start_serve_date->format('Y-m-d')
+                            : null),
                     'two_year_assembly_warranty' => (bool)$item->two_year_assembly_warranty,
                     'two_free_onsite_troubleshooting_first_6_months' => (bool)$item->two_free_onsite_troubleshooting_first_6_months,
                     'two_free_onsite_troubleshooting_claim_1' => (bool)$item->two_free_onsite_troubleshooting_claim_1,
