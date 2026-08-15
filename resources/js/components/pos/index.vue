@@ -215,8 +215,13 @@
                   <label class="mb-2">Customer Name</label>
                   <select class="form-control" v-model="customer_id" required>
                     <option value="" disabled>Select a customer</option>
-                    <option v-for="customer in Customers" :key="customer.id" :value="customer.id">
-                      {{ customer.full_name }}
+                    <option
+                      v-for="customer in Customers"
+                      :key="customer.id"
+                      :value="customer.id"
+                      :disabled="customer.time_remaining === 'Expired'"
+                    >
+                      {{ customer.full_name }}{{ customer.time_remaining === 'Expired' ? ' (Expired - renewal required)' : '' }}
                     </option>
                   </select>
                   <!-- Build Type Section - Radio Buttons -->
@@ -946,6 +951,12 @@ export default {
     orderdone() {
       if (!this.customer_id) {
         notification.customNoti('Please select a customer');
+        return;
+      }
+
+      const selectedCustomer = this.Customers.find(c => c.id === this.customer_id);
+      if (selectedCustomer && selectedCustomer.time_remaining === 'Expired') {
+        notification.customNoti('This customer\'s approval has expired. Please renew the customer before placing a new order.');
         return;
       }
 

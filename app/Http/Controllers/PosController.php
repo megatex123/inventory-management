@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\products;
+use App\Models\Customers;
 use App\Support\BusinessId;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class PosController extends Controller
 {
     public function addCategoryToCart(Request $request)
@@ -42,6 +44,18 @@ public function orderdone(Request $request)
         'upgrade_pce_enabled' => 'nullable|boolean',
         'upgrade_pce_notes' => 'nullable|string|max:500',
     ]);
+
+    // Customer approval is only valid for 6 months from approved_at (same
+    // window CustomersController::index()/all() use to compute
+    // time_remaining = "Expired") -- block placing a new order for a
+    // customer whose approval has lapsed, matches the UI's disabled
+    // dropdown option but is the real, authoritative check.
+    $customer = Customers::find($validateData['customer_id']);
+    if ($customer && $customer->approved_at && Carbon::now()->gt(Carbon::parse($customer->approved_at)->addMonths(6))) {
+        return response()->json([
+            'message' => 'This customer\'s approval has expired. Please renew the customer before placing a new order.',
+        ], 422);
+    }
 
     $cartProducts = DB::table('pos')->get();
 

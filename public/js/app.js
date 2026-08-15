@@ -23608,6 +23608,13 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         notification.customNoti('Please select a customer');
         return;
       }
+      var selectedCustomer = this.Customers.find(function (c) {
+        return c.id === _this15.customer_id;
+      });
+      if (selectedCustomer && selectedCustomer.time_remaining === 'Expired') {
+        notification.customNoti('This customer\'s approval has expired. Please renew the customer before placing a new order.');
+        return;
+      }
       if (this.carts.length === 0) {
         notification.customNoti('Cart is empty');
         return;
@@ -69751,10 +69758,13 @@ var render = function render() {
   }, [_vm._v("Select a customer")]), _vm._v(" "), _vm._l(_vm.Customers, function (customer) {
     return _c("option", {
       key: customer.id,
+      attrs: {
+        disabled: customer.time_remaining === "Expired"
+      },
       domProps: {
         value: customer.id
       }
-    }, [_vm._v("\n                    " + _vm._s(customer.full_name) + "\n                  ")]);
+    }, [_vm._v("\n                    " + _vm._s(customer.full_name) + _vm._s(customer.time_remaining === "Expired" ? " (Expired - renewal required)" : "") + "\n                  ")]);
   })], 2), _vm._v(" "), _c("div", {
     staticClass: "mt-3"
   }, [_c("label", {
