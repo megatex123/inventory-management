@@ -61794,13 +61794,13 @@ var render = function render() {
     }
   }, [_vm._v("QuiviCraft")]), _vm._v(" "), _c("td", {
     staticClass: "text-left"
-  }, [_vm._v("\n                                        " + _vm._s(_vm.order.craft.name) + "\n                                        "), _vm.order.build_way ? _c("small", {
+  }, [_vm.order.build_way ? _c("small", {
     staticClass: "d-block text-muted text-uppercase"
   }, [_vm._v(_vm._s(_vm.order.build_way))]) : _vm._e(), _vm._v(" "), _vm.order.tag_along ? _c("small", {
     staticClass: "d-block text-muted"
   }, [_vm._v("Tag Along")]) : _vm._e()]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
-  }), _vm._v(" "), _c("td", {
+  }, [_vm._v(_vm._s(_vm.order.craft_tag_id || "-"))]), _vm._v(" "), _c("td", {
     staticClass: "text-left"
   }, [_vm._v("Building Fee")]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
