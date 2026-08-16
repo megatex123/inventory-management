@@ -343,6 +343,21 @@ Route::prefix('inv-care')->group(function () {
     });
 });
 
+Route::prefix('inv-serve')->group(function () {
+    Route::get('/', 'InvServeController@index');
+    Route::post('/', 'InvServeController@store');
+    Route::get('/statistics', 'InvServeController@statistics');
+    Route::get('/search', 'InvServeController@search');
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', 'InvServeController@show');
+        Route::get('/edit', 'InvServeController@edit');
+        Route::put('/', 'InvServeController@update');
+        Route::patch('/', 'InvServeController@update');
+        Route::delete('/', 'InvServeController@destroy');
+    });
+});
+
 Route::prefix('inventory-movements')->group(function () {
     Route::get('/', 'InventoryMovementController@index');
     Route::post('/', 'InventoryMovementController@store');
