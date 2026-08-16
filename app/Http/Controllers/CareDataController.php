@@ -183,7 +183,7 @@ class CareDataController extends Controller
     {
         $query = CareData::query()
             ->with(['customer' => function($q) {
-                $q->select('id', 'full_name as name', 'email', 'phone', 'customer_id');
+                $q->select('id', 'full_name', 'email', 'phone', 'customer_id');
             }])
             ->with(['order' => function($q) {
                 $q->select('id', 'invoice_id', 'order_id');

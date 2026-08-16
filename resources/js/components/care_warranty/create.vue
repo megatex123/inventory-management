@@ -244,6 +244,14 @@
                               <i class="fas fa-heartbeat mr-1"></i> Care: {{ product.is_care == 1 ? 'Yes' : 'No' }}
                             </span>
                           </div>
+                          <div class="mt-1">
+                            <span v-if="substituteStock(product.cat) > 0" class="badge badge-success">
+                              <i class="fas fa-box mr-1"></i> Substitute Available &middot; {{ substituteStock(product.cat) }} left
+                            </span>
+                            <span v-else class="badge badge-secondary">
+                              <i class="fas fa-box mr-1"></i> No Substitute In Stock
+                            </span>
+                          </div>
                         </div>
 
                         <!-- Selected Indicator -->
@@ -518,11 +526,18 @@ export default {
       selectedWarranty: null,
       selectedWarrantyId: null,
       loadingWarranties: false,
-      warrantySearch: ''
+      warrantySearch: '',
+
+      // category_id -> total current_stock in QuiviCare Inventory, used to
+      // show a "Substitute Available" tag + remaining count on each
+      // product card (staff replace a damaged covered part from this
+      // stock first, then exchange with the supplier for a restock).
+      careInventoryByCategory: {}
     }
   },
   mounted() {
     this.fetchCategories()
+    this.fetchCareInventoryStock()
     this.debouncedSearch = debounce(this.searchCareDataApi, 300)
 
     const { order_id: orderId, pro_id: proId } = this.$route.query
@@ -541,6 +556,25 @@ export default {
         } finally {
             this.isLoadingCategories = false
         }
+    },
+
+    async fetchCareInventoryStock() {
+      try {
+        const response = await axios.get('/api/inv-care', { params: { per_page: 1000 } })
+        const items = response.data.data || []
+        const byCategory = {}
+        items.forEach(item => {
+          if (!item.category) return
+          byCategory[item.category] = (byCategory[item.category] || 0) + Number(item.current_stock || 0)
+        })
+        this.careInventoryByCategory = byCategory
+      } catch (error) {
+        console.error('Error fetching QuiviCare inventory stock:', error)
+      }
+    },
+
+    substituteStock(categoryId) {
+      return this.careInventoryByCategory[categoryId] || 0
     },
 
     getCategoryName(categoryId) {
