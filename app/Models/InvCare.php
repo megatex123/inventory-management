@@ -16,12 +16,10 @@ class InvCare extends Model {
         'sku_code',
         'item_name',
         'unit_cost',
-        'max_stock',
-        'current_stock',
         'category',
         'status',
         'generate_id',
-        'serial_label',
+        'serial_number',
         'warranty_starts',
         'warranty_duration',
         'warranty_ends',
@@ -31,12 +29,9 @@ class InvCare extends Model {
     protected $casts = [
         'care_id' => 'integer',
         'unit_cost' => 'decimal:2',
-        'max_stock' => 'integer',
-        'current_stock' => 'integer',
         'category' => 'integer',
         'status' => 'integer',
         'generate_id' => 'integer',
-        'serial_label' => 'integer',
         'warranty_starts' => 'datetime',
         'warranty_duration' => 'integer',
         'warranty_ends' => 'datetime',
@@ -44,6 +39,12 @@ class InvCare extends Model {
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    // 1 Active, 2 Discontinued, 3 Deprecated, 4 Testing, 5 Reserved,
+    // 6 Out of Stock, 7 Archived, 8 Occupied (this specific serialized
+    // unit has already been used as a warranty replacement).
+    const STATUS_ACTIVE = 1;
+    const STATUS_OCCUPIED = 8;
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';

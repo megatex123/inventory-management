@@ -5012,10 +5012,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       selectedWarrantyId: null,
       loadingWarranties: false,
       warrantySearch: '',
-      // category_id -> total current_stock in QuiviCare Inventory, used to
-      // show a "Substitute Available" tag + remaining count on each
-      // product card (staff replace a damaged covered part from this
-      // stock first, then exchange with the supplier for a restock).
+      // category_id -> count of Active (not yet Occupied) serialized units
+      // in QuiviCare Inventory, used to show a "Substitute Available" tag +
+      // remaining count on each product card (staff replace a damaged
+      // covered part from this stock first, then exchange with the
+      // supplier for a restock).
       careInventoryByCategory: {}
     };
   },
@@ -5080,8 +5081,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               items = response.data.data || [];
               byCategory = {};
               items.forEach(function (item) {
-                if (!item.category) return;
-                byCategory[item.category] = (byCategory[item.category] || 0) + Number(item.current_stock || 0);
+                // Each row is one serialized physical unit -- only count ones
+                // that are still Active (status 1), not already Occupied or in
+                // some other non-available state.
+                if (!item.category || item.status !== 1) return;
+                byCategory[item.category] = (byCategory[item.category] || 0) + 1;
               });
               _this2.careInventoryByCategory = byCategory;
               _context2.n = 3;
@@ -10211,11 +10215,36 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         category: '',
         manufacturer: '',
         unit_cost: '',
-        current_stock: '',
-        max_stock: ''
+        status: 1,
+        serial_number: ''
       },
       loading: false,
-      errors: []
+      errors: [],
+      statusOptions: [{
+        value: 1,
+        label: 'Active'
+      }, {
+        value: 2,
+        label: 'Discontinued'
+      }, {
+        value: 3,
+        label: 'Deprecated'
+      }, {
+        value: 4,
+        label: 'Testing'
+      }, {
+        value: 5,
+        label: 'Reserved'
+      }, {
+        value: 6,
+        label: 'Out of Stock'
+      }, {
+        value: 7,
+        label: 'Archived'
+      }, {
+        value: 8,
+        label: 'Occupied'
+      }]
     };
   },
   mounted: function mounted() {
@@ -10342,12 +10371,37 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         category: '',
         manufacturer: '',
         unit_cost: '',
-        current_stock: '',
-        max_stock: ''
+        status: 1,
+        serial_number: ''
       },
       loading: false,
       loadingData: true,
-      errors: []
+      errors: [],
+      statusOptions: [{
+        value: 1,
+        label: 'Active'
+      }, {
+        value: 2,
+        label: 'Discontinued'
+      }, {
+        value: 3,
+        label: 'Deprecated'
+      }, {
+        value: 4,
+        label: 'Testing'
+      }, {
+        value: 5,
+        label: 'Reserved'
+      }, {
+        value: 6,
+        label: 'Out of Stock'
+      }, {
+        value: 7,
+        label: 'Archived'
+      }, {
+        value: 8,
+        label: 'Occupied'
+      }]
     };
   },
   mounted: function mounted() {
@@ -10402,8 +10456,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 category: record.category,
                 manufacturer: record.manufacturer,
                 unit_cost: record.unit_cost,
-                current_stock: record.current_stock,
-                max_stock: record.max_stock
+                status: record.status,
+                serial_number: record.serial_number
               };
               _context2.n = 4;
               break;
@@ -10476,6 +10530,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_SortableTh_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/SortableTh.vue */ "./resources/js/components/shared/SortableTh.vue");
 /* harmony import */ var _mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mixins/sortablePagination */ "./resources/js/mixins/sortablePagination.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -10489,7 +10549,28 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 
 var EMPTY_FILTERS = {
   search: '',
-  category: ''
+  category: '',
+  status: ''
+};
+var STATUS_LABELS = {
+  1: 'Active',
+  2: 'Discontinued',
+  3: 'Deprecated',
+  4: 'Testing',
+  5: 'Reserved',
+  6: 'Out of Stock',
+  7: 'Archived',
+  8: 'Occupied'
+};
+var STATUS_BADGE_CLASSES = {
+  1: 'badge-success',
+  2: 'badge-secondary',
+  3: 'badge-secondary',
+  4: 'badge-info',
+  5: 'badge-primary',
+  6: 'badge-danger',
+  7: 'badge-dark',
+  8: 'badge-warning'
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_mixins_sortablePagination__WEBPACK_IMPORTED_MODULE_5__["default"]],
@@ -10522,7 +10603,7 @@ var EMPTY_FILTERS = {
     filterColumns: function filterColumns() {
       return [{
         key: 'search',
-        label: 'Item Name / SKU Code / Manufacturer',
+        label: 'Item Name / SKU Code / Manufacturer / Serial No',
         type: 'text'
       }, {
         key: 'category',
@@ -10532,6 +10613,19 @@ var EMPTY_FILTERS = {
           return {
             value: cat.id,
             label: cat.name
+          };
+        })
+      }, {
+        key: 'status',
+        label: 'Status',
+        type: 'select',
+        options: Object.entries(STATUS_LABELS).map(function (_ref) {
+          var _ref2 = _slicedToArray(_ref, 2),
+            value = _ref2[0],
+            label = _ref2[1];
+          return {
+            value: value,
+            label: label
           };
         })
       }];
@@ -10555,6 +10649,12 @@ var EMPTY_FILTERS = {
     formatNumber: function formatNumber(value) {
       var num = parseFloat(value) || 0;
       return num.toFixed(2);
+    },
+    statusLabel: function statusLabel(status) {
+      return STATUS_LABELS[status] || 'Unknown';
+    },
+    statusBadgeClass: function statusBadgeClass(status) {
+      return STATUS_BADGE_CLASSES[status] || 'badge-secondary';
     },
     fetchList: function fetchList() {
       var _this = this;
@@ -39910,11 +40010,11 @@ var render = function render() {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-qrcode mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Tag:")]), _vm._v(" " + _vm._s(warranty.inv_care) + "\n                      ")]) : _vm._e(), _vm._v(" "), _c("div", {
+    }), _vm._v(" "), _c("strong", [_vm._v("Tag:")]), _vm._v(" " + _vm._s(warranty.inv_care) + "\n                      ")]) : _vm._e(), _vm._v(" "), warranty.serial_number ? _c("div", {
       staticClass: "small"
     }, [_c("i", {
-      staticClass: "fas fa-boxes mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Stock:")]), _vm._v(" " + _vm._s(warranty.current_stock) + "\n                      ")]), _vm._v(" "), _c("div", {
+      staticClass: "fas fa-barcode mr-1"
+    }), _vm._v(" "), _c("strong", [_vm._v("Serial No:")]), _vm._v(" " + _vm._s(warranty.serial_number) + "\n                      ")]) : _vm._e(), _vm._v(" "), _c("div", {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-tag mr-1"
@@ -40666,11 +40766,11 @@ var render = function render() {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-qrcode mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Tag:")]), _vm._v(" " + _vm._s(warranty.inv_care) + "\n                      ")]) : _vm._e(), _vm._v(" "), _c("div", {
+    }), _vm._v(" "), _c("strong", [_vm._v("Tag:")]), _vm._v(" " + _vm._s(warranty.inv_care) + "\n                      ")]) : _vm._e(), _vm._v(" "), warranty.serial_number ? _c("div", {
       staticClass: "small"
     }, [_c("i", {
-      staticClass: "fas fa-boxes mr-1"
-    }), _vm._v(" "), _c("strong", [_vm._v("Stock:")]), _vm._v(" " + _vm._s(warranty.current_stock) + "\n                      ")]), _vm._v(" "), _c("div", {
+      staticClass: "fas fa-barcode mr-1"
+    }), _vm._v(" "), _c("strong", [_vm._v("Serial No:")]), _vm._v(" " + _vm._s(warranty.serial_number) + "\n                      ")]) : _vm._e(), _vm._v(" "), _c("div", {
       staticClass: "small"
     }, [_c("i", {
       staticClass: "fas fa-tag mr-1"
@@ -47592,6 +47692,31 @@ var render = function render() {
         _vm.$set(_vm.form, "manufacturer", $event.target.value);
       }
     }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "form-label"
+  }, [_vm._v("Serial No")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.serial_number,
+      expression: "form.serial_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      maxlength: "100"
+    },
+    domProps: {
+      value: _vm.form.serial_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "serial_number", $event.target.value);
+      }
+    }
   })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -47622,54 +47747,35 @@ var render = function render() {
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
-  }, [_vm._m(3), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.form.current_stock,
-      expression: "form.current_stock"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "number",
-      min: "0",
-      required: ""
-    },
-    domProps: {
-      value: _vm.form.current_stock
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "current_stock", $event.target.value);
-      }
-    }
-  })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group"
   }, [_c("label", {
     staticClass: "form-label"
-  }, [_vm._v("Max Stock")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("Status")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.form.max_stock,
-      expression: "form.max_stock"
+      value: _vm.form.status,
+      expression: "form.status"
     }],
     staticClass: "form-control",
-    attrs: {
-      type: "number",
-      min: "0"
-    },
-    domProps: {
-      value: _vm.form.max_stock
-    },
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "max_stock", $event.target.value);
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.form, "status", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
       }
     }
-  })])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, _vm._l(_vm.statusOptions, function (opt) {
+    return _c("option", {
+      key: opt.value,
+      domProps: {
+        value: opt.value
+      }
+    }, [_vm._v(_vm._s(opt.label))]);
+  }), 0)])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
   }, [_c("ul", {
     staticClass: "mb-0 pl-3"
@@ -47713,14 +47819,6 @@ var staticRenderFns = [function () {
   return _c("label", {
     staticClass: "form-label"
   }, [_vm._v("Item Name "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("label", {
-    staticClass: "form-label"
-  }, [_vm._v("Current Stock "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]);
 }];
@@ -47896,6 +47994,31 @@ var render = function render() {
         _vm.$set(_vm.form, "manufacturer", $event.target.value);
       }
     }
+  })]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "form-label"
+  }, [_vm._v("Serial No")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.serial_number,
+      expression: "form.serial_number"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      maxlength: "100"
+    },
+    domProps: {
+      value: _vm.form.serial_number
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "serial_number", $event.target.value);
+      }
+    }
   })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
@@ -47926,54 +48049,35 @@ var render = function render() {
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "form-group"
-  }, [_vm._m(3), _vm._v(" "), _c("input", {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: _vm.form.current_stock,
-      expression: "form.current_stock"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      type: "number",
-      min: "0",
-      required: ""
-    },
-    domProps: {
-      value: _vm.form.current_stock
-    },
-    on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "current_stock", $event.target.value);
-      }
-    }
-  })]), _vm._v(" "), _c("div", {
-    staticClass: "form-group"
   }, [_c("label", {
     staticClass: "form-label"
-  }, [_vm._v("Max Stock")]), _vm._v(" "), _c("input", {
+  }, [_vm._v("Status")]), _vm._v(" "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.form.max_stock,
-      expression: "form.max_stock"
+      value: _vm.form.status,
+      expression: "form.status"
     }],
     staticClass: "form-control",
-    attrs: {
-      type: "number",
-      min: "0"
-    },
-    domProps: {
-      value: _vm.form.max_stock
-    },
     on: {
-      input: function input($event) {
-        if ($event.target.composing) return;
-        _vm.$set(_vm.form, "max_stock", $event.target.value);
+      change: function change($event) {
+        var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
+          return o.selected;
+        }).map(function (o) {
+          var val = "_value" in o ? o._value : o.value;
+          return val;
+        });
+        _vm.$set(_vm.form, "status", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
       }
     }
-  })])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
+  }, _vm._l(_vm.statusOptions, function (opt) {
+    return _c("option", {
+      key: opt.value,
+      domProps: {
+        value: opt.value
+      }
+    }, [_vm._v(_vm._s(opt.label))]);
+  }), 0)])])]), _vm._v(" "), _vm.errors.length > 0 ? _c("div", {
     staticClass: "alert alert-danger mt-3"
   }, [_c("ul", {
     staticClass: "mb-0 pl-3"
@@ -48017,14 +48121,6 @@ var staticRenderFns = [function () {
   return _c("label", {
     staticClass: "form-label"
   }, [_vm._v("Item Name "), _c("span", {
-    staticClass: "text-danger"
-  }, [_vm._v("*")])]);
-}, function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("label", {
-    staticClass: "form-label"
-  }, [_vm._v("Current Stock "), _c("span", {
     staticClass: "text-danger"
   }, [_vm._v("*")])]);
 }];
@@ -48086,9 +48182,9 @@ var render = function render() {
     staticClass: "ml-3"
   }, [_c("h6", {
     staticClass: "card-title text-uppercase text-muted mb-0"
-  }, [_vm._v("Total Stock")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("Active")]), _vm._v(" "), _c("span", {
     staticClass: "h4 font-weight-bold mb-0"
-  }, [_vm._v(_vm._s(_vm.stats.total_stock || 0))])])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.stats.active_count || 0))])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "col-xl-4 col-md-4 mb-3"
   }, [_c("div", {
     staticClass: "card card-stats h-100"
@@ -48100,9 +48196,9 @@ var render = function render() {
     staticClass: "ml-3"
   }, [_c("h6", {
     staticClass: "card-title text-uppercase text-muted mb-0"
-  }, [_vm._v("Low Stock (<5)")]), _vm._v(" "), _c("span", {
+  }, [_vm._v("Occupied")]), _vm._v(" "), _c("span", {
     staticClass: "h4 font-weight-bold mb-0"
-  }, [_vm._v(_vm._s(_vm.stats.low_stock_count || 0))])])])])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v(_vm._s(_vm.stats.occupied_count || 0))])])])])])])]), _vm._v(" "), _c("div", {
     staticClass: "card mb-4"
   }, [_c("div", {
     staticClass: "card-header d-flex justify-content-between align-items-center"
@@ -48191,9 +48287,7 @@ var render = function render() {
     on: {
       sort: _vm.onSort
     }
-  }), _vm._v(" "), _c("th", {
-    staticClass: "text-right"
-  }, [_vm._v("Current / Max Stock")]), _vm._v(" "), _c("th", {
+  }), _vm._v(" "), _c("th", [_vm._v("Serial No")]), _vm._v(" "), _c("th", [_vm._v("Status")]), _vm._v(" "), _c("th", {
     staticClass: "text-center"
   }, [_vm._v("Actions")])], 1)]), _vm._v(" "), _vm.loading ? _c("tbody", [_vm._m(6)]) : _vm.items.length === 0 ? _c("tbody", [_vm._m(7)]) : _c("tbody", _vm._l(_vm.items, function (item, index) {
     return _c("tr", {
@@ -48211,10 +48305,13 @@ var render = function render() {
     }, [_vm._v(_vm._s(item.category_lookup ? item.category_lookup.name : item.categoryLookup ? item.categoryLookup.name : "N/A"))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle text-right"
     }, [_vm._v("RM" + _vm._s(_vm.formatNumber(item.unit_cost)))]), _vm._v(" "), _c("td", {
-      staticClass: "align-middle text-right"
+      staticClass: "align-middle"
+    }, [_vm._v(_vm._s(item.serial_number || "-"))]), _vm._v(" "), _c("td", {
+      staticClass: "align-middle"
     }, [_c("span", {
-      "class": item.current_stock < 5 ? "badge badge-danger" : "badge badge-success"
-    }, [_vm._v(_vm._s(item.current_stock) + " / " + _vm._s(item.max_stock))])]), _vm._v(" "), _c("td", {
+      staticClass: "badge",
+      "class": _vm.statusBadgeClass(item.status)
+    }, [_vm._v(_vm._s(_vm.statusLabel(item.status)))])]), _vm._v(" "), _c("td", {
       staticClass: "align-middle text-center"
     }, [_c("div", {
       staticClass: "btn-group"
@@ -48273,9 +48370,9 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
-    staticClass: "icon icon-shape bg-gradient-info text-white rounded-circle shadow"
+    staticClass: "icon icon-shape bg-gradient-success text-white rounded-circle shadow"
   }, [_c("i", {
-    staticClass: "fas fa-cubes"
+    staticClass: "fas fa-check-circle"
   })]);
 }, function () {
   var _vm = this,
@@ -48283,7 +48380,7 @@ var staticRenderFns = [function () {
   return _c("div", {
     staticClass: "icon icon-shape bg-gradient-warning text-white rounded-circle shadow"
   }, [_c("i", {
-    staticClass: "fas fa-exclamation-triangle"
+    staticClass: "fas fa-lock"
   })]);
 }, function () {
   var _vm = this,
@@ -48307,7 +48404,7 @@ var staticRenderFns = [function () {
   return _c("tr", [_c("td", {
     staticClass: "text-center py-5",
     attrs: {
-      colspan: "7"
+      colspan: "8"
     }
   }, [_c("div", {
     staticClass: "spinner-border text-primary",
@@ -48321,7 +48418,7 @@ var staticRenderFns = [function () {
   return _c("tr", [_c("td", {
     staticClass: "text-center py-5",
     attrs: {
-      colspan: "7"
+      colspan: "8"
     }
   }, [_c("i", {
     staticClass: "fas fa-database fa-3x text-muted mb-3"

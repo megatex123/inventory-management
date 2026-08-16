@@ -33,6 +33,10 @@
                 <label class="form-label">Manufacturer</label>
                 <input type="text" v-model="form.manufacturer" class="form-control" maxlength="100">
               </div>
+              <div class="form-group">
+                <label class="form-label">Serial No</label>
+                <input type="text" v-model="form.serial_number" class="form-control" maxlength="100">
+              </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
@@ -40,12 +44,10 @@
                 <input type="number" step="0.01" min="0" v-model="form.unit_cost" class="form-control">
               </div>
               <div class="form-group">
-                <label class="form-label">Current Stock <span class="text-danger">*</span></label>
-                <input type="number" min="0" v-model="form.current_stock" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Max Stock</label>
-                <input type="number" min="0" v-model="form.max_stock" class="form-control">
+                <label class="form-label">Status</label>
+                <select v-model="form.status" class="form-control">
+                  <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                </select>
               </div>
             </div>
           </div>
@@ -75,9 +77,19 @@ export default {
     return {
       masterSkus: [],
       categories: [],
-      form: { sku_code: '', item_name: '', category: '', manufacturer: '', unit_cost: '', current_stock: '', max_stock: '' },
+      form: { sku_code: '', item_name: '', category: '', manufacturer: '', unit_cost: '', status: 1, serial_number: '' },
       loading: false,
-      errors: []
+      errors: [],
+      statusOptions: [
+        { value: 1, label: 'Active' },
+        { value: 2, label: 'Discontinued' },
+        { value: 3, label: 'Deprecated' },
+        { value: 4, label: 'Testing' },
+        { value: 5, label: 'Reserved' },
+        { value: 6, label: 'Out of Stock' },
+        { value: 7, label: 'Archived' },
+        { value: 8, label: 'Occupied' },
+      ],
     };
   },
   mounted() {

@@ -345,9 +345,9 @@
                           <i class="fas fa-qrcode mr-1"></i>
                           <strong>Tag:</strong> {{ warranty.inv_care }}
                         </div>
-                        <div class="small">
-                          <i class="fas fa-boxes mr-1"></i>
-                          <strong>Stock:</strong> {{ warranty.current_stock }}
+                        <div v-if="warranty.serial_number" class="small">
+                          <i class="fas fa-barcode mr-1"></i>
+                          <strong>Serial No:</strong> {{ warranty.serial_number }}
                         </div>
                         <div class="small">
                           <i class="fas fa-tag mr-1"></i>
@@ -528,10 +528,11 @@ export default {
       loadingWarranties: false,
       warrantySearch: '',
 
-      // category_id -> total current_stock in QuiviCare Inventory, used to
-      // show a "Substitute Available" tag + remaining count on each
-      // product card (staff replace a damaged covered part from this
-      // stock first, then exchange with the supplier for a restock).
+      // category_id -> count of Active (not yet Occupied) serialized units
+      // in QuiviCare Inventory, used to show a "Substitute Available" tag +
+      // remaining count on each product card (staff replace a damaged
+      // covered part from this stock first, then exchange with the
+      // supplier for a restock).
       careInventoryByCategory: {}
     }
   },
@@ -564,8 +565,11 @@ export default {
         const items = response.data.data || []
         const byCategory = {}
         items.forEach(item => {
-          if (!item.category) return
-          byCategory[item.category] = (byCategory[item.category] || 0) + Number(item.current_stock || 0)
+          // Each row is one serialized physical unit -- only count ones
+          // that are still Active (status 1), not already Occupied or in
+          // some other non-available state.
+          if (!item.category || item.status !== 1) return
+          byCategory[item.category] = (byCategory[item.category] || 0) + 1
         })
         this.careInventoryByCategory = byCategory
       } catch (error) {

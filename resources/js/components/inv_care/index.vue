@@ -28,10 +28,10 @@
         <div class="card card-stats h-100">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow"><i class="fas fa-cubes"></i></div>
+              <div class="icon icon-shape bg-gradient-success text-white rounded-circle shadow"><i class="fas fa-check-circle"></i></div>
               <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Total Stock</h6>
-                <span class="h4 font-weight-bold mb-0">{{ stats.total_stock || 0 }}</span>
+                <h6 class="card-title text-uppercase text-muted mb-0">Active</h6>
+                <span class="h4 font-weight-bold mb-0">{{ stats.active_count || 0 }}</span>
               </div>
             </div>
           </div>
@@ -41,10 +41,10 @@
         <div class="card card-stats h-100">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <div class="icon icon-shape bg-gradient-warning text-white rounded-circle shadow"><i class="fas fa-exclamation-triangle"></i></div>
+              <div class="icon icon-shape bg-gradient-warning text-white rounded-circle shadow"><i class="fas fa-lock"></i></div>
               <div class="ml-3">
-                <h6 class="card-title text-uppercase text-muted mb-0">Low Stock (&lt;5)</h6>
-                <span class="h4 font-weight-bold mb-0">{{ stats.low_stock_count || 0 }}</span>
+                <h6 class="card-title text-uppercase text-muted mb-0">Occupied</h6>
+                <span class="h4 font-weight-bold mb-0">{{ stats.occupied_count || 0 }}</span>
               </div>
             </div>
           </div>
@@ -96,15 +96,16 @@
                 <sortable-th label="SKU Code" sort-key="sku_code" :current-sort="sortState" @sort="onSort" />
                 <th>Category</th>
                 <sortable-th label="Unit Cost" sort-key="unit_cost" :current-sort="sortState" @sort="onSort" class="text-right" />
-                <th class="text-right">Current / Max Stock</th>
+                <th>Serial No</th>
+                <th>Status</th>
                 <th class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody v-if="loading">
-              <tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></td></tr>
+              <tr><td colspan="8" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></td></tr>
             </tbody>
             <tbody v-else-if="items.length === 0">
-              <tr><td colspan="7" class="text-center py-5"><i class="fas fa-database fa-3x text-muted mb-3"></i><h5 class="text-muted">No inventory items found</h5></td></tr>
+              <tr><td colspan="8" class="text-center py-5"><i class="fas fa-database fa-3x text-muted mb-3"></i><h5 class="text-muted">No inventory items found</h5></td></tr>
             </tbody>
             <tbody v-else>
               <tr v-for="(item, index) in items" :key="item.id">
@@ -116,8 +117,9 @@
                 <td class="align-middle">{{ item.sku_code }}</td>
                 <td class="align-middle">{{ item.category_lookup ? item.category_lookup.name : (item.categoryLookup ? item.categoryLookup.name : 'N/A') }}</td>
                 <td class="align-middle text-right">RM{{ formatNumber(item.unit_cost) }}</td>
-                <td class="align-middle text-right">
-                  <span :class="item.current_stock < 5 ? 'badge badge-danger' : 'badge badge-success'">{{ item.current_stock }} / {{ item.max_stock }}</span>
+                <td class="align-middle">{{ item.serial_number || '-' }}</td>
+                <td class="align-middle">
+                  <span class="badge" :class="statusBadgeClass(item.status)">{{ statusLabel(item.status) }}</span>
                 </td>
                 <td class="align-middle text-center">
                   <div class="btn-group">
@@ -149,7 +151,29 @@ import PaginationControl from '../shared/PaginationControl.vue';
 import SortableTh from '../shared/SortableTh.vue';
 import sortablePaginationMixin from '../../mixins/sortablePagination';
 
-const EMPTY_FILTERS = { search: '', category: '' };
+const EMPTY_FILTERS = { search: '', category: '', status: '' };
+
+const STATUS_LABELS = {
+  1: 'Active',
+  2: 'Discontinued',
+  3: 'Deprecated',
+  4: 'Testing',
+  5: 'Reserved',
+  6: 'Out of Stock',
+  7: 'Archived',
+  8: 'Occupied',
+};
+
+const STATUS_BADGE_CLASSES = {
+  1: 'badge-success',
+  2: 'badge-secondary',
+  3: 'badge-secondary',
+  4: 'badge-info',
+  5: 'badge-primary',
+  6: 'badge-danger',
+  7: 'badge-dark',
+  8: 'badge-warning',
+};
 
 export default {
   mixins: [sortablePaginationMixin],
@@ -169,8 +193,9 @@ export default {
   computed: {
     filterColumns() {
       return [
-        { key: 'search', label: 'Item Name / SKU Code / Manufacturer', type: 'text' },
+        { key: 'search', label: 'Item Name / SKU Code / Manufacturer / Serial No', type: 'text' },
         { key: 'category', label: 'Category', type: 'select', options: this.categories.map(cat => ({ value: cat.id, label: cat.name })) },
+        { key: 'status', label: 'Status', type: 'select', options: Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label })) },
       ];
     }
   },
@@ -192,6 +217,12 @@ export default {
     formatNumber(value) {
       const num = parseFloat(value) || 0;
       return num.toFixed(2);
+    },
+    statusLabel(status) {
+      return STATUS_LABELS[status] || 'Unknown';
+    },
+    statusBadgeClass(status) {
+      return STATUS_BADGE_CLASSES[status] || 'badge-secondary';
     },
     fetchList() {
       this.loading = true;

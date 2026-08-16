@@ -29,7 +29,8 @@ class InvCareController extends Controller
                 $q->where('item_name', 'LIKE', '%' . $escaped . '%')
                     ->orWhere('sku_code', 'LIKE', '%' . $escaped . '%')
                     ->orWhere('inv_care', 'LIKE', '%' . $escaped . '%')
-                    ->orWhere('manufacturer', 'LIKE', '%' . $escaped . '%');
+                    ->orWhere('manufacturer', 'LIKE', '%' . $escaped . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $escaped . '%');
             });
         }
 
@@ -64,11 +65,17 @@ class InvCareController extends Controller
         ]);
     }
 
+    /**
+     * Units of the given category that are still available to hand out as
+     * a warranty replacement -- Active, not Occupied. Each row is now one
+     * serialized physical unit, not a quantity, so "available" means the
+     * unit itself hasn't already been used, not a stock count > 0.
+     */
     public function getByCategory(Request $request)
     {
         $items = InvCare::with('categoryLookup')
             ->where('category', $request->category_id)
-            ->where('current_stock', '>', 0)
+            ->where('status', InvCare::STATUS_ACTIVE)
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($item) {
@@ -77,7 +84,7 @@ class InvCareController extends Controller
                     'inv_care' => $item->inv_care,
                     'item_name' => $item->item_name,
                     'sku_code' => $item->sku_code,
-                    'current_stock' => $item->current_stock,
+                    'serial_number' => $item->serial_number,
                     'category_name' => optional($item->categoryLookup)->name,
                     'category_id' => $item->category,
                     'created_at' => $item->created_at,
@@ -125,10 +132,9 @@ class InvCareController extends Controller
             'sku_code' => 'required|string|max:100|exists:master_sku,sku_code',
             'item_name' => 'required|string|max:100',
             'unit_cost' => 'nullable|numeric|min:0',
-            'max_stock' => 'nullable|integer|min:0',
-            'current_stock' => 'required|integer|min:0',
             'category' => 'nullable|exists:categories,id',
-            'status' => 'nullable|integer',
+            'status' => 'nullable|integer|between:1,8',
+            'serial_number' => 'nullable|string|max:100',
             'manufacturer' => 'nullable|string|max:100',
             'warranty_starts' => 'nullable|date',
             'warranty_duration' => 'nullable|integer|min:0',
@@ -150,12 +156,10 @@ class InvCareController extends Controller
                 'sku_code' => $request->sku_code,
                 'item_name' => $request->item_name,
                 'unit_cost' => $request->unit_cost ?? 0,
-                'max_stock' => $request->max_stock ?? 0,
-                'current_stock' => $request->current_stock,
                 'category' => $request->category ?? 0,
-                'status' => $request->status ?? 1,
+                'status' => $request->status ?? InvCare::STATUS_ACTIVE,
                 'generate_id' => $request->generate_id ?? 0,
-                'serial_label' => $request->serial_label,
+                'serial_number' => $request->serial_number,
                 // Leave unset -- fabricating "now" here silently claims a
                 // warranty period that was never actually assigned yet.
                 'warranty_starts' => $request->warranty_starts,
@@ -189,10 +193,9 @@ class InvCareController extends Controller
             'sku_code' => 'required|string|max:100|exists:master_sku,sku_code',
             'item_name' => 'required|string|max:100',
             'unit_cost' => 'nullable|numeric|min:0',
-            'max_stock' => 'nullable|integer|min:0',
-            'current_stock' => 'required|integer|min:0',
             'category' => 'nullable|exists:categories,id',
-            'status' => 'nullable|integer',
+            'status' => 'nullable|integer|between:1,8',
+            'serial_number' => 'nullable|string|max:100',
             'manufacturer' => 'nullable|string|max:100',
             'warranty_starts' => 'nullable|date',
             'warranty_duration' => 'nullable|integer|min:0',
@@ -205,8 +208,8 @@ class InvCareController extends Controller
 
         try {
             $invCare->update($request->only([
-                'sku_code', 'item_name', 'unit_cost', 'max_stock', 'current_stock', 'category',
-                'status', 'manufacturer', 'warranty_starts', 'warranty_duration', 'warranty_ends',
+                'sku_code', 'item_name', 'unit_cost', 'category',
+                'status', 'serial_number', 'manufacturer', 'warranty_starts', 'warranty_duration', 'warranty_ends',
             ]));
 
             return response()->json([
@@ -238,11 +241,11 @@ class InvCareController extends Controller
     public function statistics()
     {
         $totalItems = InvCare::count();
-        $totalStock = InvCare::sum('current_stock');
-        $lowStockCount = InvCare::where('current_stock', '<', 5)->count();
+        $occupiedCount = InvCare::where('status', InvCare::STATUS_OCCUPIED)->count();
+        $activeCount = InvCare::where('status', InvCare::STATUS_ACTIVE)->count();
 
         $byCategory = InvCare::join('categories', 'inv_care.category', '=', 'categories.id')
-            ->select('categories.id', 'categories.name', DB::raw('COUNT(*) as count'), DB::raw('SUM(inv_care.current_stock) as total_stock'))
+            ->select('categories.id', 'categories.name', DB::raw('COUNT(*) as count'))
             ->groupBy('categories.id', 'categories.name')
             ->get();
 
@@ -250,8 +253,8 @@ class InvCareController extends Controller
             'success' => true,
             'data' => [
                 'total_items' => $totalItems,
-                'total_stock' => (int) $totalStock,
-                'low_stock_count' => $lowStockCount,
+                'active_count' => $activeCount,
+                'occupied_count' => $occupiedCount,
                 'by_category' => $byCategory,
             ],
         ]);

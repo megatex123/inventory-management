@@ -350,9 +350,9 @@
                           <i class="fas fa-qrcode mr-1"></i>
                           <strong>Tag:</strong> {{ warranty.inv_care }}
                         </div>
-                        <div class="small">
-                          <i class="fas fa-boxes mr-1"></i>
-                          <strong>Stock:</strong> {{ warranty.current_stock }}
+                        <div v-if="warranty.serial_number" class="small">
+                          <i class="fas fa-barcode mr-1"></i>
+                          <strong>Serial No:</strong> {{ warranty.serial_number }}
                         </div>
                         <div class="small">
                           <i class="fas fa-tag mr-1"></i>
