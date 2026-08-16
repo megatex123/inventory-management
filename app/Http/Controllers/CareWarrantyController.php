@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CareWarranty;
 use App\Models\CareData;
+use App\Models\InvCare;
 use App\Http\Controllers\Concerns\FiltersSortsAndPaginates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -188,6 +189,14 @@ class CareWarrantyController extends Controller
 
             $CareWarranty = CareWarranty::create($data);
 
+            // The selected substitute unit is now in use -- mark it
+            // Occupied so it stops showing up as an available substitute
+            // for other claims (InvCareController::getByCategory() only
+            // returns Active units).
+            if (!empty($data['i_qvca_id'])) {
+                InvCare::where('id', $data['i_qvca_id'])->update(['status' => InvCare::STATUS_OCCUPIED]);
+            }
+
             DB::commit();
 
             $formattedItem = $this->formatCareWarantyItem($CareWarranty->load(['careData', 'category', 'spareCategory', 'product']));
@@ -264,7 +273,22 @@ class CareWarrantyController extends Controller
                 ], 422);
             }
 
-            $CareWarranty->update($validator->validated());
+            $oldQvcaId = $CareWarranty->i_qvca_id;
+            $validated = $validator->validated();
+
+            $CareWarranty->update($validated);
+
+            // If the substitute unit selection changed, release the old
+            // one back to Active and occupy the new one -- keeps the
+            // "available substitutes" list accurate after an edit.
+            if (array_key_exists('i_qvca_id', $validated) && $validated['i_qvca_id'] != $oldQvcaId) {
+                if (!empty($oldQvcaId)) {
+                    InvCare::where('id', $oldQvcaId)->update(['status' => InvCare::STATUS_ACTIVE]);
+                }
+                if (!empty($validated['i_qvca_id'])) {
+                    InvCare::where('id', $validated['i_qvca_id'])->update(['status' => InvCare::STATUS_OCCUPIED]);
+                }
+            }
 
             DB::commit();
 
@@ -304,6 +328,11 @@ class CareWarrantyController extends Controller
 
         try {
             $CareWarranty = CareWarranty::findOrFail($id);
+
+            if (!empty($CareWarranty->i_qvca_id)) {
+                InvCare::where('id', $CareWarranty->i_qvca_id)->update(['status' => InvCare::STATUS_ACTIVE]);
+            }
+
             $CareWarranty->delete();
 
             DB::commit();
