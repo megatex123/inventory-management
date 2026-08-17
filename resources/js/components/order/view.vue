@@ -216,7 +216,7 @@
                                         <td colspan="3" class="font-weight-bold">QuiviCraft</td>
                                         <td class="text-left">
                                             <small v-if="order.build_way" class="d-block text-muted text-uppercase">{{ order.build_way }}</small>
-                                            <small v-if="order.tag_along" class="d-block text-muted">Tag Along</small>
+                                            <small v-if="order.tag_along" class="d-block text-muted">TAG ALONG</small>
                                         </td>
                                         <td class="text-right">{{ order.craft_tag_id || '-' }}</td>
                                         <td class="text-left">Building Fee</td>
