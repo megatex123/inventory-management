@@ -185,7 +185,8 @@ export default {
         { value: 4, label: 'Testing' },
         { value: 5, label: 'Reserved' },
         { value: 6, label: 'Out of Stock' },
-        { value: 7, label: 'Archived' }
+        { value: 7, label: 'Archived' },
+        { value: 8, label: 'Occupied' }
       ],
       filters: { ...EMPTY_FILTERS },
       sortState: { key: 'created_at', dir: 'desc' },
@@ -228,7 +229,8 @@ export default {
         4: 'status-testing',
         5: 'status-reserved',
         6: 'status-outofstock',
-        7: 'status-archived'
+        7: 'status-archived',
+        8: 'status-occupied'
       };
       return classes[value] || 'status-active';
     },
@@ -354,4 +356,5 @@ export default {
 .status-reserved { background-color: #ddc9f0; color: #6a3f96; }
 .status-outofstock { background-color: #f7cba3; color: #a15a1f; }
 .status-archived { background-color: #b7d3d6; color: #33646b; }
+.status-occupied { background-color: #f5c6cb; color: #721c24; }
 </style>

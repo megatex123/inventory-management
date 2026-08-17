@@ -12479,6 +12479,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }, {
         value: 7,
         label: 'Archived'
+      }, {
+        value: 8,
+        label: 'Occupied'
       }],
       form: {
         product_name: '',
@@ -12609,6 +12612,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }, {
         value: 7,
         label: 'Archived'
+      }, {
+        value: 8,
+        label: 'Occupied'
       }],
       form: {
         sku_code: '',
@@ -12783,6 +12789,9 @@ var EMPTY_FILTERS = {
       }, {
         value: 7,
         label: 'Archived'
+      }, {
+        value: 8,
+        label: 'Occupied'
       }],
       filters: _objectSpread({}, EMPTY_FILTERS),
       sortState: {
@@ -12848,7 +12857,8 @@ var EMPTY_FILTERS = {
         4: 'status-testing',
         5: 'status-reserved',
         6: 'status-outofstock',
-        7: 'status-archived'
+        7: 'status-archived',
+        8: 'status-occupied'
       };
       return classes[value] || 'status-active';
     },
@@ -96195,7 +96205,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.card-stats[data-v-fa590ee4] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-fa590ee4] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-fa590ee4] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n.filter-panel-enter-active[data-v-fa590ee4],\n.filter-panel-leave-active[data-v-fa590ee4] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-fa590ee4],\n.filter-panel-leave-to[data-v-fa590ee4] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n.status-select[data-v-fa590ee4] {\n  border: none;\n  border-radius: 20px;\n  padding: 0.35rem 1.75rem 0.35rem 0.9rem;\n  font-weight: 600;\n  font-size: 0.85rem;\n  cursor: pointer;\n  -moz-appearance: none;\n       appearance: none;\n  -webkit-appearance: none;\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E\");\n  background-repeat: no-repeat;\n  background-position: right 0.6rem center;\n  background-size: 10px;\n}\n.status-select[data-v-fa590ee4]:disabled { opacity: 0.6; cursor: wait;\n}\n.status-active[data-v-fa590ee4] { background-color: #cdeab0; color: #2f6d1e;\n}\n.status-discontinued[data-v-fa590ee4] { background-color: #f6c6c9; color: #a3282d;\n}\n.status-deprecated[data-v-fa590ee4] { background-color: #fbdf9d; color: #8a6a14;\n}\n.status-testing[data-v-fa590ee4] { background-color: #b7dcf4; color: #1c5f8a;\n}\n.status-reserved[data-v-fa590ee4] { background-color: #ddc9f0; color: #6a3f96;\n}\n.status-outofstock[data-v-fa590ee4] { background-color: #f7cba3; color: #a15a1f;\n}\n.status-archived[data-v-fa590ee4] { background-color: #b7d3d6; color: #33646b;\n}\n", ""]);
+exports.push([module.i, "\n.card-stats[data-v-fa590ee4] { border-radius: 10px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);\n}\n.icon-shape[data-v-fa590ee4] { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;\n}\n.table thead th[data-v-fa590ee4] { border-top: none; border-bottom: 2px solid #dee2e6; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;\n}\n.filter-panel-enter-active[data-v-fa590ee4],\n.filter-panel-leave-active[data-v-fa590ee4] {\n  transition: opacity 0.2s ease, transform 0.2s ease;\n}\n.filter-panel-enter[data-v-fa590ee4],\n.filter-panel-leave-to[data-v-fa590ee4] {\n  opacity: 0;\n  transform: translateY(-8px);\n}\n.status-select[data-v-fa590ee4] {\n  border: none;\n  border-radius: 20px;\n  padding: 0.35rem 1.75rem 0.35rem 0.9rem;\n  font-weight: 600;\n  font-size: 0.85rem;\n  cursor: pointer;\n  -moz-appearance: none;\n       appearance: none;\n  -webkit-appearance: none;\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%23555' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E\");\n  background-repeat: no-repeat;\n  background-position: right 0.6rem center;\n  background-size: 10px;\n}\n.status-select[data-v-fa590ee4]:disabled { opacity: 0.6; cursor: wait;\n}\n.status-active[data-v-fa590ee4] { background-color: #cdeab0; color: #2f6d1e;\n}\n.status-discontinued[data-v-fa590ee4] { background-color: #f6c6c9; color: #a3282d;\n}\n.status-deprecated[data-v-fa590ee4] { background-color: #fbdf9d; color: #8a6a14;\n}\n.status-testing[data-v-fa590ee4] { background-color: #b7dcf4; color: #1c5f8a;\n}\n.status-reserved[data-v-fa590ee4] { background-color: #ddc9f0; color: #6a3f96;\n}\n.status-outofstock[data-v-fa590ee4] { background-color: #f7cba3; color: #a15a1f;\n}\n.status-archived[data-v-fa590ee4] { background-color: #b7d3d6; color: #33646b;\n}\n.status-occupied[data-v-fa590ee4] { background-color: #f5c6cb; color: #721c24;\n}\n", ""]);
 
 // exports
 

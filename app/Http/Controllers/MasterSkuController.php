@@ -101,7 +101,7 @@ class MasterSkuController extends Controller
             'from' => 'nullable|string|max:50',
             'cost' => 'nullable|numeric|min:0',
             'unit_type' => 'nullable|string|max:50',
-            'lkp_status_sku' => 'nullable|integer|between:1,7',
+            'lkp_status_sku' => 'nullable|integer|between:1,8',
         ]);
 
         if ($validator->fails()) {
@@ -154,7 +154,7 @@ class MasterSkuController extends Controller
             'from' => 'nullable|string|max:50',
             'cost' => 'nullable|numeric|min:0',
             'unit_type' => 'nullable|string|max:50',
-            'lkp_status_sku' => 'nullable|integer|between:1,7',
+            'lkp_status_sku' => 'nullable|integer|between:1,8',
         ]);
 
         if ($validator->fails()) {
@@ -201,7 +201,7 @@ class MasterSkuController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'lkp_status_sku' => 'required|integer|between:1,7',
+            'lkp_status_sku' => 'required|integer|between:1,8',
         ]);
 
         if ($validator->fails()) {

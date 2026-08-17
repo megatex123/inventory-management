@@ -85,7 +85,8 @@ export default {
         { value: 4, label: 'Testing' },
         { value: 5, label: 'Reserved' },
         { value: 6, label: 'Out of Stock' },
-        { value: 7, label: 'Archived' }
+        { value: 7, label: 'Archived' },
+        { value: 8, label: 'Occupied' }
       ],
       form: { product_name: '', supplier_id: '', from: '', cost: '', unit_type: '', lkp_status_sku: 1 },
       loading: false,
