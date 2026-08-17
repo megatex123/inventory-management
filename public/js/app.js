@@ -50181,7 +50181,7 @@ var render = function render() {
       staticClass: "align-middle font-weight-bold"
     }, [_c("small", {
       staticClass: "d-block text-muted font-weight-normal"
-    }, [_vm._v(_vm._s(item.inv_serve))]), _vm._v("\n                " + _vm._s(item.item_name) + "\n              ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v(_vm._s(item.inv_excl_serve))]), _vm._v("\n                " + _vm._s(item.item_name) + "\n              ")]), _vm._v(" "), _c("td", {
       staticClass: "align-middle"
     }, [_vm._v(_vm._s(item.sku_code))]), _vm._v(" "), _c("td", {
       staticClass: "align-middle text-right"

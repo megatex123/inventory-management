@@ -111,7 +111,7 @@
               <tr v-for="(item, index) in items" :key="item.id">
                 <td class="text-center align-middle">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}</td>
                 <td class="align-middle font-weight-bold">
-                  <small class="d-block text-muted font-weight-normal">{{ item.inv_serve }}</small>
+                  <small class="d-block text-muted font-weight-normal">{{ item.inv_excl_serve }}</small>
                   {{ item.item_name }}
                 </td>
                 <td class="align-middle">{{ item.sku_code }}</td>

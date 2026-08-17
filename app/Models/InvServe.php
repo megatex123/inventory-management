@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvServe extends Model {
     use SoftDeletes;
-    protected $table = 'inv_serve';
+    // The real, original table -- see 2026_08_18_000000_restore_inv_excl_serve_drop_inv_serve.
+    protected $table = 'inv_excl_serve';
     protected $guarded = ['id'];
 
     protected $fillable = [
-        'inv_serve',
+        'inv_excl_serve',
         'sku_code',
         'serve_data_id',
         'item_name',

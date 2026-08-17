@@ -26,7 +26,7 @@ class InvServeController extends Controller
             $query->where(function ($q) use ($escaped) {
                 $q->where('item_name', 'LIKE', '%' . $escaped . '%')
                     ->orWhere('sku_code', 'LIKE', '%' . $escaped . '%')
-                    ->orWhere('inv_serve', 'LIKE', '%' . $escaped . '%');
+                    ->orWhere('inv_excl_serve', 'LIKE', '%' . $escaped . '%');
             });
         }
 
@@ -83,7 +83,7 @@ class InvServeController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'inv_serve' => $invServe,
+                'inv_serve' => $invServe, // JSON envelope key, not a DB column
                 'master_skus' => MasterSku::orderBy('product_name')->get(),
             ],
         ]);
@@ -108,10 +108,10 @@ class InvServeController extends Controller
 
         DB::beginTransaction();
         try {
-            $invServeCode = BusinessId::next('inv_serve', 'inv_serve', 'IE-QVSE-', 6);
+            $invServeCode = BusinessId::next('inv_excl_serve', 'inv_excl_serve', 'IE-QVSE-', 6);
 
             $invServe = InvServe::create([
-                'inv_serve' => $invServeCode,
+                'inv_excl_serve' => $invServeCode,
                 'sku_code' => $request->sku_code,
                 'serve_data_id' => $request->serve_data_id,
                 'item_name' => $request->item_name,
