@@ -32,6 +32,10 @@
                   <option :value="0">Inactive</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label class="form-label">Linked ServeData ID</label>
+                <input type="number" min="0" v-model="form.serve_data_id" class="form-control" placeholder="Optional -- set once handed out to a specific order">
+              </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
@@ -77,7 +81,7 @@ export default {
   data() {
     return {
       masterSkus: [],
-      form: { sku_code: '', item_name: '', status: 1, unit_cost: '', current_stock: '', max_stock: '', to_restock: '' },
+      form: { sku_code: '', item_name: '', status: 1, unit_cost: '', current_stock: '', max_stock: '', to_restock: '', serve_data_id: '' },
       loading: false,
       loadingData: true,
       errors: []
@@ -101,7 +105,8 @@ export default {
           unit_cost: record.unit_cost,
           current_stock: record.current_stock,
           max_stock: record.max_stock,
-          to_restock: record.to_restock
+          to_restock: record.to_restock,
+          serve_data_id: record.serve_data_id
         };
       } catch (error) {
         console.error('Error fetching inventory item:', error);

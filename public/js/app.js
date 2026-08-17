@@ -11126,7 +11126,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         unit_cost: '',
         current_stock: '',
         max_stock: '',
-        to_restock: ''
+        to_restock: '',
+        serve_data_id: ''
       },
       loading: false,
       errors: []
@@ -11230,7 +11231,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         unit_cost: '',
         current_stock: '',
         max_stock: '',
-        to_restock: ''
+        to_restock: '',
+        serve_data_id: ''
       },
       loading: false,
       loadingData: true,
@@ -11264,7 +11266,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 unit_cost: record.unit_cost,
                 current_stock: record.current_stock,
                 max_stock: record.max_stock,
-                to_restock: record.to_restock
+                to_restock: record.to_restock,
+                serve_data_id: record.serve_data_id
               };
               _context.n = 4;
               break;
@@ -49490,7 +49493,33 @@ var render = function render() {
     domProps: {
       value: 0
     }
-  }, [_vm._v("Inactive")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Inactive")])])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "form-label"
+  }, [_vm._v("Linked ServeData ID")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.serve_data_id,
+      expression: "form.serve_data_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      min: "0",
+      placeholder: "Optional -- set once handed out to a specific order"
+    },
+    domProps: {
+      value: _vm.form.serve_data_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "serve_data_id", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
@@ -49791,7 +49820,33 @@ var render = function render() {
     domProps: {
       value: 0
     }
-  }, [_vm._v("Inactive")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Inactive")])])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "form-label"
+  }, [_vm._v("Linked ServeData ID")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.form.serve_data_id,
+      expression: "form.serve_data_id"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "number",
+      min: "0",
+      placeholder: "Optional -- set once handed out to a specific order"
+    },
+    domProps: {
+      value: _vm.form.serve_data_id
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.form, "serve_data_id", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("div", {
     staticClass: "form-group"
@@ -62344,7 +62399,7 @@ var render = function render() {
     staticClass: "mt-3"
   }, [_c("label", {
     staticClass: "mb-2 font-weight-bold"
-  }, [_vm._v("Tag Along")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("TAG ALONG")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex"
   }, [_c("div", {
     staticClass: "form-check mr-4"
@@ -63232,7 +63287,7 @@ var render = function render() {
     staticClass: "d-block text-muted text-uppercase"
   }, [_vm._v(_vm._s(_vm.order.build_way))]) : _vm._e(), _vm._v(" "), _vm.order.tag_along ? _c("small", {
     staticClass: "d-block text-muted"
-  }, [_vm._v("Tag Along")]) : _vm._e()]), _vm._v(" "), _c("td", {
+  }, [_vm._v("TAG ALONG")]) : _vm._e()]), _vm._v(" "), _c("td", {
     staticClass: "text-right"
   }, [_vm._v(_vm._s(_vm.order.craft_tag_id || "-"))]), _vm._v(" "), _c("td", {
     staticClass: "text-left"
@@ -71343,7 +71398,7 @@ var render = function render() {
     staticClass: "mt-3"
   }, [_c("label", {
     staticClass: "mb-2 font-weight-bold"
-  }, [_vm._v("Tag Along")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("TAG ALONG")]), _vm._v(" "), _c("div", {
     staticClass: "d-flex"
   }, [_c("div", {
     staticClass: "form-check mr-4"

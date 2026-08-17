@@ -16,7 +16,7 @@ class InvServeController extends Controller
 
     public function index(Request $request)
     {
-        $query = InvServe::with('masterSku');
+        $query = InvServe::with(['masterSku', 'serveData']);
 
         $this->applyEqualsFilter($query, $request, 'status', 'status');
 
@@ -40,7 +40,7 @@ class InvServeController extends Controller
 
     public function search(Request $request)
     {
-        $query = InvServe::with('masterSku');
+        $query = InvServe::with(['masterSku', 'serveData']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -63,7 +63,7 @@ class InvServeController extends Controller
 
     public function show($id)
     {
-        $invServe = InvServe::with('masterSku')->find($id);
+        $invServe = InvServe::with(['masterSku', 'serveData'])->find($id);
 
         if (!$invServe) {
             return response()->json(['success' => false, 'message' => 'Inventory record not found'], 404);
@@ -74,7 +74,7 @@ class InvServeController extends Controller
 
     public function edit($id)
     {
-        $invServe = InvServe::with('masterSku')->find($id);
+        $invServe = InvServe::with(['masterSku', 'serveData'])->find($id);
 
         if (!$invServe) {
             return response()->json(['success' => false, 'message' => 'Inventory record not found'], 404);
@@ -93,6 +93,7 @@ class InvServeController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'sku_code' => 'required|string|max:100|exists:master_sku,sku_code',
+            'serve_data_id' => 'nullable|integer|exists:serve_data,id',
             'item_name' => 'required|string|max:100',
             'unit_cost' => 'nullable|numeric|min:0',
             'max_stock' => 'nullable|integer|min:0',
@@ -112,6 +113,7 @@ class InvServeController extends Controller
             $invServe = InvServe::create([
                 'inv_serve' => $invServeCode,
                 'sku_code' => $request->sku_code,
+                'serve_data_id' => $request->serve_data_id,
                 'item_name' => $request->item_name,
                 'unit_cost' => $request->unit_cost ?? 0,
                 'max_stock' => $request->max_stock ?? 0,
@@ -144,6 +146,7 @@ class InvServeController extends Controller
 
         $validator = Validator::make($request->all(), [
             'sku_code' => 'required|string|max:100|exists:master_sku,sku_code',
+            'serve_data_id' => 'nullable|integer|exists:serve_data,id',
             'item_name' => 'required|string|max:100',
             'unit_cost' => 'nullable|numeric|min:0',
             'max_stock' => 'nullable|integer|min:0',
@@ -158,7 +161,7 @@ class InvServeController extends Controller
 
         try {
             $invServe->update($request->only([
-                'sku_code', 'item_name', 'unit_cost', 'max_stock', 'current_stock', 'to_restock', 'status',
+                'sku_code', 'serve_data_id', 'item_name', 'unit_cost', 'max_stock', 'current_stock', 'to_restock', 'status',
             ]));
 
             return response()->json([

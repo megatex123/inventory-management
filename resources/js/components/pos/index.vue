@@ -294,7 +294,7 @@
 
                   <!-- Tag Along Section - Radio Buttons, only when Onsite -->
                   <div class="mt-3" v-if="build_way === 'onsite'">
-                      <label class="mb-2 font-weight-bold">TAG ALONG
+                      <label class="mb-2 font-weight-bold">TAG ALONG</label>
                       <div class="d-flex">
                       <div class="form-check mr-4">
                           <input

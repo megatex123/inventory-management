@@ -13,6 +13,7 @@ class InvServe extends Model {
     protected $fillable = [
         'inv_serve',
         'sku_code',
+        'serve_data_id',
         'item_name',
         'unit_cost',
         'max_stock',
@@ -29,6 +30,7 @@ class InvServe extends Model {
         'to_restock' => 'integer',
         'status' => 'integer',
         'generate_id' => 'integer',
+        'serve_data_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -39,5 +41,9 @@ class InvServe extends Model {
 
     public function masterSku() {
         return $this->belongsTo(MasterSku::class, 'sku_code', 'sku_code');
+    }
+
+    public function serveData() {
+        return $this->belongsTo(ServeData::class, 'serve_data_id');
     }
 }
