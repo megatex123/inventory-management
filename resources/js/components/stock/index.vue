@@ -39,16 +39,15 @@
                         <sortable-th label="Category" sort-key="category" :current-sort="sortState" @sort="onSort" />
                         <sortable-th label="Price (RM)" sort-key="price" :current-sort="sortState" @sort="onSort" />
                         <th>Status</th>
-                        <sortable-th label="Product Quantity" sort-key="product_qty" :current-sort="sortState" @sort="onSort" />
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-if="loading">
-                        <td colspan="8" class="text-center py-4">Loading...</td>
+                        <td colspan="7" class="text-center py-4">Loading...</td>
                       </tr>
                       <tr v-else-if="products.length === 0">
-                        <td colspan="8" class="text-center py-4">No products found.</td>
+                        <td colspan="7" class="text-center py-4">No products found.</td>
                       </tr>
                       <tr v-for='data in products' :key="data.id" v-else>
                         <td><img :src="data.image" class="img-fluid" width='40px' height='40px' /></td>
@@ -60,7 +59,6 @@
                            <span v-if='data.product_qty>=1' class="badge badge-pill badge-success">Stock Available</span>
                            <span v-else='' class="badge badge-pill badge-danger">Stock Out</span>
                         </td>
-                        <td>{{data.product_qty}}</td>
                         <td>
                             <router-link :to="{name:'stockedit', params:{id:data.id}}" class="btn btn-sm   btn-primary">Edit </router-link>
                         </td>
