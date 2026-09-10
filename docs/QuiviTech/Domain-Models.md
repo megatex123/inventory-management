@@ -6,6 +6,10 @@ tags: [domain, models]
 
 Grouped by business area. All models live in `app/Models/`. Most use `SoftDeletes`.
 
+![Database schema ERD](assets/database-schema-erd.png)
+
+Generated 2026-08-20 from the live `quivi` schema (71 tables) plus every Eloquent relation — covers the 44 most meaningful entities across 9 subsystems (Customer/Meetings, QuiviCraft orders, build QC, QuiviServe, QuiviCare, QuiviThread/Merch/Plus, Inventory). The 11 `performance_test_*_results` child tables are rolled into one `PERFORMANCE_TESTS` node; framework/UI-only tables (`menu_items`, `carts`, `pos`, `migrations`, etc.) are omitted. Many relations shown are Eloquent relations keyed on a business-id string column (e.g. `order_id`, `sku_code`), not enforced DB foreign keys — this schema has very few real FK constraints.
+
 ## Core catalog / people
 - `Products` → belongsTo `Categories` (via `car_id`)
 - `Categories`, `SubCategories` (belongsTo `Categories` via `cat_id`), `Brand`, `Craft`
